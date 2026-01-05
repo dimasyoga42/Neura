@@ -1,0 +1,18 @@
+{
+  "name": "Neura-bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "start": "pm2 start index.js",
+    "relod": "pm2 restart index.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.89.0",
+    "@whiskeysockets/baileys": "^7.0.0-rc.9",
+    "dotenv": "^17.2.3",
+    "nodemon": "^3.1.11",
+    "qrcode-terminal": "^0.12.0"
+  }
+}
