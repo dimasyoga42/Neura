@@ -1,40 +1,74 @@
-import path from "path";
 import { getUserData, saveUserData } from "../../config/func.js";
-
-const db = path.resolve("db", "ban.json");
-export const ban = async (sock, chatId, msg, mention) => {
+import path from "path";
+const dbPath = path.resolve("database", "banned.json");
+import fs from "fs";
+export const ban = async (sock, chatId, msg) => {
   try {
-    const data = await getUserData(db);
-    const userValidation = data.find((user) => user.ban && user.ban.some((ban) => ban.userId === mention[0] && ban.value === true));
-    if (userValidation) return sock.sendMessage(chatId, { text: `sudah dalam status banned` }, { quoted: msg });
-    let dataSuspand = data.find((user) => user.id === mention);
-    if (!dataSuspand) {
-      dataSuspand = {
-        id: mention[0],
+    const mention = msg.message?.extendedTextMessage?.contextInfo?.mentionedJid;
+
+    if (!mention || mention.length === 0) {
+      await sock.sendMessage(chatId, {
+        text: "❌ Tag seseorang untuk ban!\n\nContoh: .ban @user",
+      });
+      return;
+    }
+
+    const target = mention[0];
+    const getData = getUserData(dbPath);
+
+    // Cek apakah sudah di ban
+    const existingBan = getData.find(
+      (entry) => entry.ban && entry.ban.some((ban) => ban.userid === target && ban.value === true)
+    );
+
+    if (existingBan) {
+      await sock.sendMessage(chatId, {
+        text: `❌ @${target.split("@")[0]} sudah dalam status banned!`,
+        mentions: [target],
+      });
+      return;
+    }
+
+    let dataEntry = getData.find((entry) => entry.id === target);
+    if (!dataEntry) {
+      dataEntry = {
+        id: target,
         ban: [],
       };
-      data.push(dataSuspand);
+      getData.push(dataEntry);
     }
+
     const newBan = {
-      userId: mention[0],
+      userid: target,
       value: true,
       timestamp: new Date().toISOString(),
       bannedBy: msg.key.participant || msg.key.remoteJid,
-    }
-    dataSuspand.ban.push(newBan);
-    saveUserData(db, data);
-    sock.sendMessage(chatId, { text: "user telah di banned" }, { quoted: msg })
-  } catch (err) {
-    sock.sendMessage(chatId, { text: err }, { quoted: msg });
-  }
-}
+    };
 
+    dataEntry.ban.push(newBan);
+    saveUserData(dbPath, getData);
+
+    await sock.sendMessage(
+      chatId,
+      {
+        text: ` @${target.split("@")[0]} telah dibanned!`,
+        mentions: [target],
+      },
+      { quoted: msg }
+    );
+  } catch (error) {
+    console.error("Error in ban function:", error);
+    await sock.sendMessage(chatId, {
+      text: "Terjadi kesalahan saat melakukan ban.",
+    });
+  }
+};
 export const isBan = (sock, chatId, msg) => {
   try {
     const userId = msg.key.participant || msg.key.remoteJid;
     if (!userId) return false;
 
-    const data = getUserData(db);
+    const data = getUserData(dbPath);
     const userData = data.find(
       (entry) => entry.ban && entry.ban.some((ban) => ban.userid === userId && ban.value === true)
     );
@@ -47,7 +81,7 @@ export const isBan = (sock, chatId, msg) => {
 };
 export const isOwner = (sock, msg, chatId) => {
   const userJid = msg.key.participant || msg.key.remoteJid;
-  const ownerNumber = "179573169848377@lid";
+  const ownerNumber = "272206605082689@lid";
   console.log("User JID:", userJid);
   if (userJid !== ownerNumber) {
     sock.sendMessage(chatId, {
@@ -57,7 +91,6 @@ export const isOwner = (sock, msg, chatId) => {
   }
   return true;
 };
-
 export const unBan = async (sock, chatId, msg) => {
   try {
     const mention = msg.message?.extendedTextMessage?.contextInfo?.mentionedJid;
@@ -70,13 +103,13 @@ export const unBan = async (sock, chatId, msg) => {
     }
 
     const target = mention[0];
-    const getData = getUserData(db);
+    const getData = getUserData(dbPath);
 
     const dataUserIndex = getData.findIndex((entry) => entry.id === target);
     if (dataUserIndex === -1)
       return sock.sendMessage(
         chatId,
-        { text: "User tidak ditemukan dalam database." },
+        { text: "⚠️ User tidak ditemukan dalam database." },
         { quoted: msg }
       );
 
