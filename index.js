@@ -7,6 +7,7 @@ import qrcode from "qrcode-terminal";
 import { Admincontrols } from "./src/admin/controlAdmin.js";
 import dotenv from "dotenv";
 import { ownerControls } from "./src/admin/owner.js";
+import { cmdMenucontrol } from "./src/modul/cmdControls.js";
 dotenv.config();
 const start = async () => {
   const { state, saveCreds } = await useMultiFileAuthState("./auth_save");
@@ -58,6 +59,7 @@ const start = async () => {
       if (!chatId?.endsWith("@g.us")) return;
       Admincontrols(sock, chatId, msg, text);
       ownerControls(sock, chatId, msg, text);
+      cmdMenucontrol(sock, chatId, msg, text);
     } catch (err) {
       console.log(err)
     }

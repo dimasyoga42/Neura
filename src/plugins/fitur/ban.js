@@ -10,7 +10,7 @@ export const ban = async (sock, chatId, msg) => {
 
     if (!mention || mention.length === 0) {
       await sock.sendMessage(chatId, {
-        text: "❌ Tag seseorang untuk ban!\n\nContoh: .ban @user",
+        text: "Tag seseorang untuk ban!\nContoh: !ban @user",
       })
       return
     }
@@ -28,7 +28,7 @@ export const ban = async (sock, chatId, msg) => {
 
     if (existingBan) {
       await sock.sendMessage(chatId, {
-        text: `❌ @${target.split("@")[0]} sudah dalam status banned!`,
+        text: `@${target.split("@")[0]} sudah dalam status banned!`,
         mentions: [target],
       })
       return
