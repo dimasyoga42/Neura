@@ -6,6 +6,7 @@ import makeWASocket, {
 import qrcode from "qrcode-terminal";
 import { Admincontrols } from "./src/admin/controlAdmin.js";
 import dotenv from "dotenv";
+import { ownerControls } from "./src/admin/owner.js";
 dotenv.config();
 const start = async () => {
   const { state, saveCreds } = await useMultiFileAuthState("./auth_save");
@@ -56,6 +57,7 @@ const start = async () => {
       const text = msg.message.conversation || msg.message.extendedTextMessage?.text || "";
       if (!chatId?.endsWith("@g.us")) return;
       Admincontrols(sock, chatId, msg, text);
+      ownerControls(sock, chatId, msg, text);
     } catch (err) {
       console.log(err)
     }
