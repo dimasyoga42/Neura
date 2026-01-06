@@ -40,3 +40,20 @@ export const Admincontrols = async (sock, chatId, msg, text) => {
     console.log(err)
   }
 }
+
+export const adminValid = async (sock, chatId, msg, text) => {
+  try {
+    const metadata = await sock.groupMetadata(chatId);
+    const admin = metadata.participants
+      .filter(p => p.admin)
+      .map(p => ({
+        jid: p.id,
+        pn: p.pn,
+        role: p.admin
+      }));
+    const isAdmin = admin.some(a => a.jid === msg.key.participant)
+    if (!isAdmin) return sock.sendMessage(chatId, { text: "admin only" }, { quoted: msg })
+  } catch (err) {
+    console.log(err)
+  }
+}

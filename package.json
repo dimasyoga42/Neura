@@ -11,8 +11,11 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.89.0",
     "@whiskeysockets/baileys": "^7.0.0-rc.9",
+    "axios": "^1.13.2",
+    "cheerio": "^1.1.2",
     "dotenv": "^17.2.3",
     "nodemon": "^3.1.11",
-    "qrcode-terminal": "^0.12.0"
+    "qrcode-terminal": "^0.12.0",
+    "wa-sticker-formatter": "^4.4.4"
   }
 }
