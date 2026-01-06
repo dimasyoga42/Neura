@@ -69,7 +69,7 @@ export const botValid = async (sock, chatId, msg, text) => {
       }));
     const botId = "179573169848377@lid"
     const isBotadmin = admin.some(a => a.jid === botId)
-    if (isBotadmin) return sock.sendMessage(chatId, { text: "bot tidak menjadi admin" }, { quoted: msg })
+    if (!isBotadmin) return sock.sendMessage(chatId, { text: "bot tidak menjadi admin" }, { quoted: msg })
   } catch (err) {
 
   }
