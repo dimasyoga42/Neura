@@ -77,20 +77,43 @@ export const joinRaid = async (sock, chatId, msg, text) => {
       );
     }
 
+    const jid = msg.key.participant || msg.key.remoteJid;
+
     const data = await getUserData(db);
     const raid = data.find(item => item.id === chatId);
 
     if (!raid) {
       return sock.sendMessage(
         chatId,
-        { text: "Raid belum dibuat\n> gunakan !creatRaid dulu" },
+        { text: "Raid belum dibuat\n> gunakan !creatRaid terlebih dahulu" },
         { quoted: msg }
       );
     }
 
-    // cek sudah join di party manapun
+    /* ================= NORMALISASI DATA (FIX ERROR) ================= */
+
+    // jika party masih format lama (array)
+    if (Array.isArray(raid.party)) {
+      raid.party = {
+        pt1: [],
+        pt2: [],
+        pt3: [],
+        pt4: []
+      };
+    }
+
+    // pastikan setiap pt adalah array
     for (const key of ["pt1", "pt2", "pt3", "pt4"]) {
-      if (raid.party[key].some(p => p.jid === msg.key.participant)) {
+      if (!Array.isArray(raid.party[key])) {
+        raid.party[key] = [];
+      }
+    }
+
+    /* ================================================================ */
+
+    // cek user sudah join di party manapun
+    for (const key of ["pt1", "pt2", "pt3", "pt4"]) {
+      if (raid.party[key].some(p => p.jid === jid)) {
         return sock.sendMessage(
           chatId,
           { text: "Kamu sudah join party lain" },
@@ -108,8 +131,9 @@ export const joinRaid = async (sock, chatId, msg, text) => {
       );
     }
 
+    // join party
     raid.party[pt].push({
-      jid: msg.key.participant,
+      jid: jid,
       ign: ign
     });
 
@@ -121,9 +145,10 @@ export const joinRaid = async (sock, chatId, msg, text) => {
         : "-";
 
     const message = `
-*Raid Party*
-Element Boss: ${raid.bos_ele}
-Hadiah: ${raid.hadiah}
+=== RAID PARTY UPDATED ===
+
+Element Boss : ${raid.bos_ele}
+Hadiah       : ${raid.hadiah}
 
 pt1 (${raid.party.pt1.length}/4)
 ${list("pt1")}
@@ -136,14 +161,20 @@ ${list("pt3")}
 
 pt4 (${raid.party.pt4.length}/4)
 ${list("pt4")}
+
+> join: !join <pt1-pt4> <ign>
 `.trim();
 
     sock.sendMessage(chatId, { text: message }, { quoted: msg });
 
   } catch (err) {
-    sock.sendMessage(chatId, { text: String(err) }, { quoted: msg });
+    sock.sendMessage(
+      chatId,
+      { text: `Error: ${String(err)}` },
+      { quoted: msg }
+    );
   }
-};
+}
 
 
 export const viewRaid = async (sock, chatId, msg) => {
