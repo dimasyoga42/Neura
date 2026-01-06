@@ -6,7 +6,7 @@ export const menuMessage = `
 - !open
 - !close
 - !addNews
-
+- !hidetag
 
 *Cmd Grub*
 - !news 
