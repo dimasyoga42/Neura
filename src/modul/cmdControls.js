@@ -11,9 +11,9 @@ export const cmdMenucontrol = (sock, chatId, msg, text) => {
     sock.sendMessage(chatId, { text: buffMessage }, { quoted: msg });
   }
   if (text.startsWith("!creatRaid")) {
-    const arg = text.split(" ");
-    const element = arg[2]
-    const hadiah = arg[3]
+    const arg = text.split(",");
+    const element = arg[1]
+    const hadiah = arg[2]
     if (!element || !hadiah) return sock.sendMessage(chatId, { text: "sususnan cmd anda tidak sesuai\n> use !creatRaid <element> <hadiah>" }, { quoted: msg })
     if (isBan(sock, chatId, msg)) return;
     createRaid(sock, chatId, msg, text, element, hadiah);
