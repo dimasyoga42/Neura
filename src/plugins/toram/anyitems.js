@@ -1,4 +1,12 @@
 import { supabase } from "../../model/supabase.js"
+const formatStatList = (stat) => {
+  if (!stat || stat === "None") return "- None";
+
+  return stat
+    .split("|")
+    .map(s => `- ${s.trim()}`)
+    .join("\n");
+};
 
 
 export const searchXtall = async (sock, chatId, msg, text) => {
