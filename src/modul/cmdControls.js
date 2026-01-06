@@ -1,6 +1,8 @@
 import { buffMessage, menuMessage } from "../config/variabel.js";
 import { isBan } from "../plugins/fitur/ban.js"
+import { getNews, setNews } from "../plugins/sosial/news.js";
 import { searchAbility, searchApp, searchItem, searchRegist, searchXtall } from "../plugins/toram/anyitems.js";
+import { leveling } from "../plugins/toram/lv.js";
 import { clearRaid, createRaid, joinRaid, leaveRaid, viewRaid } from "../plugins/toram/raidControl.js";
 export const cmdMenucontrol = (sock, chatId, msg, text) => {
   if (text.startsWith("!menu")) {
@@ -76,6 +78,20 @@ export const cmdMenucontrol = (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     searchAbility(sock, chatId, msg, text);
   }
+  if (text.startsWith("!setNews")) {
+    if (isBan(sock, chatId, msg)) return;
+    setNews(sock, chatId, msg, text);
+  }
+  if (text.startsWith("!news")) {
+    if (isBan(sock, chatId, msg)) return;
+    getNews(sock, chatId, msg);
+  }
+  if (text.startsWith("!lv")) {
+    if (isBan(sock, chatId, msg)) return;
+    leveling(sock, chatId, msg, text);
+  }
+
+
 
 
 

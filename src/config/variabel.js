@@ -6,12 +6,10 @@ export const menuMessage = `
 - !open
 - !close
 - !addNews
-- !setMem
 
 
 *Cmd Grub*
 - !news 
-- !listmem
 
 
 *Cmd Raid*
@@ -27,14 +25,10 @@ export const menuMessage = `
 - !regist
 - !ability
 - !buff
-- !lv
-- !bosinfo
-- !dye
+- !lv 
 
 *Cmd Tools*
-- !imgtolink
 - !stiker
-- !meme
 
 
 `.trim();
