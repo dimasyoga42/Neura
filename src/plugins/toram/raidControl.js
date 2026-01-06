@@ -35,10 +35,7 @@ export const createRaid = async (sock, chatId, msg, text, element, count) => {
 
     const messageUp = `
 Join Party Raid
-
-> !join <pt1-pt4> <ign>
-contoh: !join pt1 Sheyzo
-
+> !join <pt1-pt4> <ign>\ncontoh: !join pt1 Sheyzo
 Element Boss: ${element}
 Hadiah: ${count}
 

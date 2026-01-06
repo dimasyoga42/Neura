@@ -7,13 +7,18 @@ export const menuMessage = `
 - !close
 - !addNews
 - !setMem
-- !createRaid
+
 
 *Cmd Grub*
 - !news 
 - !listmem
+
+
+*Cmd Raid*
+- !createRaid <admin only>
 - !join
-- !raid
+- !raid 
+- !leave
 
 *Cmd Toram*
 - !xtall
