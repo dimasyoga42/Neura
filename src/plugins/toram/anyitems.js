@@ -193,6 +193,7 @@ ${i + 1}. ${ab.name}
 
 
 
+
 export const searchItem = async (sock, chatId, msg, text) => {
   try {
     const namaItem = text.replace("!item", "").trim();
@@ -234,14 +235,15 @@ export const searchItem = async (sock, chatId, msg, text) => {
 ${data.map((item, i) => `
 ${i + 1}. ${item.nama}
    Jenis : ${item.jenis}
-   Stat  : ${item.stat}
+   Stat  :
+${formatStatList(item.stat)}
    Drop  : ${item.drop}
 `).join("\n")}
 `.trim();
 
     sock.sendMessage(
       chatId,
-      { text: messageData },
+      { text: messageData.trim() },
       { quoted: msg }
     );
 
