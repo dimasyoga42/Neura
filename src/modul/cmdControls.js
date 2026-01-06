@@ -1,6 +1,6 @@
 import { buffMessage, menuMessage } from "../config/variabel.js";
 import { isBan } from "../plugins/fitur/ban.js"
-import { createRaid, joinRaid, viewRaid } from "../plugins/toram/raidControl.js";
+import { clearRaid, createRaid, joinRaid, leaveRaid, viewRaid } from "../plugins/toram/raidControl.js";
 export const cmdMenucontrol = (sock, chatId, msg, text) => {
   if (text.startsWith("!menu")) {
     if (isBan(sock, chatId, msg)) return;
@@ -46,6 +46,14 @@ export const cmdMenucontrol = (sock, chatId, msg, text) => {
   if (text.startsWith("!raid")) {
     if (isBan(sock, chatId, msg)) return;
     viewRaid(sock, chatId, msg);
+  }
+  if (text.startsWith("!clearRaid")) {
+    if (isBan(sock, chatId, msg)) return;
+    clearRaid(sock, chatId, msg, text);
+  }
+  if (text.startsWith("!leave")) {
+    if (isBan(sock, chatId, msg)) return;
+    leaveRaid(sock, chatId, msg)
   }
 
 

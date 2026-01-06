@@ -196,7 +196,6 @@ export const viewRaid = async (sock, chatId, msg) => {
 
     const message = `
 *RAID PARTY*
-
 Element Boss : ${raid.bos_ele}
 Hadiah       : ${raid.hadiah}
 
@@ -213,6 +212,126 @@ party 4 (${raid.party.pt4.length}/4)
 ${list("pt4")}
 
 > join party: !join <pt1-pt4> <ign>
+`.trim();
+
+    sock.sendMessage(chatId, { text: message }, { quoted: msg });
+
+  } catch (err) {
+    sock.sendMessage(
+      chatId,
+      { text: String(err) },
+      { quoted: msg }
+    );
+  }
+};
+
+
+export const clearRaid = async (sock, chatId, msg, text) => {
+  try {
+    // validasi admin
+    adminValid(sock, chatId, msg, text);
+
+    const data = await getUserData(db);
+
+    const index = data.findIndex(item => item.id === chatId);
+
+    if (index === -1) {
+      return sock.sendMessage(
+        chatId,
+        { text: "Tidak ada raid yang aktif di grup ini" },
+        { quoted: msg }
+      );
+    }
+
+    data.splice(index, 1);
+    saveUserData(db, data);
+
+    sock.sendMessage(
+      chatId,
+      { text: "Raid berhasil dibubarkan" },
+      { quoted: msg }
+    );
+
+  } catch (err) {
+    sock.sendMessage(
+      chatId,
+      { text: String(err) },
+      { quoted: msg }
+    );
+  }
+};
+
+export const leaveRaid = async (sock, chatId, msg) => {
+  try {
+    const jid = msg.key.participant || msg.key.remoteJid;
+
+    const data = await getUserData(db);
+    const raid = data.find(item => item.id === chatId);
+
+    if (!raid) {
+      return sock.sendMessage(
+        chatId,
+        { text: "Raid belum dibuat di grup ini" },
+        { quoted: msg }
+      );
+    }
+
+    /* ========= NORMALISASI DATA ========= */
+    if (Array.isArray(raid.party)) {
+      raid.party = { pt1: [], pt2: [], pt3: [], pt4: [] };
+    }
+
+    for (const pt of ["pt1", "pt2", "pt3", "pt4"]) {
+      if (!Array.isArray(raid.party[pt])) {
+        raid.party[pt] = [];
+      }
+    }
+    /* =================================== */
+
+    let found = false;
+
+    for (const pt of ["pt1", "pt2", "pt3", "pt4"]) {
+      const index = raid.party[pt].findIndex(p => p.jid === jid);
+      if (index !== -1) {
+        raid.party[pt].splice(index, 1);
+        found = true;
+        break;
+      }
+    }
+
+    if (!found) {
+      return sock.sendMessage(
+        chatId,
+        { text: "Kamu belum join party mana pun" },
+        { quoted: msg }
+      );
+    }
+
+    saveUserData(db, data);
+
+    const list = (p) =>
+      raid.party[p].length
+        ? raid.party[p].map((u, i) => `${i + 1}. ${u.ign}`).join("\n")
+        : "-";
+
+    const message = `
+*RAID PARTY UPDATED*
+Element Boss : ${raid.bos_ele}
+Hadiah       : ${raid.hadiah}
+
+pt1 (${raid.party.pt1.length}/4)
+${list("pt1")}
+
+pt2 (${raid.party.pt2.length}/4)
+${list("pt2")}
+
+pt3 (${raid.party.pt3.length}/4)
+${list("pt3")}
+
+pt4 (${raid.party.pt4.length}/4)
+${list("pt4")}
+
+> join: !join <pt1-pt4> <ign>
 `.trim();
 
     sock.sendMessage(chatId, { text: message }, { quoted: msg });
