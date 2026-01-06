@@ -64,13 +64,193 @@ Stat    : ${xtall.stat}
   }
 };
 
-export const searchRegist = async () => {
+export const searchRegist = async (sock, chatId, msg, text) => {
+  try {
+    const nama = text.replace("!regist", "").trim();
 
-}
+    if (!nama) {
+      return sock.sendMessage(
+        chatId,
+        { text: "Format salah\n> gunakan !regist <nama regist>" },
+        { quoted: msg }
+      );
+    }
 
-export const searchAbility = async () => {
+    const { data, error } = await supabase
+      .from("regist")
+      .select("name, effect, max_lv, levels_studied")
+      .ilike("name", `%${nama}%`)
+      .limit(1);
 
-}
+    if (error) {
+      console.log(error);
+      return sock.sendMessage(
+        chatId,
+        { text: "Internal server error" },
+        { quoted: msg }
+      );
+    }
+
+    if (!data || data.length === 0) {
+      return sock.sendMessage(
+        chatId,
+        { text: "Regist tidak ditemukan" },
+        { quoted: msg }
+      );
+    }
+
+    const regist = data[0];
+
+    const messageData = `
+*SEARCH REGIST*
+> By Neura Bot
+Name           : ${regist.name}
+Effect         : ${regist.effect}
+Max Level      : ${regist.max_lv}
+Levels Studied : ${regist.levels_studied}
+`.trim();
+
+    sock.sendMessage(
+      chatId,
+      { text: messageData },
+      { quoted: msg }
+    );
+
+  } catch (err) {
+    console.log(err);
+    sock.sendMessage(
+      chatId,
+      { text: "Terjadi kesalahan" },
+      { quoted: msg }
+    );
+  }
+};
+
+
+export const searchAbility = async (sock, chatId, msg, text) => {
+  try {
+    const nama = text.replace("!ability", "").trim();
+
+    if (!nama) {
+      return sock.sendMessage(
+        chatId,
+        { text: "Format salah\n> gunakan !ability <nama ability>" },
+        { quoted: msg }
+      );
+    }
+
+    const { data, error } = await supabase
+      .from("ability")
+      .select("name, stat_effect, tier, stat_id")
+      .ilike("name", `%${nama}%`)
+      .limit(1);
+
+    if (error) {
+      console.log(error);
+      return sock.sendMessage(
+        chatId,
+        { text: "Internal server error" },
+        { quoted: msg }
+      );
+    }
+
+    if (!data || data.length === 0) {
+      return sock.sendMessage(
+        chatId,
+        { text: "Ability tidak ditemukan" },
+        { quoted: msg }
+      );
+    }
+
+    const ability = data[0];
+
+    const messageData = `
+*SEARCH ABILITY*
+> By Neura Bot
+Name        : ${ability.name}
+Stat Effect : ${ability.stat_effect}
+Tier        : ${ability.tier}
+Stat ID     : ${ability.stat_id}
+`.trim();
+
+    sock.sendMessage(
+      chatId,
+      { text: messageData },
+      { quoted: msg }
+    );
+
+  } catch (err) {
+    console.log(err);
+    sock.sendMessage(
+      chatId,
+      { text: "Terjadi kesalahan" },
+      { quoted: msg }
+    );
+  }
+};
+
+
+export const searchItem = async (sock, chatId, msg, text) => {
+  try {
+    const namaItem = text.replace("!item", "").trim();
+
+    if (!namaItem) {
+      return sock.sendMessage(
+        chatId,
+        { text: "Format salah\n> gunakan !item <nama item>" },
+        { quoted: msg }
+      );
+    }
+
+    const { data, error } = await supabase
+      .from("item")
+      .select("nama, jenis, stat, drop")
+      .ilike("nama", `%${namaItem}%`)
+      .limit(1);
+
+    if (error) {
+      console.log(error);
+      return sock.sendMessage(
+        chatId,
+        { text: "Internal server error" },
+        { quoted: msg }
+      );
+    }
+
+    if (!data || data.length === 0) {
+      return sock.sendMessage(
+        chatId,
+        { text: "Item tidak ditemukan" },
+        { quoted: msg }
+      );
+    }
+
+    const item = data[0];
+
+    const messageData = `
+*SEARCH ITEM*
+> By Neura Bot
+Nama  : ${item.nama}
+Jenis : ${item.jenis}
+Stat  : ${item.stat}
+Drop  : ${item.drop}
+`.trim();
+
+    sock.sendMessage(
+      chatId,
+      { text: messageData },
+      { quoted: msg }
+    );
+
+  } catch (err) {
+    console.log(err);
+    sock.sendMessage(
+      chatId,
+      { text: "Terjadi kesalahan" },
+      { quoted: msg }
+    );
+  }
+};
 
 
 export const searchApp = async (sock, chatId, msg, text) => {

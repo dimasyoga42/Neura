@@ -1,6 +1,6 @@
 import { buffMessage, menuMessage } from "../config/variabel.js";
 import { isBan } from "../plugins/fitur/ban.js"
-import { searchApp, searchXtall } from "../plugins/toram/anyitems.js";
+import { searchAbility, searchApp, searchItem, searchRegist, searchXtall } from "../plugins/toram/anyitems.js";
 import { clearRaid, createRaid, joinRaid, leaveRaid, viewRaid } from "../plugins/toram/raidControl.js";
 export const cmdMenucontrol = (sock, chatId, msg, text) => {
   if (text.startsWith("!menu")) {
@@ -64,5 +64,20 @@ export const cmdMenucontrol = (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     searchXtall(sock, chatId, msg, text);
   }
+  if (text.startsWith("!item")) {
+    if (isBan(sock, chatId, msg)) return;
+    searchItem(sock, chatId, msg, text);
+  }
+  if (text.startsWith("!regist")) {
+    if (isBan(sock, chatId, msg)) return;
+    searchRegist(sock, chatId, msg, text);
+  }
+  if (text.startsWith("!ability")) {
+    if (isBan(sock, chatId, msg)) return;
+    searchAbility(sock, chatId, msg, text);
+  }
+
+
+
 
 }
