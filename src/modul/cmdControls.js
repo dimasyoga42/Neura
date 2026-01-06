@@ -1,3 +1,4 @@
+import { hidetag } from "../admin/hidetag.js";
 import { buffMessage, menuMessage } from "../config/variabel.js";
 import { isBan } from "../plugins/fitur/ban.js"
 import { getNews, setNews } from "../plugins/sosial/news.js";
@@ -89,6 +90,10 @@ export const cmdMenucontrol = (sock, chatId, msg, text) => {
   if (text.startsWith("!lv")) {
     if (isBan(sock, chatId, msg)) return;
     leveling(sock, chatId, msg, text);
+  }
+  if (text.startsWith("!hidetag")) {
+    if (isBan(sock, chatId, msg)) return;
+    hidetag(sock, chatId, msg, text);
   }
 
 
