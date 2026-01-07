@@ -1,85 +1,71 @@
-import { readToramData } from "../../config/readToramData.js";
+import axios from "axios"
 
-export const searchBosDef = async (sock, chatId, msg, text) => {
+const Bossdef = async (sock, chatId, msg, text) => {
   try {
-    const keyword = text.replace("!bosdef", "").trim().toLowerCase();
-
-    if (!keyword) {
+    const name = text.replace("!bos", "").trim()
+    if (!name) {
       return sock.sendMessage(
         chatId,
-        { text: "Format salah\n> gunakan !bosdef <nama boss>" },
+        { text: "Masukkan nama boss setelah !bos" },
         { quoted: msg }
-      );
+      )
     }
 
-    const data = await readToramData();
+    const res = await axios.get(
+      `https://monster-toram.vercel.app/api/monsters/search/${encodeURIComponent(name)}`
+    )
 
-    if (!data || !Array.isArray(data.bosdef)) {
+    const { count, data } = res.data
+
+    if (!data || data.length === 0) {
       return sock.sendMessage(
         chatId,
-        { text: "Database bosdef tidak tersedia" },
+        { text: `Boss "${name}" tidak ditemukan.` },
         { quoted: msg }
-      );
+      )
     }
 
-    // 🔍 SEARCH TANPA LIMIT
-    const results = data.bosdef.filter(b =>
-      b.name.toLowerCase().includes(keyword)
-    );
+    const result = data.map((boss, i) => {
+      const details = Object.entries(boss)
+        .filter(([_, value]) => value !== null && value !== "")
+        .map(([key, value]) => {
+          const cleanKey = key.replace(/_/g, " ").toUpperCase()
+          const cleanValue =
+            typeof value === "string"
+              ? value.replace(/\n/g, " ")
+              : value
+          return `${cleanKey} : ${cleanValue}`
+        })
+        .join("\n")
 
-    if (results.length === 0) {
-      return sock.sendMessage(
-        chatId,
-        { text: "Boss tidak ditemukan" },
-        { quoted: msg }
-      );
-    }
+      return `
+[${i + 1}]
+${details}
+`.trim()
+    }).join("\n\n")
 
-    let message = `
-*SEARCH BOS DEF*
-> By Neura Bot
-`.trim();
+    const message = `
+Hasil pencarian: ${name}
+Ditemukan: ${count} boss
 
-    results.forEach((b, i) => {
-      message += `
+${result}
+`.trim()
 
-${i + 1}. ${b.name}
-   Level   : ${b.level}
-   Element : ${b.element}
-   HP      : ${b.hp}
-   EXP     : ${b.xp}
-
-   DEF     : ${b.def}
-   MDEF    : ${b.mdef}
-   FLEE    : ${b.flee}
-   Guard   : ${b.guard}
-   Evade   : ${b.evade}
-
-   Proration:
-   - Normal : ${b.proration_normal}
-   - Phys   : ${b.proration_phys}
-   - Magic  : ${b.proration_magic}
-
-   Resistance:
-   - Physical : ${b.res_phys}
-   - Magic    : ${b.res_magic}
-   - Critical : ${b.res_crit}
-`;
-    });
-
-    sock.sendMessage(
+    await sock.sendMessage(
       chatId,
-      { text: message.trim() },
+      { text: message },
       { quoted: msg }
-    );
+    )
 
   } catch (err) {
-    console.log(err);
-    sock.sendMessage(
+    console.error(err)
+    await sock.sendMessage(
       chatId,
-      { text: "Terjadi kesalahan saat mencari boss" },
+      { text: "Terjadi kesalahan saat mengambil data boss." },
       { quoted: msg }
-    );
+    )
   }
-};
+}
+
+export default Bossdef
 

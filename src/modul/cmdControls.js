@@ -7,7 +7,7 @@ import { cekProfile, myBio, myProfile, setDesc, setPP } from "../plugins/sosial/
 import { getNews, setNews } from "../plugins/sosial/news.js";
 import { getRules, setrules } from "../plugins/sosial/rules.js";
 import { searchAbility, searchApp, searchItem, searchRegist, searchXtall } from "../plugins/toram/anyitems.js";
-import { searchBosDef } from "../plugins/toram/bos.js";
+import Bossdef from "../plugins/toram/bos.js";
 import { dyePredictor } from "../plugins/toram/dye.js";
 import { leveling } from "../plugins/toram/lv.js";
 import { clearRaid, createRaid, joinRaid, leaveRaid, viewRaid } from "../plugins/toram/raidControl.js";
@@ -107,7 +107,7 @@ export const cmdMenucontrol = (sock, chatId, msg, text) => {
   }
   if (text.startsWith("!bos")) {
     if (isBan(sock, chatId, msg)) return;
-    searchBosDef(sock, chatId, msg, text)
+    Bossdef(sock, chatId, msg, text)
   }
   if (text.startsWith("!mybio")) {
     if (isBan(sock, chatId, msg)) return;
