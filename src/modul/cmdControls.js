@@ -2,6 +2,7 @@ import { hidetag } from "../admin/hidetag.js";
 import { buffMessage, menuMessage } from "../config/variabel.js";
 import { isBan } from "../plugins/fitur/ban.js"
 import sticker from "../plugins/fitur/stiker.js";
+import { cekProfile, myBio, setDesc, setPP } from "../plugins/sosial/bio.js";
 import { getNews, setNews } from "../plugins/sosial/news.js";
 import { searchAbility, searchApp, searchItem, searchRegist, searchXtall } from "../plugins/toram/anyitems.js";
 import { Bosdef } from "../plugins/toram/bos.js";
@@ -105,6 +106,25 @@ export const cmdMenucontrol = (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     Bosdef(sock, chatId, msg, text);
   }
+  if (text.startsWith("!mybio")) {
+    if (isBan(sock, chatId, msg)) return;
+    myBio(sock, chatId, msg);
+  }
+  if (text.startsWith("!setPP")) {
+    if (isBan(sock, chatId, msg)) return;
+    setPP(sock, chatId, msg);
+  }
+  if (text.startsWith("!cekprofil")) {
+    if (isBan(sock, chatId, msg)) return;
+    cekProfile(sock, chatId, msg);
+  }
+  if (text.startsWith("!setDesc")) {
+    if (isBan(sock, chatId, msg)) return;
+    setDesc(sock, chatId, msg, text);
+  }
+
+
+
 
 
 
