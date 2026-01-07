@@ -146,7 +146,7 @@ export const cmdMenucontrol = (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     dyePredictor(sock, chatId, msg, text);
   }
-  if (text.startsWith("!bosdef")) {
+  if (text.startsWith("!bosdif")) {
     if (isBan(sock, chatId, msg)) return;
     searchBosDef(sock, chatId, msg, text);
   }

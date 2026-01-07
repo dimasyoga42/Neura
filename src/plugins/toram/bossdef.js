@@ -2,7 +2,7 @@ import { readToramData } from "../../config/readToramData.js";
 
 export const searchBosDef = async (sock, chatId, msg, text) => {
   try {
-    const name = text.replace("!bosdef", "").trim();
+    const name = text.replace("!bosdif", "");
 
     if (!name) {
       return sock.sendMessage(
