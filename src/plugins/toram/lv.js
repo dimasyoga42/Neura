@@ -4,8 +4,8 @@ import * as cheerio from "cheerio";
 export const leveling = async (sock, chatid, msg, text) => {
   const arg = text.split(" ");
   const lvl = arg[1]
-  const gap = arg[2]
-  if (!lvl || !gap) return sock.sendMessage(chatid, { text: "format salah\n> use !lv <level mu> <jarak lvl> !lv 250 7" }, { quoted: msg })
+  const gap = 7
+  if (!lvl) return sock.sendMessage(chatid, { text: "format salah\n> use !lv <level mu>" }, { quoted: msg })
   const url = `https://coryn.club/leveling.php?lv=${lvl}&gap=${gap}&bonusEXP=0`;
   const response = await fetch(url, {
     headers: {
