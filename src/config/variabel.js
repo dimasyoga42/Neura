@@ -14,6 +14,7 @@ export const menuMessage = `
 - !setDesc
 - !setPP <replay foto>
 - !cekProfil
+- !pembolong
 
 *Cmd Raid*
 - !createRaid <admin only>
@@ -140,4 +141,36 @@ Code buff\n> by Neura Bot
 - 1011010 Lv 10
 - 1012000 Lv 10
 - 1100000 Lv 10
+`.trim();
+
+export const messagePembolong = `
+MARKET PRICE JAN 2026
+
+[EXTRACT]
+Extract Crysta : 2.5 - 3.5m
+
+[PIERCER]
+Ohs   : 10 - 18m
+Ths   : 10 - 18m
+Ktn   : 10 - 15m
+Bow   : 9 - 12m
+Bwg   : 9 - 12m
+Hb    : 10 - 15m
+Knuck : 10 - 15m
+Staff : 5 - 10m
+Md    : 5 - 10m
+
+[PRIME]
+Ktn   : 100 - 120m
+Ohs   : 40 - 60m
+Ths   : 45 - 65m
+Bwg   : 35 - 50m
+Hb    : 50 - 70m
+Staff : 40 - 60m
+Md    : 25 - 40m
+
+[LEGENDARY]
+Silk     : 250 - 400m
+Needle   : 200 - 450m
+Ornament : 300 - 400m
 `.trim();
