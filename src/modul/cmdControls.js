@@ -4,6 +4,7 @@ import { isBan } from "../plugins/fitur/ban.js"
 import sticker from "../plugins/fitur/stiker.js";
 import { getNews, setNews } from "../plugins/sosial/news.js";
 import { searchAbility, searchApp, searchItem, searchRegist, searchXtall } from "../plugins/toram/anyitems.js";
+import { Bosdef } from "../plugins/toram/bos.js";
 import { leveling } from "../plugins/toram/lv.js";
 import { clearRaid, createRaid, joinRaid, leaveRaid, viewRaid } from "../plugins/toram/raidControl.js";
 export const cmdMenucontrol = (sock, chatId, msg, text) => {
@@ -99,6 +100,10 @@ export const cmdMenucontrol = (sock, chatId, msg, text) => {
   if (text.startsWith("!stiker")) {
     if (isBan(sock, chatId, msg)) return;
     sticker(sock, chatId, msg);
+  }
+  if (text.startsWith("!stiker")) {
+    if (isBan(sock, chatId, msg)) return;
+    Bosdef(sock, chatId, msg, text);
   }
 
 
