@@ -28,7 +28,7 @@ export const menuMessage = `
 - !lv 
 
 *Cmd Tools*
-- !stiker
+- !stiker ()
 
 
 `.trim();

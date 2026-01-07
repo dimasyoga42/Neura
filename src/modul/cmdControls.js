@@ -1,6 +1,7 @@
 import { hidetag } from "../admin/hidetag.js";
 import { buffMessage, menuMessage } from "../config/variabel.js";
 import { isBan } from "../plugins/fitur/ban.js"
+import sticker from "../plugins/fitur/stiker.js";
 import { getNews, setNews } from "../plugins/sosial/news.js";
 import { searchAbility, searchApp, searchItem, searchRegist, searchXtall } from "../plugins/toram/anyitems.js";
 import { leveling } from "../plugins/toram/lv.js";
@@ -95,6 +96,11 @@ export const cmdMenucontrol = (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     hidetag(sock, chatId, msg, text);
   }
+  if (text.startsWith("!stiker")) {
+    if (isBan(sock, chatId, msg)) return;
+    sticker(sock, chatId, msg);
+  }
+
 
 
 
