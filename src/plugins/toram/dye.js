@@ -75,6 +75,6 @@ export const dyePredictor = async (sock, chatId, msg, text) => {
     fs.unlinkSync(imgPath); // hapus file setelah dikirim
   } catch (err) {
     console.error(err);
-    sock.sendMessage(chatId, { text: "Gagal mengambil data." }, { quoted: msg });
+    sock.sendMessage(chatId, { text: err }, { quoted: msg });
   }
 };
