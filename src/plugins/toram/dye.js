@@ -1,6 +1,9 @@
 import puppeteer from "puppeteer";
-import path from "path";
 import fs from "fs";
+import path from "path";
+
+// Helper function untuk delay
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const screenshotFullTable = async (month = "202601") => {
   const url = `https://tanaka0.work/AIO/en/DyePredictor/ColorWeapon?month=${month}`;
@@ -36,7 +39,7 @@ export const screenshotFullTable = async (month = "202601") => {
     await page.waitForSelector("table", { timeout: 10000 });
 
     // Tunggu sebentar untuk memastikan rendering selesai
-    await page.waitForTimeout(1000);
+    await delay(1000);
 
     // Ambil ukuran tabel
     const tableInfo = await page.evaluate(() => {
@@ -64,7 +67,7 @@ export const screenshotFullTable = async (month = "202601") => {
     });
 
     // Tunggu sebentar setelah resize
-    await page.waitForTimeout(500);
+    await delay(500);
 
     // Screenshot tabel
     const table = await page.$("table");
