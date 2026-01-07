@@ -25,9 +25,15 @@ const Bossdef = async (sock, chatId, msg, text) => {
       )
     }
 
+    const blacklistKey = ["id"]
+
     const result = data.map((boss, i) => {
       const details = Object.entries(boss)
-        .filter(([_, value]) => value !== null && value !== "")
+        .filter(([key, value]) => {
+          if (blacklistKey.includes(key)) return false
+          if (key.startsWith("unnamed")) return false
+          return value !== null && value !== ""
+        })
         .map(([key, value]) => {
           const cleanKey = key.replace(/_/g, " ").toUpperCase()
           const cleanValue =
