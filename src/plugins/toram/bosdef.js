@@ -157,7 +157,7 @@ export const handleBossCommand = async (sock, msg, text) => {
     });
 
     const data = await getBossData();
-    const searchQuery = args.join(" ");
+    const searchQuery = args;
     const message = formatBossMessage(data, searchQuery || null);
 
     await sock.sendMessage(jid, { text: message });
