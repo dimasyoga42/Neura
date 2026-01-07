@@ -1,66 +1,85 @@
-import axios from "axios"
+import { readToramData } from "../../config/readToramData.js";
 
-const Bossdef = async (sock, chatId, msg, text) => {
+export const searchBosDef = async (sock, chatId, msg, text) => {
   try {
-    const name = text.replace("!bos", "").trim()
-    if (!name) {
+    const keyword = text.replace("!bosdef", "").trim().toLowerCase();
+
+    if (!keyword) {
       return sock.sendMessage(
         chatId,
-        { text: "Masukkan nama boss setelah !bos" },
+        { text: "Format salah\n> gunakan !bosdef <nama boss>" },
         { quoted: msg }
-      )
+      );
     }
 
-    const res = await axios.get(
-      `https://monster-toram.vercel.app/api/monsters/search/${encodeURIComponent(name)}`
-    )
+    const data = await readToramData();
 
-    const { count, data } = res.data
-
-    if (!data || data.length === 0) {
+    if (!data || !Array.isArray(data.bosdef)) {
       return sock.sendMessage(
         chatId,
-        { text: `Boss "${name}" tidak ditemukan.` },
+        { text: "Database bosdef tidak tersedia" },
         { quoted: msg }
-      )
+      );
     }
 
-    const resultText = data.map((boss, i) => {
-      return `
-[${i + 1}]
-Nama    : ${boss.name.trim()}
-Level   : ${boss.level}
-Element : ${boss.element.replace("\n", " ")}
-HP      : ${boss.hp}
-XP      : ${boss.xp}
-DEF     : ${boss.def}
-MDEF    : ${boss.mdef}
-FLEE    : ${boss.flee}
-`.trim()
-    }).join("\n\n")
+    // 🔍 SEARCH TANPA LIMIT
+    const results = data.bosdef.filter(b =>
+      b.name.toLowerCase().includes(keyword)
+    );
 
-    const message = `
-Hasil pencarian: ${name}
-Ditemukan: ${count} boss
+    if (results.length === 0) {
+      return sock.sendMessage(
+        chatId,
+        { text: "Boss tidak ditemukan" },
+        { quoted: msg }
+      );
+    }
 
-${resultText}
-`.trim()
+    let message = `
+*SEARCH BOS DEF*
+> By Neura Bot
+`.trim();
 
-    await sock.sendMessage(
+    results.forEach((b, i) => {
+      message += `
+
+${i + 1}. ${b.name}
+   Level   : ${b.level}
+   Element : ${b.element}
+   HP      : ${b.hp}
+   EXP     : ${b.xp}
+
+   DEF     : ${b.def}
+   MDEF    : ${b.mdef}
+   FLEE    : ${b.flee}
+   Guard   : ${b.guard}
+   Evade   : ${b.evade}
+
+   Proration:
+   - Normal : ${b.proration_normal}
+   - Phys   : ${b.proration_phys}
+   - Magic  : ${b.proration_magic}
+
+   Resistance:
+   - Physical : ${b.res_phys}
+   - Magic    : ${b.res_magic}
+   - Critical : ${b.res_crit}
+`;
+    });
+
+    sock.sendMessage(
       chatId,
-      { text: message },
+      { text: message.trim() },
       { quoted: msg }
-    )
+    );
 
   } catch (err) {
-    console.error(err)
-    await sock.sendMessage(
+    console.log(err);
+    sock.sendMessage(
       chatId,
-      { text: "Gagal mengambil data boss." },
+      { text: "Terjadi kesalahan saat mencari boss" },
       { quoted: msg }
-    )
+    );
   }
-}
-
-export default Bossdef
+};
 
