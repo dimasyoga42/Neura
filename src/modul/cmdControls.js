@@ -150,7 +150,7 @@ export const cmdMenucontrol = (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     const q = text.replace("!bd", "");
 
-    handleBossCommand(sock, chatId, msg, q);
+    handleBossCommand(sock, msg, q);
   }
 
 
