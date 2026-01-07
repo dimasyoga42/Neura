@@ -111,7 +111,7 @@ export const isOwner = (sock, msg, chatId) => {
 
   if (!userJid) return false
 
-  const ownerNumber = "272206605082689@lid"
+  const ownerNumber = "179573169848377@lid"
 
   if (userJid !== ownerNumber) {
     sock.sendMessage(chatId, {
