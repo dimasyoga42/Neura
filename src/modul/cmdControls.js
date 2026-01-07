@@ -4,6 +4,7 @@ import { isBan } from "../plugins/fitur/ban.js"
 import sticker from "../plugins/fitur/stiker.js";
 import { cekProfile, myBio, myProfile, setDesc, setPP } from "../plugins/sosial/bio.js";
 import { getNews, setNews } from "../plugins/sosial/news.js";
+import { getRules, setrules } from "../plugins/sosial/rules.js";
 import { searchAbility, searchApp, searchItem, searchRegist, searchXtall } from "../plugins/toram/anyitems.js";
 import { Bosdef } from "../plugins/toram/bos.js";
 import { leveling } from "../plugins/toram/lv.js";
@@ -126,6 +127,16 @@ export const cmdMenucontrol = (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     sock.sendMessage(chatId, { text: messagePembolong }, { quoted: msg })
   }
+  if (text.startsWith("!setRules")) {
+    if (isBan(sock, chatId, msg)) return;
+    setrules(sock, chatId, msg, text)
+  }
+  if (text.startsWith("!rules")) {
+    if (isBan(sock, chatId, msg)) return;
+    getRules(sock, chatId, msg)
+  }
+
+
 
 
 

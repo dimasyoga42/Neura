@@ -7,6 +7,7 @@ export const menuMessage = `
 - !close
 - !addNews
 - !hidetag
+- !setRules
 
 *Cmd Grub*
 - !news 
@@ -15,6 +16,7 @@ export const menuMessage = `
 - !setPP <replay foto>
 - !cekProfil
 - !pembolong
+- !rules
 
 *Cmd Raid*
 - !createRaid <admin only>
@@ -33,8 +35,7 @@ export const menuMessage = `
 - !bos
 
 *Cmd Tools*
-- !stiker ()
-
+- !stiker <replay foto>
 
 `.trim();
 
