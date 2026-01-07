@@ -17,7 +17,6 @@ const scrapeSheetData = async (url) => {
     });
 
     const page = await browser.newPage();
-
     await page.goto(url, {
       waitUntil: "networkidle2",
       timeout: 30000
@@ -54,15 +53,11 @@ const scrapeSheetData = async (url) => {
         }
       }
 
-      return {
-        headers,
-        list,
-        total: list.length
-      };
+      return list;
     });
 
     await browser.close();
-    return data;
+    return data || [];
 
   } catch (error) {
     if (browser) await browser.close();
@@ -70,102 +65,80 @@ const scrapeSheetData = async (url) => {
   }
 };
 
-// Ambil data boss dan miniboss
-export const getBossData = async () => {
+// Handler untuk bot Baileys
+export const bosdefHandler = async (sock, msg, query) => {
+  const jid = msg.key.remoteJid;
+
   try {
+    // Validasi query
+    if (!query || query.trim() === '') {
+      await sock.sendMessage(jid, {
+        text: "Silakan masukkan nama boss/miniboss.\n\nContoh: !bosdef venena"
+      });
+      return;
+    }
+
+    await sock.sendMessage(jid, { text: "Mengambil data..." });
+
+    // Ambil data dari kedua sheet secara parallel
     const [bossData, minibossData] = await Promise.all([
       scrapeSheetData("https://docs.google.com/spreadsheets/d/1s_CcLFFUeyP28HaHrJtRcTh06YVujO8boa4SzWwvy-M/htmlview"),
       scrapeSheetData("https://docs.google.com/spreadsheets/d/1FOb_YkYNuw_EUWNg5AFo5PfuuupKzeT592FZ_mazXXk/htmlview")
     ]);
 
-    return {
-      boss: bossData?.list || [],
-      miniboss: minibossData?.list || [],
-      total: (bossData?.total || 0) + (minibossData?.total || 0)
-    };
-  } catch (error) {
-    console.error("Error fetching boss data:", error);
-    throw error;
-  }
-};
+    // Gabungkan data dengan tipe
+    const allData = [
+      ...bossData.map(b => ({ ...b, type: 'Boss' })),
+      ...minibossData.map(m => ({ ...m, type: 'Miniboss' }))
+    ];
 
-// Format data untuk ditampilkan di WhatsApp
-export const formatBossMessage = (data, searchQuery = null) => {
-  if (!data || (data.boss.length === 0 && data.miniboss.length === 0)) {
-    return "Data tidak ditemukan.";
-  }
+    // Cari berdasarkan query
+    const searchQuery = query.toLowerCase().trim();
+    const filtered = allData.filter(item =>
+      Object.values(item).some(val =>
+        String(val).toLowerCase().includes(searchQuery)
+      )
+    );
 
-  if (!searchQuery) {
-    return "Silakan masukkan nama boss/miniboss yang ingin dicari.\n\nContoh: !bosdef venena";
-  }
-
-  const query = searchQuery.toLowerCase();
-
-  // Gabungkan semua data dan tambahkan type
-  const allData = [
-    ...data.boss.map(b => ({ ...b, type: 'Boss' })),
-    ...data.miniboss.map(m => ({ ...m, type: 'Miniboss' }))
-  ];
-
-  // Filter berdasarkan search query
-  const filtered = allData.filter(item =>
-    Object.values(item).some(val =>
-      String(val).toLowerCase().includes(query)
-    )
-  );
-
-  if (filtered.length === 0) {
-    return `"${searchQuery}" tidak ditemukan.`;
-  }
-
-  // Ambil item pertama yang cocok
-  const item = filtered[0];
-  const name = item['Boss Name'] || item['Nama Boss'] || item['Miniboss Name'] || item['Nama Miniboss'] || 'Unknown';
-
-  let message = `*${name}* (${item.type})\n\n`;
-
-  // Tampilkan semua field
-  Object.entries(item).forEach(([key, value]) => {
-    if (key !== 'Boss Name' && key !== 'Nama Boss' &&
-      key !== 'Miniboss Name' && key !== 'Nama Miniboss' &&
-      key !== 'type') {
-      const displayValue = value || '-';
-      message += `${key}: ${displayValue}\n`;
+    // Jika tidak ditemukan
+    if (filtered.length === 0) {
+      await sock.sendMessage(jid, {
+        text: `"${query}" tidak ditemukan.`
+      });
+      return;
     }
-  });
 
-  // Jika ada lebih dari 1 hasil
-  if (filtered.length > 1) {
-    const others = filtered.slice(1).map(i => {
-      const n = i['Boss Name'] || i['Nama Boss'] || i['Miniboss Name'] || i['Nama Miniboss'];
-      return `${n} (${i.type})`;
-    }).join(', ');
-    message += `\nDitemukan ${filtered.length} hasil. Lainnya: ${others}`;
-  }
+    // Ambil hasil pertama
+    const result = filtered[0];
+    const name = result['Boss Name'] || result['Nama Boss'] || result['Miniboss Name'] || result['Nama Miniboss'] || 'Unknown';
 
-  return message;
-};
+    // Buat pesan
+    let message = `*${name}* (${result.type})\n\n`;
 
-// Fungsi untuk bot Baileys
-export const handleBossCommand = async (sock, msg, searchQuery) => {
-  const jid = msg.key.remoteJid;
-
-  try {
-    await sock.sendMessage(jid, {
-      text: "Mengambil data..."
+    Object.entries(result).forEach(([key, value]) => {
+      if (key !== 'Boss Name' && key !== 'Nama Boss' &&
+        key !== 'Miniboss Name' && key !== 'Nama Miniboss' &&
+        key !== 'type') {
+        message += `${key}: ${value || '-'}\n`;
+      }
     });
 
-    const data = await getBossData();
-    const message = formatBossMessage(data, searchQuery);
+    // Tambahkan info jika ada hasil lain
+    if (filtered.length > 1) {
+      const others = filtered.slice(1).map(i => {
+        const n = i['Boss Name'] || i['Nama Boss'] || i['Miniboss Name'] || i['Nama Miniboss'];
+        return `${n} (${i.type})`;
+      }).join(', ');
+      message += `\nDitemukan ${filtered.length} hasil. Lainnya: ${others}`;
+    }
 
     await sock.sendMessage(jid, { text: message });
 
   } catch (error) {
-    console.error("Error getting boss data:", error);
+    console.error("Error bosdef:", error);
     await sock.sendMessage(jid, {
       text: "Terjadi kesalahan saat mengambil data."
     });
   }
 };
-
 

@@ -8,7 +8,7 @@ import { getNews, setNews } from "../plugins/sosial/news.js";
 import { getRules, setrules } from "../plugins/sosial/rules.js";
 import { searchAbility, searchApp, searchItem, searchRegist, searchXtall } from "../plugins/toram/anyitems.js";
 import { Bosdef } from "../plugins/toram/bos.js";
-import { handleBossCommand } from "../plugins/toram/bossdef.js";
+import { bosdefHandler } from "../plugins/toram/bossdef.js";
 import { dyePredictor } from "../plugins/toram/dye.js";
 import { leveling } from "../plugins/toram/lv.js";
 import { clearRaid, createRaid, joinRaid, leaveRaid, viewRaid } from "../plugins/toram/raidControl.js";
@@ -148,8 +148,8 @@ export const cmdMenucontrol = (sock, chatId, msg, text) => {
   }
   if (text.startsWith("!bosdef")) {
     if (isBan(sock, chatId, msg)) return;
-    const query = text.substring(8).trim();
-    handleBossCommand(sock, msg, query);
+    const query = text.replace("!bosdef", "");
+    bosdefHandler(sock, msg, query);
   }
 
 
