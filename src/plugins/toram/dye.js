@@ -2,28 +2,50 @@ import puppeteer from "puppeteer";
 import path from "path";
 import fs from "fs";
 
-export const screenshotTanakaTable = async (month = "202601") => {
+export const screenshotFullTable = async (month = "202601") => {
   const url = `https://tanaka0.work/AIO/en/DyePredictor/ColorWeapon?month=${month}`;
-  const filePath = path.resolve("temp", `tanaka_${month}.png`);
+  const outputDir = path.resolve("temp");
+  const filePath = path.join(outputDir, `dye_${month}.png`);
 
-  if (!fs.existsSync("temp")) {
-    fs.mkdirSync("temp", { recursive: true });
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
   }
 
   const browser = await puppeteer.launch({
     headless: "new",
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+    ],
   });
 
   const page = await browser.newPage();
   await page.goto(url, { waitUntil: "networkidle2" });
 
-  // Tunggu tabel muncul
   await page.waitForSelector("table");
 
-  // Ambil hanya bagian tabel (lebih rapi daripada fullPage)
+  // 👉 Ambil ukuran tabel
+  const tableInfo = await page.evaluate(() => {
+    const table = document.querySelector("table");
+    const rect = table.getBoundingClientRect();
+    return {
+      width: Math.ceil(rect.width),
+      height: Math.ceil(rect.height),
+    };
+  });
+
+  // 👉 Set viewport sesuai tinggi tabel
+  await page.setViewport({
+    width: Math.max(1200, tableInfo.width),
+    height: tableInfo.height,
+  });
+
   const table = await page.$("table");
-  await table.screenshot({ path: filePath });
+
+  await table.screenshot({
+    path: filePath,
+  });
 
   await browser.close();
   return filePath;
