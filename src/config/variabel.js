@@ -10,7 +10,10 @@ export const menuMessage = `
 
 *Cmd Grub*
 - !news 
-
+- !mybio
+- !setDesc
+- !setPP <replay foto>
+- !cekProfil
 
 *Cmd Raid*
 - !createRaid <admin only>
