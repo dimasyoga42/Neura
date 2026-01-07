@@ -26,6 +26,7 @@ export const menuMessage = `
 - !ability
 - !buff
 - !lv 
+- !bos
 
 *Cmd Tools*
 - !stiker ()
