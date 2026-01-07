@@ -17,6 +17,7 @@ export const menuMessage = `
 - !cekProfil
 - !pembolong
 - !rules
+- !afk
 
 *Cmd Raid*
 - !createRaid <admin only>
