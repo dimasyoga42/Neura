@@ -13,6 +13,19 @@ const WEBP_QUALITY = 80
    HELPER
 ===================== */
 
+const getMediaMessage = (msg) => {
+  // gambar langsung
+  if (msg.message?.imageMessage) return msg
+
+  // reply gambar
+  const quoted = msg.message?.extendedTextMessage?.contextInfo?.quotedMessage
+  if (quoted?.imageMessage) {
+    return { message: quoted }
+  }
+
+  return null
+}
+
 const parseText = (text) => {
   const input = text.replace("!smeme", "").trim()
   const [top = "_", bottom = "_"] = input.split("|")
@@ -28,11 +41,11 @@ const parseText = (text) => {
 
 const Smeme = async (sock, chatId, msg, text) => {
   try {
-    // ❌ HANYA gambar langsung
-    if (!msg.message?.imageMessage) {
+    const mediaMsg = getMediaMessage(msg)
+    if (!mediaMsg) {
       return sock.sendMessage(
         chatId,
-        { text: "❌ Kirim gambar dengan caption `!smeme atas|bawah`" },
+        { text: "❌ Kirim atau reply gambar dengan `!smeme atas|bawah`" },
         { quoted: msg }
       )
     }
@@ -43,7 +56,7 @@ const Smeme = async (sock, chatId, msg, text) => {
        DOWNLOAD IMAGE
     ===================== */
     const buffer = await downloadMediaMessage(
-      msg,
+      mediaMsg,
       "buffer",
       {},
       { reuploadRequest: sock.updateMediaMessage }
@@ -78,7 +91,7 @@ const Smeme = async (sock, chatId, msg, text) => {
     })
 
     /* =====================
-       CONVERT TO STICKER
+       CONVERT TO STICKER (SHARP)
     ===================== */
     const stickerBuffer = await sharp(memeImage.data)
       .resize(STICKER_SIZE, STICKER_SIZE, {
@@ -101,7 +114,7 @@ const Smeme = async (sock, chatId, msg, text) => {
     console.error("[SMEME ERROR]", err)
     await sock.sendMessage(
       chatId,
-      { text: "❌ Gagal membuat stiker meme." },
+      { text: "❌ Gagal membuat meme." },
       { quoted: msg }
     )
   }

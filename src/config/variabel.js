@@ -42,6 +42,7 @@ grub: https://chat.whatsapp.com/IeRyRhLn7OA5lKSrJnBlVv
 *Cmd Tools*
 - !stiker <caption foto>
 - !qc <text>
+- !smeme <replay foto>
 
 `.trim();
 
