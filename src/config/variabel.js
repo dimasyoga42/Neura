@@ -16,7 +16,7 @@ grub: https://chat.whatsapp.com/IeRyRhLn7OA5lKSrJnBlVv
 - !news 
 - !mybio
 - !setdesc
-- !setpp <replay foto>
+- !setpp <caption>
 - !profil
 - !pembolong
 - !rules
@@ -40,7 +40,7 @@ grub: https://chat.whatsapp.com/IeRyRhLn7OA5lKSrJnBlVv
 - !dye
 
 *Cmd Tools*
-- !stiker <replay foto>
+- !stiker <caption foto>
 - !qc <text>
 
 `.trim();

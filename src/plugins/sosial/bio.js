@@ -40,7 +40,7 @@ export const setPP = async (sock, chatId, msg) => {
         chatId,
         {
           text:
-            "Silakan kirim atau reply gambar.\n\nContoh:\n• Reply gambar dengan !setpp",
+            "Silakan kirim gambar.\n\nContoh:\n•  gambar caption !setpp",
         },
         { quoted: msg }
       );

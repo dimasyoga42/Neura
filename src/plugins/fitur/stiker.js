@@ -27,7 +27,7 @@ const sticker = async (sock, msg, chatId) => {
     if (!mediaMsg) {
       return sock.sendMessage(
         chatId,
-        { text: "Kirim atau reply gambar dengan caption `!stiker`" },
+        { text: "Kirim gambar dengan caption `!stiker`" },
         { quoted: msg }
       )
     }
