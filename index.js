@@ -54,7 +54,6 @@ const start = async () => {
     }
   });
   sock.ev.on("group-participants.update", update => {
-    const msg = messages[0]
     welcomeGroup(sock, update)
   })
   sock.ev.on("messages.upsert", async ({ messages }) => {
