@@ -1,5 +1,7 @@
 export const menuMessage = `
-*Neura Bot*\n> gunakan bot dengan bijak, dilarang spam cmd secara berlebihan
+*Neura Bot*\n> gunakan bot dengan bijak, dukung bot agar bisa hidup lebih lama dengan donet seiklasnya
+vps exp: 21 januari 2026
+donate: https://sociabuzz.com/neurabot/tribe
 
 *Cmd Admin*
 - !kick
@@ -35,6 +37,7 @@ export const menuMessage = `
 - !lv 
 - !bos
 - !dye
+
 *Cmd Tools*
 - !stiker <replay foto>
 
