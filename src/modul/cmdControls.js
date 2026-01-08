@@ -1,6 +1,7 @@
 import { hidetag } from "../admin/hidetag.js";
 import { buffMessage, menuMessage, messagePembolong } from "../config/variabel.js";
 import { isBan } from "../plugins/fitur/ban.js"
+import Smeme from "../plugins/fitur/smeme.js";
 import sticker from "../plugins/fitur/stiker.js";
 import { setAfk } from "../plugins/sosial/afk.js";
 import { cekProfile, myBio, myProfile, setDesc, setPP } from "../plugins/sosial/bio.js";
@@ -150,6 +151,11 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     qc(sock, chatId, msg, text);
   }
+  if (text.startsWith("!smeme") || msg.message.imageMessage?.caption === "!smeme") {
+    if (isBan(sock, chatId, msg)) return;
+    Smeme(sock, chatId, msg, text);
+  }
+
 
 
 
