@@ -103,7 +103,7 @@ export const cmdMenucontrol = (sock, chatId, msg, text) => {
   }
   if (text.startsWith("!stiker")) {
     if (isBan(sock, chatId, msg)) return;
-    sticker(sock, chatId, msg);
+    sticker(sock, msg, chatId);
   }
   if (text.startsWith("!bos")) {
     if (isBan(sock, chatId, msg)) return;
