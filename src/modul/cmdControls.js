@@ -102,7 +102,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     hidetag(sock, chatId, msg, text);
   }
-  if (text.startsWith("!stiker") || text === "!stiker") {
+  if (text.startsWith("!stiker") || msg.message.imageMessage?.caption === "!stiker") {
     if (isBan(sock, chatId, msg)) return;
     sticker(sock, msg, chatId);
   }
@@ -114,7 +114,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     myProfile(sock, chatId, msg);
   }
-  if (text.startsWith("!setpp") || text === "!setpp") {
+  if (text.startsWith("!setpp") || msg.message.imageMessage?.caption === "!setpp") {
     if (isBan(sock, chatId, msg)) return;
     setPP(sock, chatId, msg);
   }
