@@ -28,9 +28,9 @@ export const generateWelcomeImage = async (ppUrl, userName, groupName) => {
   // avatar circle
   ctx.save()
   ctx.beginPath()
-  ctx.arc(120, 200, 70, 0, Math.PI * 2)
+  ctx.arc(100, 200, 70, 0, Math.PI * 2)
   ctx.clip()
-  ctx.drawImage(avatar, 50, 130, 140, 140)
+  ctx.drawImage(avatar, 50, 120, 140, 140)
   ctx.restore()
 
   // text
@@ -39,11 +39,11 @@ export const generateWelcomeImage = async (ppUrl, userName, groupName) => {
   ctx.fillText("Hai", 200, 100)
 
   ctx.font = "28px Sans"
-  ctx.fillText(userName, 240, 165)
+  ctx.fillText(userName, 200, 155)
 
   ctx.font = "18px Sans"
   ctx.fillStyle = "#000000"
-  ctx.fillText(`to ${groupName}`, 240, 205)
+  ctx.fillText(`to ${groupName}`, 200, 200)
 
   ctx.font = "20px Sans"
   ctx.fillText("gunakan !menu untuk menggunakan Neura", 240, 245)
