@@ -34,7 +34,7 @@ export const generateWelcomeImage = async (ppUrl, userName, groupName) => {
   ctx.restore()
 
   // text
-  ctx.fillStyle = "#e5e7eb"
+  ctx.fillStyle = "#000000"
   ctx.font = "bold 34px Sans"
   ctx.fillText("Halo", 240, 120)
 
@@ -42,7 +42,7 @@ export const generateWelcomeImage = async (ppUrl, userName, groupName) => {
   ctx.fillText(userName, 240, 165)
 
   ctx.font = "22px Sans"
-  ctx.fillStyle = "#94a3b8"
+  ctx.fillStyle = "#000000"
   ctx.fillText(`to ${groupName}`, 240, 205)
 
   ctx.font = "18px Sans"
