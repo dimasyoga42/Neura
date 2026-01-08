@@ -38,20 +38,16 @@ export const welcomeGroup = async (sock, update) => {
 export const testWelcomeCmd = async (sock, chatId, msg, text) => {
   try {
     if (text !== "!wctest") return
+    //if (!chatId.endsWith("@g.us")) return
 
-    // Pastikan di grup
-    if (!chatId.endsWith("@g.us")) {
-      return sock.sendMessage(
-        chatId,
-        { text: "Command ini hanya bisa dipakai di grup." },
-        { quoted: msg }
-      )
-    }
+    const user = msg.key.participant || msg.key.remoteJid
+    const userName =
+      msg.pushName ||
+      sock.contacts?.[user]?.notify ||
+      user.split("@")[0]
 
-    const metadata = await sock.groupMetadata(chatId)
-    const user = msg.pushName
-    const userName = user.split("@")[0]
-    const groupName = metadata.subject
+    const groupName =
+      sock.groupMetadataCache?.[chatId]?.subject || "Group"
 
     let ppUrl
     try {
@@ -60,11 +56,7 @@ export const testWelcomeCmd = async (sock, chatId, msg, text) => {
       ppUrl = "https://i.imgur.com/6VBx3io.png"
     }
 
-    const image = await generateWelcomeImage(
-      ppUrl,
-      userName,
-      groupName
-    )
+    const image = await generateWelcomeImage(ppUrl, userName, groupName)
 
     await sock.sendMessage(chatId, {
       image,
@@ -74,10 +66,5 @@ export const testWelcomeCmd = async (sock, chatId, msg, text) => {
 
   } catch (err) {
     console.error("TEST WELCOME ERROR:", err)
-    await sock.sendMessage(
-      chatId,
-      { text: "Gagal test welcome image." },
-      { quoted: msg }
-    )
   }
 }

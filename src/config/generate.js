@@ -8,15 +8,15 @@ export const generateWelcomeImage = async (ppUrl, userName, groupName) => {
   const canvas = createCanvas(width, height)
   const ctx = canvas.getContext("2d")
 
-  // Background
-  ctx.fillStyle = "#0f172a"
+  // background
+  ctx.fillStyle = "#020617"
   ctx.fillRect(0, 0, width, height)
 
-  // Card
-  ctx.fillStyle = "#020617"
+  // card
+  ctx.fillStyle = "#0f172a"
   ctx.fillRect(20, 20, width - 40, height - 40)
 
-  // Load profile picture
+  // load avatar
   let avatar
   try {
     const res = await axios.get(ppUrl, { responseType: "arraybuffer" })
@@ -25,18 +25,17 @@ export const generateWelcomeImage = async (ppUrl, userName, groupName) => {
     avatar = await loadImage("https://i.imgur.com/6VBx3io.png")
   }
 
-  // Avatar circle
+  // avatar circle
   ctx.save()
   ctx.beginPath()
   ctx.arc(120, 200, 70, 0, Math.PI * 2)
-  ctx.closePath()
   ctx.clip()
   ctx.drawImage(avatar, 50, 130, 140, 140)
   ctx.restore()
 
-  // Text
+  // text
   ctx.fillStyle = "#e5e7eb"
-  ctx.font = "bold 32px Sans"
+  ctx.font = "bold 34px Sans"
   ctx.fillText("Welcome", 240, 120)
 
   ctx.font = "28px Sans"
@@ -51,4 +50,3 @@ export const generateWelcomeImage = async (ppUrl, userName, groupName) => {
 
   return canvas.toBuffer()
 }
-
