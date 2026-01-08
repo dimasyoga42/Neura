@@ -35,7 +35,7 @@ const getProfilePictureFast = async (sock, user) => {
   }
 }
 
-export const welcomeGroup = async (sock, update) => {
+export const welcomeGroup = async (sock, update, msg) => {
   try {
     const { id, participants, action } = update
     if (action !== "add") return
@@ -47,7 +47,7 @@ export const welcomeGroup = async (sock, update) => {
       const jid = normalizeJid(user)
       if (!jid) continue
 
-      const userName = getUserNameFast(sock, user)
+      const userName = msg.pushName;
       const ppUrl = await getProfilePictureFast(sock, user)
 
       const image = await generateWelcomeImage(
