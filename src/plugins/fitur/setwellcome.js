@@ -65,7 +65,9 @@ export const welcomeGroup = async (sock, update) => {
   } catch (err) {
     console.error("WELCOME ERROR:", err)
   }
-}export const testWelcomeCmd = async (sock, chatId, msg, text) => {
+
+}
+export const testWelcomeCmd = async (sock, chatId, msg, text) => {
   try {
     if (text !== "!wctest") return
     //if (!chatId.endsWith("@g.us")) return
