@@ -33,7 +33,7 @@ const sticker = async (sock, msg, chatId) => {
     }
 
     const buffer = await downloadMediaMessage(
-      mediaMsg,
+      msg,
       "buffer",
       {},
       { reuploadRequest: sock.updateMediaMessage }
