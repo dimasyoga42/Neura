@@ -1,4 +1,3 @@
-import { ColdownUser } from "../admin/coldownChat.js";
 import { hidetag } from "../admin/hidetag.js";
 import { buffMessage, menuMessage, messagePembolong } from "../config/variabel.js";
 import { isBan } from "../plugins/fitur/ban.js"
@@ -22,9 +21,8 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     sock.sendMessage(chatId, { text: buffMessage }, { quoted: msg });
   }
 
-  if (text.startsWith("!creatRaid")) {
+  if (text.startsWith("!creatraid")) {
     if (isBan(sock, chatId, msg)) return;
-    if (!await ColdownUser(sock, chatId, msg, "!createRaid")) return
 
     const arg = text.split(" ");
     const element = arg[1];
@@ -59,7 +57,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     viewRaid(sock, chatId, msg);
   }
-  if (text.startsWith("!clearRaid")) {
+  if (text.startsWith("!clearraid")) {
     if (isBan(sock, chatId, msg)) return;
     clearRaid(sock, chatId, msg, text);
   }
@@ -68,31 +66,26 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     leaveRaid(sock, chatId, msg)
   }
   if (text.startsWith("!appview")) {
-    if (!await ColdownUser(sock, chatId, msg, "!appview")) return
     if (isBan(sock, chatId, msg)) return;
     searchApp(sock, chatId, msg, text);
   }
   if (text.startsWith("!xtall")) {
     if (isBan(sock, chatId, msg)) return;
-    if (!await ColdownUser(sock, chatId, msg, "!xtall")) return
     searchXtall(sock, chatId, msg, text);
   }
   if (text.startsWith("!item")) {
     if (isBan(sock, chatId, msg)) return;
-    if (!await ColdownUser(sock, chatId, msg, "!item")) return
     searchItem(sock, chatId, msg, text);
   }
   if (text.startsWith("!regist")) {
     if (isBan(sock, chatId, msg)) return;
-    if (!await ColdownUser(sock, chatId, msg, "!regist")) return
     searchRegist(sock, chatId, msg, text);
   }
   if (text.startsWith("!ability")) {
     if (isBan(sock, chatId, msg)) return;
-    if (!await ColdownUser(sock, chatId, msg, "!ability")) return
     searchAbility(sock, chatId, msg, text);
   }
-  if (text.startsWith("!setNews")) {
+  if (text.startsWith("!setnews")) {
     if (isBan(sock, chatId, msg)) return;
     setNews(sock, chatId, msg, text);
   }
@@ -102,7 +95,6 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   }
   if (text.startsWith("!lv")) {
     if (isBan(sock, chatId, msg)) return;
-    if (!await ColdownUser(sock, chatId, msg, "!lv")) return
     leveling(sock, chatId, msg, text);
   }
   if (text.startsWith("!hidetag")) {
@@ -111,7 +103,6 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   }
   if (text.startsWith("!stiker")) {
     if (isBan(sock, chatId, msg)) return;
-    if (!await ColdownUser(sock, chatId, msg, "!stiker")) return
     sticker(sock, msg, chatId);
   }
   if (text.startsWith("!bos")) {
@@ -122,15 +113,15 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     myProfile(sock, chatId, msg);
   }
-  if (text.startsWith("!setPP")) {
+  if (text.startsWith("!setpp")) {
     if (isBan(sock, chatId, msg)) return;
     setPP(sock, chatId, msg);
   }
-  if (text.startsWith("!cekprofil")) {
+  if (text.startsWith("!profil")) {
     if (isBan(sock, chatId, msg)) return;
     cekProfile(sock, chatId, msg);
   }
-  if (text.startsWith("!setDesc")) {
+  if (text.startsWith("!setdesc")) {
     if (isBan(sock, chatId, msg)) return;
     setDesc(sock, chatId, msg, text);
   }
@@ -138,7 +129,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     sock.sendMessage(chatId, { text: messagePembolong }, { quoted: msg })
   }
-  if (text.startsWith("!setRules")) {
+  if (text.startsWith("!setrules")) {
     if (isBan(sock, chatId, msg)) return;
     setrules(sock, chatId, msg, text)
   }

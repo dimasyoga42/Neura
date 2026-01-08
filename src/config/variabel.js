@@ -8,16 +8,16 @@ grub: https://chat.whatsapp.com/IeRyRhLn7OA5lKSrJnBlVv
 - !kick
 - !open
 - !close
-- !addNews
+- !addnews
 - !hidetag
-- !setRules
+- !setrules
 
 *Cmd Grub*
 - !news 
 - !mybio
-- !setDesc
-- !setPP <replay foto>
-- !cekProfil
+- !setdesc
+- !setpp <replay foto>
+- !profil
 - !pembolong
 - !rules
 - !afk
