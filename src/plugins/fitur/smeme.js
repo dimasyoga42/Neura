@@ -1,7 +1,8 @@
 import { downloadMediaMessage } from "@whiskeysockets/baileys"
 import axios from "axios"
 import FormData from "form-data"
-
+import dotenv from "dotenv"
+dotenv.config()
 /* =====================
    HELPER
 ===================== */
