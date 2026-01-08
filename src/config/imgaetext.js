@@ -9,11 +9,11 @@ export const generateWelcomeImage = async (ppUrl, userName, groupName) => {
   const ctx = canvas.getContext("2d")
 
   // background
-  ctx.fillStyle = "#020617"
+  ctx.fillStyle = "#fff"
   ctx.fillRect(0, 0, width, height)
 
   // card
-  ctx.fillStyle = "#0f172a"
+  ctx.fillStyle = "#e5e7eb"
   ctx.fillRect(20, 20, width - 40, height - 40)
 
   // load avatar
@@ -36,7 +36,7 @@ export const generateWelcomeImage = async (ppUrl, userName, groupName) => {
   // text
   ctx.fillStyle = "#e5e7eb"
   ctx.font = "bold 34px Sans"
-  ctx.fillText("Welcome", 240, 120)
+  ctx.fillText("Halo", 240, 120)
 
   ctx.font = "28px Sans"
   ctx.fillText(userName, 240, 165)
