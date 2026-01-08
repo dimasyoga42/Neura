@@ -16,6 +16,7 @@ grub: https://chat.whatsapp.com/IeRyRhLn7OA5lKSrJnBlVv
 - !news 
 - !mybio
 - !setdesc
+- !setbuff <name & code>
 - !setpp <caption>
 - !profil
 - !pembolong

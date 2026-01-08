@@ -290,8 +290,9 @@ export const cekProfile = async (sock, chatId, msg) => {
 /* =======================
    SET BUFF
 ======================= */
-export const setidBuff = async (sock, chatId, msg, arg) => {
+export const setidBuff = async (sock, chatId, msg, text) => {
   try {
+    const arg = text.replace("!setbuff", "");
     if (!arg?.trim()) {
       return sock.sendMessage(
         chatId,

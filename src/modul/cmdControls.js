@@ -4,7 +4,7 @@ import { isBan } from "../plugins/fitur/ban.js"
 import Smeme from "../plugins/fitur/smeme.js";
 import sticker from "../plugins/fitur/stiker.js";
 import { setAfk } from "../plugins/sosial/afk.js";
-import { cekProfile, myBio, myProfile, setDesc, setPP } from "../plugins/sosial/bio.js";
+import { cekProfile, myBio, myProfile, setDesc, setidBuff, setPP } from "../plugins/sosial/bio.js";
 import { getNews, setNews } from "../plugins/sosial/news.js";
 import { qc } from "../plugins/sosial/qc.js";
 import { getRules, setrules } from "../plugins/sosial/rules.js";
@@ -154,6 +154,10 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!smeme") || msg.message.imageMessage?.caption === "!smeme") {
     if (isBan(sock, chatId, msg)) return;
     Smeme(sock, chatId, msg, text);
+  }
+  if (text.startsWith("!setbuff")) {
+    if (isBan(sock, chatId, msg)) return;
+    setidBuff(sock, chatId, msg, text);
   }
 
 
