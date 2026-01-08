@@ -91,7 +91,7 @@ export const setPP = async (sock, chatId, msg) => {
 ======================= */
 export const setDesc = async (sock, chatId, msg, arg) => {
   try {
-    const text = arg.replace("!setDesc", "");
+    const text = arg.replace("!setdesc", "");
 
     if (!text?.trim()) {
       return sock.sendMessage(
