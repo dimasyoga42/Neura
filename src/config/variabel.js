@@ -8,7 +8,7 @@ grub: https://chat.whatsapp.com/IeRyRhLn7OA5lKSrJnBlVv
 - !kick
 - !open
 - !close
-- !addnews
+- !setnews
 - !hidetag
 - !setrules
 
