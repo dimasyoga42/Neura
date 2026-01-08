@@ -37,7 +37,7 @@ export const welcomeGroup = async (sock, update) => {
 }
 export const testWelcomeCmd = async (sock, chatId, msg, text) => {
   try {
-    if (text !== "!testwelcome") return
+    if (text !== "!wctest") return
 
     // Pastikan di grup
     if (!chatId.endsWith("@g.us")) {
