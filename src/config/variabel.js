@@ -156,30 +156,28 @@ export const messagePembolong = `
 MARKET PRICE JAN 2026
 
 [EXTRACT]
-Extract Crysta : 2.5 - 3.5m
+Extract Crysta : 3 - 4m
 
 [PIERCER]
-Ohs   : 10 - 18m
-Ths   : 10 - 18m
+Ohs   : 10 - 20m
+Ths   : 10 - 20m
 Ktn   : 10 - 15m
-Bow   : 9 - 12m
-Bwg   : 9 - 12m
-Hb    : 10 - 15m
-Knuck : 10 - 15m
-Staff : 5 - 10m
+Bwg   : 10 - 15m
+Hb    : 15 - 25m
+Staff : 25 - 35m
 Md    : 5 - 10m
 
 [PRIME]
-Ktn   : 100 - 120m
-Ohs   : 40 - 60m
-Ths   : 45 - 65m
-Bwg   : 35 - 50m
-Hb    : 50 - 70m
-Staff : 40 - 60m
-Md    : 25 - 40m
+Ktn   : 110 - 120m
+Ohs   : 150 - 120m
+Ths   : 110 - 120m
+Bwg   : 120 - 130m
+Hb    : 90 - 100m
+Staff : 25 - 35m
+Md    : 55 - 65m
 
 [LEGENDARY]
-Silk     : 250 - 400m
-Needle   : 200 - 450m
-Ornament : 300 - 400m
+Silk     : 120m
+Needle   : 600m
+Ornament : 500m
 `.trim();
