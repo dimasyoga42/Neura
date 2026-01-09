@@ -4,6 +4,7 @@ import { isBan } from "../plugins/fitur/ban.js"
 import { Benner } from "../plugins/fitur/benner.js";
 import { setMenu } from "../plugins/fitur/img.js";
 import { getMt } from "../plugins/fitur/mt.js";
+import { getAllReport, report } from "../plugins/fitur/report.js";
 import Smeme from "../plugins/fitur/smeme.js";
 import sticker from "../plugins/fitur/stiker.js";
 import { setAfk } from "../plugins/sosial/afk.js";
@@ -166,6 +167,18 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     getMt(sock, chatId, msg)
   }
+  if (text.startsWith("!report")) {
+    if (isBan(sock, chatId, msg)) return;
+    report(sock, chatId, msg, text)
+  }
+  if (text.startsWith("!grep")) {
+    if (isBan(sock, chatId, msg)) return;
+    getAllReport(sock, chatId, msg)
+  }
+
+
+
+
 
 
 
