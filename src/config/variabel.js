@@ -153,31 +153,5 @@ Code buff\n> by Neura Bot
 `.trim();
 
 export const messagePembolong = `
-MARKET PRICE JAN 2026
-
-[EXTRACT]
-Extract Crysta : 3 - 4m
-
-[PIERCER]
-Ohs   : 10 - 20m
-Ths   : 10 - 20m
-Ktn   : 10 - 15m
-Bwg   : 10 - 15m
-Hb    : 15 - 25m
-Staff : 25 - 35m
-Md    : 5 - 10m
-
-[PRIME]
-Ktn   : 110 - 120m
-Ohs   : 150 - 120m
-Ths   : 110 - 120m
-Bwg   : 120 - 130m
-Hb    : 90 - 100m
-Staff : 25 - 35m
-Md    : 55 - 65m
-
-[LEGENDARY]
-Silk     : 120m
-Needle   : 600m
-Ornament : 500m
+pm: bot kasih harga sekrang
 `.trim();
