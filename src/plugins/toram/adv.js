@@ -96,7 +96,7 @@ export const spamAdv = async (
         : parseChapterInput(fromQuest);
 
     browser = await puppeteer.launch({
-      headless: true,
+      headless: false,
       args: ["--no-sandbox", "--disable-gpu"],
     });
 
