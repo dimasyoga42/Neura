@@ -161,7 +161,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     setidBuff(sock, chatId, msg, text);
   }
-  if (text.startsWith("!setbuff")) {
+  if (text.startsWith("!benner")) {
     if (isBan(sock, chatId, msg)) return;
     Benner(sock, chatId, msg, text);
   }
