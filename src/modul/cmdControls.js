@@ -106,7 +106,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     hidetag(sock, chatId, msg, text);
   }
-  if (text.startsWith("!stiker")) {
+  if (msg.message.imageMessage?.caption === "!stiker") {
     if (isBan(sock, chatId, msg)) return;
     sticker(sock, msg, chatId);
   }
