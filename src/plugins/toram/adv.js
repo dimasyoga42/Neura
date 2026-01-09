@@ -1,6 +1,11 @@
 import puppeteer from "puppeteer";
 
 /* =======================
+   HELPER
+======================= */
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+/* =======================
    QUEST MAPPING
 ======================= */
 const QUEST_MAPPING = {
@@ -19,7 +24,6 @@ const QUEST_MAPPING = {
   bab13: { from: 117, until: 124, name: "Bab 13" },
   bab14: { from: 126, until: 132, name: "Bab 14" },
   bab15: { from: 134, until: 136, name: "Bab 15" },
-
   all: { from: 1, until: 136, name: "Semua Bab" },
   semua: { from: 1, until: 136, name: "Semua Bab" },
 };
@@ -31,18 +35,17 @@ const parseChapterInput = (input) => {
   if (!input) return QUEST_MAPPING.all;
 
   const key = input.toLowerCase().trim();
-
   if (QUEST_MAPPING[key]) return QUEST_MAPPING[key];
 
   const range = key.match(/(\d+)-(\d+)/);
   if (range) {
-    const start = `bab${range[1]}`;
-    const end = `bab${range[2]}`;
-    if (QUEST_MAPPING[start] && QUEST_MAPPING[end]) {
+    const start = QUEST_MAPPING[`bab${range[1]}`];
+    const end = QUEST_MAPPING[`bab${range[2]}`];
+    if (start && end) {
       return {
-        from: QUEST_MAPPING[start].from,
-        until: QUEST_MAPPING[end].until,
-        name: `Bab ${range[1]}-${range[2]}`,
+        from: start.from,
+        until: end.until,
+        name: `Bab ${range[1]}-${range[2]}`
       };
     }
   }
@@ -69,7 +72,10 @@ export const spamAdv = async (
   untilQuest = null
 ) => {
   let browser;
-  if (!lv_char || !exp_char || !lv_target || !fromQuest || !untilQuest) return showUsageExamples(sock, chatId, msg)
+
+  if (!lv_char || !lv_target) {
+    return showUsageExamples(sock, chatId, msg);
+  }
 
   try {
     lv_char = parseInt(lv_char);
@@ -99,20 +105,24 @@ export const spamAdv = async (
       waitUntil: "networkidle2",
     });
 
-    await page.type("#level", lv_char.toString());
-    await page.type("#level-percentage", exp_char.toString());
-    await page.type("#target-level", lv_target.toString());
+    await page.type("#level", String(lv_char));
+    await page.type("#level-percentage", String(exp_char));
+    await page.type("#target-level", String(lv_target));
 
     await page.click("#mq-ui");
-    await page.select("#mq-from", questRange.from.toString());
-    await page.select("#mq-until", questRange.until.toString());
+    await sleep(500);
 
-    await page.waitForTimeout(1500);
+    await page.select("#mq-from", String(questRange.from));
+    await page.select("#mq-until", String(questRange.until));
+
+    await page.waitForFunction(() =>
+      document.querySelector("#mq-xp")?.textContent !== ""
+    );
 
     const result = await page.evaluate(() => ({
-      xpRequired: document.querySelector("#xp-required")?.textContent,
-      xpGained: document.querySelector("#mq-xp")?.textContent,
-      finalLevel: document.querySelector("#mq-eval")?.textContent,
+      xpRequired: document.querySelector("#xp-required")?.textContent || "-",
+      xpGained: document.querySelector("#mq-xp")?.textContent || "-",
+      finalLevel: document.querySelector("#mq-eval")?.textContent || "-",
     }));
 
     const text = `
@@ -166,22 +176,23 @@ export const spamMainQuest = async (
       waitUntil: "networkidle2",
     });
 
-    await page.type("#level", lv_char.toString());
-    await page.type("#level-percentage", exp_char.toString());
-    await page.type("#target-level", lv_target.toString());
+    await page.type("#level", String(lv_char));
+    await page.type("#level-percentage", String(exp_char));
+    await page.type("#target-level", String(lv_target));
 
     await page.click("#mq-ui");
-    await page.select("#mq-from", questRange.from.toString());
-    await page.select("#mq-until", questRange.until.toString());
-    await page.click("#multiple-mq");
+    await sleep(500);
 
-    await page.waitForTimeout(2000);
+    await page.select("#mq-from", String(questRange.from));
+    await page.select("#mq-until", String(questRange.until));
+
+    await page.click("#multiple-mq");
+    await sleep(2000);
 
     const runs = await page.evaluate(() =>
-      [...document.querySelectorAll("#mq-table-row")].map(row => {
-        const div = row.querySelectorAll("div");
-        return div[2]?.textContent;
-      })
+      [...document.querySelectorAll("#mq-table-row")]
+        .map(row => row.querySelectorAll("div")[2]?.textContent)
+        .filter(Boolean)
     );
 
     let text = `
@@ -208,10 +219,9 @@ Total Run: ${runs.length}
 ======================= */
 export const showUsageExamples = async (sock, chatId, msg) => {
   const text = `
-!spamadv 200|50|250|bab5
-!spamadv 200|50|250|1 45
-!spamadv 200|50|250|semua
-
+spamadv 200|50|250|bab5
+spamadv 200|50|250|1 45
+spamadv 200|50|250|semua
 `.trim();
 
   await sock.sendMessage(chatId, { text }, { quoted: msg });
@@ -222,4 +232,3 @@ export default {
   spamMainQuest,
   showUsageExamples,
 };
-
