@@ -24,6 +24,7 @@ komunitas: https://whatsapp.com/channel/0029VbAmhBF7z4kjOQcoVV0A
 - !afk
 - !mt 
 - !benner
+- !report
 
 *Cmd Raid*
 - !createRaid <admin only>
