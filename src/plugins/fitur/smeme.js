@@ -27,7 +27,7 @@ const getMediaMessage = (msg) => {
 }
 
 const parseText = (text) => {
-  const input = text.replace("!smeme", "").trim()
+  const input = text.replace("!stiker", "").trim()
   const [top = "_", bottom = "_"] = input.split("|")
   return {
     top: encodeURIComponent(top || "_"),
@@ -45,7 +45,7 @@ const Smeme = async (sock, chatId, msg, text) => {
     if (!mediaMsg) {
       return sock.sendMessage(
         chatId,
-        { text: "reply gambar dengan `!smeme atas|bawah`" },
+        { text: "reply gambar dengan `!stiker atas|bawah`" },
         { quoted: msg }
       )
     }
