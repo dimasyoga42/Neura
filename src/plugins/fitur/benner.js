@@ -25,83 +25,54 @@ export const Benner = async (sock, chatId, msg, text) => {
     const bannerHtml = await bannerResponse.text();
     const $banner = cheerio.load(bannerHtml);
 
-    // 5. Ambil informasi banner kampanye
-    const campaigns = [];
-
-    // Ambil semua gambar banner dari halaman
-    $banner("center img").each((i, elem) => {
-      const imgSrc = $banner(elem).attr("src");
-      if (imgSrc && (imgSrc.includes("toram_orbitem") || imgSrc.includes("toram_avatar"))) {
-        campaigns.push({
-          image: imgSrc.startsWith("http") ? imgSrc : `https://id.toram.jp${imgSrc}`,
-          index: i
-        });
-      }
-    });
-
-    // 6. Ambil judul dan detail kampanye
+    // 5. Ambil judul dan tanggal
     const title = $banner(".news_title").text().trim();
     const date = $banner(".news_date time").text().trim();
 
-    // 7. Ambil semua section kampanye
-    const campaignDetails = [];
-    $banner("h2.deluxetitle").each((i, elem) => {
-      const sectionTitle = $banner(elem).text().trim();
-      const sectionId = $banner(elem).attr("id");
-
-      // Cari gambar di section ini
-      let sectionImage = null;
-      $banner(elem).nextAll("center").first().find("img").each((j, img) => {
-        const src = $banner(img).attr("src");
-        if (src) {
-          sectionImage = src.startsWith("http") ? src : `https://id.toram.jp${src}`;
-        }
-      });
-
-      campaignDetails.push({
-        id: sectionId,
-        title: sectionTitle,
-        image: sectionImage
-      });
+    // 6. Ambil semua gambar banner dari halaman detail
+    const bannerImages = [];
+    $banner("center img").each((i, elem) => {
+      const imgSrc = $banner(elem).attr("src");
+      if (imgSrc && (imgSrc.includes("toram_orbitem") || imgSrc.includes("toram_avatar"))) {
+        const fullImgUrl = imgSrc.startsWith("http") ? imgSrc : `https://id.toram.jp${imgSrc}`;
+        bannerImages.push(fullImgUrl);
+      }
     });
 
-    // 8. Format pesan
-    let message = `*${title}*\n`;
-    message += `${date}\n\n`;
-    message += `Link: ${fullUrl}\n\n`;
-    message += `Daftar Kampanye:\n\n`;
-
-    campaignDetails.forEach((campaign, index) => {
-      message += `${index + 1}. ${campaign.title}\n`;
+    // 7. Ambil daftar kampanye dari link di top
+    const campaignLinks = [];
+    $banner("#top").next("br").nextAll("a").each((i, elem) => {
+      const linkText = $banner(elem).text().trim();
+      if (linkText && !linkText.includes("Back to Top")) {
+        campaignLinks.push(linkText);
+      }
     });
 
-    // 9. Kirim pesan dengan gambar pertama (jika ada)
-    if (campaigns.length > 0) {
+    // 8. Format pesan ringkas
+    let message = `*${title}*\n${date}\n\n`;
+    message += `Kampanye Aktif:\n\n`;
+
+    campaignLinks.forEach((campaign, index) => {
+      message += `${index + 1}. ${campaign}\n`;
+    });
+
+    message += `\nLink: ${fullUrl}`;
+
+    // 9. Kirim pesan text dulu
+    await sock.sendMessage(
+      chatId,
+      { text: message },
+      { quoted: msg }
+    );
+
+    // 10. Kirim gambar-gambar banner dari halaman detail
+    for (let i = 0; i < bannerImages.length; i++) {
       await sock.sendMessage(
         chatId,
         {
-          image: { url: campaigns[0].image },
-          caption: message
+          image: { url: bannerImages[i] },
+          caption: `Banner ${i + 1}`
         },
-        { quoted: msg }
-      );
-
-      // Kirim gambar banner lainnya (max 5 untuk menghindari spam)
-      for (let i = 1; i < Math.min(campaigns.length, 5); i++) {
-        await sock.sendMessage(
-          chatId,
-          {
-            image: { url: campaigns[i].image },
-            caption: `Banner ${i + 1}: ${campaignDetails[i]?.title || 'Campaign'}`
-          },
-          { quoted: msg }
-        );
-      }
-    } else {
-      // Jika tidak ada gambar, kirim text saja
-      await sock.sendMessage(
-        chatId,
-        { text: message },
         { quoted: msg }
       );
     }
