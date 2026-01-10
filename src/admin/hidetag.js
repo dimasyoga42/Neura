@@ -14,7 +14,7 @@ export const hidetag = async (sock, chatId, msg, text) => {
     }
 
     // Check admin permission
-    if (adminValid(sock, chatId, msg, text)) return
+    adminValid(sock, chatId, msg, text)
 
     // Get group metadata
     const groupMetadata = await sock.groupMetadata(chatId);
