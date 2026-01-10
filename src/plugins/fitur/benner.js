@@ -17,22 +17,34 @@ export const Banner = async (sock, msg, chatId) => {
     const $ = cheerio.load(html);
 
     const firstNews = $(".common_list li.news_border a").first();
-    if (!firstNews.length) throw new Error("News tidak ditemukan");
+    if (!firstNews.length) {
+      throw new Error("News tidak ditemukan");
+    }
 
     const newsLink = fixUrl(firstNews.attr("href"));
-    const newsTitle = firstNews.find(".news_title").text().trim();
-    const newsDate = firstNews.find("time").text().replace(/[［］]/g, "").trim();
+    if (!newsLink) {
+      throw new Error("Link news invalid");
+    }
 
-    /* ================= FETCH DETAIL ================= */
+    const newsTitle = firstNews.find(".news_title").text().trim();
+    const newsDate = firstNews
+      .find("time")
+      .text()
+      .replace(/[［］]/g, "")
+      .trim();
+
+    /* ================= FETCH DETAIL (OPSIONAL) ================= */
     const detailRes = await fetch(newsLink);
     const detailHtml = await detailRes.text();
     const $detail = cheerio.load(detailHtml);
+    // $detail disiapkan kalau nanti mau ambil konten detail
 
-    /* ================= EVENT BANNER ================= */
+    /* ================= EVENT BANNER (HALAMAN LIST) ================= */
     const banners = [];
     $(".event_bn a.banner_link").each((i, el) => {
       const img = $(el).find("img").attr("src");
       const alt = $(el).find("img").attr("alt");
+
       if (img) {
         banners.push({
           title: alt?.trim() || `Banner ${i + 1}`,
@@ -40,6 +52,10 @@ export const Banner = async (sock, msg, chatId) => {
         });
       }
     });
+
+    if (!banners.length) {
+      throw new Error("Event banner tidak ditemukan");
+    }
 
     /* ================= MESSAGE ================= */
     let text = `*${newsTitle}*\n`;
