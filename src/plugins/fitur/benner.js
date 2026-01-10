@@ -6,10 +6,6 @@ export const Banner = async (sock, msg, chatId) => {
     const BASE = "https://id.toram.jp";
     const LIST_URL = BASE + "/?type_code=all#contentArea";
 
-    const jid = typeof chatId === "string"
-      ? chatId
-      : msg.key.remoteJid;
-
     const fixUrl = (url) => {
       if (!url) return null;
       return url.startsWith("http") ? url : BASE + url;
@@ -56,11 +52,11 @@ export const Banner = async (sock, msg, chatId) => {
 
     text += `\nDetail:\n${newsLink}`;
 
-    await sock.sendMessage(jid, { text });
+    await sock.sendMessage(chatId, { text });
 
     /* ================= SEND IMAGE ================= */
     for (const b of banners) {
-      await sock.sendMessage(jid, {
+      await sock.sendMessage(chatId, {
         image: { url: b.image },
         caption: b.title
       });
@@ -69,7 +65,7 @@ export const Banner = async (sock, msg, chatId) => {
   } catch (err) {
     console.error("[Toram Banner Error]", err);
     await sock.sendMessage(
-      typeof chatId === "string" ? chatId : msg.key.remoteJid,
+      chatId,
       { text: `Error Banner Toram:\n${err.message}` }
     );
   }
