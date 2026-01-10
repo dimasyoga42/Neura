@@ -133,7 +133,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   }
   if (text.startsWith("!benner")) {
     if (isBan(sock, chatId, msg)) return;
-    Banner(sock, chatId, msg, text);
+    Banner(sock, chatId, msg);
   }
   if (text.startsWith("!mt")) {
     if (isBan(sock, chatId, msg)) return;
