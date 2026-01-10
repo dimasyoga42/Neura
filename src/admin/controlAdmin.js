@@ -53,7 +53,6 @@ export const adminValid = async (sock, chatId, msg, text) => {
       }));
     const isAdmin = admin.some(a => a.jid === msg.key.participant)
     if (!isAdmin) return sock.sendMessage(chatId, { text: "admin only" }, { quoted: msg })
-    return
   } catch (err) {
     console.log(err)
   }
