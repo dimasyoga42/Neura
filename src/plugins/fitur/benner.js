@@ -1,84 +1,89 @@
 import fetch from "node-fetch";
-import * as cheerio from "cheerio";
+import cheerio from "cheerio";
 
-export const Benner = async (sock, chatId, msg, text) => {
+export const Banner = async (sock, msg, chatId) => {
   try {
-    const targetUrl = "https://id.toram.jp/?type_code=all#contentArea";
+    const baseUrl = "https://id.toram.jp";
+    const listUrl = "https://id.toram.jp/?type_code=all#contentArea";
 
-    // 1. Fetch halaman utama
-    const response = await fetch(targetUrl);
+    // 1. ambil halaman list news
+    const response = await fetch(listUrl);
     const html = await response.text();
     const $ = cheerio.load(html);
 
-    // 2. Ambil URL berita terbaru
+    // 2. cari link news pertama
     let newsLink = null;
-    const linkSelectors = [
-      ".common_list .news_border:first-child a",
-      ".news_list .news_item:first-child a",
-      ".information_list li:first-child a",
-      "a[href*='information_id']",
-    ];
-
-    for (const selector of linkSelectors) {
-      const element = $(selector);
-      if (element.length > 0) {
-        newsLink = element.attr("href");
-        break;
+    $("a").each((i, el) => {
+      const href = $(el).attr("href");
+      if (href && href.includes("news")) {
+        newsLink = href;
+        return false; // break
       }
+    });
+
+    if (!newsLink) throw new Error("No news link found");
+
+    if (!newsLink.startsWith("http")) {
+      newsLink = baseUrl + newsLink;
     }
 
-    if (!newsLink) {
-      throw new Error("No news link found");
-    }
-
-    if (newsLink.startsWith("/")) {
-      newsLink = "https://id.toram.jp" + newsLink;
-    }
+    // 3. ambil halaman detail news
     const bannerResponse = await fetch(newsLink);
     const bannerHtml = await bannerResponse.text();
     const $banner = cheerio.load(bannerHtml);
 
-    // 5. Ambil judul dan tanggal
+    // 4. ambil judul & tanggal
     const title = $banner(".news_title").text().trim();
     const date = $banner(".news_date time").text().trim();
 
-    // 6. Ambil semua gambar banner dari halaman detail
+    // 5. ambil gambar banner
     const bannerImages = [];
-    $banner("center img").each((i, elem) => {
-      const imgSrc = $banner(elem).attr("src");
-      if (imgSrc && (imgSrc.includes("toram_orbitem") || imgSrc.includes("toram_avatar"))) {
-        const fullImgUrl = imgSrc.startsWith("http") ? imgSrc : `https://id.toram.jp${imgSrc}`;
-        bannerImages.push(fullImgUrl);
+    $banner("img").each((i, img) => {
+      const src = $banner(img).attr("src");
+      if (
+        src &&
+        (src.includes("toram_orbitem") || src.includes("toram_avatar"))
+      ) {
+        bannerImages.push(
+          src.startsWith("http") ? src : baseUrl + src
+        );
       }
     });
 
-    // 7. Ambil daftar kampanye dari link di top
+    // 6. ambil daftar campaign
     const campaignLinks = [];
-    $banner("#top").next("br").nextAll("a").each((i, elem) => {
-      const linkText = $banner(elem).text().trim();
-      if (linkText && !linkText.includes("Back to Top")) {
-        campaignLinks.push(linkText);
+    $banner("a").each((i, el) => {
+      const text = $banner(el).text().trim();
+      if (
+        text &&
+        !text.includes("Back to Top") &&
+        !text.includes("http")
+      ) {
+        campaignLinks.push(text);
       }
     });
 
-    // 8. Format pesan ringkas
+    // hilangkan duplikat
+    const campaigns = [...new Set(campaignLinks)];
+
+    // 7. format pesan
     let message = `*${title}*\n${date}\n\n`;
     message += `Kampanye Aktif:\n\n`;
 
-    campaignLinks.forEach((campaign, index) => {
-      message += `${index + 1}. ${campaign}\n`;
+    campaigns.slice(0, 10).forEach((c, i) => {
+      message += `${i + 1}. ${c}\n`;
     });
 
-    message += `\nLink: ${fullUrl}`;
+    message += `\nLink:\n${newsLink}`;
 
-    // 9. Kirim pesan text dulu
+    // 8. kirim pesan text
     await sock.sendMessage(
       chatId,
       { text: message },
       { quoted: msg }
     );
 
-    // 10. Kirim gambar-gambar banner dari halaman detail
+    // 9. kirim banner satu per satu
     for (let i = 0; i < bannerImages.length; i++) {
       await sock.sendMessage(
         chatId,
@@ -91,11 +96,11 @@ export const Benner = async (sock, chatId, msg, text) => {
     }
 
   } catch (err) {
-    console.error("[Benner Error]", err);
+    console.error("[Banner Error]", err);
     await sock.sendMessage(
       chatId,
       {
-        text: `Terjadi kesalahan saat mengambil banner.\n\nDetail Error:\n${err.message}`
+        text: `Terjadi kesalahan saat mengambil banner.\n\n${err.message}`
       },
       { quoted: msg }
     );

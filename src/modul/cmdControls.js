@@ -1,7 +1,7 @@
 import { hidetag } from "../admin/hidetag.js";
 import { buffMessage, listLeveling, menuMessage, messagePembolong } from "../config/variabel.js";
 import { isBan } from "../plugins/fitur/ban.js"
-import { Benner } from "../plugins/fitur/benner.js";
+import { Banner } from "../plugins/fitur/benner.js";
 import { setMenu } from "../plugins/fitur/img.js";
 import { getMt } from "../plugins/fitur/mt.js";
 import { getAllReport, report } from "../plugins/fitur/report.js";
@@ -133,7 +133,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   }
   if (text.startsWith("!benner")) {
     if (isBan(sock, chatId, msg)) return;
-    Benner(sock, chatId, msg, text);
+    Banner(sock, chatId, msg, text);
   }
   if (text.startsWith("!mt")) {
     if (isBan(sock, chatId, msg)) return;
