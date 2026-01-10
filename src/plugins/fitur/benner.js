@@ -11,7 +11,7 @@ export const Benner = async (sock, chatId, msg, text) => {
     const $ = cheerio.load(html);
 
     // 2. Ambil URL berita terbaru
-    const urlNew = $("section#news .news_area li a").first().attr("href");
+    const urlNew = $("section#news > .news_area > li > a").first().attr("href");
     console.log(urlNew)
     if (!urlNew) {
       throw new Error("URL berita tidak ditemukan");
