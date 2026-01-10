@@ -1,88 +1,113 @@
 import fetch from "node-fetch";
-import * as cheerio from "cheerio";
+import cheerio from "cheerio";
 
 export const Banner = async (sock, msg, chatId) => {
   try {
     const BASE = "https://id.toram.jp";
-    const LIST_URL = BASE + "/?type_code=all#contentArea";
+    const LIST_URL = "https://id.toram.jp/?type_code=all#contentArea";
 
-    const fixUrl = (url) => {
-      if (!url) return null;
-      return url.startsWith("http") ? url : BASE + url;
-    };
-
-    /* ================= FETCH LIST ================= */
+    // 1. fetch halaman utama
     const res = await fetch(LIST_URL);
     const html = await res.text();
     const $ = cheerio.load(html);
 
+    /* ==========================
+       AMBIL NEWS TERBARU
+    ========================== */
     const firstNews = $(".common_list li.news_border a").first();
+
     if (!firstNews.length) {
       throw new Error("News tidak ditemukan");
     }
 
-    const newsLink = fixUrl(firstNews.attr("href"));
-    if (!newsLink) {
-      throw new Error("Link news invalid");
-    }
-
+    const newsLink = firstNews.attr("href");
     const newsTitle = firstNews.find(".news_title").text().trim();
-    const newsDate = firstNews
-      .find("time")
-      .text()
-      .replace(/[［］]/g, "")
-      .trim();
+    const newsDate = firstNews.find("time").text().replace(/[［］]/g, "").trim();
 
-    /* ================= FETCH DETAIL (OPSIONAL) ================= */
+    /* ==========================
+       FETCH DETAIL NEWS
+    ========================== */
     const detailRes = await fetch(newsLink);
     const detailHtml = await detailRes.text();
     const $detail = cheerio.load(detailHtml);
-    // $detail disiapkan kalau nanti mau ambil konten detail
 
-    /* ================= EVENT BANNER (HALAMAN LIST) ================= */
-    const banners = [];
+    // ambil banner image di halaman detail
+    const detailImages = [];
+    $detail("img").each((i, img) => {
+      const src = $detail(img).attr("src");
+      if (
+        src &&
+        (src.includes("toram_") || src.includes("banner"))
+      ) {
+        detailImages.push(
+          src.startsWith("http") ? src : BASE + src
+        );
+      }
+    });
+
+    /* ==========================
+       AMBIL EVENT BANNER (540x80)
+    ========================== */
+    const eventBanners = [];
+
     $(".event_bn a.banner_link").each((i, el) => {
+      const link = $(el).attr("href");
       const img = $(el).find("img").attr("src");
       const alt = $(el).find("img").attr("alt");
 
       if (img) {
-        banners.push({
+        eventBanners.push({
           title: alt?.trim() || `Banner ${i + 1}`,
-          image: fixUrl(img)
+          link,
+          image: img.startsWith("http") ? img : BASE + img
         });
       }
     });
 
-    if (!banners.length) {
-      throw new Error("Event banner tidak ditemukan");
-    }
+    /* ==========================
+       FORMAT PESAN
+    ========================== */
+    let message = `*${newsTitle}*\n`;
+    message += `${newsDate}\n\n`;
+    message += `Event Banner Aktif:\n\n`;
 
-    /* ================= MESSAGE ================= */
-    let text = `*${newsTitle}*\n`;
-    text += `${newsDate}\n\n`;
-    text += `Event Aktif:\n\n`;
-
-    banners.forEach((b, i) => {
-      text += `${i + 1}. ${b.title}\n`;
+    eventBanners.forEach((b, i) => {
+      message += `${i + 1}. ${b.title}\n`;
     });
 
-    text += `\nDetail:\n${newsLink}`;
+    message += `\nDetail:\n${newsLink}`;
 
-    await sock.sendMessage(chatId, { text });
+    /* ==========================
+       KIRIM TEXT
+    ========================== */
+    await sock.sendMessage(
+      chatId,
+      { text: message },
+      { quoted: msg }
+    );
 
-    /* ================= SEND IMAGE ================= */
-    for (const b of banners) {
-      await sock.sendMessage(chatId, {
-        image: { url: b.image },
-        caption: b.title
-      });
+    /* ==========================
+       KIRIM EVENT BANNER
+    ========================== */
+    for (let i = 0; i < eventBanners.length; i++) {
+      await sock.sendMessage(
+        chatId,
+        {
+          image: { url: eventBanners[i].image },
+          caption: eventBanners[i].title
+        },
+        { quoted: msg }
+      );
     }
 
   } catch (err) {
     console.error("[Toram Banner Error]", err);
     await sock.sendMessage(
       chatId,
-      { text: `Error Banner Toram:\n${err.message}` }
+      {
+        text: `Gagal mengambil banner Toram.\n\n${err.message}`
+      },
+      { quoted: msg }
     );
   }
 };
