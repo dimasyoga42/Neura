@@ -8,7 +8,7 @@ async function getAllGroups(sock) {
   }
 }
 
-export const broadcastAllGroups = async (sock, pesan) => {
+export const bcGroups = async (sock, pesan) => {
   const groupJids = await getAllGroups(sock)
 
   if (groupJids.length === 0) {

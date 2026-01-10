@@ -1,4 +1,5 @@
 import { ban, isOwner, unBan } from "../plugins/fitur/ban.js"
+import { bcGroups } from "./bc.js";
 import { setNocoldown } from "./coldownChat.js";
 
 export const ownerControls = async (sock, chatId, msg, text) => {
@@ -15,6 +16,9 @@ export const ownerControls = async (sock, chatId, msg, text) => {
     await setNocoldown(sock, chatId, msg)
   }
   if (text.startsWith("!bc")) {
+    if (!isOwner(sock, msg, chatId)) return;
+    const p = text.replace("!bc", "");
 
+    bcGroups(sock, p);
   }
 }
