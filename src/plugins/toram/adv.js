@@ -39,17 +39,17 @@ export const addXP = (begin, beginPercentage, extraXP) => {
 
 
 
-export default async function mqExpCommand(sock, msg, args) {
+export default async function spamAdvCommand(sock, msg, args) {
   if (args.length < 5) {
     return sock.sendMessage(msg.key.remoteJid, {
       text:
-        "Format:\n" +
+        "📘 FORMAT:\n" +
         "!spamadv <level> <percent> <targetLv> <babMulai> <babAkhir>"
     }, { quoted: msg })
   }
 
-  const lv = Number(args[0])
-  const lvP = Number(args[1])
+  let lv = Number(args[0])
+  let lvP = Number(args[1])
   const targetLv = Number(args[2])
   const babMulai = Number(args[3])
   const babAkhir = Number(args[4])
@@ -61,27 +61,58 @@ export default async function mqExpCommand(sock, msg, args) {
   }
 
   const keys = Object.keys(mq_data)
-  let totalXP = 0
 
-  for (let bab = babMulai; bab <= babAkhir; bab++) {
-    totalXP += Number(mq_data[keys[bab]]) || 0
+  // Total XP target
+  const targetXP = getTotalXP(lv, lvP, targetLv)
+
+  // XP satu kali run MQ
+  let mqXP = 0
+  for (let i = babMulai; i <= babAkhir; i++) {
+    mqXP += Number(mq_data[keys[i]]) || 0
   }
 
-  const [hasilLv, hasilLvP] = addXP(lv, lvP, totalXP)
+  if (mqXP <= 0) {
+    return sock.sendMessage(msg.key.remoteJid, {
+      text: "❌ Total EXP MQ bernilai 0"
+    }, { quoted: msg })
+  }
 
-  const text = `
-*MAIN QUEST (BAB)*
+  const runs = floor(targetXP / mqXP)
+  if (runs > 100) {
+    return sock.sendMessage(msg.key.remoteJid, {
+      text: `❌ Terlalu banyak run (${runs}), perbesar rentang BAB`
+    }, { quoted: msg })
+  }
 
-Bab:
-${keys[babMulai]} → ${keys[babAkhir]}
+  let output = `📘 *SPAM ADVENTURE (MQ)*\n\n`
+  output += `Bab: ${keys[babMulai]} → ${keys[babAkhir]}\n`
+  output += `Target: Lv ${targetLv}\n\n`
 
-Total EXP:
-${totalXP.toLocaleString()}
+  // Simulasi tiap run
+  for (let i = 1; i <= runs; i++) {
+    ;[lv, lvP] = addXP(lv, lvP, mqXP)
+    output += `${i}. Lv ${lv} (${lvP}%)\n`
+  }
 
-Hasil Level:
-Lv ${hasilLv} (${hasilLvP}%)
-`.trim()
+  // Sisa XP (run terakhir tidak full)
+  if (lv < targetLv) {
+    let curXP = 0
+    let stackedXP = 0
 
-  await sock.sendMessage(msg.key.remoteJid, { text }, { quoted: msg })
+    for (let i = babMulai; i <= babAkhir; i++) {
+      const xp = Number(mq_data[keys[i]]) || 0
+      curXP += xp
+      stackedXP += xp
+
+      if (curXP >= targetXP) {
+        ;[lv, lvP] = addXP(lv, lvP, stackedXP)
+        output += `${runs + 1}. Stop di "${keys[i]}" → Lv ${lv} (${lvP}%)\n`
+        break
+      }
+    }
+  }
+
+  await sock.sendMessage(msg.key.remoteJid, {
+    text: output.trim()
+  }, { quoted: msg })
 }
-
