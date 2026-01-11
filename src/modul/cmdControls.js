@@ -20,6 +20,7 @@ import Bossdef from "../plugins/toram/bos.js";
 import { dyePredictor } from "../plugins/toram/dye.js";
 import { leveling } from "../plugins/toram/lv.js";
 import { clearRaid, createRaid, joinRaid, leaveRaid, viewRaid } from "../plugins/toram/raidControl.js";
+import tanaka, { formatResultMessage, parseCommand } from "../plugins/toram/tanaka.js";
 import { downloadToMp3 } from "../plugins/vip/downloader/music.js";
 import fs from "fs";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
@@ -173,10 +174,22 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
 
   }
 
-  if (text.startsWith("!spamadv")) {
+  if (text.startsWith("!filarm")) {
     if (isBan(sock, chatId, msg)) return;
-    const args = text.slice(1).trim().split(/\s+/)
-    spamAdv(sock, msg, args)
+    try {
+
+      const args = text.split(" ").slice(1);
+      const statConfig = parseCommand(args);
+
+      console.log("Memulai scraper dengan konfigurasi:", statConfig);
+      const result = await tanaka(statConfig, { headless: false });
+
+      const replyMessage = formatResultMessage(result);
+      await sock.sendMessage(chatId, { text: replyMessage });
+    } catch (error) {
+      console.error("Error saat menjalankan perintah .filarm:", error);
+      await sock.sendMessage(chatId, { text: `Terjadi kesalahan: ${error.message}` });
+    }
   }
 
 
