@@ -20,7 +20,7 @@ import Bossdef from "../plugins/toram/bos.js";
 import { dyePredictor } from "../plugins/toram/dye.js";
 import { leveling } from "../plugins/toram/lv.js";
 import { clearRaid, createRaid, joinRaid, leaveRaid, viewRaid } from "../plugins/toram/raidControl.js";
-import tanaka, { formatResultMessage, parseCommand } from "../plugins/toram/tanaka.js";
+import { formatResultMessage, parseCommand, tanaka } from "../plugins/toram/tanaka.js";
 import { downloadToMp3 } from "../plugins/vip/downloader/music.js";
 import fs from "fs";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
