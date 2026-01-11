@@ -28,6 +28,7 @@ komunitas: https://whatsapp.com/channel/0029VbAmhBF7z4kjOQcoVV0A
 - !mt 
 - !benner
 - !report
+- !sheetfill
 
 *Cmd Raid*
 - !creatraid <admin only>
@@ -47,6 +48,7 @@ komunitas: https://whatsapp.com/channel/0029VbAmhBF7z4kjOQcoVV0A
 - !bos
 - !dye
 - !listLeveling
+- !filarm
 - 
 
 *Cmd Tools*
