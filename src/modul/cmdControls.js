@@ -1,6 +1,6 @@
 import { ColdownUser } from "../admin/coldownChat.js";
 import { hidetag } from "../admin/hidetag.js";
-import { buffMessage, listLeveling, menuMessage, messagePembolong } from "../config/variabel.js";
+import { buffMessage, listLeveling, menuMessage, messagePembolong, stat } from "../config/variabel.js";
 import { isBan } from "../plugins/fitur/ban.js"
 import { Banner } from "../plugins/fitur/benner.js";
 import { setMenu } from "../plugins/fitur/img.js";
@@ -179,6 +179,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     try {
 
       const args = text.split(" ").slice(1);
+      if (!args) return sock.sendMessage(chatId, { text: "gunakan !sheetfill untuk melihat cara penggunaan nya" }, { quoted: msg })
       const statConfig = parseCommand(args);
 
       console.log("Memulai scraper dengan konfigurasi:", statConfig);
@@ -190,6 +191,10 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
       console.error("Error saat menjalankan perintah .filarm:", error);
       await sock.sendMessage(chatId, { text: `Terjadi kesalahan: ${error.message}` });
     }
+  }
+  if (text.startsWith("!sheetfill")) {
+    if (isBan(sock, chatId, msg)) return;
+    sock.sendMessage(chatId, { text: stat }, { quoted: msg })
   }
 
 

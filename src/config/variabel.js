@@ -340,6 +340,87 @@ Code : 1019696 Lv 6
 Code : 1032727 Lv 5
 ━━━━━━━━━━━━━━━━━━━━`.trim();
 
+
+export const stat = `
+Format: +[nama][level] untuk positive, -[nama][level] untuk negative
+contoh: !filarm lv280 pot120 +dteearthMax  +str%Max +critrateMax +critdmgMax -atk%Max -matk%Max  -acc%Max
+
+critdmg -> Critical Damage
+critdmg% -> Critical Damage %
+critrate -> Critical Rate
+critrate% -> Critical Rate %
+
+atk -> ATK
+atk% -> ATK %
+matk -> MATK
+matk% -> MATK %
+
+def -> DEF
+def% -> DEF %
+mdef -> MDEF
+mdef% -> MDEF %
+
+acc -> Accuracy
+accuracy -> Accuracy
+acc% -> Accuracy %
+accuracy% -> Accuracy %
+
+hp -> MaxHP
+hp% -> MaxHP %
+mp -> MaxMP
+mp% -> MaxMP %
+
+str -> STR
+str% -> STR %
+int -> INT
+int% -> INT %
+vit -> VIT
+vit% -> VIT %
+agi -> AGI
+agi% -> AGI %
+dex -> DEX
+dex% -> DEX %
+
+aspd -> Kecepatan Serangan
+aspd% -> Kecepatan Serangan %
+cspd -> Kecepatan Merapal
+cspd% -> Kecepatan Merapal %
+
+dodge -> Dodge
+dodge% -> Dodge %
+
+hpreg -> Natural HP Regen
+hpreg% -> Natural HP Regen %
+mpreg -> Natural MP Regen
+mpreg% -> Natural MP Regen %
+
+stab% -> Stability %
+penfis% -> Penetrasi Fisik %
+penmag% -> Magic Pierce %
+kebalfis% -> Kekebalan Fisik %
+kebalmag% -> "Kekebalan Sihir %
+aggro% -> Aggro %
+dteearth% -> % luka ke Bumi
+dtefire% -> % luka ke Api
+dtewind% -> % luka ke Angin
+dtewater% -> % luka ke Air
+dtelight% -> % luka ke Cahaya
+dtedark% -> % luka ke Gelap
+
+`.trim();
+
+
+
+
+
+
+
+
+
+
+
+
+
 export const messagePembolong = `
 invalid
 `.trim();
