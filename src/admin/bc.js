@@ -77,11 +77,7 @@ export const handleBroadcast = async (sock, msg) => {
   const isGroup = chatId.endsWith("@g.us")
 
   // ❌ Tolak jika dari grup
-  if (isGroup) {
-    return sock.sendMessage(chatId, {
-      text: "❌ Broadcast hanya bisa dari chat pribadi bot"
-    }, { quoted: msg })
-  }
+
 
   const text =
     msg.message?.conversation ||
