@@ -126,6 +126,8 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   }
   if (text.startsWith("!stiker") || msg.message.imageMessage?.caption === "!stiker") {
     if (isBan(sock, chatId, msg)) return;
+    const allow = await ColdownUser(sock, chatId, msg, "!stiker")
+    if (!allow) return;
     Smeme(sock, chatId, msg, text);
   }
   if (text.startsWith("!setbuff")) {
