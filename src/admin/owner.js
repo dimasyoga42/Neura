@@ -16,7 +16,7 @@ export const ownerControls = async (sock, chatId, msg, text) => {
     if (!isOwner(sock, msg, chatId)) return;
     await setNocoldown(sock, chatId, msg)
   }
-  if (text.startsWith("!bc")) {
+  if (text.startsWith("!bc") || msg.message.imageMessage?.caption === "!bc") {
     if (!isOwner(sock, msg, chatId)) return;
     handleBroadcast(sock, msg);
   }
