@@ -14,6 +14,7 @@ komunitas: https://whatsapp.com/channel/0029VbAmhBF7z4kjOQcoVV0A
 
 *Cmd Fun*
 - !waifu 
+- !cek <any text>
 
 *Cmd Grub*
 - !news 

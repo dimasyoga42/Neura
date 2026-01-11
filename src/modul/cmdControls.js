@@ -8,6 +8,7 @@ import { getMt } from "../plugins/fitur/mt.js";
 import { getAllReport, report } from "../plugins/fitur/report.js";
 import Smeme from "../plugins/fitur/smeme.js";
 import sticker from "../plugins/fitur/stiker.js";
+import { cek } from "../plugins/fun/cek.js";
 import { waifu } from "../plugins/fun/waifu.js";
 import { setAfk } from "../plugins/sosial/afk.js";
 import { cekProfile, myBio, myProfile, setDesc, setidBuff, setPP } from "../plugins/sosial/bio.js";
@@ -196,6 +197,11 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     sock.sendMessage(chatId, { text: stat }, { quoted: msg })
   }
+  if (text.startsWith("!cek")) {
+    if (isBan(sock, chatId, msg)) return;
+    cek(sock, chatId, msg, text);
+  }
+
 
 
 
