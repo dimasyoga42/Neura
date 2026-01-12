@@ -1,6 +1,6 @@
 import { ColdownUser } from "../admin/coldownChat.js";
 import { hidetag } from "../admin/hidetag.js";
-import { buffMessage, listLeveling, menuMessage, messagePembolong, stat } from "../config/variabel.js";
+import { buffMessage, listLeveling, menuMessage, messagePembolong, stat, upbagId } from "../config/variabel.js";
 import { isBan } from "../plugins/fitur/ban.js"
 import { Banner } from "../plugins/fitur/benner.js";
 import { setMenu } from "../plugins/fitur/img.js";
@@ -205,6 +205,20 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!remini") || msg.message.imageMessage?.caption === "!remini") {
     if (isBan(sock, chatId, msg)) return;
     Remini(sock, chatId, msg);
+  }
+  if (text.startsWith("!upbag")) {
+    if (isBan(sock, chatId, msg)) return;
+    sock.sendMessage(chatId, { text: upbagId }, { quoted: msg })
+  }
+  if (text.startsWith("!donet")) {
+    if (isBan(sock, chatId, msg)) return;
+    sock.sendMessage(chatId, {
+      text: `
+    dukung bot dengan berdonasi:
+    nomer: 085789109095 (DANA, GOPAY)
+    Sosialbuz: https://sociabuzz.com/neurabot/tribe
+    nomer owner: 085664393331 (dimas)
+      `}, { quoted: msg })
   }
 
 
