@@ -484,7 +484,7 @@ async function parseAllResults(page) {
           index,
           text,
           html,
-          hasSuccessRate: text.includes("Success Rate").split("Perhitungan Otomatis Final Success Rate"),
+          hasSuccessRate: text.includes("Perhitungan Otomatis Final Success Rate"),
           hasStatting: text.includes("Statting of Armor"),
           hasSteps: /\d+\.\s/.test(text),
           isCostInfo:
