@@ -24,6 +24,7 @@ import { clearRaid, createRaid, joinRaid, leaveRaid, viewRaid } from "../plugins
 import fs from "fs";
 import { Remini } from "../plugins/vip/tools/remini.js";
 import { play, ytmp3 } from "../plugins/vip/downloader/play.js";
+import { pin } from "../plugins/vip/downloader/pinterst.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!menu")) {
     if (isBan(sock, chatId, msg)) return;
@@ -216,6 +217,10 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!ytmp3")) {
     if (isBan(sock, chatId, msg)) return;
     ytmp3(sock, chatId, msg, text)
+  }
+  if (text.startsWith("!pinterest")) {
+    if (isBan(sock, chatId, msg)) return;
+    pin(sock, chatId, msg, text)
   }
 
 
