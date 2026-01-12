@@ -6,6 +6,7 @@ export const play = async (sock, chatId, msg, text) => {
     if (!query) return sock.sendMessage(chatId, { text: "mana judul lagunya?" }, { quoted: msg });
     const res = await axios.get(`https://api.deline.web.id/downloader/ytplay?q=${encodeURIComponent(query)}`);
     const data = res.data.result
+    console.log(data)
     const messagePlay = `
     name: ${data.title}
     url: ${data.url}
