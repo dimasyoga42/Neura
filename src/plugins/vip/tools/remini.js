@@ -2,12 +2,17 @@ import { downloadMediaMessage } from "@whiskeysockets/baileys"
 import axios from "axios"
 import FormData from "form-data"
 
-const baseUrl = "https://magma-api.biz.id/edits/enhance"
+const ENHANCE_API = "https://magma-api.biz.id/edits/enhance"
+const IMGBB_API = "https://api.imgbb.com/1/upload"
 
 const getMediaMessage = (msg) => {
+  // gambar langsung
   if (msg.message?.imageMessage) return msg
+
+  // reply gambar
   const quoted = msg.message?.extendedTextMessage?.contextInfo?.quotedMessage
   if (quoted?.imageMessage) return { message: quoted }
+
   return null
 }
 
@@ -22,9 +27,13 @@ export const Remini = async (sock, chatId, msg) => {
 
     const mediaMsg = getMediaMessage(msg)
     if (!mediaMsg)
-      return sock.sendMessage(chatId, { text: "Reply / kirim gambar dengan caption !remini" }, { quoted: msg })
+      return sock.sendMessage(
+        chatId,
+        { text: "❗ Kirim atau reply gambar dengan caption `!remini`" },
+        { quoted: msg }
+      )
 
-    // download image
+    // ================= DOWNLOAD IMAGE =================
     const buffer = await downloadMediaMessage(
       mediaMsg,
       "buffer",
@@ -32,35 +41,44 @@ export const Remini = async (sock, chatId, msg) => {
       { reuploadRequest: sock.updateMediaMessage }
     )
 
-    // upload ke imgbb
+    // ================= UPLOAD IMGBB =================
     const form = new FormData()
     form.append("image", buffer.toString("base64"))
 
     const upload = await axios.post(
-      `https://api.imgbb.com/1/upload?expiration=600&key=${process.env.BBI_KEY}`,
+      `${IMGBB_API}?expiration=600&key=${process.env.BBI_KEY}`,
       form,
       { headers: form.getHeaders() }
     )
 
-    const imageUrl = upload.data.data.url
+    const imageUrl = upload.data?.data?.url
+    if (!imageUrl) throw "Gagal upload image"
 
-    // enhance
-    const enhance = await axios.get(baseUrl, {
-      headers: { url: imageUrl }
-    })
+    // ================= ENHANCE =================
+    const enhance = await axios.get(
+      `${ENHANCE_API}?url=${encodeURIComponent(imageUrl)}`
+    )
 
     const resultUrl = enhance.data?.result || enhance.data?.url
-    if (!resultUrl) throw new Error("Gagal enhance")
+    if (!resultUrl) throw "Enhance gagal"
 
-    // kirim hasil
+    // ================= SEND RESULT =================
     await sock.sendMessage(
       chatId,
-      { image: { url: resultUrl }, caption: "✨ Berhasil di-enhance" },
+      {
+        image: { url: resultUrl },
+        caption: "✨ Gambar berhasil di-enhance"
+      },
       { quoted: msg }
     )
 
   } catch (err) {
-    console.error(err)
-    sock.sendMessage(chatId, { text: "❌ Terjadi kesalahan saat memproses gambar" }, { quoted: msg })
+    console.error("[REMINI ERROR]", err?.response?.data || err)
+
+    await sock.sendMessage(
+      chatId,
+      { text: "❌ Terjadi kesalahan saat memproses gambar" },
+      { quoted: msg }
+    )
   }
 }
