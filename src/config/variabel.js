@@ -24,6 +24,9 @@ komunitas: https://whatsapp.com/channel/0029VbAmhBF7z4kjOQcoVV0A
 *Cmd Fun*
 - !waifu 
 - !cek <any>
+- !tebakanime
+- !caklontong
+- !j <untuk menjawab all mini game>
 
 *Cmd Grub*
 - !news 
@@ -64,6 +67,8 @@ komunitas: https://whatsapp.com/channel/0029VbAmhBF7z4kjOQcoVV0A
 *Cmd Tools*
 - !qc <text>
 - !stiker <replay foto>
+- !play <judul>
+- !spotify <judul>
 > banyak banyk litrasi dalam membaca menu!!
 `.trim();
 

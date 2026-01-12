@@ -25,6 +25,7 @@ import { formatResultMessage, parseCommand, tanaka } from "../plugins/toram/tana
 import { downloadToMp3 } from "../plugins/vip/downloader/music.js";
 import fs from "fs";
 import { Remini } from "../plugins/vip/tools/remini.js";
+import { play } from "../plugins/vip/downloader/play.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!menu")) {
     if (isBan(sock, chatId, msg)) return;
@@ -178,6 +179,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
 
   if (text.startsWith("!filarm")) {
     if (isBan(sock, chatId, msg)) return;
+    if (text.startsWith("!filarm")) return sock.sendMessage(chatId, { text: "sedang perbaikan" }, { quoted: msg })
     try {
 
       const args = text.split(" ").slice(1);
@@ -219,6 +221,10 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     Sosialbuz: https://sociabuzz.com/neurabot/tribe
     nomer owner: 085664393331 (dimas)
       `}, { quoted: msg })
+  }
+  if (text.startsWith("!play")) {
+    if (isBan(sock, chatId, msg)) return;
+    play(sock, chatId, msg, text)
   }
 
 
