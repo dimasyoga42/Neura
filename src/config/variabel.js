@@ -11,10 +11,11 @@ komunitas: https://whatsapp.com/channel/0029VbAmhBF7z4kjOQcoVV0A
 - !setnews
 - !hidetag
 - !setrules
+- !setwc
 
 *Cmd Fun*
 - !waifu 
-- !cek <any text>
+- !cek <any>
 
 *Cmd Grub*
 - !news 
