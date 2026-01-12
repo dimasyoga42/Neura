@@ -3,7 +3,7 @@ import { setNews } from "../plugins/sosial/news.js";
 import { setrules } from "../plugins/sosial/rules.js";
 import { clearRaid, createRaid } from "../plugins/toram/raidControl.js";
 import { hidetag } from "./hidetag.js";
-import { setWellcome } from "./wellcome.js";
+import { SetWelcome } from "./wellcome.js";
 
 export const Admincontrols = async (sock, chatId, msg, text) => {
   try {
@@ -56,7 +56,7 @@ export const Admincontrols = async (sock, chatId, msg, text) => {
     if (text.startsWith("!setwc")) {
       if (isBan(sock, chatId, msg)) return;
       if (!isAdmin) return sock.sendMessage(chatId, { text: "admin only" }, { quoted: msg });
-      setWellcome(sock, chatId, msg, text);
+      SetWelcome(sock, chatId, msg, text);
     }
 
     if (text.startsWith("!creatraid")) {

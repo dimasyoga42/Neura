@@ -10,7 +10,7 @@ import { ownerControls } from "./src/admin/owner.js";
 import { cmdMenucontrol } from "./src/modul/cmdControls.js";
 import { checkMentionAfk, checkUnAfk } from "./src/plugins/sosial/afk.js";
 import { CekColdown } from "./src/admin/coldownChat.js";
-import { handleWelcome } from "./src/admin/wellcome.js";
+import { HandleWelcome } from "./src/admin/wellcome.js";
 dotenv.config();
 const start = async () => {
   const { state, saveCreds } = await useMultiFileAuthState("./auth_save");
@@ -53,8 +53,8 @@ const start = async () => {
       setTimeout(start, 5000);
     }
   });
-  sock.ev.on("messages.update", async (update) => {
-    await handleWelcome(sock, update)
+  sock.ev.on('group-participants.update', async (update) => {
+    await HandleWelcome(sock, update)
   })
   sock.ev.on("messages.upsert", async ({ messages }) => {
     const msg = messages[0]
