@@ -23,7 +23,7 @@ import { leveling } from "../plugins/toram/lv.js";
 import { clearRaid, createRaid, joinRaid, leaveRaid, viewRaid } from "../plugins/toram/raidControl.js";
 import fs from "fs";
 import { Remini } from "../plugins/vip/tools/remini.js";
-import { play } from "../plugins/vip/downloader/play.js";
+import { play, ytmp3 } from "../plugins/vip/downloader/play.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!menu")) {
     if (isBan(sock, chatId, msg)) return;
@@ -212,6 +212,10 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!play")) {
     if (isBan(sock, chatId, msg)) return;
     play(sock, chatId, msg, text)
+  }
+  if (text.startsWith("!ytmp3")) {
+    if (isBan(sock, chatId, msg)) return;
+    ytmp3(sock, chatId, msg, text)
   }
 
 

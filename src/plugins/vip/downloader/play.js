@@ -43,3 +43,22 @@ Ukuran: ${data.pick?.size || data.size || 'N/A'}
     }, { quoted: msg });
   }
 };
+
+export const ytmp3 = async (sock, chatId, msg, text) => {
+  try {
+    const urlDat = text.replace("!ytmp3", "");
+    if (!urlDat) return sock.sendMessage(chatId, { text: "mana link youtubenya" }, { quoted: msg });
+    const res = await axios.get(`https://api.deline.web.id/downloader/ytmp3?url=${encodeURIComponent(urlDat)}`);
+    const data = res.data.result;
+    if (!data) return sock.sendMessage(chatId, { text: "gagal memproses" }, { quoted: msg });
+    const messagePlay = `
+    *music downloaded*
+    name: ${data.youtube.title}
+    url: ${data.youtube.url}
+    `.trim()
+    sock.sendMessage(chatId, { image: { url: `${data.youtube.thumbnail}` }, caption: messagePlay }, { quoted: msg });
+    sock.sendMessage(chatId, { audio: { url: `${data.dlink}` }, mimetype: 'audio/mp4' }, { quoted: msg });
+  } catch (err) {
+
+  }
+}

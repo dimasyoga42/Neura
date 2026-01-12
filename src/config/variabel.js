@@ -68,7 +68,7 @@ komunitas: https://whatsapp.com/channel/0029VbAmhBF7z4kjOQcoVV0A
 - !qc <text>
 - !stiker <replay foto>
 - !play <judul>
-- !spotify <judul>
+- !ytmp3 <link>
 > banyak banyk litrasi dalam membaca menu!!
 `.trim();
 
