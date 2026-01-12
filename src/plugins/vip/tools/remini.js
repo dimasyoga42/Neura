@@ -2,7 +2,7 @@ import { downloadMediaMessage } from "@whiskeysockets/baileys"
 import axios from "axios"
 import FormData from "form-data"
 
-const ENHANCE_API = "https://tools.betabotz.org/tools/remini"
+const ENHANCE_API = "https://api.neoxr.eu/api/remini"
 const IMGBB_API = "https://api.imgbb.com/1/upload"
 
 const getMedia = (msg) => {
@@ -23,7 +23,7 @@ export const Remini = async (sock, chatId, msg) => {
 
     await sock.sendMessage(chatId, { text: "⏳ Sedang diproses..." }, { quoted: msg })
 
-    // Download & upload ke imgbb
+    // Download & upload
     const buffer = await downloadMediaMessage(mediaMsg, "buffer", {}, { reuploadRequest: sock.updateMediaMessage })
     const form = new FormData()
     form.append("image", buffer.toString("base64"))
@@ -34,25 +34,24 @@ export const Remini = async (sock, chatId, msg) => {
 
     if (!data?.data?.url) throw "Upload gagal"
 
-    // Enhance dengan BetaBotz API
-    const enhance = await axios.get(`${ENHANCE_API}?url=${encodeURIComponent(data.data.url)}`)
+    // Enhance dengan Neoxr API
+    const enhance = await axios.get(`${ENHANCE_API}?image=${encodeURIComponent(data.data.url)}&apikey=${process.env.NEOXR_KEY}`)
 
-    // Response format: { image_data: "url", image_size: "size" }
-    const result = enhance.data?.image_data || enhance.data?.url
+    const result = enhance.data?.data?.url || enhance.data?.url
 
-    if (!result || !result.startsWith('http')) {
-      throw `Format response tidak valid: ${JSON.stringify(enhance.data)}`
+    if (!result?.startsWith('http')) {
+      throw `Response tidak valid: ${JSON.stringify(enhance.data)}`
     }
 
     await sock.sendMessage(chatId, {
       image: { url: result },
-      caption: `✅ Berhasil!\n📦 Size: ${enhance.data?.image_size || 'N/A'}`
+      caption: "✅ Berhasil ditingkatkan!"
     }, { quoted: msg })
 
   } catch (err) {
     console.error("[REMINI]", err?.response?.data || err)
     sock.sendMessage(chatId, {
-      text: `❌ Gagal: ${err?.message || err}`
+      text: `❌ ${err?.response?.data?.message || err?.message || "Gagal memproses"}`
     }, { quoted: msg })
   }
 }
