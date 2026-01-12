@@ -646,9 +646,8 @@ function formatResultMessage(result) {
   if (!result.hasValidResult) {
     return `*Tanaka Scraper:*\nHasil tidak lengkap atau gagal memuat`;
   }
-
   let message = `*Hasil Tanaka*\n\n`;
-  message += `*Success Rate:* ${result.successRate.split("Perhitungan Otomatis Final Success Rate")}\n`;
+  message += `*Success Rate:* ${result.successRate}\n`;
   message += `*Starting Pot:* ${result.startingPot}\n`;
   message += `*Total Steps:* ${result.totalSteps}\n`;
 
