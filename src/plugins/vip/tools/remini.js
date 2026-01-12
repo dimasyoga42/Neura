@@ -56,26 +56,8 @@ export const Remini = async (sock, chatId, msg) => {
     )
 
     // ✅ AMBIL SEMUA KEMUNGKINAN RESPONSE
-    const resultUrl =
-      enhance.data?.result ||
-      enhance.data?.data?.image ||
-      enhance.data?.url
-
-    if (!resultUrl) {
-      console.log("[ENHANCE RESPONSE]", enhance.data)
-      throw "Enhance gagal"
-    }
-
-    // kirim hasil
-    await sock.sendMessage(
-      chatId,
-      {
-        image: { url: resultUrl },
-        caption: "✨ Gambar berhasil di-enhance"
-      },
-      { quoted: msg }
-    )
-
+    const res = enhance.data
+    console.log(res)
   } catch (err) {
     console.error("[REMINI ERROR]", err?.response?.data || err)
     sock.sendMessage(
