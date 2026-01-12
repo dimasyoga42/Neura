@@ -484,7 +484,7 @@ async function parseAllResults(page) {
           index,
           text,
           html,
-          hasSuccessRate: text.includes("Perhitungan Otomatis Final Success Rate"),
+          hasSuccessRate: text.includes("Success Rate"),
           hasStatting: text.includes("Statting of Armor"),
           hasSteps: /\d+\.\s/.test(text),
           isCostInfo:
@@ -630,7 +630,7 @@ async function parseAllResults(page) {
   console.log(`- Material cost: ${result.materialCost}`);
   console.log(`- Highest step cost: ${result.highestStepCost}`);
   console.log(`- Success Rate: ${result.successRate}`);
-  console.log(`- Starting Pot: ${result.startingPot}`);
+  console.log(`- Starting Pot: ${result.startingPot.split("Perhitungan Otomatis Final Success Rate")}`);
   console.log(`- Total Steps: ${result.totalSteps}`);
   console.log(`- Valid Result: ${result.hasValidResult}`);
 
@@ -648,7 +648,7 @@ function formatResultMessage(result) {
   }
 
   let message = `*Hasil Tanaka*\n\n`;
-  message += `*Success Rate:* ${result.successRate}\n`;
+  message += `*Success Rate:* ${result.successRate.split("Perhitungan Otomatis Final Success Rate")}\n`;
   message += `*Starting Pot:* ${result.startingPot}\n`;
   message += `*Total Steps:* ${result.totalSteps}\n`;
 
