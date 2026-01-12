@@ -50,13 +50,21 @@ export const Remini = async (sock, chatId, msg) => {
     const imageUrl = upload.data?.data?.url
     if (!imageUrl) throw "Upload gagal"
 
-    // ✅ PARAMETER YANG BENAR
+    // enhance
     const enhance = await axios.get(
       `${ENHANCE_API}?image=${encodeURIComponent(imageUrl)}`
     )
 
-    const resultUrl = enhance.data?.result
-    if (!resultUrl) throw "Enhance gagal"
+    // ✅ AMBIL SEMUA KEMUNGKINAN RESPONSE
+    const resultUrl =
+      enhance.data?.result ||
+      enhance.data?.data?.image ||
+      enhance.data?.url
+
+    if (!resultUrl) {
+      console.log("[ENHANCE RESPONSE]", enhance.data)
+      throw "Enhance gagal"
+    }
 
     // kirim hasil
     await sock.sendMessage(
@@ -72,7 +80,7 @@ export const Remini = async (sock, chatId, msg) => {
     console.error("[REMINI ERROR]", err?.response?.data || err)
     sock.sendMessage(
       chatId,
-      { text: "❌ Gagal memproses gambar" },
+      { text: "❌ Gagal memproses gambar (API bermasalah)" },
       { quoted: msg }
     )
   }
