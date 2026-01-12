@@ -1,4 +1,5 @@
 import path from "path"
+import fs from "fs"
 const db = path.resolve("database", "wc.json")
 export const setWellcome = async (sock, chatId, msg, text) => {
   try {
