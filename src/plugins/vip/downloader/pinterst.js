@@ -8,13 +8,17 @@ export const pin = async (sock, chatId, msg, text) => {
     const res = await axios.get(`https://api.deline.web.id/search/pinterest?q=${encodeURIComponent(urlDat)}`);
     const data = res.data.data;
     if (!data) return sock.sendMessage(chatId, { text: "gagal memproses" }, { quoted: msg });
-    const messagePlay = `
+    data.map((item, index) => {
+      const messagePlay = `
     *Pintrest*
-    name: ${data.caption}
-    author: ${data.fullname}
+    name: ${item.caption}
+    author: ${item.fullname}
     `.trim()
-    sock.sendMessage(chatId, { image: { url: `${data.image}` }, caption: messagePlay }, { quoted: msg });
+      sock.sendMessage(chatId, { image: { url: `${item.image}` }, caption: messagePlay }, { quoted: msg });
+
+    })
   } catch (err) {
+
 
   }
 }
