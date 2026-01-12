@@ -6,13 +6,9 @@ const ENHANCE_API = "https://magma-api.biz.id/edits/enhance"
 const IMGBB_API = "https://api.imgbb.com/1/upload"
 
 const getMediaMessage = (msg) => {
-  // gambar langsung
   if (msg.message?.imageMessage) return msg
-
-  // reply gambar
   const quoted = msg.message?.extendedTextMessage?.contextInfo?.quotedMessage
   if (quoted?.imageMessage) return { message: quoted }
-
   return null
 }
 
@@ -29,11 +25,11 @@ export const Remini = async (sock, chatId, msg) => {
     if (!mediaMsg)
       return sock.sendMessage(
         chatId,
-        { text: "❗ Kirim atau reply gambar dengan caption `!remini`" },
+        { text: "❗ Kirim / reply gambar dengan `!remini`" },
         { quoted: msg }
       )
 
-    // ================= DOWNLOAD IMAGE =================
+    // download image
     const buffer = await downloadMediaMessage(
       mediaMsg,
       "buffer",
@@ -41,7 +37,7 @@ export const Remini = async (sock, chatId, msg) => {
       { reuploadRequest: sock.updateMediaMessage }
     )
 
-    // ================= UPLOAD IMGBB =================
+    // upload ke imgbb
     const form = new FormData()
     form.append("image", buffer.toString("base64"))
 
@@ -52,17 +48,17 @@ export const Remini = async (sock, chatId, msg) => {
     )
 
     const imageUrl = upload.data?.data?.url
-    if (!imageUrl) throw "Gagal upload image"
+    if (!imageUrl) throw "Upload gagal"
 
-    // ================= ENHANCE =================
+    // ✅ PARAMETER YANG BENAR
     const enhance = await axios.get(
-      `${ENHANCE_API}?url=${encodeURIComponent(imageUrl)}`
+      `${ENHANCE_API}?image=${encodeURIComponent(imageUrl)}`
     )
 
-    const resultUrl = enhance.data?.result || enhance.data?.url
+    const resultUrl = enhance.data?.result
     if (!resultUrl) throw "Enhance gagal"
 
-    // ================= SEND RESULT =================
+    // kirim hasil
     await sock.sendMessage(
       chatId,
       {
@@ -74,10 +70,9 @@ export const Remini = async (sock, chatId, msg) => {
 
   } catch (err) {
     console.error("[REMINI ERROR]", err?.response?.data || err)
-
-    await sock.sendMessage(
+    sock.sendMessage(
       chatId,
-      { text: "❌ Terjadi kesalahan saat memproses gambar" },
+      { text: "❌ Gagal memproses gambar" },
       { quoted: msg }
     )
   }
