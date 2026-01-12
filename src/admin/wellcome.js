@@ -15,7 +15,7 @@ Cara penggunaan:
 
 Tag yang tersedia:
 @user = mention user yang masuk
-@decs = deskripsi grup`
+@group = nama grub`
       },
       { quoted: msg }
     )
@@ -39,9 +39,9 @@ export const HandleWelcome = async (sock, update) => {
     for (const participant of participants) {
       const jid = typeof participant === 'string' ? participant : participant.id
       const message = welcomeText
-        .replace(/{@user}/g, `@${jid.split('@')[0]}`)
-        .replace(/{@group}/g, groupMetadata.subject)
-        .replace(/{@count}/g, groupMetadata.participants.length)
+        .replace(/@user/g, `@${jid.split('@')[0]}`)
+        .replace(/@group/g, groupMetadata.subject)
+        .replace(/@count/g, groupMetadata.participants.length)
 
       await sock.sendMessage(chatId, {
         text: message,
