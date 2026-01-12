@@ -37,14 +37,15 @@ export const HandleWelcome = async (sock, update) => {
     const groupMetadata = await sock.groupMetadata(chatId)
 
     for (const participant of participants) {
+      const jid = typeof participant === 'string' ? participant : participant.id
       const message = welcomeText
-        .replace(/{user}/g, `@${participant.split('@')[0]}`)
+        .replace(/{user}/g, `@${jid.split('@')[0]}`)
         .replace(/{group}/g, groupMetadata.subject)
         .replace(/{count}/g, groupMetadata.participants.length)
 
       await sock.sendMessage(chatId, {
         text: message,
-        mentions: [participant]
+        mentions: [jid]
       })
     }
   } catch (err) {
