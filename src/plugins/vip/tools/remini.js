@@ -2,7 +2,7 @@ import { downloadMediaMessage } from "@whiskeysockets/baileys"
 import axios from "axios"
 import FormData from "form-data"
 
-const ENHANCE_API = "https://magma-api.biz.id/edits/enhance"
+const ENHANCE_API = "https://tools.betabotz.org/tools/remini"
 const IMGBB_API = "https://api.imgbb.com/1/upload"
 
 const getMedia = (msg) => {
@@ -21,7 +21,9 @@ export const Remini = async (sock, chatId, msg) => {
       return sock.sendMessage(chatId, { text: "❗ Kirim/reply gambar dengan `!remini`" }, { quoted: msg })
     }
 
-    // Download & upload
+    await sock.sendMessage(chatId, { text: "⏳ Sedang diproses..." }, { quoted: msg })
+
+    // Download & upload ke imgbb
     const buffer = await downloadMediaMessage(mediaMsg, "buffer", {}, { reuploadRequest: sock.updateMediaMessage })
     const form = new FormData()
     form.append("image", buffer.toString("base64"))
@@ -32,33 +34,25 @@ export const Remini = async (sock, chatId, msg) => {
 
     if (!data?.data?.url) throw "Upload gagal"
 
-    // Enhance - log untuk debugging
-    await sock.sendMessage(chatId, { text: "⏳ Memproses gambar..." }, { quoted: msg })
+    // Enhance dengan BetaBotz API
+    const enhance = await axios.get(`${ENHANCE_API}?url=${encodeURIComponent(data.data.url)}`)
 
-    const enhance = await axios.get(`${ENHANCE_API}?image=${encodeURIComponent(data.data.url)}`)
-    console.log("Response enhance:", JSON.stringify(enhance.data, null, 2))
+    // Response format: { image_data: "url", image_size: "size" }
+    const result = enhance.data?.image_data || enhance.data?.url
 
-    // Coba berbagai kemungkinan response structure
-    const result = enhance.data?.image_data
-      || enhance.data?.url
-      || enhance.data?.result?.url
-      || enhance.data?.data?.url
-      || enhance.data
-
-    if (typeof result === 'string' && result.startsWith('http')) {
-      await sock.sendMessage(chatId, {
-        image: { url: result },
-        caption: "✅ Gambar berhasil ditingkatkan!"
-      }, { quoted: msg })
-    } else {
-      // Kirim response mentah jika struktur tidak dikenali
-      await sock.sendMessage(chatId, {
-        text: `⚠️ Response API:\n\`\`\`json\n${JSON.stringify(enhance.data, null, 2)}\n\`\`\``
-      }, { quoted: msg })
+    if (!result || !result.startsWith('http')) {
+      throw `Format response tidak valid: ${JSON.stringify(enhance.data)}`
     }
+
+    await sock.sendMessage(chatId, {
+      image: { url: result },
+      caption: `✅ Berhasil!\n📦 Size: ${enhance.data?.image_size || 'N/A'}`
+    }, { quoted: msg })
 
   } catch (err) {
     console.error("[REMINI]", err?.response?.data || err)
-    sock.sendMessage(chatId, { text: "❌ Gagal memproses gambar" }, { quoted: msg })
+    sock.sendMessage(chatId, {
+      text: `❌ Gagal: ${err?.message || err}`
+    }, { quoted: msg })
   }
 }
