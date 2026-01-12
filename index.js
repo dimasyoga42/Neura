@@ -53,7 +53,7 @@ const start = async () => {
       setTimeout(start, 5000);
     }
   });
-  sock.ev.on("group-participants.update", async (update) => {
+  sock.ev.on("messages.update", async (update) => {
     await handleWelcome(sock, update)
   })
   sock.ev.on("messages.upsert", async ({ messages }) => {
