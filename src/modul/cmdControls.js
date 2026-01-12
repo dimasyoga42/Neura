@@ -24,6 +24,7 @@ import { clearRaid, createRaid, joinRaid, leaveRaid, viewRaid } from "../plugins
 import { formatResultMessage, parseCommand, tanaka } from "../plugins/toram/tanaka.js";
 import { downloadToMp3 } from "../plugins/vip/downloader/music.js";
 import fs from "fs";
+import { Remini } from "../plugins/vip/tools/remini.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!menu")) {
     if (isBan(sock, chatId, msg)) return;
@@ -201,6 +202,11 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     cek(sock, chatId, msg, text);
   }
+  if (text.startsWith("!remini") || msg.message.imageMessage?.caption === "!remini") {
+    if (isBan(sock, chatId, msg)) return;
+    Remini(sock, chatId, msg);
+  }
+
 
 
 
