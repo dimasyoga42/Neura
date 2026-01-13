@@ -24,7 +24,7 @@ komunitas: https://whatsapp.com/channel/0029VbAmhBF7z4kjOQcoVV0A
 *Cmd Fun*
 - !waifu 
 - !cek <any>
-- !tebakanime
+- !tebakgambar
 - !caklontong
 - !j <untuk menjawab all mini game>
 

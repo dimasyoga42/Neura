@@ -23,6 +23,26 @@ export const Caklontong = async (sock, chatId, msg, text) => {
   } catch (err) {
   }
 }
+export const tebakGambar = async (sock, chatId, msg, text) => {
+  try {
+    if (answer.has(chatId)) sock.sendMessage(chatId, { text: "selesaikan terlebih dahulu game yang sedang berjalan" }, { quoted: msg });
+    const res = await axios.get("https://api.deline.web.id/game/tebakgambar");
+    const Imag = res.data.Result;
+    answer.set(chatId, {
+      jawaban: Imag.jawaban
+    })
+    sock.sendMessage(chatId, { text: "sedang memuat..." }, { quoted: msg });
+    sock.sendMessage(chatId, { image: { url: `${Imag.ing}` }, caption: `${Imag.deskripsi}\n> jawab menggunakan !j` }, { quoted: msg });
+    setTimeout(() => {
+      if (answer.has(chatId)) {
+        answer.delete(chatId);
+        sock.sendMessage(chatId, { text: `waktu habis. jawaban yang benar adalah *${Imag.jawaban}*` })
+      }
+    }, 60000)
+  } catch (err) {
+    sock.sendMessage(chatId, { text: `error tolong !report <error>` }, { quoted: msg })
+  }
+}
 export const jawab = (sock, chatId, msg, text) => {
   try {
     const jawab = text.replace("!j", "");
