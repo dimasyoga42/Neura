@@ -28,8 +28,10 @@ export const tebakGambar = async (sock, chatId, msg, text) => {
     if (answer.has(chatId)) sock.sendMessage(chatId, { text: "selesaikan terlebih dahulu game yang sedang berjalan" }, { quoted: msg });
     const res = await axios.get("https://api.deline.web.id/game/tebakgambar");
     const Imag = res.data.Result;
+    console.log(Imag)
     answer.set(chatId, {
-      jawaban: Imag.jawaban
+      jawaban: Imag.jawaban,
+      timestamp: Date.now()
     })
     sock.sendMessage(chatId, { text: "sedang memuat..." }, { quoted: msg });
     sock.sendMessage(chatId, { image: { url: `${Imag.ing}` }, caption: `${Imag.deskripsi}\n> jawab menggunakan !j` }, { quoted: msg });
