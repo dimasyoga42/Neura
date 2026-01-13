@@ -25,7 +25,7 @@ import fs from "fs";
 import { Remini } from "../plugins/vip/tools/remini.js";
 import { play, ytmp3 } from "../plugins/vip/downloader/play.js";
 import { pin } from "../plugins/vip/downloader/pinterst.js";
-import { Caklontong } from "../plugins/fun/caklontong.js";
+import { Caklontong, jawab } from "../plugins/fun/caklontong.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!menu")) {
     if (isBan(sock, chatId, msg)) return;
@@ -227,7 +227,10 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     Caklontong(sock, chatId, msg, text)
   }
-
+  if (text.startsWith("!j")) {
+    if (isBan(sock, chatId, msg)) return;
+    jawab(sock, chatId, msg, text)
+  }
 
 
 
