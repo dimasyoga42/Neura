@@ -17,6 +17,7 @@ export const Caklontong = async (sock, chatId, msg, text) => {
       jawaban: data.jawaban
     }
     answer.push(newAnswer);
+    console.log(answer)
   } catch (err) {
 
   }
