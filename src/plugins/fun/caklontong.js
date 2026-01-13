@@ -36,7 +36,7 @@ export const tebakGambar = async (sock, chatId, msg, text) => {
     setTimeout(() => {
       if (answer.has(chatId)) {
         answer.delete(chatId);
-        sock.sendMessage(chatId, { text: `waktu habis. jawaban yang benar adalah *${Imag.jawaban}*` })
+        sock.sendMessage(chatId, { text: `waktu habis. jawaban yang benar adalah *${Imag.jawaban}*` }, { quoted: msg })
       }
     }, 60000)
   } catch (err) {
