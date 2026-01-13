@@ -27,7 +27,7 @@ export const tebakGambar = async (sock, chatId, msg, text) => {
   try {
     if (answer.has(chatId)) sock.sendMessage(chatId, { text: "selesaikan terlebih dahulu game yang sedang berjalan" }, { quoted: msg });
     const res = await axios.get("https://api.deline.web.id/game/tebakgambar");
-    const Imag = res.data?.Result;
+    const Imag = res.data.result;
     console.log(Imag)
     answer.set(chatId, {
       jawaban: Imag.jawaban,
