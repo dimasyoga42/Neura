@@ -40,7 +40,7 @@ export const tebakGambar = async (sock, chatId, msg, text) => {
       }
     }, 60000)
   } catch (err) {
-    sock.sendMessage(chatId, { text: `error tolong !report <error>` }, { quoted: msg })
+    sock.sendMessage(chatId, { text: `error tolong !report <error>\n ${err}` }, { quoted: msg })
   }
 }
 export const jawab = (sock, chatId, msg, text) => {
