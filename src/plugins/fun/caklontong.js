@@ -17,7 +17,7 @@ export const Caklontong = async (sock, chatId, msg, text) => {
     setTimeout(() => {
       if (answer.has(chatId)) {
         answer.delete(chatId);
-        sock.sendMessage(chatId, { text: `waktu habis,jawaban yang benar adalah: *${data.jawaban}*` }, { quoted: msg })
+        sock.sendMessage(chatId, { text: `waktu habis,jawaban yang benar adalah: *${data.jawaban}* penjelasan: ${data.deskripsi}` }, { quoted: msg })
       }
     }, 60000)
   } catch (err) {
