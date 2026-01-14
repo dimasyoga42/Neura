@@ -12,6 +12,7 @@ import { checkMentionAfk, checkUnAfk } from "./src/plugins/sosial/afk.js";
 import { CekColdown } from "./src/admin/coldownChat.js";
 import { HandleWelcome } from "./src/admin/wellcome.js";
 import { messageHandler } from "./src/plugins/ai/message.js";
+import { subMenu } from "./src/modul/subMenu.js";
 dotenv.config();
 const start = async () => {
   const { state, saveCreds } = await useMultiFileAuthState("./auth_save");
@@ -70,6 +71,7 @@ const start = async () => {
       Admincontrols(sock, chatId, msg, text);
       ownerControls(sock, chatId, msg, text);
       cmdMenucontrol(sock, chatId, msg, text);
+      subMenu(sock, chatId, msg, text);
     } catch (err) {
       console.log(err)
     }
