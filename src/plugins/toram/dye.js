@@ -6,7 +6,7 @@ import path from "path";
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const screenshotFullTable = async (month = "202601") => {
-  const url = `https://tanaka0.work/AIO/en/DyePredictor/ColorWeapon?month=${month}`;
+  const url = `https://tanaka0.work/AIO/en/DyePredictor/ColorWeapon`;
   const outputDir = path.resolve("temp");
   const filePath = path.join(outputDir, `dye_${month}_full.png`);
 
@@ -169,7 +169,7 @@ export const dyePredictor = async (sock, chatId, msg, text) => {
       chatId,
       {
         image: buffer,
-        caption: `Dye Weapon Prediction\nMonth: ${month}`,
+        caption: `Dye Weapon Prediction`,
       },
       { quoted: msg }
     );

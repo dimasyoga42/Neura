@@ -30,3 +30,5 @@ export const waifu = async (sock, chatId, msg) => {
     );
   }
 };
+
+
