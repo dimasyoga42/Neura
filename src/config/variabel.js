@@ -13,16 +13,16 @@ export const xsubMenu = {
   `.trim(),
   menutoram: `
 *Menu Toram By Neura Sama*
-- !xtall 
-- !item 
-- !appview 
+- !xtall <nama xtall>
+- !item <nama item>
+- !appview <nama app>
 - !benner 
-- !lv 
+- !lv <level>
 - !buff 
-- !ability 
+- !ability <nama ability>
 - !mt 
-- !regist 
-- !bos 
+- !regist <nama regist>
+- !bos <nama bos>
 - !filarm 
 - !sheetfill
 - !upbag 
@@ -37,26 +37,26 @@ export const xsubMenu = {
   - !caklontong 
   - !tebakgambar 
   - !waifu 
-  - !j
+  - !j <answer>
   `.trim(),
   menutools: `
   *Menu Tools By Neura Sama*
   - !stiker 
-  - !play 
-  - !ytmp3 
-  - !pinterest 
-  - !qc
+  - !play <title music>
+  - !ytmp3 <link yt>
+  - !pinterest <any txt>
+  - !qc <txt>
   `.trim(),
   menugrub: `
 *Menu Grub By Neura Sama*
 - !profil 
 - !mybio 
-- !setdesc 
+- !setdesc <text>
 - !setpp 
 - !rules 
 - !raid 
-- !setbuff 
-- !afk 
+- !setbuff <code> 
+- !afk <any text>
   `.trim()
 }
 
@@ -77,65 +77,6 @@ komunitas: https://whatsapp.com/channel/0029VbAmhBF7z4kjOQcoVV0A
 - !menutoram 
 - !menufun 
 - !menutools
-
-*Cmd Admin*
-- !kick
-- !open
-- !close
-- !setnews
-- !hidetag
-- !setrules
-- !setwc
-
-*Cmd Fun*
-- !waifu 
-- !cek <any>
-- !tebakgambar
-- !caklontong
-- !j <untuk menjawab all mini game>
-
-*Cmd Grub*
-- !news 
-- !mybio
-- !setdesc
-- !setbuff <name & code>
-- !setpp <caption>
-- !profil
-- !pembolong
-- !rules
-- !afk
-- !mt 
-- !benner
-- !report
-- !sheetfill
-
-*Cmd Raid*
-- !creatraid <admin only>
-- !clear
-- !join
-- !raid 
-- !leave
-
-*Cmd Toram*
-- !xtall
-- !appview
-- !items 
-- !regist
-- !ability
-- !buff
-- !lv 
-- !bos
-- !dye
-- !listLeveling
-- !filarm
-- !upbag 
-
-*Cmd Tools*
-- !qc <text>
-- !stiker <replay foto>
-- !play <judul>
-- !ytmp3 <link>
-- !pinterest <judul>
 > banyak banyk litrasi dalam membaca menu!!
 `.trim();
 
