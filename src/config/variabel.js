@@ -36,7 +36,8 @@ export const xsubMenu = {
   *Menu fun By Neura Sama*
   - !caklontong 
   - !tebakgambar 
-  - !waifu 
+  - !waifu
+  - !cek
   - !j <answer>
   `.trim(),
   menutools: `

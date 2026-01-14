@@ -9,7 +9,7 @@ export const play = async (sock, chatId, msg, text) => {
     }
 
     // Kirim pesan loading
-    await sock.sendMessage(chatId, { text: "Mencari lagu..." }, { quoted: msg });
+    await sock.sendMessage(chatId, { text: `Mencari lagu: *${query}*` }, { quoted: msg });
 
     // Perbaikan: gunakan tanda kurung biasa, bukan backtick
     const res = await axios.get(`https://api.deline.web.id/downloader/ytplay?q=${encodeURIComponent(query)}`);
@@ -24,7 +24,6 @@ export const play = async (sock, chatId, msg, text) => {
 
     const messagePlay = `
 *Informasi Lagu*
-
 Judul: ${data.title}
 URL: ${data.url}
 Ukuran: ${data.pick?.size || data.size || 'N/A'}
