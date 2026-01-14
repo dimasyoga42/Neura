@@ -1,3 +1,65 @@
+export const xsubMenu = {
+  menuadmin: `
+*Menu Admin By Neura Sama*
+- !kick 
+- !open 
+- !close 
+- !setnews 
+- !setrules 
+- !clear 
+- !hidetag 
+- !creatraid
+- !setwc 
+  `,
+  menutoram: `
+*Menu Toram By Neura Sama*
+- !xtall 
+- !item 
+- !appview 
+- !benner 
+- !lv 
+- !buff 
+- !ability 
+- !mt 
+- !regist 
+- !bos 
+- !filarm 
+- !sheetfill
+- !upbag 
+- !listLeveling
+- !raid 
+- !join 
+- !leave
+- !pembolong
+  `,
+  menufun: `
+  *Menu fun By Neura Sama*
+  - !caklontong 
+  - !tebakgambar 
+  - !waifu 
+  - !j
+  `,
+  menutools: `
+  *Menu Tools By Neura Sama*
+  - !stiker 
+  - !play 
+  - !ytmp3 
+  - !pinterest 
+  - !qc
+  `,
+  menugrub: `
+*Menu Grub By Neura Sama*
+- !profil 
+- !mybio 
+- !setdesc 
+- !setpp 
+- !rules 
+- !raid 
+- !setbuff 
+- !afk 
+  `
+}
+
 export const menuMessage = `
 *Neura Bot*\n> gunakan bot dengan bijak, dukung bot agar bisa hidup lebih lama dengan donet seiklasnya
 vps exp: 21 januari 2026
@@ -10,7 +72,11 @@ komunitas: https://whatsapp.com/channel/0029VbAmhBF7z4kjOQcoVV0A
 
 *info*
 - !report <any req / bug report>
-- !sawer 
+- !donet 
+- !menuadmin 
+- !menutoram 
+- !menufun 
+- !menutools
 
 *Cmd Admin*
 - !kick
