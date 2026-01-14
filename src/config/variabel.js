@@ -10,7 +10,7 @@ export const xsubMenu = {
 - !hidetag 
 - !creatraid
 - !setwc 
-  `,
+  `.trim(),
   menutoram: `
 *Menu Toram By Neura Sama*
 - !xtall 
@@ -31,14 +31,14 @@ export const xsubMenu = {
 - !join 
 - !leave
 - !pembolong
-  `,
+  `.trim(),
   menufun: `
   *Menu fun By Neura Sama*
   - !caklontong 
   - !tebakgambar 
   - !waifu 
   - !j
-  `,
+  `.trim(),
   menutools: `
   *Menu Tools By Neura Sama*
   - !stiker 
@@ -46,7 +46,7 @@ export const xsubMenu = {
   - !ytmp3 
   - !pinterest 
   - !qc
-  `,
+  `.trim(),
   menugrub: `
 *Menu Grub By Neura Sama*
 - !profil 
@@ -57,7 +57,7 @@ export const xsubMenu = {
 - !raid 
 - !setbuff 
 - !afk 
-  `
+  `.trim()
 }
 
 export const menuMessage = `
