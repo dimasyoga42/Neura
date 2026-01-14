@@ -11,10 +11,10 @@ export const subMenu = async (sock, chatId, msg, text) => {
     if (text.startsWith("!menutoram")) {
       sock.sendMessage(chatId, { text: xsubMenu.menutoram }, { quoted: msg })
     }
-    if (text.startsWith("!menuafun")) {
+    if (text.startsWith("!menufun")) {
       sock.sendMessage(chatId, { text: xsubMenu.menufun }, { quoted: msg })
     }
-    if (text.startsWith("!menuatools")) {
+    if (text.startsWith("!menutools")) {
       sock.sendMessage(chatId, { text: xsubMenu.menutools }, { quoted: msg })
     }
   } catch (err) {
