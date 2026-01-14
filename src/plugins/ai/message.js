@@ -2,7 +2,6 @@ import { NeuraBot } from "./Neura.js";
 
 export const messageHandler = async (sock, chatId, msg) => {
   const messageType = Object.keys(msg.message || {})[0];
-  const chatId = msg.key.remoteJid;
   const isGroup = chatId.endsWith("@g.us");
   const fromMe = msg.key.fromMe;
 
