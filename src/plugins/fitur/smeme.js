@@ -2,7 +2,7 @@ import { downloadMediaMessage } from "@whiskeysockets/baileys"
 import axios from "axios"
 import FormData from "form-data"
 import sharp from "sharp"
-import Sticker, { StickerTypes } from "wa-sticker-formatter"
+import { Sticker, StickerTypes } from "wa-sticker-formatter"
 
 /* =====================
    CONFIG
