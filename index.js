@@ -58,6 +58,7 @@ const start = async () => {
   })
   sock.ev.on("messages.upsert", async ({ messages }) => {
     const msg = messages[0]
+
     try {
       const chatId = msg.key.remoteJid;
       const text = msg.message.conversation || msg.message.extendedTextMessage?.text || "";

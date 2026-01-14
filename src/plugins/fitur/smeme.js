@@ -2,31 +2,30 @@ import { downloadMediaMessage } from "@whiskeysockets/baileys"
 import axios from "axios"
 import FormData from "form-data"
 import sharp from "sharp"
+import Sticker, { StickerTypes } from "wa-sticker-formatter"
 
 /* =====================
    CONFIG
 ===================== */
 const STICKER_SIZE = 512
 const WEBP_QUALITY = 80
+const PACK_NAME = "Neura"
+const AUTHOR_NAME = "Neura"
 
 /* =====================
    HELPER
 ===================== */
-
 const getMediaMessage = (msg) => {
-  // gambar langsung
-  if (msg.message?.imageMessage) return msg
+  if (msg.message?.imageMessage || msg.message?.videoMessage) return msg
 
-  // reply gambar
   const quoted = msg.message?.extendedTextMessage?.contextInfo?.quotedMessage
-  if (quoted?.imageMessage) {
+  if (quoted?.imageMessage || quoted?.videoMessage) {
     return { message: quoted }
   }
-
   return null
 }
 
-const parseText = (text) => {
+const parseText = (text = "") => {
   const input = text.replace("!stiker", "").trim()
   const [top = "_", bottom = "_"] = input.split("|")
   return {
@@ -38,14 +37,19 @@ const parseText = (text) => {
 /* =====================
    MAIN
 ===================== */
-
 const Smeme = async (sock, chatId, msg, text) => {
   try {
     const mediaMsg = getMediaMessage(msg)
     if (!mediaMsg) {
       return sock.sendMessage(
         chatId,
-        { text: "reply gambar / berikan caption dengan `!stiker\ncontoh > !stiker / replay jika ingin memberi tulisan !stiker hey | mommey`" },
+        {
+          text:
+            "Reply gambar / video dengan `!stiker`\n" +
+            "Contoh:\n" +
+            "`!stiker Halo | Dunia`\n" +
+            "`Reply video + !stiker`",
+        },
         { quoted: msg }
       )
     }
@@ -53,7 +57,30 @@ const Smeme = async (sock, chatId, msg, text) => {
     const { top, bottom } = parseText(text)
 
     /* =====================
-       DOWNLOAD IMAGE
+       VIDEO → STICKER
+    ===================== */
+    if (mediaMsg.message?.videoMessage) {
+      const vid = await downloadMediaMessage(
+        mediaMsg,
+        "buffer",
+        {},
+        { reuploadRequest: sock.updateMediaMessage }
+      )
+
+      const sticker = await new Sticker(vid, {
+        pack: PACK_NAME,
+        author: AUTHOR_NAME,
+        type: StickerTypes.FULL,
+        quality: 50,
+        animated: true,
+      }).toBuffer()
+
+      await sock.sendMessage(chatId, { sticker }, { quoted: msg })
+      return
+    }
+
+    /* =====================
+       IMAGE → MEME STICKER
     ===================== */
     const buffer = await downloadMediaMessage(
       mediaMsg,
@@ -62,9 +89,7 @@ const Smeme = async (sock, chatId, msg, text) => {
       { reuploadRequest: sock.updateMediaMessage }
     )
 
-    /* =====================
-       UPLOAD KE IMGBB
-    ===================== */
+    /* Upload ke IMGBB */
     const form = new FormData()
     form.append("image", buffer.toString("base64"))
 
@@ -76,23 +101,16 @@ const Smeme = async (sock, chatId, msg, text) => {
 
     const imageUrl = upload.data.data.url
 
-    /* =====================
-       GENERATE MEME
-    ===================== */
+    /* Generate Meme */
     const memeUrl = `https://api.memegen.link/images/custom/${top}/${bottom}.png?background=${encodeURIComponent(
       imageUrl
     )}`
 
-    /* =====================
-       DOWNLOAD MEME IMAGE
-    ===================== */
     const memeImage = await axios.get(memeUrl, {
       responseType: "arraybuffer",
     })
 
-    /* =====================
-       CONVERT TO STICKER (SHARP)
-    ===================== */
+    /* Convert ke WebP Sticker */
     const stickerBuffer = await sharp(memeImage.data)
       .resize(STICKER_SIZE, STICKER_SIZE, {
         fit: "contain",
@@ -101,23 +119,19 @@ const Smeme = async (sock, chatId, msg, text) => {
       .webp({ quality: WEBP_QUALITY })
       .toBuffer()
 
-    /* =====================
-       SEND STICKER
-    ===================== */
     await sock.sendMessage(
       chatId,
       { sticker: stickerBuffer },
       { quoted: msg }
     )
-
   } catch (err) {
     console.error("[SMEME ERROR]", err)
     await sock.sendMessage(
       chatId,
-      { text: "Gagal membuat stiker." + err },
+      { text: "Gagal membuat stiker." },
       { quoted: msg }
     )
   }
 }
 
-export default Smeme
+export default Smeme;
