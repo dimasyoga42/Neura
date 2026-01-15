@@ -58,6 +58,7 @@ export const xsubMenu = {
 - !raid 
 - !setbuff <code> 
 - !afk <any text>
+- !gempa
   `.trim()
 }
 
