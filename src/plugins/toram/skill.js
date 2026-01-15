@@ -55,3 +55,57 @@ ${i + 1}. *${item["Nama Skill"]}*
     sock.sendMessage(chatId, { text: `[ERROR] Terjadi kesalahan sistem: ${err.message}` }, { quoted: msg });
   }
 };
+
+
+
+
+export const listSkill = async (sock, chatId, msg) => {
+  try {
+    // 1. Mengambil hanya kolom "Skill Tree" dari database
+    const { data, error } = await supabase
+      .from("skill")
+      .select('"Skill Tree"');
+
+    if (error) {
+      console.error("Database Error:", error);
+      return sock.sendMessage(
+        chatId,
+        { text: "Terjadi kesalahan saat mengambil data kategori skill." },
+        { quoted: msg }
+      );
+    }
+
+    if (!data || data.length === 0) {
+      return sock.sendMessage(
+        chatId,
+        { text: "Data Skill Tree belum tersedia." },
+        { quoted: msg }
+      );
+    }
+
+    // 2. Eliminasi duplikasi menggunakan Set
+    // Kita mengambil value dari object, memasukkannya ke Set (agar unik), lalu kembalikan ke Array
+    const uniqueTrees = [...new Set(data.map((item) => item["Skill Tree"]))];
+
+    // 3. Mengurutkan secara alfabetis (A-Z) agar terstruktur rapi
+    uniqueTrees.sort();
+
+    // 4. Membangun pesan balasan
+    const listMessage = uniqueTrees
+      .map((tree, index) => `${index + 1}. ${tree}`)
+      .join("\n");
+
+    const finalMessage = `*Daftar Kategori Skill Tree*\n\n${listMessage}\n\n_Gunakan perintah !skill [nama tree] untuk melihat detail._`;
+
+    await sock.sendMessage(chatId, { text: finalMessage }, { quoted: msg });
+
+  } catch (err) {
+    console.error("System Error:", err);
+    sock.sendMessage(
+      chatId,
+      { text: `[ERROR] Terjadi kesalahan sistem: ${err.message}` },
+      { quoted: msg }
+    );
+  }
+};
+

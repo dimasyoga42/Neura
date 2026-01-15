@@ -46,6 +46,7 @@ export const xsubMenu = {
 - !pembolong
 - !padu
 - !listability
+- !listskill
 - !skill
   `.trim(),
   menufun: `
