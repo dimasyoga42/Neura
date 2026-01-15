@@ -23,7 +23,7 @@ export const skill = async (sock, chatId, msg, text) => {
         Range,
         Deskripsi_Indo
       `)
-      .eq("Skill Tree", input)
+      .ilike("SKill Tree", `%${input}%`)
 
     if (error || !data.length) {
       return sock.sendMessage(
