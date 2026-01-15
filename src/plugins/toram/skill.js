@@ -25,6 +25,8 @@ export const skill = async (sock, chatId, msg, text) => {
       `)
       .ilike("SKill Tree", `%${input}%`)
 
+    console.log(data)
+
     if (error || !data.length) {
       return sock.sendMessage(
         chatId,
