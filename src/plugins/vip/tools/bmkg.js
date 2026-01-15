@@ -4,7 +4,7 @@ export const autoGempa = async (sock, chatId, msg) => {
   try {
     const baseURL = "https://static.bmkg.go.id"
     const res = await axios.get("https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json");
-    const data = res.data.infogempa
+    const data = res.data.Infogempa
 
     const messagetxt = `
 *Informasi Gempa Terbaru By BMKG*
