@@ -1,3 +1,16 @@
+export const guide = {
+  padu: `
+*Leveling Padu*
+- 0-30 = revita I - II
+- 31-55 = revita III
+- 56-80 = revita IV
+- 81-105 = revita V
+- 106-135 = revita VI
+- 136-150 = revita VII
+  `.trim(),
+
+}
+
 export const xsubMenu = {
   menuadmin: `
 *Menu Admin By Neura Sama*
@@ -31,6 +44,7 @@ export const xsubMenu = {
 - !join 
 - !leave
 - !pembolong
+- !padu
   `.trim(),
   menufun: `
   *Menu fun By Neura Sama*
