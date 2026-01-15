@@ -27,6 +27,7 @@ import { play, ytmp3 } from "../plugins/vip/downloader/play.js";
 import { pin } from "../plugins/vip/downloader/pinterst.js";
 import { Caklontong, jawab, tebakGambar } from "../plugins/fun/caklontong.js";
 import { autoGempa } from "../plugins/vip/tools/bmkg.js";
+import { skill } from "../plugins/toram/skill.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!menu")) {
     if (isBan(sock, chatId, msg)) return;
@@ -245,6 +246,11 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     sock.sendMessage(chatId, { text: guide.padu }, { quoted: msg })
   }
+  if (text.startsWith("!skill")) {
+    if (isBan(sock, chatId, msg)) return;
+    skill(sock, chatId, msg, text)
+  }
+
 
 
   if (text.startsWith("!listability")) {
