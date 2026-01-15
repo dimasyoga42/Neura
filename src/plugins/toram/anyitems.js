@@ -134,17 +134,33 @@ Levels Studied : ${rg.levels_studied}
 
 export const ability = async (sock, chatId, msg) => {
   try {
-    const { data, error } = await supabase.from("ability").select("name")
-    if (error) return sock.sendMessage(chatId, { text: "gagal mengambil data" }, { quoted: msg });
-    const txt = `
-    *List Ability*
-    ${data.map((item, i) => ` 
-    ${i + 1} . ${item.name}
-    `)}
-    `.trim()
-    sock.sendMessage(chatId, { text: txt }, { quoted: msg })
+    const { data, error } = await supabase
+      .from("ability")
+      .select("name")
+      .order('name', { ascending: true });
+
+    if (error) {
+      console.error("Supabase Error:", error); // Log ke console server untuk debugging
+      return sock.sendMessage(chatId, { text: "Gagal mengambil data dari database." }, { quoted: msg });
+    }
+
+    if (!data || data.length === 0) {
+      return sock.sendMessage(chatId, { text: "Belum ada data ability yang tersimpan." }, { quoted: msg });
+    }
+
+    const formattedList = data
+      .map((item, i) => `${i + 1}. ${item.name}`)
+      .join("\n");
+
+    const txt = `*List Ability Toram*\nTotal: ${data.length} Data\n\n${formattedList}`;
+
+    // Mengirim pesan
+    await sock.sendMessage(chatId, { text: txt }, { quoted: msg });
+
   } catch (err) {
-    sock.sendMessage(chatId, { text: err.message })
+    console.error("System Error:", err);
+    // Pesan error ke user sebaiknya generik, detail error cukup di console server
+    await sock.sendMessage(chatId, { text: "Terjadi kesalahan pada sistem bot." }, { quoted: msg });
   }
 }
 export const searchAbility = async (sock, chatId, msg, text) => {
