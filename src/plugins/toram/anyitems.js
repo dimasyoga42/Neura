@@ -138,8 +138,8 @@ export const ability = async (sock, chatId, msg) => {
     if (error) return sock.sendMessage(chatId, { text: "gagal mengambil data" }, { quoted: msg });
     const txt = `
     *List Ability*
-    ${data.map((item, i) => `
-    ${i + 1}. ${item.name}
+    ${data.map((item, i) => ` 
+    ${i + 1} . ${item.name}
     `)}
     `.trim()
     sock.sendMessage(chatId, { text: txt }, { quoted: msg })
