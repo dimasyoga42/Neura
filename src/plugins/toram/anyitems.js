@@ -132,7 +132,22 @@ Levels Studied : ${rg.levels_studied}
 };
 
 
+export const ability = async (sock, chatId, msg) => {
+  try {
+    const { data, error } = await supabase.from("ability").select("name")
+    if (error) return sock.sendMessage(chatId, { text: "gagal mengambil data" }, { quoted: msg });
+    data.map((item, index) => {
+      const msgtxt = `
+      *list ability*
+      ${index + 1}. ${item.name}
+      `.trim()
 
+      sock.sendMessage(chatId, { text: msgtxt }, { quoted: msg })
+    })
+  } catch (err) {
+    sock.sendMessage(chatId, { text: err.message })
+  }
+}
 export const searchAbility = async (sock, chatId, msg, text) => {
   try {
     const nama = text.replace("!ability", "").trim();

@@ -16,7 +16,7 @@ import { getNews, setNews } from "../plugins/sosial/news.js";
 import { qc } from "../plugins/sosial/qc.js";
 import { getRules, setrules } from "../plugins/sosial/rules.js";
 import spamAdv from "../plugins/toram/adv.js";
-import { searchAbility, searchApp, searchItem, searchRegist, searchXtall } from "../plugins/toram/anyitems.js";
+import { ability, searchAbility, searchApp, searchItem, searchRegist, searchXtall } from "../plugins/toram/anyitems.js";
 import Bossdef from "../plugins/toram/bos.js";
 import { dyePredictor } from "../plugins/toram/dye.js";
 import { leveling } from "../plugins/toram/lv.js";
@@ -246,6 +246,11 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     sock.sendMessage(chatId, { text: guide.padu }, { quoted: msg })
   }
 
+
+  if (text.startsWith("!listability")) {
+    if (isBan(sock, chatId, msg)) return;
+    ability(sock, chatId, msg)
+  }
 
 
 

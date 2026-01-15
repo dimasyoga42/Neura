@@ -45,6 +45,7 @@ export const xsubMenu = {
 - !leave
 - !pembolong
 - !padu
+- !listability
   `.trim(),
   menufun: `
   *Menu fun By Neura Sama*
