@@ -136,14 +136,13 @@ export const ability = async (sock, chatId, msg) => {
   try {
     const { data, error } = await supabase.from("ability").select("name")
     if (error) return sock.sendMessage(chatId, { text: "gagal mengambil data" }, { quoted: msg });
-    data.map((item, index) => {
-      const msgtxt = `
-      *list ability*
-      ${index + 1}. ${item.name}
-      `.trim()
-
-      sock.sendMessage(chatId, { text: msgtxt }, { quoted: msg })
-    })
+    const txt = `
+    *List Ability*
+    ${data.map((item, i) => `
+    ${i + 1}. ${item.name}
+    `)}
+    `.trim()
+    sock.sendMessage(chatId, { text: txt }, { quoted: msg })
   } catch (err) {
     sock.sendMessage(chatId, { text: err.message })
   }
