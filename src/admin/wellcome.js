@@ -36,61 +36,62 @@ export const SetWelcome = async (sock, chatId, msg, text) => {
   }
 }
 
+
+
+const getDisplayName = async (sock, jid) => {
+  try {
+    const businessProfile = await sock.getBusinessProfile(jid);
+    if (businessProfile && businessProfile.description) {
+    }
+    return jid.split('@')[0]
+  } catch {
+    return jid.split('@')[0]
+  }
+}
+
 export const HandleWelcome = async (sock, update) => {
   try {
     const { id: chatId, participants, action } = update
 
-    // Hanya proses jika ada yang masuk (add)
     if (action !== 'add') return
 
-    // 1. Cek Database
     const { data, error } = await supabase
       .from("wellcome")
       .select("message")
       .eq("id_grub", chatId)
       .maybeSingle()
 
-    // Jika database error atau tidak ada data welcome, berhenti.
     if (error || !data || !data.message) return;
 
     const welcomeText = data.message;
-
-    // 2. Ambil Informasi Grup
     const groupMetadata = await sock.groupMetadata(chatId)
     const groupName = groupMetadata.subject
     const memberCount = groupMetadata.participants.length
 
-    // 3. Loop Member yang Masuk
     for (const participant of participants) {
       const jid = typeof participant === 'string' ? participant : participant.id
-      const username = jid.split('@')[0]
-      const nama = jid.pushName
-      // --- PERBAIKAN LOGIKA FOTO PROFIL ---
-      // Kita ambil URL foto profil dari server WhatsApp.
-      // Hasilnya SUDAH BERUPA LINK (String URL).
+
+      let username = jid.split('@')[0];
+
+
       let ppUrl
       try {
         ppUrl = await sock.profilePictureUrl(jid, 'image')
       } catch {
-        // Jika user mem-private foto profil, gunakan link default
         ppUrl = 'https://telegra.ph/file/24fa902ead26340f3df2c.png'
       }
 
-      // 4. Susun Link API Canvas
-      // Gunakan encodeURIComponent agar URL tidak rusak oleh karakter aneh
       const bg = "https://api.deline.web.id/Eu3BVf3K4x.jpg"
-      const apiUrl = `https://api.deline.web.id/canvas/welcome?username=${encodeURIComponent(username || nama)}&guildName=${encodeURIComponent(groupName)}&memberCount=${memberCount}&avatar=${encodeURIComponent(ppUrl)}&background=${encodeURIComponent(bg)}&quality=99`
+      const apiUrl = `https://api.deline.web.id/canvas/welcome?username=${encodeURIComponent(username)}&guildName=${encodeURIComponent(groupName)}&memberCount=${memberCount}&avatar=${encodeURIComponent(ppUrl)}&background=${encodeURIComponent(bg)}&quality=99`
 
-      // 5. Format Pesan Teks
       const caption = welcomeText
-        .replace(/@user/g, `@${username}`)
+        .replace(/@user/g, `@${jid.split('@')[0]}`)
         .replace(/@group/g, groupName)
         .replace(/@desc/g, groupMetadata.desc?.toString() || "")
         .replace(/@count/g, memberCount)
 
-      // 6. Kirim Pesan
       await sock.sendMessage(chatId, {
-        image: { url: apiUrl }, // Link API langsung dimasukkan ke sini
+        image: { url: apiUrl },
         caption: caption,
         mentions: [jid]
       })
