@@ -64,7 +64,7 @@ export const HandleWelcome = async (sock, update) => {
     for (const participant of participants) {
       const jid = typeof participant === 'string' ? participant : participant.id
       const username = jid.split('@')[0]
-
+      const nama = jid.pushName
       // --- PERBAIKAN LOGIKA FOTO PROFIL ---
       // Kita ambil URL foto profil dari server WhatsApp.
       // Hasilnya SUDAH BERUPA LINK (String URL).
@@ -79,7 +79,7 @@ export const HandleWelcome = async (sock, update) => {
       // 4. Susun Link API Canvas
       // Gunakan encodeURIComponent agar URL tidak rusak oleh karakter aneh
       const bg = "https://api.deline.web.id/Eu3BVf3K4x.jpg"
-      const apiUrl = `https://api.deline.web.id/canvas/welcome?username=${encodeURIComponent(username)}&guildName=${encodeURIComponent(groupName)}&memberCount=${memberCount}&avatar=${encodeURIComponent(ppUrl)}&background=${encodeURIComponent(bg)}&quality=99`
+      const apiUrl = `https://api.deline.web.id/canvas/welcome?username=${encodeURIComponent(username || nama)}&guildName=${encodeURIComponent(groupName)}&memberCount=${memberCount}&avatar=${encodeURIComponent(ppUrl)}&background=${encodeURIComponent(bg)}&quality=99`
 
       // 5. Format Pesan Teks
       const caption = welcomeText
