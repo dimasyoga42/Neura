@@ -28,18 +28,15 @@ export const SetWelcome = async (sock, chatId, msg, text) => {
   }
 }
 
-// ===== FUNGSI HELPER UNTUK MENDAPATKAN NAMA =====
 const getDisplayName = async (sock, jid, groupId) => {
   try {
     let displayName = jid.split('@')[0]; // Default: nomor HP
 
-    // METODE 1: Cek dari Group Metadata (Paling Akurat)
     try {
       const groupMetadata = await sock.groupMetadata(groupId);
       const participant = groupMetadata.participants.find(p => p.id === jid);
 
       if (participant) {
-        // Coba ambil notify name dari participant
         if (participant.notify) {
           return participant.notify;
         }
@@ -48,17 +45,9 @@ const getDisplayName = async (sock, jid, groupId) => {
       console.log('Gagal ambil dari group metadata:', e.message);
     }
 
-    // METODE 2: Cek Store Contacts (jika menggunakan makeInMemoryStore)
-    // Uncomment jika Anda menggunakan store
-    if (sock.store && sock.store.contacts && sock.store.contacts[jid]) {
-      const contact = sock.store.contacts[jid];
-      if (contact.notify) return contact.notify;
-      if (contact.name) return contact.name;
-      if (contact.verifiedName) return contact.verifiedName;
-    }
 
 
-    // METODE 3: Fetch Contact Info (Kadang berhasil)
+
     try {
       const [contactInfo] = await sock.onWhatsApp(jid);
       if (contactInfo && contactInfo.notify) {
@@ -68,25 +57,18 @@ const getDisplayName = async (sock, jid, groupId) => {
       console.log('Gagal ambil dari onWhatsApp:', e.message);
     }
 
-    // METODE 4: Coba Business Profile
     try {
       const businessProfile = await sock.getBusinessProfile(jid);
       if (businessProfile && businessProfile.description) {
-        // Business profile biasanya tidak return nama langsung
-        // Tapi kita coba cek jika ada
       }
     } catch (e) {
-      // Ignore, bukan akun bisnis
     }
 
-    // METODE 5: Manual Contact Query (Baileys versi terbaru)
     try {
       const contacts = await sock.fetchStatus(jid);
       if (contacts && contacts.status) {
-        // Status kadang mengandung nama
       }
     } catch (e) {
-      // Ignore
     }
 
     return displayName; // Return nomor jika semua metode gagal
@@ -173,23 +155,4 @@ export const HandleWelcome = async (sock, update) => {
   }
 }
 
-// ===== ALTERNATIF: JIKA MENGGUNAKAN STORE =====
-// Tambahkan ini di file utama bot Anda saat inisialisasi:
-/*
 
-const store = makeInMemoryStore({})
-store.readFromFile('./baileys_store.json')
-
-setInterval(() => {
-  store.writeToFile('./baileys_store.json')
-}, 10_000)
-
-const sock = makeWASocket({
-  auth: state,
-  // ... konfigurasi lain
-})
-
-store.bind(sock.ev)
-
-// Lalu di fungsi getDisplayName, uncomment bagian store
-*/

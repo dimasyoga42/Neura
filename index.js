@@ -2,7 +2,6 @@ import makeWASocket, {
   fetchLatestBaileysVersion,
   useMultiFileAuthState,
   DisconnectReason,
-  makeInMemoryStore
 } from "@whiskeysockets/baileys";
 import qrcode from "qrcode-terminal";
 import { Admincontrols } from "./src/admin/controlAdmin.js";
@@ -18,16 +17,12 @@ dotenv.config();
 const start = async () => {
   const { state, saveCreds } = await useMultiFileAuthState("./auth_save");
   const { version } = await fetchLatestBaileysVersion();
-  const store = makeInMemoryStore({})
-  store.readFromFile('./baileys_store.json')
-  setInterval(() => { store.writeToFile('./baileys_store.json') }, 10_000)
   const sock = makeWASocket({
     version,
     auth: state,
     printQRInTerminal: false
   });
 
-  store.bind(sock.ev)
   sock.ev.on("creds.update", saveCreds);
 
   sock.ev.on("connection.update", ({ connection, lastDisconnect, qr }) => {
