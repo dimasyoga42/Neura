@@ -33,11 +33,9 @@ export const waifu = async (sock, chatId, msg) => {
 
 export const husbu = async (sock, chatId, msg) => {
   try {
-    const { data, error } = await supabase.from("hubsu").select("link_Image")
-    if (error) return sock.sendMessage(chatId, { text: "gagal mengambil data dari database" }, { quoted: msg });
-    const query = Math.floor(Math.random() * data.length);
-    const imgLink = data[query]
-    sock.sendMessage(chatId, { image: { url: `${imgLink.link_Image}` }, caption: "nih husbu buat kamu" }, { quoted: msg })
+    const data = await axios.get("https://nekos.best/api/v2/husbando?amount=1")
+    const imgLink = data.data.results
+    sock.sendMessage(chatId, { image: { url: `${imgLink.url}` }, caption: "nih husbu buat kamu" }, { quoted: msg })
   } catch (error) {
     sock.sendMessage(chatId, { text: `[husbu error] ${error.message}` }, { quoted: msg })
   }
