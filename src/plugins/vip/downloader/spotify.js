@@ -12,7 +12,7 @@ export const Spotifysearch = async (sock, chatId, msg, text) => {
     *Spotify Search*
     judul lagu: ${data.result.metadata.title}\nartis: ${data.result.metadata.artist}\ndurasi: ${data.result.metadata.duration}
     `.trim()
-    console.log(data.dlink)
+    console.log(data.result.dlink)
     sock.sendMessage(chatId, { image: { url: `${data.result.metadata.cover}` }, caption: messagetxt }, { quoted: msg });
     sock.sendMessage(chatId, { audio: { url: `${data.result.dlink}` }, mimetype: 'audio/mp3' }, { quoted: msg });
 
