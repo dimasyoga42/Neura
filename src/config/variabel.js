@@ -93,10 +93,74 @@ komunitas: https://whatsapp.com/channel/0029VbAmhBF7z4kjOQcoVV0A
 *info*
 - !report <any req / bug report>
 - !donet 
+
+*Sub Menu*
 - !menuadmin 
 - !menutoram 
 - !menufun 
 - !menutools
+
+*Menu Admin*
+- !kick 
+- !open 
+- !close 
+- !setnews 
+- !setrules 
+- !clear 
+- !hidetag 
+- !creatraid
+- !setwc 
+
+*Menu Tools*
+- !stiker 
+- !play <title music>
+- !ytmp3 <link yt>
+- !pinterest <any txt>
+- !qc <txt>
+
+*Menu Fun*
+- !caklontong 
+- !tebakgambar 
+- !waifu
+- !husbu
+- !cek
+- !j <answer>
+
+*Menu Grub*
+- !profil 
+- !mybio 
+- !setdesc <text>
+- !setpp 
+- !rules 
+- !raid 
+- !setbuff <code> 
+- !afk <any text>
+- !gempa
+
+*Menu Toram*
+- !xtall <nama xtall>
+- !item <nama item>
+- !appview <nama app>
+- !benner 
+- !lv <level>
+- !buff 
+- !ability <nama ability>
+- !mt 
+- !regist <nama regist>
+- !bos <nama bos>
+- !filarm 
+- !sheetfill
+- !upbag 
+- !listLeveling
+- !raid 
+- !join 
+- !leave
+- !pembolong
+- !padu
+- !listability
+- !listskill
+- !skill
+
 > banyak banyk litrasi dalam membaca menu!!
 `.trim();
 
