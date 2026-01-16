@@ -4,7 +4,7 @@ import * as cheerio from "cheerio";
 export const Banner = async (sock, msg, chatId) => {
   try {
     const BASE = "https://id.toram.jp";
-    const LIST_URL = `${BASE}/?type_code=all#contentArea`;
+    const LIST_URL = `${BASE}/?type_code=event#contentArea`;
 
     const fixUrl = (url) => {
       if (!url) return null;
@@ -12,89 +12,77 @@ export const Banner = async (sock, msg, chatId) => {
       return BASE + url;
     };
 
-    /* ================= 1. FETCH HALAMAN LIST ================= */
     const res = await fetch(LIST_URL);
     const html = await res.text();
     const $ = cheerio.load(html);
 
-    // ambil href PERTAMA di list news
-    const firstLink = $(".common_list li a").first();
-    if (!firstLink.length) {
-      throw new Error("Href pertama tidak ditemukan");
+    let targetHref = null;
+    let targetTitle = "";
+
+    $(".common_list li a").each((_, el) => {
+      const titleText = $(el).find(".news_title").text().trim();
+      const category = $(el).find(".news_category").text().trim(); // Opsional: cek kategori
+
+      if (
+        !targetHref &&
+        (titleText.match(/avatar/i) || titleText.match(/ava/i) || titleText.match(/peti harta/i))
+      ) {
+        targetHref = $(el).attr("href");
+        targetTitle = titleText;
+      }
+    });
+
+    if (!targetHref) {
+      return sock.sendMessage(
+        String(chatId),
+        { text: "Tidak ditemukan berita terbaru mengenai Banner/Avatar saat ini." },
+        { quoted: msg }
+      );
     }
 
-    const href = firstLink.attr("href");
-    const detailUrl = fixUrl(href);
+    const detailUrl = fixUrl(targetHref);
+    console.log(`[Toram Banner] Mengambil data dari: ${targetTitle}`);
 
-    if (!detailUrl) {
-      throw new Error("Detail URL invalid");
-    }
-
-    /* ================= 2. FETCH HALAMAN DETAIL ================= */
     const detailRes = await fetch(detailUrl);
     const detailHtml = await detailRes.text();
     const $detail = cheerio.load(detailHtml);
 
-    /* ================= 3. AMBIL JUDUL & TANGGAL ================= */
-    const title = $detail(".news_title").first().text().trim();
     const date = $detail(".news_date time").first().text().trim();
+    const title = $detail("h1").first().text().trim() || targetTitle;
 
-    /* ================= 4. AMBIL LINK KAMPANYE ================= */
-    const campaigns = [];
-    $detail("#top")
-      .nextAll("a")
-      .each((_, el) => {
-        const text = $detail(el).text().trim();
-        if (text && !text.includes("Back to Top")) {
-          campaigns.push(text);
-        }
-      });
-
-    /* ================= 5. AMBIL GAMBAR BANNER ================= */
     const images = [];
-    $detail("center img").each((i, el) => {
+    $detail(".news_content img").each((_, el) => {
       const src = $detail(el).attr("src");
-      if (
-        src &&
-        (src.includes("toram_orbitem") || src.includes("toram_avatar"))
-      ) {
+      if (src && !src.includes("icon") && !src.includes("arrow")) {
         images.push(fixUrl(src));
       }
     });
 
-    /* ================= 6. FORMAT PESAN ================= */
-    let text = `${date}\n`;
-    text += `Kampanye Aktif:\n`;
+    if (images.length === 0) {
+      throw new Error("Gambar banner tidak ditemukan dalam postingan tersebut.");
+    }
 
-    campaigns.forEach((c, i) => {
-      text += `${i + 1}. ${c}\n`;
-    });
+    const mainBanner = images[0];
 
-    text += `\n> Detail: ${detailUrl}`;
+    const messageText = `*TORAM ONLINE AVATAR BANNER*\n\n` +
+      ` *Judul:* ${title}\n` +
+      `*Tanggal:* ${date}\n` +
+      `*Link:* ${detailUrl}`;
 
-    /* ================= 7. KIRIM PESAN ================= */
     await sock.sendMessage(
       String(chatId),
-      { text },
+      {
+        image: { url: mainBanner },
+        caption: messageText
+      },
       msg ? { quoted: msg } : {}
     );
-
-    /* ================= 8. KIRIM GAMBAR ================= */
-    for (let i = 0; i < images.length; i++) {
-      await sock.sendMessage(
-        String(chatId),
-        {
-          image: { url: images[i] },
-        },
-        msg ? { quoted: msg } : {}
-      );
-    }
 
   } catch (err) {
     console.error("[Toram Banner Error]", err);
     await sock.sendMessage(
       String(chatId),
-      { text: `Gagal ambil banner Toram.\n\n${err.message}` },
+      { text: `Gagal mengambil banner Toram.\n\nError: ${err.message}` },
       msg ? { quoted: msg } : {}
     );
   }
