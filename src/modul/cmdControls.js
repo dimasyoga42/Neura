@@ -29,6 +29,7 @@ import { Caklontong, jawab, tebakGambar } from "../plugins/fun/caklontong.js";
 import { autoGempa } from "../plugins/vip/tools/bmkg.js";
 import { listSkill, skill } from "../plugins/toram/skill.js";
 import { Spotifysearch } from "../plugins/vip/downloader/spotify.js";
+import { bosboost } from "../plugins/toram/boost.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!menu")) {
     if (isBan(sock, chatId, msg)) return;
@@ -266,6 +267,11 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!listability")) {
     if (isBan(sock, chatId, msg)) return;
     ability(sock, chatId, msg)
+  }
+
+  if (text.startsWith("!boost")) {
+    if (isBan(sock, chatId, msg)) return;
+    bosboost(sock, chatId, msg)
   }
 
   if (text.startsWith("!spotify")) {

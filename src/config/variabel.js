@@ -138,15 +138,18 @@ komunitas: https://whatsapp.com/channel/0029VbAmhBF7z4kjOQcoVV0A
 - !afk <any text>
 - !gempa
 
+*Info Toram*
+- !benner 
+- !boost
+- !dye
+
 *Menu Toram*
 - !xtall <nama xtall>
 - !item <nama item>
 - !appview <nama app>
-- !benner 
 - !lv <level>
 - !buff 
 - !ability <nama ability>
-- !mt 
 - !regist <nama regist>
 - !bos <nama bos>
 - !filarm 
