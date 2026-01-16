@@ -108,7 +108,7 @@ komunitas: https://whatsapp.com/channel/0029VbAmhBF7z4kjOQcoVV0A
 - !setrules 
 - !clear 
 - !hidetag 
-- !creatraid
+- !createraid 
 - !setwc 
 
 *Menu Tools*
@@ -162,7 +162,7 @@ komunitas: https://whatsapp.com/channel/0029VbAmhBF7z4kjOQcoVV0A
 - !listskill
 - !skill
 
-> banyak banyk litrasi dalam membaca menu!!
+> banyak banyk literasi dalam membaca menu!!
 `.trim();
 
 export const buffMessage = `

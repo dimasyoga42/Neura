@@ -59,7 +59,7 @@ export const Admincontrols = async (sock, chatId, msg, text) => {
       SetWelcome(sock, chatId, msg, text);
     }
 
-    if (text.startsWith("!creatraid")) {
+    if (text.startsWith("!createraid")) {
       if (isBan(sock, chatId, msg)) return;
       const arg = text.split(" ");
       const element = arg[1];
