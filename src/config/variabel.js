@@ -54,6 +54,7 @@ export const xsubMenu = {
   - !caklontong 
   - !tebakgambar 
   - !waifu
+  - !husbu
   - !cek
   - !j <answer>
   `.trim(),

@@ -9,7 +9,7 @@ import { getAllReport, report } from "../plugins/fitur/report.js";
 import Smeme from "../plugins/fitur/smeme.js";
 import sticker from "../plugins/fitur/stiker.js";
 import { cek } from "../plugins/fun/cek.js";
-import { waifu } from "../plugins/fun/waifu.js";
+import { husbu, waifu } from "../plugins/fun/waifu.js";
 import { setAfk } from "../plugins/sosial/afk.js";
 import { cekProfile, myBio, myProfile, setDesc, setidBuff, setPP } from "../plugins/sosial/bio.js";
 import { getNews, setNews } from "../plugins/sosial/news.js";
@@ -256,7 +256,10 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     listSkill(sock, chatId, msg)
   }
 
-
+  if (text.startsWith("!husbu")) {
+    if (isBan(sock, chatId, msg)) return;
+    husbu(sock, chatId, msg)
+  }
 
 
   if (text.startsWith("!listability")) {
