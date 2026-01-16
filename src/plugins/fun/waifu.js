@@ -35,6 +35,7 @@ export const husbu = async (sock, chatId, msg) => {
   try {
     const data = await axios.get("https://nekos.best/api/v2/husbando?amount=1")
     const imgLink = data.data.results
+    console.log(imgLink)
     sock.sendMessage(chatId, { image: { url: `${imgLink.url}` }, caption: "nih husbu buat kamu" }, { quoted: msg })
   } catch (error) {
     sock.sendMessage(chatId, { text: `[husbu error] ${error.message}` }, { quoted: msg })
