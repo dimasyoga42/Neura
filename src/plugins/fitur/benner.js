@@ -62,21 +62,22 @@ export const Banner = async (sock, msg, chatId) => {
     const detailHtml = await detailRes.text();
     const $detail = cheerio.load(detailHtml);
 
-    let bannerUrl = null;
+    const banners = [];
 
     $detail("center img").each((i, el) => {
-      if (bannerUrl) return;
       const src = $detail(el).attr("src");
       if (src && /toram_avatar|avatar.*\d{6}|kotobuki|banner|chest/i.test(src)) {
         if (!/icon|nav_|footer|logo(?!.*avatar)/i.test(src)) {
-          bannerUrl = fixUrl(src);
+          const fullUrl = fixUrl(src);
+          if (!banners.includes(fullUrl)) {
+            banners.push(fullUrl);
+          }
         }
       }
     });
 
-    if (!bannerUrl) {
+    if (banners.length === 0) {
       $detail(".news_content img").each((i, el) => {
-        if (bannerUrl) return;
         const src = $detail(el).attr("src");
         const width = $detail(el).attr("width");
         const height = $detail(el).attr("height");
@@ -87,22 +88,30 @@ export const Banner = async (sock, msg, chatId) => {
           (height && parseInt(height) > 200)
         )) {
           if (!/icon|nav_|footer|logo(?!.*avatar)/i.test(src)) {
-            bannerUrl = fixUrl(src);
+            const fullUrl = fixUrl(src);
+            if (!banners.includes(fullUrl)) {
+              banners.push(fullUrl);
+            }
           }
         }
       });
     }
 
-    if (!bannerUrl) {
-      const firstBigImg = $detail(".news_content img").filter((i, el) => {
+    if (banners.length === 0) {
+      $detail(".news_content img").each((i, el) => {
         const src = $detail(el).attr("src");
-        return src && /\.(png|jpg|jpeg)$/i.test(src) && !/icon|nav_|footer/i.test(src);
-      }).first().attr("src");
-
-      if (firstBigImg) bannerUrl = fixUrl(firstBigImg);
+        if (src && /\.(png|jpg|jpeg)$/i.test(src) && !/icon|nav_|footer/i.test(src)) {
+          const fullUrl = fixUrl(src);
+          if (!banners.includes(fullUrl)) {
+            banners.push(fullUrl);
+          }
+        }
+      });
     }
 
-    const finalImage = bannerUrl || "https://toram-jp.akamaized.net/id/img/common/logo.png";
+    if (banners.length === 0) {
+      banners.push("https://toram-jp.akamaized.net/id/img/common/logo.png");
+    }
 
     let preview = "";
     const firstParagraph = $detail(".news_content p").first().text().trim();
@@ -110,8 +119,8 @@ export const Banner = async (sock, msg, chatId) => {
       preview = firstParagraph.substring(0, 150) + (firstParagraph.length > 150 ? "..." : "");
     }
 
-    let caption = `TORAM ONLINE - UPDATE\n\n`;
-    caption += `${targetTitle}\n\n`;
+    let caption = `TORAM ONLINE - UPDATE\n`;
+    caption += `${targetTitle}\n`;
     caption += `Tanggal: ${targetDate}\n`;
 
     if (preview) {
@@ -120,18 +129,20 @@ export const Banner = async (sock, msg, chatId) => {
 
     caption += `\nLink: ${detailUrl}`;
 
-    await sock.sendMessage(
-      String(chatId),
-      {
-        image: { url: finalImage },
-        caption: caption
-      },
-      msg ? { quoted: msg } : {}
-    );
+    for (let i = 0; i < banners.length; i++) {
+      await sock.sendMessage(
+        String(chatId),
+        {
+          image: { url: banners[i] },
+          caption: i === 0 ? caption : `Banner ${i + 1}/${banners.length}`
+        },
+        msg ? { quoted: msg } : {}
+      );
+    }
 
   } catch (err) {
-    let errorMsg = "TORAM BANNER - ERROR\n\n";
-    errorMsg += `Terjadi kesalahan: ${err.message}\n\n`;
+    let errorMsg = "TORAM BANNER - ERROR\n";
+    errorMsg += `Terjadi kesalahan: ${err.message}\n`;
     errorMsg += `Solusi:\n`;
     errorMsg += `- Cek koneksi internet\n`;
     errorMsg += `- Website mungkin maintenance\n`;
