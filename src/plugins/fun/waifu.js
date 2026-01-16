@@ -31,7 +31,6 @@ export const waifu = async (sock, chatId, msg) => {
   }
 };
 
-import axios from 'axios'; // Pastikan library ini diimpor
 
 export const husbu = async (sock, chatId, msg) => {
   try {
