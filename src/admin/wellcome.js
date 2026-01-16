@@ -1,3 +1,4 @@
+import { generateWelcomeImage } from "../config/imgaetext.js"
 import { supabase } from "../model/supabase.js"
 
 // Fungsi SetWelcome (Tidak berubah)
@@ -127,9 +128,7 @@ export const HandleWelcome = async (sock, update) => {
         ppUrl = 'https://telegra.ph/file/24fa902ead26340f3df2c.png'
       }
 
-      // 4. Susun URL Canvas API
-      const bg = "https://api.deline.web.id/Eu3BVf3K4x.jpg"
-      const apiUrl = `https://api.deline.web.id/canvas/welcome?username=${encodeURIComponent(username)}&guildName=${encodeURIComponent(groupName)}&memberCount=${memberCount}&avatar=${encodeURIComponent(ppUrl)}&background=${encodeURIComponent(bg)}&quality=99`
+      const apiUrl = generateWelcomeImage(ppUrl, groupName, memberCount)
 
       // 5. Format Caption dengan Replacements
       const caption = welcomeText
