@@ -9,6 +9,7 @@ const formatStatList = (stat) => {
 };
 
 
+
 export const searchXtall = async (sock, chatId, msg, text) => {
   try {
     const nama = text.replace("!xtall", "").trim();
@@ -24,8 +25,7 @@ export const searchXtall = async (sock, chatId, msg, text) => {
     const { data, error } = await supabase
       .from("xtall")
       .select("name, type, upgrade, stat")
-      .ilike("name", `%${nama}%`)
-      .limit(1);
+      .ilike("name", `%${nama}%`); // ❌ hapus limit(1)
 
     if (error) {
       console.log(error);
@@ -44,17 +44,18 @@ export const searchXtall = async (sock, chatId, msg, text) => {
       );
     }
 
-    const xtall = data[0];
-
     const messageData = `
-*SEARCH XTALL*
-Nama    : ${xtall.name}
+*SEARCH XTALL (${data.length})*
+
+${data.map((xtall, i) => `
+${xtall.name}
 Type    : ${xtall.type}
 Upgrade : ${xtall.upgrade}
 Stat    : ${xtall.stat}
+`).join("")}
 `.trim();
 
-    sock.sendMessage(
+    await sock.sendMessage(
       chatId,
       { text: messageData },
       { quoted: msg }
@@ -62,13 +63,14 @@ Stat    : ${xtall.stat}
 
   } catch (err) {
     console.log(err);
-    sock.sendMessage(
+    await sock.sendMessage(
       chatId,
       { text: "Terjadi kesalahan" },
       { quoted: msg }
     );
   }
 };
+
 
 
 export const searchRegist = async (sock, chatId, msg, text) => {
