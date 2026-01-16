@@ -4,49 +4,104 @@ import * as cheerio from "cheerio";
 const BASE = "https://id.toram.jp";
 
 async function scrapeBoostBoss() {
-  const { data: news } = await axios.get(`${BASE}/information/`);
-  const $ = cheerio.load(news);
+  try {
+    const { data: news } = await axios.get(`${BASE}/information/`);
+    const $ = cheerio.load(news);
 
-  const boostLink = $("a[href*='information/detail']")
-    .map((i, el) => BASE + $(el).attr("href"))
-    .get()
-    .find(h => h.toLowerCase().includes("boost"));
+    let boostLink = null;
 
-  if (!boostLink) return [];
+    $("a[href*='information/detail']").each((i, el) => {
+      const text = $(el).text().toLowerCase();
+      const href = $(el).attr("href");
 
-  const { data } = await axios.get(boostLink);
-  const $$ = cheerio.load(data);
+      if (text.includes("boost") && text.includes("akhir pekan")) {
+        boostLink = href.startsWith("http") ? href : BASE + href;
+        return false; // break loop
+      }
+    });
 
-  const bosses = [];
-
-  $$("div.subtitle").each((i, el) => {
-    const name = $$(el).text().trim();
-    const img = $$(el).next("br").next("div").find("img").attr("src");
-
-    if (name && img) {
-      bosses.push({
-        name,
-        image: img.startsWith("http") ? img : BASE + img
-      });
+    if (!boostLink) {
+      console.log("Tidak ada event Boost Akhir Pekan saat ini");
+      return [];
     }
-  });
 
-  return bosses;
+    const { data } = await axios.get(boostLink);
+    const $$ = cheerio.load(data);
+
+    const bosses = [];
+
+    $$("div.subtitle").each((i, el) => {
+      const rawText = $$(el).text().trim();
+
+      if (!rawText.startsWith("Lv")) return;
+
+      const match = rawText.match(/^(Lv\d+)\s+([^(]+)/);
+      if (!match) return;
+
+      const level = match[1];
+      const bossName = match[2].trim();
+      const location = rawText.match(/\(([^)]+)\)/)?.[1] || "";
+
+      let img = null;
+      let nextEl = $$(el).next();
+
+      for (let j = 0; j < 5; j++) {
+        if (nextEl.length === 0) break;
+
+        const foundImg = nextEl.find("img").first();
+        if (foundImg.length > 0) {
+          img = foundImg.attr("src");
+          break;
+        }
+        nextEl = nextEl.next();
+      }
+
+      if (img) {
+        const imageUrl = img.startsWith("http")
+          ? img
+          : img.startsWith("/")
+            ? BASE + img
+            : BASE + "/" + img;
+
+        bosses.push({
+          level,
+          name: bossName,
+          location,
+          fullName: `${level} ${bossName}${location ? ` (${location})` : ""}`,
+          image: imageUrl
+        });
+      }
+    });
+
+    return bosses;
+
+  } catch (error) {
+    console.error("Error scraping boost boss:", error.message);
+    throw error;
+  }
 }
 
 export const bosboost = async (sock, chatId, msg) => {
   try {
-    const data = await scrapeBoostBoss();
-    if (!data.length) return sock.sendMessage(chatId, { text: "Boost boss tidak ditemukan." });
+    const bosses = await scrapeBoostBoss();
 
-    for (const e of data) {
-      await sock.sendMessage(chatId, {
-        image: { url: e.image },
-        caption: e.name
+    if (!bosses.length) {
+      return sock.sendMessage(chatId, {
+        text: "Tidak ada event Boost Akhir Pekan yang aktif saat ini."
       });
     }
+
+    for (const boss of bosses) {
+      await sock.sendMessage(chatId, {
+        image: { url: boss.image },
+        caption: boss.fullName
+      });
+    }
+
   } catch (err) {
-    console.error(err);
-    sock.sendMessage(chatId, { text: "Gagal ambil data boost boss." });
+    console.error("Error in bosboost:", err);
+    await sock.sendMessage(chatId, {
+      text: `Gagal mengambil data boost boss.\nError: ${err.message}`
+    });
   }
 };
