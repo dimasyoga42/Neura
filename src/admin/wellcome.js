@@ -24,7 +24,7 @@ export const SetWelcome = async (sock, chatId, msg, text) => {
       throw new Error("Gagal menyimpan ke database");
     }
 
-    await sock.sendMessage(chatId, { text: "✅ Welcome message berhasil disimpan ke database!" }, { quoted: msg })
+    await sock.sendMessage(chatId, { text: "Welcome message berhasil disimpan ke database!" }, { quoted: msg })
 
   } catch (err) {
     console.error("[SETWELCOME]", err)
