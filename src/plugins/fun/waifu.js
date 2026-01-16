@@ -31,13 +31,29 @@ export const waifu = async (sock, chatId, msg) => {
   }
 };
 
+import axios from 'axios'; // Pastikan library ini diimpor
+
 export const husbu = async (sock, chatId, msg) => {
   try {
-    const data = await axios.get("https://nekos.best/api/v2/husbando?amount=1")
-    const imgLink = data.data.results
-    console.log(imgLink)
-    sock.sendMessage(chatId, { image: { url: `${imgLink.url}` }, caption: "nih husbu buat kamu" }, { quoted: msg })
+    const response = await axios.get("https://nekos.best/api/v2/husbando?amount=1");
+
+    const results = response.data.results;
+
+    if (results && results.length > 0) {
+      const targetImage = results[0]; // Mengambil indeks ke-0
+
+      console.log("Data Gambar:", targetImage); // Debugging
+
+      await sock.sendMessage(chatId, {
+        image: { url: targetImage.url }, // Mengakses properti .url dari objek
+        caption: "Nih husbu buat kamu"
+      }, { quoted: msg });
+    } else {
+      throw new Error("API tidak memberikan hasil data gambar.");
+    }
+
   } catch (error) {
-    sock.sendMessage(chatId, { text: `[husbu error] ${error.message}` }, { quoted: msg })
+    console.error(error);
+    await sock.sendMessage(chatId, { text: `[husbu error] ${error.message}` }, { quoted: msg });
   }
 }
