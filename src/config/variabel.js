@@ -169,6 +169,7 @@ export const buffMessage = `
 Code buff\n> by Neura Bot
 > use !report <nama buff, code buff> untuk menambahkan code buff mu kedalam bot
 *Max HP*
+- 2020096
 - 1010032
 - 1010084
 - 1010356

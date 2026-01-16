@@ -9,8 +9,8 @@ export const Spotifysearch = async (sock, chatId, msg, text) => {
     const data = response.data
     if (!data) return sock.sendMessage(chatId, { text: "lagu tidak ditemukan" }, { quoted: msg })
     const messagetxt = `
-    *Spotify Search*
-    judul lagu: ${data.result.metadata.title}\nartis: ${data.result.metadata.artist}\ndurasi: ${data.result.metadata.duration}
+*Spotify Search*
+judul lagu: ${data.result.metadata.title}\nartis: ${data.result.metadata.artist}\ndurasi: ${data.result.metadata.duration}
     `.trim()
     console.log(data.result.dlink)
     sock.sendMessage(chatId, { image: { url: `${data.result.metadata.cover}` }, caption: messagetxt }, { quoted: msg });
