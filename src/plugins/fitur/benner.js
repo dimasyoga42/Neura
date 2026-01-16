@@ -4,7 +4,7 @@ import * as cheerio from "cheerio";
 export const Banner = async (sock, msg, chatId) => {
   try {
     const BASE = "https://id.toram.jp";
-    const LIST_URL = `${BASE}/?type_code=event#contentArea`;
+    const LIST_URL = `${BASE}/?type_code=all#contentArea`;
 
     const fixUrl = (url) => {
       if (!url) return null;
@@ -12,68 +12,75 @@ export const Banner = async (sock, msg, chatId) => {
       return BASE + url;
     };
 
+    console.log(`[Toram Banner] Mengambil daftar berita dari ${LIST_URL}...`);
     const res = await fetch(LIST_URL);
+    if (!res.ok) throw new Error("Gagal terhubung ke situs Toram.");
+
     const html = await res.text();
     const $ = cheerio.load(html);
 
     let targetHref = null;
     let targetTitle = "";
+    let targetDate = "";
 
-    $(".common_list li a").each((_, el) => {
-      const titleText = $(el).find(".news_title").text().trim();
-      const category = $(el).find(".news_category").text().trim(); // Opsional: cek kategori
+    $(".common_list li a").each((i, el) => {
+      if (targetHref) return;
+
+      const title = $(el).find(".news_title").text().trim();
+      const date = $(el).find(".news_date").text().trim();
 
       if (
-        !targetHref &&
-        (titleText.match(/avatar/i) || titleText.match(/ava/i) || titleText.match(/peti harta/i))
+        title.toLowerCase().includes("peti harta avatar") ||
+        title.toLowerCase().includes("avatar chest")
       ) {
         targetHref = $(el).attr("href");
-        targetTitle = titleText;
+        targetTitle = title;
+        targetDate = date;
       }
     });
 
     if (!targetHref) {
       return sock.sendMessage(
         String(chatId),
-        { text: "Tidak ditemukan berita terbaru mengenai Banner/Avatar saat ini." },
-        { quoted: msg }
+        { text: "⚠️ Maaf, tidak ditemukan berita terbaru mengenai 'Peti Harta Avatar' (Avatar Chest) di halaman utama saat ini." },
+        msg ? { quoted: msg } : {}
       );
     }
 
     const detailUrl = fixUrl(targetHref);
-    console.log(`[Toram Banner] Mengambil data dari: ${targetTitle}`);
+    console.log(`[Toram Banner] Target ditemukan: ${targetTitle} -> ${detailUrl}`);
 
     const detailRes = await fetch(detailUrl);
     const detailHtml = await detailRes.text();
     const $detail = cheerio.load(detailHtml);
 
-    const date = $detail(".news_date time").first().text().trim();
-    const title = $detail("h1").first().text().trim() || targetTitle;
+    let bannerUrl = null;
 
-    const images = [];
-    $detail(".news_content img").each((_, el) => {
+    $detail(".news_content img").each((i, el) => {
+      if (bannerUrl) return; // Ambil satu saja yang pertama
+
       const src = $detail(el).attr("src");
-      if (src && !src.includes("icon") && !src.includes("arrow")) {
-        images.push(fixUrl(src));
+      if (src && !src.includes("icon") && !src.includes("common")) {
+        bannerUrl = fixUrl(src);
       }
     });
 
-    if (images.length === 0) {
-      throw new Error("Gambar banner tidak ditemukan dalam postingan tersebut.");
+    if (!bannerUrl) {
+      bannerUrl = "https://toram.jp/img/common/logo.png"; // Gambar default
     }
 
-    const mainBanner = images[0];
-
-    const messageText = `*TORAM ONLINE AVATAR BANNER*\n\n` +
-      ` *Judul:* ${title}\n` +
-      `*Tanggal:* ${date}\n` +
-      `*Link:* ${detailUrl}`;
+    /* ================= 5. PENGIRIMAN PESAN ================= */
+    const caption = `*TORAM ONLINE BANNER INFO*\n` +
+      ` *Kategori:* Avatar Chest (Peti Harta)\n` +
+      ` *Judul:* ${targetTitle}\n` +
+      ` *Rilis:* ${targetDate}\n` +
+      ` *Link:* ${detailUrl}`;
 
     await sock.sendMessage(
       String(chatId),
       {
-        image: { url: mainBanner },
-        caption: messageText
+        image: { url: bannerUrl },
+        caption: caption
       },
       msg ? { quoted: msg } : {}
     );
@@ -82,7 +89,7 @@ export const Banner = async (sock, msg, chatId) => {
     console.error("[Toram Banner Error]", err);
     await sock.sendMessage(
       String(chatId),
-      { text: `Gagal mengambil banner Toram.\n\nError: ${err.message}` },
+      { text: `Terjadi kesalahan sistem saat mengambil data banner.\nError: ${err.message}` },
       msg ? { quoted: msg } : {}
     );
   }
