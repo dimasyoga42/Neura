@@ -28,6 +28,7 @@ import { pin } from "../plugins/vip/downloader/pinterst.js";
 import { Caklontong, jawab, tebakGambar } from "../plugins/fun/caklontong.js";
 import { autoGempa } from "../plugins/vip/tools/bmkg.js";
 import { listSkill, skill } from "../plugins/toram/skill.js";
+import { Spotifysearch } from "../plugins/vip/downloader/spotify.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!menu")) {
     if (isBan(sock, chatId, msg)) return;
@@ -265,6 +266,11 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!listability")) {
     if (isBan(sock, chatId, msg)) return;
     ability(sock, chatId, msg)
+  }
+
+  if (text.startsWith("!spotify")) {
+    if (isBan(sock, chatId, msg)) return;
+    Spotifysearch(sock, chatId, msg, text)
   }
 
 

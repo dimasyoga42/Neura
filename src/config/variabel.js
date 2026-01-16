@@ -114,6 +114,7 @@ komunitas: https://whatsapp.com/channel/0029VbAmhBF7z4kjOQcoVV0A
 *Menu Tools*
 - !stiker 
 - !play <title music>
+- !spotify
 - !ytmp3 <link yt>
 - !pinterest <any txt>
 - !qc <txt>
