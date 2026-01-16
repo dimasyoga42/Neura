@@ -133,8 +133,7 @@ export const Banner = async (sock, msg, chatId) => {
       await sock.sendMessage(
         String(chatId),
         {
-          image: { url: banners[i] },
-          caption: i === 0 ? caption : `Banner ${i + 1}/${banners.length}`
+          image: { url: banners[i] }
         },
         msg ? { quoted: msg } : {}
       );
