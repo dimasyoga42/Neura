@@ -73,7 +73,7 @@ Stat    :
 - ${parseStat(xtall.stat)}
 
 Rute: ${xtall.route}
-`).join("")}
+`).join("━━━━━━━━━━━━━━━━━━━━")}
 `.trim();
 
     await sock.sendMessage(
