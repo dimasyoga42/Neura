@@ -9,10 +9,10 @@ export const pet = (sock, chatId, msg, text) => {
       sock.sendMessage(chatId, { text: petGuide.levelingPet }, { quoted: msg })
     } else if (arg === "skill") {
       sock.sendMessage(chatId, { text: petGuide.skillPet }, { quoted: msg })
-    } else if (arg === "padu") {
-      sock.sendMessage(chatId, { text: petGuide.fusionPet }, { quoted: msg })
     } else if (arg === "latih") {
-      sock.sendMessage(chatId, { image: { url: `https://i.ibb.co/B245jnXN/Fuse-Diagram.jpg` }, caption: petGuide.trainingPet }, { quoted: msg })
+      sock.sendMessage(chatId, { text: petGuide.trainingPet }, { quoted: msg })
+    } else if (arg === "padu") {
+      sock.sendMessage(chatId, { image: { url: `https://i.ibb.co/B245jnXN/Fuse-Diagram.jpg` }, caption: petGuide.fusionPet }, { quoted: msg })
     } else {
       sock.sendMessage(chatId, { text: "pilihan anda tidak ada" }, { quoted: msg })
     }
