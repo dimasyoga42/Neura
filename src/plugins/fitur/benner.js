@@ -23,33 +23,30 @@ export const Banner = async (sock, msg, chatId) => {
     const html = await res.text();
     const $ = cheerio.load(html);
 
-    const filterRegex = /avatar\s*chest|peti\s*harta|chest.*avatar|kostum|gacha/i;
-
     const newsList = [];
 
-    // Kumpulkan semua berita yang cocok filter
+    // Kumpulkan semua berita tanpa filter
     $(".common_list li a").each((i, el) => {
       const title = $(el).find(".news_title").text().trim();
       const dateStr = $(el).find(".news_date").text().trim();
       const href = $(el).attr("href");
 
-      if (filterRegex.test(title)) {
-        newsList.push({
-          href: href,
-          title: title,
-          date: dateStr
-        });
-      }
+      newsList.push({
+        href: href,
+        title: title,
+        date: dateStr
+      });
     });
 
     if (newsList.length === 0) {
       return sock.sendMessage(
         String(chatId),
-        { text: "Tidak ditemukan berita Avatar/Peti Harta.\n\nCek manual: https://id.toram.jp" },
+        { text: "Tidak ditemukan berita apapun.\n\nCek manual: https://id.toram.jp" },
         msg ? { quoted: msg } : {}
       );
     }
 
+    const filterRegex = /avatar\s*chest|peti\s*harta|chest.*avatar|kostum|gacha/i;
     let selectedNews = null;
     let banners = [];
 
@@ -69,6 +66,16 @@ export const Banner = async (sock, msg, chatId) => {
 
       const detailHtml = await detailRes.text();
       const $detail = cheerio.load(detailHtml);
+
+      // Cek apakah isi berita mengandung keyword avatar/gacha
+      const fullContent = $detail(".news_content").text();
+      const newsTitle = $detail(".news_title, h1, h2").first().text();
+      const combinedText = fullContent + " " + newsTitle;
+
+      // Validasi: apakah berita tentang avatar/gacha?
+      if (!filterRegex.test(combinedText)) {
+        continue; // Bukan berita avatar, skip
+      }
 
       // Validasi: cari banner avatar
       const tempBanners = [];
