@@ -326,25 +326,37 @@ export const buff = async (sock, chatId, msg, args) => {
   try {
     // Jika tidak ada keyword, kirim semua buff
     if (!args || args.length === 0) {
-      return sock.sendMessage(
+      await sock.sendMessage(
         String(chatId),
-        { text: buffMessage },
+        { text: `${buffMessage}\n\nBy Neura Sama` },
         msg ? { quoted: msg } : {}
       );
+      return;
     }
 
     // Gabungkan args jadi satu keyword
-    const keyword = args.join(' ');
+    const keyword = args.join(' ').trim();
+
+    // Validasi keyword tidak kosong setelah trim
+    if (!keyword) {
+      await sock.sendMessage(
+        String(chatId),
+        { text: `${buffMessage}\n\nBy Neura Sama` },
+        msg ? { quoted: msg } : {}
+      );
+      return;
+    }
 
     // Search buff
     const results = searchBuff(keyword);
 
-    if (!results) {
-      return sock.sendMessage(
+    if (!results || results.length === 0) {
+      await sock.sendMessage(
         String(chatId),
         { text: `Buff "${keyword}" tidak ditemukan.\n\nGunakan !buff untuk melihat semua daftar buff.\n\nBy Neura Sama` },
         msg ? { quoted: msg } : {}
       );
+      return;
     }
 
     // Format hasil
