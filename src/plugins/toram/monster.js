@@ -1,3 +1,4 @@
+import { supabase } from "../../model/supabase.js"
 export const searchMonster = async (sock, chatId, msg, text) => {
   try {
     const nama = text.replace("!monster", "").trim();

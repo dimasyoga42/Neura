@@ -144,11 +144,11 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     setidBuff(sock, chatId, msg, text);
   }
-  if (text.startsWith("!benner")) {
+  if (text.startsWith("!torambanner")) {
     if (isBan(sock, chatId, msg)) return;
     Banner(sock, msg, chatId);
   }
-  if (text.startsWith("!mt")) {
+  if (text.startsWith("!torammt")) {
     if (isBan(sock, chatId, msg)) return;
     getMt(sock, chatId, msg)
   }
@@ -271,7 +271,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     ability(sock, chatId, msg)
   }
 
-  if (text.startsWith("!boost")) {
+  if (text.startsWith("!toramboost")) {
     if (isBan(sock, chatId, msg)) return;
     bosboost(sock, chatId, msg)
   }
