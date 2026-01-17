@@ -69,11 +69,23 @@ export const Banner = async (sock, msg, chatId) => {
 
     const banners = [];
 
-    // Cari gambar di <center>
-    $detail("center img").each((i, el) => {
+    // Cari badge toko (biasanya di dalam <center> atau <table>)
+    // Badge toko biasanya punya pattern: badge, shop, toko, atau ukuran kecil-menengah
+    $detail("center img, table img").each((i, el) => {
       const src = $detail(el).attr("src");
-      if (src && /toram_avatar|avatar.*\d{6}|kotobuki|banner|chest/i.test(src)) {
-        if (!/icon|nav_|footer|logo(?!.*avatar)/i.test(src)) {
+      const alt = $detail(el).attr("alt") || "";
+      const width = $detail(el).attr("width");
+      const height = $detail(el).attr("height");
+
+      if (src) {
+        const isBadge = /badge|shop|toko|item.*icon|equip/i.test(src) ||
+          /badge|shop|toko/i.test(alt) ||
+          (width && parseInt(width) >= 50 && parseInt(width) <= 200) ||
+          (height && parseInt(height) >= 50 && parseInt(height) <= 200);
+
+        const notBadge = /icon|nav_|footer|logo|banner.*\d{6}/i.test(src);
+
+        if (isBadge && !notBadge) {
           const fullUrl = fixUrl(src);
           if (!banners.includes(fullUrl)) {
             banners.push(fullUrl);
@@ -82,19 +94,21 @@ export const Banner = async (sock, msg, chatId) => {
       }
     });
 
-    // Fallback: cari di .news_content dengan filter ukuran
+    // Fallback: cari di .news_content untuk badge
     if (banners.length === 0) {
       $detail(".news_content img").each((i, el) => {
         const src = $detail(el).attr("src");
         const width = $detail(el).attr("width");
         const height = $detail(el).attr("height");
 
-        if (src && (
-          /toram_avatar|avatar.*\d{6}|banner/i.test(src) ||
-          (width && parseInt(width) > 200) ||
-          (height && parseInt(height) > 200)
-        )) {
-          if (!/icon|nav_|footer|logo(?!.*avatar)/i.test(src)) {
+        if (src) {
+          const isBadge = /badge|shop|toko|item/i.test(src) ||
+            (width && parseInt(width) >= 50 && parseInt(width) <= 200) ||
+            (height && parseInt(height) >= 50 && parseInt(height) <= 200);
+
+          const notBadge = /icon|nav_|footer|logo|banner.*\d{6}/i.test(src);
+
+          if (isBadge && !notBadge) {
             const fullUrl = fixUrl(src);
             if (!banners.includes(fullUrl)) {
               banners.push(fullUrl);
@@ -104,22 +118,15 @@ export const Banner = async (sock, msg, chatId) => {
       });
     }
 
-    // Fallback terakhir: semua gambar .png/.jpg
+    // Jika tidak ada badge, beri notifikasi
     if (banners.length === 0) {
-      $detail(".news_content img").each((i, el) => {
-        const src = $detail(el).attr("src");
-        if (src && /\.(png|jpg|jpeg)$/i.test(src) && !/icon|nav_|footer/i.test(src)) {
-          const fullUrl = fixUrl(src);
-          if (!banners.includes(fullUrl)) {
-            banners.push(fullUrl);
-          }
-        }
-      });
-    }
-
-    // Logo default jika tidak ada gambar
-    if (banners.length === 0) {
-      banners.push("https://toram-jp.akamaized.net/id/img/common/logo.png");
+      return sock.sendMessage(
+        String(chatId),
+        {
+          text: `TORAM ONLINE - UPDATE\n${targetNews.title}\nTanggal: ${targetNews.date}\n\n⚠️ Tidak ditemukan badge toko pada berita ini.\n\nLink: ${detailUrl}`
+        },
+        msg ? { quoted: msg } : {}
+      );
     }
 
     // Ambil preview text
