@@ -38,8 +38,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   }
   if (text.startsWith("!buff")) {
     if (isBan(sock, chatId, msg)) return;
-    const argh = text.replace("!buff", "");
-    buff(sock, chatId, msg, argh);
+    buff(sock, chatId, msg, text);
   }
 
 
