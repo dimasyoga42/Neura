@@ -51,7 +51,8 @@ ${data.map((xtall, i) => `
 ${xtall.name}
 Type    : ${xtall.type}
 Upgrade : ${xtall.upgrade}
-Stat    : ${xtall.stat}
+Stat    : 
+  - ${xtall.stat.split(";").join("\n")}
 
 Rute: ${xtall.route}
 `).join("")}
