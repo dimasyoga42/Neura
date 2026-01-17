@@ -17,54 +17,22 @@ async function scrapeBoostBoss() {
     const listHtml = await listRes.text();
     const $ = cheerio.load(listHtml);
 
-    // 2. Parse tanggal format: [YYYY-MM-DD]
-    const parseDate = (dateStr) => {
-      if (!dateStr) return null;
-
-      // Format: [2026-01-17] atau 2026-01-17
-      let match = dateStr.match(/(\d{4})-(\d{2})-(\d{2})/);
-      if (match) {
-        return new Date(match[1], match[2] - 1, match[3]);
-      }
-
-      return null;
-    };
-
-    // 3. Cari semua berita "Boost Akhir Pekan" dan ambil yang terbaru
-    const boostNews = [];
+    // 2. Cari berita "Boost Akhir Pekan" terbaru
+    let boostLink = null;
 
     $(".common_list li a").each((i, el) => {
-      const title = $(el).find(".news_title").text().trim();
-      const titleLower = title.toLowerCase();
+      const title = $(el).find(".news_title").text().trim().toLowerCase();
       const href = $(el).attr("href");
-      const dateStr = $(el).find(".time time").text().trim();
 
-      if (titleLower.includes("boost") && titleLower.includes("akhir pekan")) {
-        boostNews.push({
-          title: title,
-          href: href.startsWith("http") ? href : BASE_URL + href,
-          date: dateStr,
-          parsedDate: parseDate(dateStr)
-        });
+      if (title.includes("boost") && title.includes("akhir pekan")) {
+        boostLink = href.startsWith("http") ? href : BASE_URL + href;
+        return false; // break loop - ambil yang paling atas
       }
     });
 
-    if (boostNews.length === 0) {
+    if (!boostLink) {
       return { active: false, bosses: [] };
     }
-
-    // 4. Pilih berita boost dengan tanggal terbaru
-    let latestBoost = boostNews[0];
-    for (const news of boostNews) {
-      if (news.parsedDate && latestBoost.parsedDate &&
-        news.parsedDate > latestBoost.parsedDate) {
-        latestBoost = news;
-      }
-    }
-
-    const boostLink = latestBoost.href;
-    const boostTitle = latestBoost.title;
-    const boostDate = latestBoost.date;
 
     // 3. Ambil detail berita boost
     const detailRes = await fetch(boostLink, {
@@ -78,43 +46,35 @@ async function scrapeBoostBoss() {
     const detailHtml = await detailRes.text();
     const $detail = cheerio.load(detailHtml);
 
-    // 4. Ambil periode event dan validasi tanggal
-    let eventPeriod = "";
+    // 4. Validasi tanggal - Cek apakah event masih berlangsung
     let eventEndDate = null;
 
     $detail(".pTxt, p").each((i, el) => {
       const text = $detail(el).text();
-      if (text.includes("Periode Event") || text.includes("Mulai") || text.includes("Selesai")) {
-        const periodMatch = text.match(/(Mulai[\s\S]*?Selesai[\s\S]*?\d{2}:\d{2}\s+WIB)/);
-        if (periodMatch) {
-          eventPeriod = periodMatch[1].trim();
 
-          // Parse tanggal selesai event
-          // Format: "Selesai : Minggu, 18 Januari 2026 pukul 21:59 WIB"
-          const endDateMatch = text.match(/Selesai[\s:]*[^,]+,\s*(\d+)\s+(\w+)\s+(\d{4})\s+pukul\s+(\d{2}):(\d{2})/i);
-          if (endDateMatch) {
-            const day = parseInt(endDateMatch[1]);
-            const monthName = endDateMatch[2];
-            const year = parseInt(endDateMatch[3]);
-            const hour = parseInt(endDateMatch[4]);
-            const minute = parseInt(endDateMatch[5]);
+      // Parse tanggal selesai event
+      // Format: "Selesai : Minggu, 18 Januari 2026 pukul 21:59 WIB"
+      const endDateMatch = text.match(/Selesai[\s:]*[^,]+,\s*(\d+)\s+(\w+)\s+(\d{4})\s+pukul\s+(\d{2}):(\d{2})/i);
+      if (endDateMatch) {
+        const day = parseInt(endDateMatch[1]);
+        const monthName = endDateMatch[2];
+        const year = parseInt(endDateMatch[3]);
+        const hour = parseInt(endDateMatch[4]);
+        const minute = parseInt(endDateMatch[5]);
 
-            // Map nama bulan Indonesia ke angka
-            const monthMap = {
-              'januari': 0, 'februari': 1, 'maret': 2, 'april': 3,
-              'mei': 4, 'juni': 5, 'juli': 6, 'agustus': 7,
-              'september': 8, 'oktober': 9, 'november': 10, 'desember': 11
-            };
+        // Map nama bulan Indonesia ke angka
+        const monthMap = {
+          'januari': 0, 'februari': 1, 'maret': 2, 'april': 3,
+          'mei': 4, 'juni': 5, 'juli': 6, 'agustus': 7,
+          'september': 8, 'oktober': 9, 'november': 10, 'desember': 11
+        };
 
-            const month = monthMap[monthName.toLowerCase()];
-            if (month !== undefined) {
-              // WIB = UTC+7, jadi kurangi 7 jam untuk get UTC time
-              eventEndDate = new Date(year, month, day, hour - 7, minute);
-            }
-          }
-
-          return false;
+        const month = monthMap[monthName.toLowerCase()];
+        if (month !== undefined) {
+          // WIB = UTC+7, jadi kurangi 7 jam untuk get UTC time
+          eventEndDate = new Date(year, month, day, hour - 7, minute);
         }
+        return false;
       }
     });
 
@@ -153,7 +113,6 @@ async function scrapeBoostBoss() {
       for (let j = 0; j < 5; j++) {
         if (nextEl.length === 0) break;
 
-        // Cari di <div align="center"> atau langsung <img>
         const foundImg = nextEl.find("img").first();
         if (foundImg.length > 0) {
           img = foundImg.attr("src");
@@ -182,11 +141,6 @@ async function scrapeBoostBoss() {
 
     return {
       active: true,
-      title: boostTitle,
-      date: boostDate,
-      period: eventPeriod,
-      endDate: eventEndDate,
-      link: boostLink,
       bosses
     };
 
@@ -220,50 +174,6 @@ export const bosboost = async (sock, chatId, msg) => {
       );
     }
 
-    // Hitung sisa waktu event
-    let timeRemaining = "";
-    if (result.endDate) {
-      const now = new Date();
-      const diff = result.endDate - now;
-      const hours = Math.floor(diff / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-
-      if (hours > 24) {
-        const days = Math.floor(hours / 24);
-        const remainingHours = hours % 24;
-        timeRemaining = `\nSisa waktu: ${days} hari ${remainingHours} jam`;
-      } else {
-        timeRemaining = `\nSisa waktu: ${hours} jam ${minutes} menit`;
-      }
-    }
-
-    // Kirim info event
-    let infoMsg = `BOOST AKHIR PEKAN\n\n`;
-    infoMsg += `${result.title}\n`;
-    infoMsg += `Tanggal: ${result.date}\n`;
-
-    if (result.period) {
-      infoMsg += `\n${result.period}`;
-    }
-
-    if (timeRemaining) {
-      infoMsg += `${timeRemaining}`;
-    }
-
-    infoMsg += `\n\nDaftar Boss (${result.bosses.length}):\n`;
-    result.bosses.forEach((boss, idx) => {
-      infoMsg += `${idx + 1}. ${boss.fullName}\n`;
-    });
-
-    infoMsg += `\nLink: ${result.link}`;
-    infoMsg += `\n\nBy Neura Sama`;
-
-    await sock.sendMessage(
-      String(chatId),
-      { text: infoMsg },
-      msg ? { quoted: msg } : {}
-    );
-
     // Kirim gambar setiap boss
     for (const boss of result.bosses) {
       await sock.sendMessage(
@@ -279,16 +189,9 @@ export const bosboost = async (sock, chatId, msg) => {
   } catch (err) {
     console.error("Error in bosboost:", err);
 
-    let errorMsg = "BOOST BOSS - ERROR\n";
-    errorMsg += `Terjadi kesalahan: ${err.message}\n\n`;
-    errorMsg += `Solusi:\n`;
-    errorMsg += `- Cek koneksi internet\n`;
-    errorMsg += `- Website mungkin maintenance\n`;
-    errorMsg += `- Coba lagi nanti`;
-
     await sock.sendMessage(
       String(chatId),
-      { text: errorMsg },
+      { text: `Gagal mengambil data boost boss.\nError: ${err.message}\n\nBy Neura Sama` },
       msg ? { quoted: msg } : {}
     );
   }
