@@ -8,21 +8,18 @@ const formatStatList = (stat) => {
     .join("\n");
 };
 
+
 const parseStat = (stat) => {
   if (!stat) return "-";
 
-  const parts = stat.split(";").map(s => s.trim());
   const result = [];
+  const regex = /([a-zA-Z% ]+)\s*(-?\d+(?:\.\d+)?)/g;
 
-  for (let i = 0; i < parts.length - 1; i++) {
-    // label harus ada huruf
-    if (/[a-zA-Z%]/.test(parts[i])) {
-      // value harus angka (boleh minus)
-      if (/^-?\d+(\.\d+)?$/.test(parts[i + 1])) {
-        result.push(`${parts[i]} : ${parts[i + 1]}`);
-        i++; // lompat ke pasangan berikutnya
-      }
-    }
+  let match;
+  while ((match = regex.exec(stat)) !== null) {
+    const label = match[1].trim();
+    const value = match[2];
+    result.push(`${label} : ${value}`);
   }
 
   return result.length ? result.join("\n- ") : "-";
@@ -64,16 +61,14 @@ export const searchXtall = async (sock, chatId, msg, text) => {
 
     const messageData = `
 *SEARCH XTALL (${data.length})*
-
 ${data.map((xtall, i) => `
 ${xtall.name}
 Type    : ${xtall.type}
 Upgrade : ${xtall.upgrade}
 Stat    : 
-- ${xtall.stat}
-
+- ${parseStat(xtall.stat)}
 Rute: ${xtall.route}
-`).join("━━━━━━━━━━━━━━━━━━━━")}
+`).join("━━━━━━━━━━━━━━━━━━━━\n")}
 `.trim();
 
     await sock.sendMessage(
