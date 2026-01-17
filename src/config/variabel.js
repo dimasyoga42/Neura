@@ -876,6 +876,7 @@ A magic attack based on MATK. Chance to inflict [Armor Break] on target.
   `.trim(),
 
   levelingPet: `
+*List Leveling Pet*
 - LVL 1-40 Masked Norm
 - LVL 40-46 Masked Hard
 - LVL 46-72 Masked NM
@@ -885,6 +886,7 @@ A magic attack based on MATK. Chance to inflict [Armor Break] on target.
 - LVL 160-cap Venena Ulti
   `.trim(),
   fusionPet: `
+*Menghitung Max Level Fusion*
 Rumus: (Pet A + Pet B) : 2 + 1
 contoh kita memiliki pet a berlevel 47 dan pet b berlevel 77
 jika menggunakan rumus maka 
