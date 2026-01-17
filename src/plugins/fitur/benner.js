@@ -14,9 +14,8 @@ export const Banner = async (sock, msg, chatId) => {
 
     const res = await fetch(LIST_URL, {
       headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-      },
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+      }
     });
 
     if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
@@ -24,40 +23,56 @@ export const Banner = async (sock, msg, chatId) => {
     const html = await res.text();
     const $ = cheerio.load(html);
 
+    // Parse tanggal format: [YYYY-MM-DD]
+    const parseDate = (dateStr) => {
+      if (!dateStr) return null;
+
+      // Format: [2026-01-17] atau 2026-01-17
+      let match = dateStr.match(/(\d{4})-(\d{2})-(\d{2})/);
+      if (match) {
+        return new Date(match[1], match[2] - 1, match[3]);
+      }
+
+      return null;
+    };
+
     const newsList = [];
 
-    // Ambil semua berita (TANPA REGEX)
+    // Kumpulkan semua berita
     $(".common_list li a").each((i, el) => {
+      const title = $(el).find(".news_title").text().trim();
+      const dateStr = $(el).find(".time time").text().trim();
+      const href = $(el).attr("href");
+
       newsList.push({
-        title: $(el).find(".news_title").text().trim(),
-        date: $(el).find(".news_date").text().trim(),
-        href: $(el).attr("href"),
+        href: href,
+        title: title,
+        date: dateStr
       });
     });
 
     if (newsList.length === 0) {
       return sock.sendMessage(
         String(chatId),
-        { text: "Tidak ada berita.\n\nhttps://id.toram.jp" },
+        { text: "Tidak ditemukan berita apapun.\n\nCek manual: https://id.toram.jp" },
         msg ? { quoted: msg } : {}
       );
     }
 
-    // REGEX KHUSUS AVATAR (HANYA DIPAKAI DI DETAIL)
-    const AVA_REGEX =
-      /avatar|ava\b|avatar\s*chest|peti\s*harta|kostum|gacha/i;
-
     let selectedNews = null;
+    let banners = [];
+    let latestDate = null;
 
-    // Loop berita satu per satu
-    for (const news of newsList) {
+    // Cek semua berita, cari yang punya banner avatar dengan tanggal terbaru
+    for (let i = 0; i < newsList.length; i++) {
+      const news = newsList[i];
       const detailUrl = fixUrl(news.href);
 
+      // Buka halaman detail
       const detailRes = await fetch(detailUrl, {
         headers: {
-          "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        },
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        }
       });
 
       if (!detailRes.ok) continue;
@@ -65,71 +80,52 @@ export const Banner = async (sock, msg, chatId) => {
       const detailHtml = await detailRes.text();
       const $detail = cheerio.load(detailHtml);
 
-      // 🔍 VALIDASI AVA DI DETAIL
-      const titleText = $detail(".news_title, h1, h2").first().text();
-      const contentText = $detail(".news_content").text();
-      const combinedText = `${titleText} ${contentText}`;
+      // Cari banner avatar di <center>
+      const tempBanners = [];
 
-      if (!AVA_REGEX.test(combinedText)) {
-        continue; // BUKAN AVATAR → SKIP
-      }
-
-      const banners = [];
-
-      // Cari banner
-      $detail("center img, table img, .news_content img").each((i, el) => {
+      $detail("center img").each((i, el) => {
         const src = $detail(el).attr("src");
-        const width = parseInt($detail(el).attr("width") || 0);
-        const height = parseInt($detail(el).attr("height") || 0);
-
-        if (!src) return;
-
-        const isBig = width > 300 || height > 300;
-        const isBannerName =
-          src.toLowerCase().includes("avatar") ||
-          src.toLowerCase().includes("banner") ||
-          src.toLowerCase().includes("chest");
-
-        if ((isBig || isBannerName) && !/icon|nav_|footer|logo/i.test(src)) {
+        // Cek pola banner avatar: toram_avatar_*
+        if (src && /toram_avatar_[a-z]+\d{6,8}/i.test(src)) {
           const fullUrl = fixUrl(src);
-          if (!banners.includes(fullUrl)) {
-            banners.push(fullUrl);
+          if (!tempBanners.includes(fullUrl)) {
+            tempBanners.push(fullUrl);
           }
         }
       });
 
-      if (banners.length === 0) continue;
+      // Jika ada banner avatar, bandingkan tanggal
+      if (tempBanners.length > 0) {
+        const newsDate = parseDate(news.date);
 
-      const firstParagraph = $detail(".news_content p")
-        .first()
-        .text()
-        .trim();
+        // Simpan jika belum ada atau tanggal lebih baru
+        if (!selectedNews || (newsDate && (!latestDate || newsDate > latestDate))) {
+          latestDate = newsDate;
+          selectedNews = news;
+          banners = tempBanners;
 
-      selectedNews = {
-        ...news,
-        detailUrl,
-        preview: firstParagraph
-          ? firstParagraph.slice(0, 150) +
-          (firstParagraph.length > 150 ? "..." : "")
-          : "",
-        banners,
-      };
+          // Ambil preview text
+          let preview = "";
+          const firstParagraph = $detail(".news_content p, .pTxt").first().text().trim();
+          if (firstParagraph && firstParagraph.length > 0) {
+            preview = firstParagraph.substring(0, 150) + (firstParagraph.length > 150 ? "..." : "");
+          }
 
-      break; // STOP → AVATAR TERBARU DITEMUKAN
+          selectedNews.preview = preview;
+          selectedNews.detailUrl = detailUrl;
+        }
+      }
     }
 
-    if (!selectedNews) {
+    if (!selectedNews || banners.length === 0) {
       return sock.sendMessage(
         String(chatId),
-        {
-          text:
-            "Tidak ditemukan banner Avatar.\n\nCek manual: https://id.toram.jp",
-        },
+        { text: "Tidak ditemukan banner avatar terbaru.\n\nCek manual: https://id.toram.jp" },
         msg ? { quoted: msg } : {}
       );
     }
 
-    // CAPTION
+    // Kirim caption
     let caption = `TORAM ONLINE - AVATAR UPDATE\n`;
     caption += `${selectedNews.title}\n`;
     caption += `Tanggal: ${selectedNews.date}\n`;
@@ -140,26 +136,29 @@ export const Banner = async (sock, msg, chatId) => {
 
     caption += `\nLink: ${selectedNews.detailUrl}`;
 
-    // KIRIM BANNER
-    for (let i = 0; i < selectedNews.banners.length; i++) {
+    // Kirim gambar banner
+    for (let i = 0; i < banners.length; i++) {
       await sock.sendMessage(
         String(chatId),
         {
-          image: { url: selectedNews.banners[i] },
-          caption: i === 0 ? caption : undefined,
+          image: { url: banners[i] },
+          caption: i === 0 ? caption : undefined
         },
         msg ? { quoted: msg } : {}
       );
     }
+
   } catch (err) {
+    let errorMsg = "TORAM BANNER - ERROR\n";
+    errorMsg += `Terjadi kesalahan: ${err.message}\n`;
+    errorMsg += `Solusi:\n`;
+    errorMsg += `- Cek koneksi internet\n`;
+    errorMsg += `- Website mungkin maintenance\n`;
+    errorMsg += `- Coba lagi nanti`;
+
     await sock.sendMessage(
       String(chatId),
-      {
-        text:
-          "TORAM AVATAR BANNER - ERROR\n" +
-          `Pesan: ${err.message}\n\n` +
-          "Solusi:\n- Cek koneksi\n- Website maintenance\n- Coba lagi nanti",
-      },
+      { text: errorMsg },
       msg ? { quoted: msg } : {}
     );
   }
