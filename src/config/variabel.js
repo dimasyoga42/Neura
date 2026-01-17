@@ -39,7 +39,7 @@ export const xsubMenu = {
 - !filarm 
 - !sheetfill
 - !upbag 
-- !listLeveling
+- !listleveling
 - !raid 
 - !join 
 - !leave
