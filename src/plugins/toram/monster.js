@@ -1,24 +1,16 @@
 import { supabase } from "../../model/supabase.js"
 
-const parseStat = (stat) => {
-  if (!stat) return "-";
 
-  const parts = stat.split(",").map(s => s.trim());
-  const result = [];
+const parseDrops = (drops) => {
+  if (!drops) return "-";
 
-  for (let i = 0; i < parts.length - 1; i++) {
-    // label harus ada huruf
-    if (/[a-zA-Z%]/.test(parts[i])) {
-      // value harus angka (boleh minus)
-      if (/^-?\d+(\.\d+)?$/.test(parts[i + 1])) {
-        result.push(`${parts[i]} : ${parts[i + 1]}`);
-        i++; // lompat ke pasangan berikutnya
-      }
-    }
-  }
-
-  return result.length ? result.join("\n- ") : "-";
+  return drops
+    .split(",")
+    .map(d => d.trim())
+    .filter(Boolean)
+    .join("\n- ");
 };
+
 export const searchMonster = async (sock, chatId, msg, text) => {
   try {
     const nama = text.replace("!monster", "").trim();
@@ -53,17 +45,17 @@ export const searchMonster = async (sock, chatId, msg, text) => {
       );
     }
 
+
     const messageData = `
 *SEARCH MONSTER (${data.length})*
 ${data.map((m, i) => `
 ${m.name}
-Level: ${m.level}
-MaxHP: ${m.hp}
-element: ${m.element}
-Map: ${m.map}
-Drops: 
-- ${parseStat(m.drops)}
-
+Level  : ${m.level}
+MaxHP  : ${m.hp}
+Element: ${m.element}
+Map    : ${m.map}
+Drops  :
+- ${parseDrops(m.drops)}
 `).join("")}
 `.trim();
 
