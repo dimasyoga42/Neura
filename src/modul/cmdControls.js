@@ -1,6 +1,6 @@
 import { ColdownUser } from "../admin/coldownChat.js";
 import { hidetag } from "../admin/hidetag.js";
-import { buffMessage, guide, listLeveling, menuMessage, messagePembolong, stat, upbagId } from "../config/variabel.js";
+import { guide, listLeveling, menuMessage, messagePembolong, stat, upbagId } from "../config/variabel.js";
 import { isBan } from "../plugins/fitur/ban.js"
 import { Banner } from "../plugins/fitur/benner.js";
 import { setMenu } from "../plugins/fitur/img.js";
@@ -30,6 +30,7 @@ import { autoGempa } from "../plugins/vip/tools/bmkg.js";
 import { listSkill, skill } from "../plugins/toram/skill.js";
 import { Spotifysearch } from "../plugins/vip/downloader/spotify.js";
 import { bosboost } from "../plugins/toram/boost.js";
+import { buff } from "../plugins/toram/buff.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!menu")) {
     if (isBan(sock, chatId, msg)) return;
@@ -37,7 +38,8 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   }
   if (text.startsWith("!buff")) {
     if (isBan(sock, chatId, msg)) return;
-    sock.sendMessage(chatId, { text: buffMessage }, { quoted: msg });
+    const argh = text.replace("!buff", "");
+    buff(sock, chatId, msg, argh);
   }
 
 
