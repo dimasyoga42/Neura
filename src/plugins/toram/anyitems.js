@@ -70,7 +70,7 @@ ${xtall.name}
 Type    : ${xtall.type}
 Upgrade : ${xtall.upgrade}
 Stat    : 
-- ${parseStat(xtall.stat)}
+- ${xtall.stat}
 
 Rute: ${xtall.route}
 `).join("━━━━━━━━━━━━━━━━━━━━")}
