@@ -78,18 +78,54 @@ async function scrapeBoostBoss() {
     const detailHtml = await detailRes.text();
     const $detail = cheerio.load(detailHtml);
 
-    // 4. Ambil periode event
+    // 4. Ambil periode event dan validasi tanggal
     let eventPeriod = "";
+    let eventEndDate = null;
+
     $detail(".pTxt, p").each((i, el) => {
       const text = $detail(el).text();
       if (text.includes("Periode Event") || text.includes("Mulai") || text.includes("Selesai")) {
         const periodMatch = text.match(/(Mulai[\s\S]*?Selesai[\s\S]*?\d{2}:\d{2}\s+WIB)/);
         if (periodMatch) {
           eventPeriod = periodMatch[1].trim();
+
+          // Parse tanggal selesai event
+          // Format: "Selesai : Minggu, 18 Januari 2026 pukul 21:59 WIB"
+          const endDateMatch = text.match(/Selesai[\s:]*[^,]+,\s*(\d+)\s+(\w+)\s+(\d{4})\s+pukul\s+(\d{2}):(\d{2})/i);
+          if (endDateMatch) {
+            const day = parseInt(endDateMatch[1]);
+            const monthName = endDateMatch[2];
+            const year = parseInt(endDateMatch[3]);
+            const hour = parseInt(endDateMatch[4]);
+            const minute = parseInt(endDateMatch[5]);
+
+            // Map nama bulan Indonesia ke angka
+            const monthMap = {
+              'januari': 0, 'februari': 1, 'maret': 2, 'april': 3,
+              'mei': 4, 'juni': 5, 'juli': 6, 'agustus': 7,
+              'september': 8, 'oktober': 9, 'november': 10, 'desember': 11
+            };
+
+            const month = monthMap[monthName.toLowerCase()];
+            if (month !== undefined) {
+              // WIB = UTC+7, jadi kurangi 7 jam untuk get UTC time
+              eventEndDate = new Date(year, month, day, hour - 7, minute);
+            }
+          }
+
           return false;
         }
       }
     });
+
+    // Validasi: Cek apakah event masih berlangsung
+    if (eventEndDate) {
+      const now = new Date();
+      if (now > eventEndDate) {
+        // Event sudah berakhir
+        return { active: false, bosses: [], expired: true };
+      }
+    }
 
     // 5. Scrape daftar boss
     const bosses = [];
@@ -149,6 +185,7 @@ async function scrapeBoostBoss() {
       title: boostTitle,
       date: boostDate,
       period: eventPeriod,
+      endDate: eventEndDate,
       link: boostLink,
       bosses
     };
@@ -163,24 +200,57 @@ export const bosboost = async (sock, chatId, msg) => {
   try {
     const result = await scrapeBoostBoss();
 
-    if (!result.active || result.bosses.length === 0) {
+    if (!result.active) {
+      let message = "Tidak ada event Boost Akhir Pekan yang aktif saat ini.";
+      if (result.expired) {
+        message = "Event Boost Akhir Pekan sudah berakhir.";
+      }
       return sock.sendMessage(
         String(chatId),
-        { text: "Tidak ada event Boost Akhir Pekan yang aktif saat ini.\n\nBy Neura Sama" },
+        { text: `${message}\n\nBy Neura Sama` },
         msg ? { quoted: msg } : {}
       );
+    }
+
+    if (result.bosses.length === 0) {
+      return sock.sendMessage(
+        String(chatId),
+        { text: "Event ditemukan tapi tidak ada daftar boss.\n\nBy Neura Sama" },
+        msg ? { quoted: msg } : {}
+      );
+    }
+
+    // Hitung sisa waktu event
+    let timeRemaining = "";
+    if (result.endDate) {
+      const now = new Date();
+      const diff = result.endDate - now;
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+      if (hours > 24) {
+        const days = Math.floor(hours / 24);
+        const remainingHours = hours % 24;
+        timeRemaining = `\nSisa waktu: ${days} hari ${remainingHours} jam`;
+      } else {
+        timeRemaining = `\nSisa waktu: ${hours} jam ${minutes} menit`;
+      }
     }
 
     // Kirim info event
     let infoMsg = `BOOST AKHIR PEKAN\n\n`;
     infoMsg += `${result.title}\n`;
-    infoMsg += `Tanggal: ${result.date}\n\n`;
+    infoMsg += `Tanggal: ${result.date}\n`;
 
     if (result.period) {
-      infoMsg += `${result.period}\n\n`;
+      infoMsg += `\n${result.period}`;
     }
 
-    infoMsg += `Daftar Boss (${result.bosses.length}):\n`;
+    if (timeRemaining) {
+      infoMsg += `${timeRemaining}`;
+    }
+
+    infoMsg += `\n\nDaftar Boss (${result.bosses.length}):\n`;
     result.bosses.forEach((boss, idx) => {
       infoMsg += `${idx + 1}. ${boss.fullName}\n`;
     });
