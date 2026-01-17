@@ -17,22 +17,51 @@ async function scrapeBoostBoss() {
     const listHtml = await listRes.text();
     const $ = cheerio.load(listHtml);
 
-    // 2. Cari berita "Boost Akhir Pekan" terbaru
-    let boostLink = null;
+    // 2. Parse tanggal format: [YYYY-MM-DD]
+    const parseDate = (dateStr) => {
+      if (!dateStr) return null;
+
+      // Format: [2026-01-17] atau 2026-01-17
+      let match = dateStr.match(/(\d{4})-(\d{2})-(\d{2})/);
+      if (match) {
+        return new Date(match[1], match[2] - 1, match[3]);
+      }
+
+      return null;
+    };
+
+    // 3. Cari semua berita "Boost Akhir Pekan" dan ambil yang terbaru
+    const boostNews = [];
 
     $(".common_list li a").each((i, el) => {
-      const title = $(el).find(".news_title").text().trim().toLowerCase();
+      const title = $(el).find(".news_title").text().trim();
+      const titleLower = title.toLowerCase();
       const href = $(el).attr("href");
+      const dateStr = $(el).find(".time time").text().trim();
 
-      if (title.includes("boost") && title.includes("akhir pekan")) {
-        boostLink = href.startsWith("http") ? href : BASE_URL + href;
-        return false; // break loop - ambil yang paling atas
+      if (titleLower.includes("boost") && titleLower.includes("akhir pekan")) {
+        boostNews.push({
+          href: href.startsWith("http") ? href : BASE_URL + href,
+          date: dateStr,
+          parsedDate: parseDate(dateStr)
+        });
       }
     });
 
-    if (!boostLink) {
+    if (boostNews.length === 0) {
       return { active: false, bosses: [] };
     }
+
+    // 4. Pilih berita boost dengan tanggal terbaru
+    let latestBoost = boostNews[0];
+    for (const news of boostNews) {
+      if (news.parsedDate && latestBoost.parsedDate &&
+        news.parsedDate > latestBoost.parsedDate) {
+        latestBoost = news;
+      }
+    }
+
+    const boostLink = latestBoost.href;
 
     // 3. Ambil detail berita boost
     const detailRes = await fetch(boostLink, {
