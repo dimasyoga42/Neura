@@ -32,6 +32,7 @@ import { Spotifysearch } from "../plugins/vip/downloader/spotify.js";
 import { bosboost } from "../plugins/toram/boost.js";
 import { buff } from "../plugins/toram/buff.js";
 import { searchMonster } from "../plugins/toram/monster.js";
+import { pet } from "../plugins/toram/pet.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!menu")) {
     if (isBan(sock, chatId, msg)) return;
@@ -284,6 +285,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     searchMonster(sock, chatId, msg, text)
   }
+
+  if (text.startsWith("!pet")) {
+    if (isBan(sock, chatId, msg)) return;
+    pet(sock, chatId, msg, text)
+  }
+
 
 
 
