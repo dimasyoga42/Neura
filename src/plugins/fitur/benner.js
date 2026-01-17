@@ -12,12 +12,13 @@ export const Banner = async (sock, msg, chatId) => {
       return BASE_URL + url;
     };
 
-    const headers = {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-    };
+    const res = await fetch(LIST_URL, {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+      },
+    });
 
-    // 1. Mengambil Daftar Berita Utama
-    const res = await fetch(LIST_URL, { headers });
     if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
 
     const html = await res.text();
@@ -25,142 +26,140 @@ export const Banner = async (sock, msg, chatId) => {
 
     const newsList = [];
 
+    // Ambil semua berita (TANPA REGEX)
     $(".common_list li a").each((i, el) => {
-      const href = $(el).attr("href");
-      const dateStr = $(el).find(".news_date").text().trim();
-
-      // Kita tetap mengambil judul hanya untuk keperluan display caption nantinya,
-      // bukan untuk filtering.
-      const titleList = $(el).find(".news_title").text().trim();
-
       newsList.push({
-        href: href,
-        titleList: titleList,
-        date: dateStr
+        title: $(el).find(".news_title").text().trim(),
+        date: $(el).find(".news_date").text().trim(),
+        href: $(el).attr("href"),
       });
     });
 
     if (newsList.length === 0) {
       return sock.sendMessage(
         String(chatId),
-        { text: "Gagal mengambil struktur daftar berita. Mohon cek manual: https://id.toram.jp" },
+        { text: "Tidak ada berita.\n\nhttps://id.toram.jp" },
         msg ? { quoted: msg } : {}
       );
     }
 
-    // Regex Keyword (Fokus pada konten)
-    const filterRegex = /(avatar|chest|peti\s*harta|kostum|gacha|item\s*khusus|kolaborasi)/i;
+    // REGEX KHUSUS AVATAR (HANYA DIPAKAI DI DETAIL)
+    const AVA_REGEX =
+      /avatar|ava\b|avatar\s*chest|peti\s*harta|kostum|gacha/i;
 
     let selectedNews = null;
-    let banners = [];
 
-    // 2. Iterasi Mendalam (Deep Loop)
-    // Kita membatasi pengecekan pada 5 berita teratas.
-    // Logikanya: Berita terbaru pasti ada di indeks 0, 1, atau 2.
-    // Kita tidak memfilter berdasarkan judul di sini, melainkan langsung masuk ke detail.
-
-    const checkLimit = Math.min(newsList.length, 5);
-
-    for (let i = 0; i < checkLimit; i++) {
-      const news = newsList[i];
+    // Loop berita satu per satu
+    for (const news of newsList) {
       const detailUrl = fixUrl(news.href);
 
-      // Fetch halaman detail secara langsung tanpa validasi judul
-      const detailRes = await fetch(detailUrl, { headers });
+      const detailRes = await fetch(detailUrl, {
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        },
+      });
+
       if (!detailRes.ok) continue;
 
       const detailHtml = await detailRes.text();
       const $detail = cheerio.load(detailHtml);
 
-      // Ekstraksi Konten Utama (.news_content)
-      // Analisis difokuskan pada teks paragraf di dalam berita
+      // 🔍 VALIDASI AVA DI DETAIL
+      const titleText = $detail(".news_title, h1, h2").first().text();
       const contentText = $detail(".news_content").text();
+      const combinedText = `${titleText} ${contentText}`;
 
-      // Validasi 1: Cek apakah ISI KONTEN mengandung keyword relevan
-      if (!filterRegex.test(contentText)) {
-        // Jika isi berita sama sekali tidak membahas avatar/gacha, skip ke berita berikutnya (yang lebih tua)
-        continue;
+      if (!AVA_REGEX.test(combinedText)) {
+        continue; // BUKAN AVATAR → SKIP
       }
 
-      // Validasi 2: Ekstraksi Gambar Banner
-      const tempBanners = [];
+      const banners = [];
 
-      // Mencari gambar di area konten utama
-      $detail(".news_content img, center img").each((_, el) => {
+      // Cari banner
+      $detail("center img, table img, .news_content img").each((i, el) => {
         const src = $detail(el).attr("src");
-        const width = $detail(el).attr("width");
+        const width = parseInt($detail(el).attr("width") || 0);
+        const height = parseInt($detail(el).attr("height") || 0);
 
         if (!src) return;
 
-        // Filter: Abaikan elemen UI (icon, footer, nav, social media)
-        if (/icon|nav_|footer|line|twitter|facebook|google/i.test(src)) return;
+        const isBig = width > 300 || height > 300;
+        const isBannerName =
+          src.toLowerCase().includes("avatar") ||
+          src.toLowerCase().includes("banner") ||
+          src.toLowerCase().includes("chest");
 
-        // Heuristik seleksi gambar:
-        // Ambil jika nama file mengandung kata kunci ATAU ukurannya besar (asumsi banner)
-        const isBannerName = /banner|main|avatar|chest|header/i.test(src);
-        const isLargeEnough = !width || parseInt(width) > 250;
-
-        if (isBannerName || isLargeEnough) {
+        if ((isBig || isBannerName) && !/icon|nav_|footer|logo/i.test(src)) {
           const fullUrl = fixUrl(src);
-          if (!tempBanners.includes(fullUrl)) {
-            tempBanners.push(fullUrl);
+          if (!banners.includes(fullUrl)) {
+            banners.push(fullUrl);
           }
         }
       });
 
-      // KEPUTUSAN FINAL (Terminating Condition)
-      // Jika ditemukan gambar valid DAN konten teks relevan, maka ini adalah update terbaru.
-      if (tempBanners.length > 0) {
-        // Ambil judul dari halaman detail (biasanya lebih akurat daripada list)
-        const detailedTitle = $detail("h1").first().text().trim() || news.titleList;
+      if (banners.length === 0) continue;
 
-        selectedNews = {
-          ...news,
-          title: detailedTitle,
-          detailUrl: detailUrl,
-          // Buat preview teks pendek untuk caption
-          preview: contentText.replace(/\s+/g, ' ').substring(0, 150).trim() + "..."
-        };
-        banners = tempBanners;
+      const firstParagraph = $detail(".news_content p")
+        .first()
+        .text()
+        .trim();
 
-        // BREAK: Berhenti segera setelah menemukan match pertama dari atas.
-        // Ini menjamin kita mendapat yang 'Terbaru' atau 'Kedua Terbaru' tanpa tertukar dengan berita lama.
-        break;
-      }
+      selectedNews = {
+        ...news,
+        detailUrl,
+        preview: firstParagraph
+          ? firstParagraph.slice(0, 150) +
+          (firstParagraph.length > 150 ? "..." : "")
+          : "",
+        banners,
+      };
+
+      break; // STOP → AVATAR TERBARU DITEMUKAN
     }
 
-    if (!selectedNews || banners.length === 0) {
+    if (!selectedNews) {
       return sock.sendMessage(
         String(chatId),
-        { text: "Tidak ditemukan banner Avatar/Gacha pada 5 berita teratas saat ini.\nCek manual: https://id.toram.jp" },
-        msg ? { quoted: msg } : {}
-      );
-    }
-
-    // Konstruksi Pesan Respons
-    let caption = `*TORAM ONLINE - NEW UPDATE*\n`;
-    caption += `\n🏷️ *${selectedNews.title}*`;
-    caption += `\n📅 ${selectedNews.date}`;
-    caption += `\n\n📝 ${selectedNews.preview}`;
-    caption += `\n\n🔗 ${selectedNews.detailUrl}`;
-
-    // Pengiriman Pesan
-    for (let i = 0; i < banners.length; i++) {
-      await sock.sendMessage(
-        String(chatId),
         {
-          image: { url: banners[i] },
-          caption: i === 0 ? caption : ""
+          text:
+            "Tidak ditemukan banner Avatar.\n\nCek manual: https://id.toram.jp",
         },
         msg ? { quoted: msg } : {}
       );
     }
 
+    // CAPTION
+    let caption = `TORAM ONLINE - AVATAR UPDATE\n`;
+    caption += `${selectedNews.title}\n`;
+    caption += `Tanggal: ${selectedNews.date}\n`;
+
+    if (selectedNews.preview) {
+      caption += `\nPreview:\n${selectedNews.preview}\n`;
+    }
+
+    caption += `\nLink: ${selectedNews.detailUrl}`;
+
+    // KIRIM BANNER
+    for (let i = 0; i < selectedNews.banners.length; i++) {
+      await sock.sendMessage(
+        String(chatId),
+        {
+          image: { url: selectedNews.banners[i] },
+          caption: i === 0 ? caption : undefined,
+        },
+        msg ? { quoted: msg } : {}
+      );
+    }
   } catch (err) {
-    console.error(err);
     await sock.sendMessage(
       String(chatId),
-      { text: `Sistem Error: ${err.message}` },
+      {
+        text:
+          "TORAM AVATAR BANNER - ERROR\n" +
+          `Pesan: ${err.message}\n\n` +
+          "Solusi:\n- Cek koneksi\n- Website maintenance\n- Coba lagi nanti",
+      },
       msg ? { quoted: msg } : {}
     );
   }
