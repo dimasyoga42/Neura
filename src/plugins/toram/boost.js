@@ -105,21 +105,28 @@ async function scrapeBoostBoss() {
       const bossName = match[2].trim();
       const location = match[3] || "";
 
-      // Cari gambar boss (biasanya di <div align="center"> setelah subtitle)
+      // Cari gambar di elemen berikutnya
+      // Struktur: <div class="subtitle">...</div> <br> <div align="center"><img></div>
       let img = null;
-      let nextEl = $detail(el).parent().next();
+      let currentEl = $detail(el);
 
-      // Cek beberapa element selanjutnya
+      // Cek 5 elemen selanjutnya
       for (let j = 0; j < 5; j++) {
-        if (nextEl.length === 0) break;
+        currentEl = currentEl.next();
+        if (currentEl.length === 0) break;
 
-        const foundImg = nextEl.find("img").first();
+        // Cari img di dalam element atau di element itu sendiri
+        const foundImg = currentEl.find("img").first();
         if (foundImg.length > 0) {
           img = foundImg.attr("src");
           break;
         }
 
-        nextEl = nextEl.next();
+        // Cek jika element sendiri adalah img
+        if (currentEl.is("img")) {
+          img = currentEl.attr("src");
+          break;
+        }
       }
 
       if (img) {
