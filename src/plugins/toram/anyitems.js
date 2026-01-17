@@ -8,7 +8,25 @@ const formatStatList = (stat) => {
     .join("\n");
 };
 
+const parseStat = (stat) => {
+  if (!stat) return "-";
 
+  const parts = stat.split(";").map(s => s.trim());
+  const result = [];
+
+  for (let i = 0; i < parts.length - 1; i++) {
+    // label harus ada huruf
+    if (/[a-zA-Z%]/.test(parts[i])) {
+      // value harus angka (boleh minus)
+      if (/^-?\d+(\.\d+)?$/.test(parts[i + 1])) {
+        result.push(`${parts[i]} : ${parts[i + 1]}`);
+        i++; // lompat ke pasangan berikutnya
+      }
+    }
+  }
+
+  return result.length ? result.join("\n- ") : "-";
+};
 
 export const searchXtall = async (sock, chatId, msg, text) => {
   try {
@@ -52,7 +70,7 @@ ${xtall.name}
 Type    : ${xtall.type}
 Upgrade : ${xtall.upgrade}
 Stat    : 
-  - ${xtall.stat.split(";").join("\n")}
+  - ${parseStat(xtall.stat)}
 
 Rute: ${xtall.route}
 `).join("")}
