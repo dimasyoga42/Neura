@@ -780,3 +780,120 @@ Spina 300.000
 
 `.trim()
 
+export const hdb_Bos = {
+
+}
+
+export const petGuide = {
+  skillPet: `
+*Ragging Blow [800 MP]*
+A physical attack basen on ATK. Deal massive physical damage to a target.
+
+*HP Gain [Passive]*
+Increase the pet's MaxHP.
+
+*Absorb MP [Passive]*
+Increase the pet's Attack MP Recovery.
+
+*Hide [Passive]*
+Hide behind the master to reduce damage. The master takes the reduced damage.
+
+*Magic Lance [800 MP]*
+A magic attack based on MATK. Deal massive magic damage to a target.
+
+*Critical Up [200 MP]*
+Increase Critical Damage of all party members near the pet for a certain period of time.
+
+*Heavy Blow [400 MP]*
+A physical attack based on ATK. Deal great physical damage to a target.
+
+*Stealth Attack [100 MP]*
+An attack that doesn't generate Aggro. If the pet's ATK is higher, deal physical damage. If the pet's MATK is higher, deal magic damage.
+
+*Magic Shot [400 MP]*
+A magic attack based on MATK. Deal great magic damage to a target.
+
+*Blast Flare [600 MP]*
+A magic attack based on MATK. Deal damage to a target and enemies around it. The range gets wider as the skill levels up.
+
+*Circle of Heal [600 MP]*
+Restore all party members HP. Heal amount depends on the pet's MATK.
+
+*Encourage [100 MP]*
+Increase ATK and CPSD of all party members near the pet for a certain period of time.
+
+*First-Aid [100 MP]*
+Give first aid when the master is beaten. Reduce the waiting time to revive.
+
+*Clear Mind [100 MP]*
+Increase MATK and CPSD of all party members near the pet for a certain period of time.
+
+*Restore [400 MP]*
+Restore a player with the lowest HP. Heal amount depends on the pet's MATK.
+
+*Sweep Attack [400 MP]*
+A physical attack based on ATK. Chance to [Tumble] the target.
+
+*Clean Hit [200 MP]*
+A physical attack based on ATK. Chance to [Flinch] the target.
+
+*Rage Attack [100 MP]*
+An attack that generates high Aggro. If the pet's ATK is higher, deal physical damage. If the pet's MATK is higher, deal magic damage.
+
+*Blinding Shadow [200 MP]*
+A magic attack based on MATK. Chance to inflict [Blind] on the target.
+
+*Resistance Up [200 MP]*
+Increase Physical and Magic Resistance of all party members near the pet for a certain period of time.
+
+*Stun Attack [600 MP]*
+A physical based on ATK. Chance to inflict [Stun] on the target.
+
+*Cover [Passive]*
+Reduce the master's damage taken. The pet takes the reduced damage.
+
+*Absorb HP [Passive]*
+Absorb a part of the pet's damage dealt as HP.
+
+*MP Gain [Passive]*
+Increase the pet's MaxMP
+
+*Shield Break [600 MP]*
+A magic attack based on MATK. Chance to inflict [Armor Break] on target.
+  `.trim(),
+
+  levelingPet: `
+- LVL 1-40 Masked Norm
+- LVL 40-46 Masked Hard
+- LVL 46-72 Masked NM
+- LVL 72-95 Masked Ulti
+- LVL 95-102 Cerberus NM
+- LVL 102-160 Cerberus Ulti
+- LVL 160-cap Venena Ulti
+  `.trim(),
+  fusionPet: `
+Rumus: (Pet A + Pet B) : 2 + 1
+contoh kita memiliki pet a berlevel 47 dan pet b berlevel 77
+jika menggunakan rumus maka 
+(47 + 77):2 +1 = 124 : 2 + 1 = 62 + 1 = 63 
+maka max Level dari fusion kedua pet tersebut adalah 63 
+`.trim(),
+  trainingPet: `
+  *Training Pet By Neura Sama*
+  *Training Skill*
+  Skill Practive Lv. 1 (100%) => First Skill, Yes
+  Skill Practive Lv. 2 (50%) => Second Skill, Random
+  Skill Practive Lv. 3 (25%) => Third Skill, Random
+
+  *Training Stat*
+  S = succes
+  F = Failed
+  Stat Training Easy (80%) (S2) (F1)
+  Stat Training Hard (60%) (S3) (F0)
+  Stat Training Profesional (70%) (S15) (F10)
+  `.trim(),
+  stat: `
+
+  `.trim()
+}
+
