@@ -31,6 +31,7 @@ import { listSkill, skill } from "../plugins/toram/skill.js";
 import { Spotifysearch } from "../plugins/vip/downloader/spotify.js";
 import { bosboost } from "../plugins/toram/boost.js";
 import { buff } from "../plugins/toram/buff.js";
+import { searchMonster } from "../plugins/toram/monster.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!menu")) {
     if (isBan(sock, chatId, msg)) return;
@@ -279,6 +280,11 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     Spotifysearch(sock, chatId, msg, text)
   }
+  if (text.startsWith("!monster")) {
+    if (isBan(sock, chatId, msg)) return;
+    searchMonster(sock, chatId, msg, text)
+  }
+
 
 
 
