@@ -25,50 +25,29 @@ export const Banner = async (sock, msg, chatId) => {
 
     const filterRegex = /avatar\s*chest|peti\s*harta|chest.*avatar|kostum|gacha/i;
 
-    // Parse tanggal format: YYYY.MM.DD atau DD/MM/YYYY
-    const parseDate = (dateStr) => {
-      if (!dateStr) return null;
+    let targetNews = null;
 
-      // Format: YYYY.MM.DD
-      let match = dateStr.match(/(\d{4})\.(\d{2})\.(\d{2})/);
-      if (match) {
-        return new Date(match[1], match[2] - 1, match[3]);
-      }
-
-      // Format: DD/MM/YYYY
-      match = dateStr.match(/(\d{2})\/(\d{2})\/(\d{4})/);
-      if (match) {
-        return new Date(match[3], match[2] - 1, match[1]);
-      }
-
-      return null;
-    };
-
-    let latestNews = null;
-    let latestDate = null;
-
-    // Cari semua berita yang cocok dengan filter dan ambil yang terbaru
+    // Iterasi dari atas ke bawah, berhenti di hasil pertama yang cocok
     $(".common_list li a").each((i, el) => {
+      // Jika sudah ketemu, langsung return
+      if (targetNews) return false;
+
       const title = $(el).find(".news_title").text().trim();
       const dateStr = $(el).find(".news_date").text().trim();
       const href = $(el).attr("href");
 
+      // Cek apakah cocok dengan filter
       if (filterRegex.test(title)) {
-        const parsedDate = parseDate(dateStr);
-
-        // Bandingkan tanggal, ambil yang paling baru
-        if (!latestDate || (parsedDate && parsedDate > latestDate)) {
-          latestDate = parsedDate;
-          latestNews = {
-            href: href,
-            title: title,
-            date: dateStr
-          };
-        }
+        targetNews = {
+          href: href,
+          title: title,
+          date: dateStr
+        };
+        return false; // Break loop
       }
     });
 
-    if (!latestNews) {
+    if (!targetNews) {
       return sock.sendMessage(
         String(chatId),
         { text: "Tidak ditemukan berita Avatar/Peti Harta terbaru.\n\nCek manual: https://id.toram.jp" },
@@ -76,7 +55,7 @@ export const Banner = async (sock, msg, chatId) => {
       );
     }
 
-    const detailUrl = fixUrl(latestNews.href);
+    const detailUrl = fixUrl(targetNews.href);
     const detailRes = await fetch(detailUrl, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
@@ -150,10 +129,10 @@ export const Banner = async (sock, msg, chatId) => {
       preview = firstParagraph.substring(0, 150) + (firstParagraph.length > 150 ? "..." : "");
     }
 
-    // Kirim caption dengan info berita terbaru
+    // Kirim caption dengan info berita
     let caption = `TORAM ONLINE - UPDATE\n`;
-    caption += `${latestNews.title}\n`;
-    caption += `Tanggal: ${latestNews.date}\n`;
+    caption += `${targetNews.title}\n`;
+    caption += `Tanggal: ${targetNews.date}\n`;
 
     if (preview) {
       caption += `\nPreview:\n${preview}\n`;
@@ -167,7 +146,7 @@ export const Banner = async (sock, msg, chatId) => {
         String(chatId),
         {
           image: { url: banners[i] },
-          caption: i === 0 ? caption : undefined // Caption hanya di gambar pertama
+          caption: i === 0 ? caption : undefined
         },
         msg ? { quoted: msg } : {}
       );
