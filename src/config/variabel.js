@@ -113,11 +113,11 @@ komunitas: https://whatsapp.com/channel/0029VbAmhBF7z4kjOQcoVV0A
 
 *Menu Tools*
 - !stiker 
-- !play <title music>
+- !play 
 - !spotify
-- !ytmp3 <link yt>
-- !pinterest <any txt>
-- !qc <txt>
+- !ytmp3 
+- !pinterest 
+- !qc 
 
 *Menu Fun*
 - !caklontong 
@@ -130,42 +130,54 @@ komunitas: https://whatsapp.com/channel/0029VbAmhBF7z4kjOQcoVV0A
 *Menu Grub*
 - !profil 
 - !mybio 
-- !setdesc <text>
+- !setdesc 
 - !setpp 
 - !rules 
 - !raid 
-- !setbuff <code> 
-- !afk <any text>
+- !setbuff  
+- !afk 
 - !gempa
 
 *Info Toram*
-- !benner 
-- !boost
+- !torambanner 
+- !toramboost
 - !dye
+- !torammt 
 
-*Menu Toram*
-- !xtall <nama xtall>
-- !item <nama item>
-- !appview <nama app>
-- !lv <level>
-- !buff 
-- !ability <nama ability>
-- !regist <nama regist>
-- !bos <nama bos>
-- !filarm 
-- !sheetfill
-- !upbag 
-- !listLeveling
-- !raid 
+*Guide Toram*
+- !pet 
+
+*Raid Fitur*
+- !createraid
 - !join 
-- !leave
-- !pembolong
-- !padu
-- !listability
-- !listskill
-- !skill
+- !leave 
+- !clear 
+- !raid 
 
-> banyak banyk literasi dalam membaca menu!!
+*tools Toram*
+- !filarm
+- !xtall 
+- !lv 
+- !regist 
+- !item 
+- !appview 
+
+*Info Toram*
+- !listability 
+- !listskill 
+- !ability 
+- !skill 
+- !buff 
+- !pembolong
+- !bos 
+- !upbag 
+- !padu
+- !listLeveling
+- !sheetfill
+
+
+
+> banyak banyak literasi dalam membaca menu!!
 `.trim();
 
 export const buffMessage = `

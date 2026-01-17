@@ -24,7 +24,7 @@ export const searchXtall = async (sock, chatId, msg, text) => {
 
     const { data, error } = await supabase
       .from("xtall")
-      .select("name, type, upgrade, stat")
+      .select("name, type, upgrade, stat, route")
       .ilike("name", `%${nama}%`); // ❌ hapus limit(1)
 
     if (error) {
@@ -52,6 +52,8 @@ ${xtall.name}
 Type    : ${xtall.type}
 Upgrade : ${xtall.upgrade}
 Stat    : ${xtall.stat}
+
+Rute: ${xtall.route}
 `).join("")}
 `.trim();
 
