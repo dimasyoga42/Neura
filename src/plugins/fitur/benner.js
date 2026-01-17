@@ -47,8 +47,29 @@ export const Banner = async (sock, msg, chatId) => {
     }
 
     const filterRegex = /avatar\s*chest|peti\s*harta|chest.*avatar|kostum|gacha/i;
+
+    // Parse tanggal format: YYYY.MM.DD atau DD/MM/YYYY
+    const parseDate = (dateStr) => {
+      if (!dateStr) return null;
+
+      // Format: YYYY.MM.DD
+      let match = dateStr.match(/(\d{4})\.(\d{2})\.(\d{2})/);
+      if (match) {
+        return new Date(match[1], match[2] - 1, match[3]);
+      }
+
+      // Format: DD/MM/YYYY
+      match = dateStr.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+      if (match) {
+        return new Date(match[3], match[2] - 1, match[1]);
+      }
+
+      return null;
+    };
+
     let selectedNews = null;
     let banners = [];
+    let latestDate = null;
 
     // Cek satu per satu dari daftar paling atas
     for (let i = 0; i < newsList.length; i++) {
@@ -115,24 +136,29 @@ export const Banner = async (sock, msg, chatId) => {
         });
       }
 
-      // Jika ada banner, pakai berita ini
+      // Jika ada banner, bandingkan tanggal
       if (tempBanners.length > 0) {
-        selectedNews = news;
-        banners = tempBanners;
+        const newsDate = parseDate(news.date);
 
-        // Ambil preview text
-        let preview = "";
-        const firstParagraph = $detail(".news_content p").first().text().trim();
-        if (firstParagraph && firstParagraph.length > 0) {
-          preview = firstParagraph.substring(0, 150) + (firstParagraph.length > 150 ? "..." : "");
+        // Jika belum ada berita terpilih atau tanggal lebih baru
+        if (!selectedNews || (newsDate && (!latestDate || newsDate > latestDate))) {
+          latestDate = newsDate;
+          selectedNews = news;
+          banners = tempBanners;
+
+          // Ambil preview text
+          let preview = "";
+          const firstParagraph = $detail(".news_content p").first().text().trim();
+          if (firstParagraph && firstParagraph.length > 0) {
+            preview = firstParagraph.substring(0, 150) + (firstParagraph.length > 150 ? "..." : "");
+          }
+
+          selectedNews.preview = preview;
+          selectedNews.detailUrl = detailUrl;
         }
-
-        selectedNews.preview = preview;
-        selectedNews.detailUrl = detailUrl;
-        break; // Sudah ketemu, stop
       }
 
-      // Jika tidak ada banner, lanjut ke berita berikutnya
+      // Lanjut cek berita berikutnya untuk cari yang lebih baru
     }
 
     if (!selectedNews || banners.length === 0) {
