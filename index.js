@@ -65,7 +65,7 @@ const start = async () => {
     try {
       const chatId = msg.key.remoteJid;
       const text = msg.message.conversation || msg.message.extendedTextMessage?.text || "";
-      if (!chatId?.endsWith("@g.us")) return;
+      //if (!chatId?.endsWith("@g.us")) return;
       messageHandler(sock, chatId, msg);
       checkMentionAfk(sock, chatId, msg)
       checkUnAfk(sock, chatId, msg);

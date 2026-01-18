@@ -24,6 +24,7 @@ const getUserId = (msg) => {
 ======================= */
 export const setPP = async (sock, chatId, msg) => {
   try {
+    if (!chatId?.endsWith("@g.us")) return sock.sendMessage(chatId, { text: "cmd ini hanya bisa digunakan di grub" }, { quoted: msg })
     let imageMessage;
 
     const quoted =
@@ -91,6 +92,7 @@ export const setPP = async (sock, chatId, msg) => {
 ======================= */
 export const setDesc = async (sock, chatId, msg, arg) => {
   try {
+    if (!chatId?.endsWith("@g.us")) return sock.sendMessage(chatId, { text: "cmd ini hanya bisa digunakan di grub" }, { quoted: msg })
     const text = arg.replace("!setdesc", "");
 
     if (!text?.trim()) {
@@ -141,6 +143,7 @@ export const setDesc = async (sock, chatId, msg, arg) => {
 ======================= */
 export const myBio = async (sock, chatId, msg) => {
   try {
+    if (!chatId?.endsWith("@g.us")) return sock.sendMessage(chatId, { text: "cmd ini hanya bisa digunakan di grub" }, { quoted: msg })
     const userId = getUserId(msg);
     const data = getUserData(db);
     const user = data.find((u) => u.userId === userId);
@@ -164,6 +167,7 @@ export const myBio = async (sock, chatId, msg) => {
 ======================= */
 export const cekBio = async (sock, chatId, msg) => {
   try {
+    if (!chatId?.endsWith("@g.us")) return sock.sendMessage(chatId, { text: "cmd ini hanya bisa digunakan di grub" }, { quoted: msg })
     const mention =
       msg.message?.extendedTextMessage?.contextInfo?.mentionedJid?.[0];
 
@@ -201,6 +205,7 @@ export const cekBio = async (sock, chatId, msg) => {
 ======================= */
 export const myProfile = async (sock, chatId, msg) => {
   try {
+    if (!chatId?.endsWith("@g.us")) return sock.sendMessage(chatId, { text: "cmd ini hanya bisa digunakan di grub" }, { quoted: msg })
     const userId = getUserId(msg);
     const data = getUserData(db);
     const user = data.find((u) => u.userId === userId);
@@ -241,6 +246,7 @@ export const myProfile = async (sock, chatId, msg) => {
 ======================= */
 export const cekProfile = async (sock, chatId, msg) => {
   try {
+    if (!chatId?.endsWith("@g.us")) return sock.sendMessage(chatId, { text: "cmd ini hanya bisa digunakan di grub" }, { quoted: msg })
     const mention =
       msg.message?.extendedTextMessage?.contextInfo?.mentionedJid?.[0];
 
@@ -292,6 +298,7 @@ export const cekProfile = async (sock, chatId, msg) => {
 ======================= */
 export const setidBuff = async (sock, chatId, msg, text) => {
   try {
+    if (!chatId?.endsWith("@g.us")) return sock.sendMessage(chatId, { text: "cmd ini hanya bisa digunakan di grub" }, { quoted: msg })
     const arg = text.replace("!setbuff", "");
     if (!arg?.trim()) {
       return sock.sendMessage(

@@ -6,6 +6,7 @@ const db = path.resolve("database", "news.json");
 
 export const setNews = async (sock, chatId, msg, text) => {
   try {
+    if (!chatId?.endsWith("@g.us")) return sock.sendMessage(chatId, { text: "cmd ini hanya bisa digunakan di grub" }, { quoted: msg })
     adminValid(sock, chatId, msg, text);
     const newsText = text.replace("!setnews", "").trim();
 
@@ -58,6 +59,7 @@ export const setNews = async (sock, chatId, msg, text) => {
 
 export const getNews = async (sock, chatId, msg) => {
   try {
+    if (!chatId?.endsWith("@g.us")) return sock.sendMessage(chatId, { text: "cmd ini hanya bisa digunakan di grub" }, { quoted: msg })
     let data = await getUserData(db);
 
     if (!Array.isArray(data) || data.length === 0) {

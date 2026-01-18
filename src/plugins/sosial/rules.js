@@ -6,6 +6,7 @@ const db = path.resolve("database", "rules.json");
 
 export const setrules = async (sock, chatId, msg, text) => {
   try {
+    if (!chatId?.endsWith("@g.us")) return sock.sendMessage(chatId, { text: "cmd ini hanya bisa digunakan di grub" }, { quoted: msg })
     const newsText = text.replace("!setrules", "").trim();
 
     if (!newsText) {
@@ -57,6 +58,7 @@ export const setrules = async (sock, chatId, msg, text) => {
 
 export const getRules = async (sock, chatId, msg) => {
   try {
+    if (!chatId?.endsWith("@g.us")) return sock.sendMessage(chatId, { text: "cmd ini hanya bisa digunakan di grub" }, { quoted: msg })
     let data = await getUserData(db);
 
     if (!Array.isArray(data) || data.length === 0) {
