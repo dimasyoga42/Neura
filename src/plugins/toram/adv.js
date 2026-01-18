@@ -4,7 +4,7 @@ import fs from "fs"
    LOAD DATA MQ
 ========================= */
 const MQ_DATA = JSON.parse(
-  fs.readFileSync("./../../../database/mq.json", "utf-8")
+  fs.readFileSync("./../dbs/data_mq_clean.json", "utf-8")
 )
 
 /* =========================
