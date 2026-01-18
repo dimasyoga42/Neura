@@ -2,7 +2,7 @@
 // SPMADV SIMULATOR - SINGLE FILE
 // Compatible with Baileys
 
-export async function spmadv(sock, chatId, text) {
+export async function spmadv(sock, chatId, msg, text) {
   try {
     const args = text.replace(".spmadv", "").trim()
     if (!args) {
