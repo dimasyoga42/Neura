@@ -8,14 +8,18 @@ import readline from "readline";
 // Enable stealth plugin
 puppeteer.use(StealthPlugin());
 
-// --- CONFIGURATION ---
+// --- CONFIGURATION - OPTIMIZED ---
 const CONFIG = {
-  MAX_RETRIES: 3,
-  DEFAULT_TIMEOUT: 120000,
-  CHECK_INTERVAL: 2000,
+  MAX_RETRIES: 2, // Reduced from 3
+  DEFAULT_TIMEOUT: 90000, // Reduced from 120000
+  CHECK_INTERVAL: 1000, // Reduced from 2000 for faster checks
   DEFAULT_LEVEL: 280,
   DEFAULT_POTENTIAL: 110,
   BASE_URL: "https://tanaka0.work/id/BouguProper",
+  // New optimization configs
+  NAVIGATION_TIMEOUT: 20000, // Faster navigation timeout
+  SELECTOR_TIMEOUT: 5000, // Faster selector timeout
+  MAX_CAPTCHA_WAIT: 20, // Reduced from 30
 };
 
 // --- STAT MAP dengan ALIAS ---
@@ -225,7 +229,6 @@ function parseCommand(args) {
     startingPotential: CONFIG.DEFAULT_POTENTIAL,
   };
 
-  // Join semua args jadi satu string
   const fullCommand = args.join(" ").toLowerCase();
 
   // Extract level dan potential
@@ -245,15 +248,11 @@ function parseCommand(args) {
     }
   }
 
-  // Split by comma untuk mendapatkan tiap stat
   const statParts = fullCommand.split(',').map(s => s.trim());
 
   for (const part of statParts) {
-    // Skip jika kosong atau mengandung lv/pot
     if (!part || part.includes('lv') || part.includes('pot')) continue;
 
-    // Format: statname = value
-    // Contoh: atk% = 10, cr = Max, acc% = Min
     const match = part.match(/^([a-z%]+)\s*=\s*(.+)$/);
 
     if (!match) continue;
@@ -261,7 +260,6 @@ function parseCommand(args) {
     const [, statKey, valueStr] = match;
     const value = valueStr.trim();
 
-    // Cek apakah stat ada di statMap
     const fullName = statMap[statKey];
 
     if (!fullName) {
@@ -269,11 +267,9 @@ function parseCommand(args) {
       continue;
     }
 
-    // Tentukan apakah positive atau negative berdasarkan value
     const isNegative = value === 'min';
     const isPositive = value === 'max';
 
-    // Konversi value
     let level;
     if (isPositive || isNegative) {
       level = 'MAX';
@@ -288,7 +284,6 @@ function parseCommand(args) {
 
     const statObject = { name: fullName, level };
 
-    // Tambahkan ke array yang sesuai
     if (isNegative) {
       if (config.negativeStats.length < 7) {
         config.negativeStats.push(statObject);
@@ -297,7 +292,6 @@ function parseCommand(args) {
         console.warn(`⚠️ Maksimal 7 negative stats, ${fullName} diabaikan`);
       }
     } else {
-      // Default ke positive jika bukan min
       if (config.positiveStats.length < 7) {
         config.positiveStats.push(statObject);
         console.log(`✓ Positive stat ditambahkan: ${fullName} ${level}`);
@@ -322,12 +316,13 @@ function parseCommand(args) {
   return config;
 }
 
-// --- CAPTCHA HANDLING ---
+// --- OPTIMIZED CAPTCHA HANDLING ---
 async function handleCaptcha(page) {
   try {
     console.log("🔍 Menganalisis CAPTCHA...");
 
-    for (let i = 0; i < 30; i++) {
+    // Reduced wait time
+    for (let i = 0; i < CONFIG.MAX_CAPTCHA_WAIT; i++) {
       await sleep(1000);
 
       const captchaGone = await page.evaluate(() => {
@@ -348,7 +343,7 @@ async function handleCaptcha(page) {
         return { solved: true, method: "auto-disappeared" };
       }
 
-      process.stdout.write(`\r🔒 Menunggu CAPTCHA ${i + 1}/30...`);
+      process.stdout.write(`\r🔒 Menunggu CAPTCHA ${i + 1}/${CONFIG.MAX_CAPTCHA_WAIT}...`);
     }
 
     console.log("\n🖱️ Mencoba penyelesaian otomatis...");
@@ -392,7 +387,7 @@ async function handleCaptcha(page) {
 
     if (clickResult.clicked) {
       console.log(`✅ Diklik: ${clickResult.type} - "${clickResult.text}"`);
-      await sleep(5000);
+      await sleep(3000); // Reduced from 5000
 
       const solved = await page.evaluate(() => {
         const pageText = document.body.innerText.toLowerCase();
@@ -412,12 +407,13 @@ async function handleCaptcha(page) {
   }
 }
 
-// --- AUTO WAIT FOR RESULTS ---
+// --- OPTIMIZED AUTO WAIT FOR RESULTS ---
 async function autoWaitForResults(page, maxWaitTime, checkInterval) {
   console.log("🤖 Memulai pemantauan otomatis...");
 
   const startTime = Date.now();
   let captchaDetected = false;
+  let consecutiveResults = 0;
 
   while (Date.now() - startTime < maxWaitTime) {
     try {
@@ -440,7 +436,7 @@ async function autoWaitForResults(page, maxWaitTime, checkInterval) {
             pageText.includes("error") ||
             pageText.includes("failed") ||
             pageText.includes("timeout"),
-          pageText: document.body.innerText.substring(0, 1000),
+          pageText: document.body.innerText.substring(0, 500),
         };
       });
 
@@ -456,16 +452,23 @@ async function autoWaitForResults(page, maxWaitTime, checkInterval) {
         }
       }
 
+      // Optimized result detection with consecutive checks
       if (pageState.hasResults) {
-        console.log("🎯 Hasil ditemukan! Memulai parsing...");
-        return await parseAllResults(page);
+        consecutiveResults++;
+        if (consecutiveResults >= 2) { // Confirm result stability
+          console.log("🎯 Hasil stabil ditemukan! Memulai parsing...");
+          await sleep(500); // Brief wait for final rendering
+          return await parseAllResults(page);
+        }
+      } else {
+        consecutiveResults = 0;
       }
 
       if (pageState.hasError) {
         console.log("❌ Error terdeteksi pada halaman");
         return {
           error: "Terjadi error pada website",
-          pageContent: pageState.pageText.substring(0, 500),
+          pageContent: pageState.pageText.substring(0, 300),
           hasValidResult: false,
         };
       }
@@ -493,7 +496,7 @@ async function autoWaitForResults(page, maxWaitTime, checkInterval) {
   return await parseAllResults(page);
 }
 
-// --- RESULT PARSING DENGAN REGEX KETAT ---
+// --- OPTIMIZED RESULT PARSING ---
 async function parseAllResults(page) {
   console.log("\n📊 Parsing hasil dari halaman...");
 
@@ -545,7 +548,6 @@ async function parseAllResults(page) {
 
   allData.resultDivs.forEach((div) => {
     const text = div.text;
-    const html = div.html;
 
     // Extract final stats
     if (div.hasStatting && text.includes("Result")) {
@@ -568,14 +570,13 @@ async function parseAllResults(page) {
       }
     }
 
-    // Extract success rate dengan regex KETAT
+    // Extract success rate
     if (div.hasSuccessRate) {
       const lines = text
         .split("\n")
         .map((l) => l.trim())
         .filter((l) => l);
 
-      // Regex ketat: HARUS ada angka + %
       const successRatePatterns = [
         /Success\s+Rate\s*[：:]\s*(\d+(?:\.\d+)?)\s*%/i,
         /Success\s+Rate\s*[：:]\s*(\d+(?:\.\d+)?)%/i,
@@ -594,21 +595,7 @@ async function parseAllResults(page) {
         }
       }
 
-      // Fallback: cari di lines
-      if (result.successRateValue === null) {
-        for (const line of lines) {
-          const match = line.match(/Success\s+Rate[：:]\s*(\d+(?:\.\d+)?)\s*%/i);
-          if (match) {
-            const percentage = parseFloat(match[1]);
-            result.successRate = line;
-            result.successRateValue = percentage;
-            console.log("✓ Success rate ditemukan (fallback):", result.successRate);
-            break;
-          }
-        }
-      }
-
-      // Extract starting pot dengan regex ketat
+      // Extract starting pot
       const potPatterns = [
         /Starting\s+Pot[：:]\s*(\d+)\s*pt/i,
         /Starting\s+Pot[：:]\s*(\d+)pt/i,
@@ -688,7 +675,6 @@ async function parseAllResults(page) {
 
   result.totalSteps = result.steps.length;
 
-  // Validasi KETAT: harus ada success rate VALUE
   result.hasValidResult =
     result.finalStat !== "Tidak ditemukan" &&
     result.successRateValue !== null &&
@@ -723,7 +709,6 @@ function formatResultMessage(result) {
 
   let message = `*Hasil Tanaka*\n\n`;
 
-  // Tampilkan success rate dengan value yang jelas
   if (result.successRateValue !== null) {
     message += `*Success Rate:* ${result.successRateValue}%\n`;
   } else {
@@ -768,7 +753,7 @@ function formatResultMessage(result) {
   return message;
 }
 
-// --- MAIN TANAKA FUNCTION ---
+// --- OPTIMIZED MAIN TANAKA FUNCTION ---
 async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions = {}) {
   let sock, jid, statConfig, options;
 
@@ -803,63 +788,107 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
     try {
       console.log("🚀 Meluncurkan peramban...");
       browser = await puppeteer.launch({
-        headless: "new",
+        headless: true,
         args: [
           "--no-sandbox",
           "--disable-setuid-sandbox",
           "--disable-dev-shm-usage",
           "--disable-gpu",
-          "--disable-software-rasterizer"
+          "--disable-software-rasterizer",
+          "--disable-extensions",
+          "--disable-images", // Speed optimization
+          "--disable-plugins",
+          "--disable-background-networking",
+          "--disable-default-apps",
+          "--disable-sync",
+          "--disable-translate",
+          "--metrics-recording-only",
+          "--mute-audio",
+          "--no-first-run",
+          "--safebrowsing-disable-auto-update",
         ],
         ...(debug && { devtools: true, slowMo: 250 }),
       });
 
       const page = await browser.newPage();
+
+      // Optimize page performance
       await page.setViewport({ width: 1280, height: 800 });
       await page.setUserAgent(
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
       );
 
+      // Disable unnecessary resources for faster loading
+      await page.setRequestInterception(true);
+      page.on('request', (req) => {
+        const resourceType = req.resourceType();
+        if (['image', 'stylesheet', 'font', 'media'].includes(resourceType)) {
+          req.abort();
+        } else {
+          req.continue();
+        }
+      });
+
       console.log(`📂 Membuka ${CONFIG.BASE_URL}...`);
       await page.goto(CONFIG.BASE_URL, {
-        waitUntil: "networkidle2",
-        timeout: 30000,
+        waitUntil: "domcontentloaded", // Changed from networkidle2 for faster loading
+        timeout: CONFIG.NAVIGATION_TIMEOUT,
       });
 
       console.log("📝 Mengisi formulir...");
-      await page.waitForSelector("#paramLevel", { timeout: 10000 });
+      await page.waitForSelector("#paramLevel", { timeout: CONFIG.SELECTOR_TIMEOUT });
 
       const { positiveStats, negativeStats, startingPotential, characterLevel } = statConfig;
 
-      await page.select("#paramLevel", String(characterLevel));
+      // Batch all form operations for better performance
+      await page.evaluate(
+        ({ level, positive, negative, pot }) => {
+          // Set level
+          const levelSelect = document.querySelector("#paramLevel");
+          if (levelSelect) levelSelect.value = String(level);
 
-      for (let i = 0; i < 7; i++) {
-        const stat = positiveStats[i];
-        if (stat) {
-          await page.select(`#plus_name_${i}`, stat.name);
-          await page.select(`#plus_value_${i}`, String(stat.level));
-        } else {
-          await page.select(`#plus_name_${i}`, "");
-        }
-      }
+          // Set positive stats
+          for (let i = 0; i < 7; i++) {
+            const stat = positive[i];
+            const nameSelect = document.querySelector(`#plus_name_${i}`);
+            const valueSelect = document.querySelector(`#plus_value_${i}`);
 
-      for (let i = 0; i < 7; i++) {
-        const stat = negativeStats[i];
-        if (stat) {
-          await page.select(`#minus_name_${i}`, stat.name);
-          await page.select(`#minus_value_${i}`, String(stat.level));
-        } else {
-          await page.select(`#minus_name_${i}`, "");
-        }
-      }
+            if (nameSelect) {
+              nameSelect.value = stat ? stat.name : "";
+            }
+            if (valueSelect && stat) {
+              valueSelect.value = String(stat.level);
+            }
+          }
 
-      await page.evaluate((pot) => {
-        const input = document.querySelector("#shokiSenzai");
-        if (input) {
-          input.value = pot;
-          input.dispatchEvent(new Event("input", { bubbles: true }));
+          // Set negative stats
+          for (let i = 0; i < 7; i++) {
+            const stat = negative[i];
+            const nameSelect = document.querySelector(`#minus_name_${i}`);
+            const valueSelect = document.querySelector(`#minus_value_${i}`);
+
+            if (nameSelect) {
+              nameSelect.value = stat ? stat.name : "";
+            }
+            if (valueSelect && stat) {
+              valueSelect.value = String(stat.level);
+            }
+          }
+
+          // Set potential
+          const potInput = document.querySelector("#shokiSenzai");
+          if (potInput) {
+            potInput.value = String(pot);
+            potInput.dispatchEvent(new Event("input", { bubbles: true }));
+          }
+        },
+        {
+          level: characterLevel,
+          positive: positiveStats,
+          negative: negativeStats,
+          pot: startingPotential,
         }
-      }, String(startingPotential));
+      );
 
       console.log("📤 Mengirim formulir...");
       await page.click("#sendData");
@@ -919,36 +948,55 @@ async function tanakaManual(sock, jid, statConfig = null, options = {}) {
   console.log("🔧 Mode Manual - Browser akan terbuka untuk interaksi manual");
 
   const browser = await puppeteer.launch({
-    headless: "new",
+    headless: false,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
   const page = await browser.newPage();
 
   try {
-    await page.goto(CONFIG.BASE_URL, { waitUntil: "networkidle2" });
+    await page.goto(CONFIG.BASE_URL, {
+      waitUntil: "domcontentloaded",
+      timeout: CONFIG.NAVIGATION_TIMEOUT
+    });
 
     if (statConfig) {
       console.log("📝 Mengisi formulir secara otomatis...");
-      await page.waitForSelector("#paramLevel", { timeout: 10000 });
+      await page.waitForSelector("#paramLevel", { timeout: CONFIG.SELECTOR_TIMEOUT });
 
       const { positiveStats, negativeStats, startingPotential, characterLevel } = statConfig;
-      await page.select("#paramLevel", String(characterLevel));
 
-      for (let i = 0; i < Math.min(7, positiveStats.length); i++) {
-        const stat = positiveStats[i];
-        await page.select(`#plus_name_${i}`, stat.name);
-        await page.select(`#plus_value_${i}`, String(stat.level));
-      }
+      // Use batch operation for manual mode too
+      await page.evaluate(
+        ({ level, positive, negative, pot }) => {
+          const levelSelect = document.querySelector("#paramLevel");
+          if (levelSelect) levelSelect.value = String(level);
 
-      for (let i = 0; i < Math.min(7, negativeStats.length); i++) {
-        const stat = negativeStats[i];
-        await page.select(`#minus_name_${i}`, stat.name);
-        await page.select(`#minus_value_${i}`, String(stat.level));
-      }
+          for (let i = 0; i < Math.min(7, positive.length); i++) {
+            const stat = positive[i];
+            const nameSelect = document.querySelector(`#plus_name_${i}`);
+            const valueSelect = document.querySelector(`#plus_value_${i}`);
+            if (nameSelect) nameSelect.value = stat.name;
+            if (valueSelect) valueSelect.value = String(stat.level);
+          }
 
-      await page.evaluate((pot) => {
-        document.querySelector("#shokiSenzai").value = pot;
-      }, String(startingPotential));
+          for (let i = 0; i < Math.min(7, negative.length); i++) {
+            const stat = negative[i];
+            const nameSelect = document.querySelector(`#minus_name_${i}`);
+            const valueSelect = document.querySelector(`#minus_value_${i}`);
+            if (nameSelect) nameSelect.value = stat.name;
+            if (valueSelect) valueSelect.value = String(stat.level);
+          }
+
+          const potInput = document.querySelector("#shokiSenzai");
+          if (potInput) potInput.value = String(pot);
+        },
+        {
+          level: characterLevel,
+          positive: positiveStats,
+          negative: negativeStats,
+          pot: startingPotential,
+        }
+      );
 
       console.log("✅ Form telah diisi otomatis");
     }
@@ -977,7 +1025,7 @@ async function tanakaManual(sock, jid, statConfig = null, options = {}) {
   }
 }
 
-// --- SMART MODE ---
+// --- SMART MODE WITH TIMEOUT PROTECTION ---
 async function tanakaSmart(sock, jid, statConfig = null, options = {}) {
   console.log("🤖 Mode Smart - Otomatis dengan fallback manual");
 
@@ -989,7 +1037,13 @@ async function tanakaSmart(sock, jid, statConfig = null, options = {}) {
       startingPotential: CONFIG.DEFAULT_POTENTIAL,
     };
 
-    const result = await tanaka(config, { ...options, headless: true, maxWaitTime: 60000 });
+    // Use optimized timeout settings
+    const result = await tanaka(config, {
+      ...options,
+      headless: true,
+      maxWaitTime: CONFIG.DEFAULT_TIMEOUT,
+      checkInterval: CONFIG.CHECK_INTERVAL
+    });
 
     if (result.hasValidResult) {
       console.log("✅ Mode otomatis berhasil!");
@@ -1072,7 +1126,7 @@ function createExampleConfigs() {
   };
 }
 
-// --- EXPORTS - SEMUA DALAM SATU FILE ---
+// --- EXPORTS ---
 export {
   // Main functions
   tanaka,
