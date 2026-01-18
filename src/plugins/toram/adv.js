@@ -1,11 +1,19 @@
 import fs from "fs"
+import path from "path"
+import { fileURLToPath } from "url"
 
-/* =========================
-   LOAD DATA MQ
-========================= */
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+
+const MQ_PATH = path.resolve(__dirname, "../../../dbs/data_mq_clean.json")
+
 const MQ_DATA = JSON.parse(
-  fs.readFileSync("./../dbs/data_mq_clean.json", "utf-8")
+  fs.readFileSync(MQ_PATH, "utf-8")
 )
+
+
+
 
 /* =========================
    RUMUS EXP (BISA DIGANTI)
@@ -84,6 +92,7 @@ export const spamadv = async (sock, chatId, text) => {
       return sock.sendMessage(chatId, {
         text:
           `Format salah
+
 Contoh:
 !spamadv 175 20 6 6 185
 
