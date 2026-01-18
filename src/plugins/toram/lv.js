@@ -1,5 +1,3 @@
-import fetch from "node-fetch";
-import * as cheerio from "cheerio";
 const dataLevel = {
   "1-40": `
 Mob: Pova
@@ -64,8 +62,8 @@ Pilihan lain:
 Mini Bos: Altoblepas
 - Level 166-182
 - Rokoko Plains
-  `.trim()
-    "179-182": `
+  `.trim(),
+  "179-182": `
 Mini Bos: Altoblepas
 Lokasi: Rokoko Plains
   `.trim(),
