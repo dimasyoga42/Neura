@@ -256,3 +256,18 @@ export const HandleWelcome = async (sock, update) => {
     console.error("[WELCOME ERROR]", err)
   }
 }
+
+export const outGC = async (sock, update) => {
+  try {
+    const { id: chatId, participants, action } = update
+    if (action !== "remove") return;
+
+    const user = participants
+    const message = `selamat tinggal ${user.split("@")[0]}`.trim()
+
+    sock.sendMessage(id, { text: message })
+
+  } catch (err) {
+    console.log(err.message)
+  }
+}

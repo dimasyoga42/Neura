@@ -10,7 +10,7 @@ import { ownerControls } from "./src/admin/owner.js";
 import { cmdMenucontrol } from "./src/modul/cmdControls.js";
 import { checkMentionAfk, checkUnAfk } from "./src/plugins/sosial/afk.js";
 import { CekColdown } from "./src/admin/coldownChat.js";
-import { HandleWelcome } from "./src/admin/wellcome.js";
+import { HandleWelcome, outGC } from "./src/admin/wellcome.js";
 import { messageHandler } from "./src/plugins/ai/message.js";
 import { subMenu } from "./src/modul/subMenu.js";
 dotenv.config();
@@ -57,6 +57,7 @@ const start = async () => {
   });
   sock.ev.on('group-participants.update', async (update) => {
     await HandleWelcome(sock, update)
+    await outGC(sock, update)
   })
   sock.ev.on("messages.upsert", async ({ messages }) => {
     const msg = messages[0]
