@@ -206,8 +206,7 @@ export async function spmadv(sock, chatId, msg, text) {
     }
 
     const result = `
-    *Spam Adv By Neura Sama*
-
+*Spam Adv By Neura Sama*
 Level Awal  : ${startLevel} (${startPercent}%)
 Target Level: ${targetLevel}
 Chapter     : ${chapterFrom} - ${chapterTo}
@@ -220,7 +219,7 @@ Progress:
 ${progress.join('\n')}
 
 > Formula: (level^4 / 40) + (level * 2)
-Referensi: Toram Tools`
+Referensi: Toram Tools`.trim()
 
     await sock.sendMessage(chatId, { text: result })
 
