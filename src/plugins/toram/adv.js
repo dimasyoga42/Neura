@@ -1,104 +1,145 @@
-import { mq_data } from "../fitur/expData.js"
+import fs from "fs"
 
-export const floor = Math.floor
-export const ceil = Math.ceil
+/* =========================
+   LOAD DATA MQ
+========================= */
+const MQ_DATA = JSON.parse(
+  fs.readFileSync("./../../../database/mq.json", "utf-8")
+)
 
-export const getXP = (lv) =>
-  floor(0.025 * lv ** 4 + 2 * lv)
-
-export const getTotalXP = (begin, beginPercentage, end) => {
-  let xp = floor((1 - beginPercentage / 100) * getXP(begin))
-  for (let i = begin + 1; i < end; i++) {
-    xp += getXP(i)
-  }
-  return xp
+/* =========================
+   RUMUS EXP (BISA DIGANTI)
+========================= */
+function expToNextLevel(lv) {
+  return Math.floor(lv * lv * 10000)
 }
 
-export const addXP = (begin, beginPercentage, extraXP) => {
-  let remainingXP = extraXP
-  let needXP = (1 - beginPercentage / 100) * getXP(begin)
-
-  if (extraXP < needXP) {
-    let currentXP =
-      beginPercentage / 100 * getXP(begin) + extraXP
-    return [begin, floor(100 * currentXP / getXP(begin))]
-  }
-
-  remainingXP -= needXP
-  let lv = begin + 1
-
-  while (getXP(lv) <= remainingXP) {
-    remainingXP -= getXP(lv)
-    lv++
-  }
-
-  let lvP = floor(100 * remainingXP / getXP(lv))
-  return [lv, lvP]
+/* =========================
+   HITUNG TOTAL QUEST XP
+========================= */
+function getQuestXP(chStart, chEnd) {
+  return MQ_DATA
+    .filter(q => q.chapter >= chStart && q.chapter <= chEnd)
+    .reduce((a, b) => a + b.exp, 0)
 }
 
+/* =========================
+   SPMADV SIMULATOR
+========================= */
+function spmadvSimulator({
+  level,
+  percent,
+  chapterStart,
+  chapterEnd,
+  targetLevel
+}) {
+  let expNow = Math.floor(expToNextLevel(level) * (percent / 100))
+  const questXp = getQuestXP(chapterStart, chapterEnd)
 
+  let run = 0
+  let progress = []
 
+  while (level < targetLevel) {
+    run++
+    expNow += questXp
 
-export default async function spamAdv(sock, msg, args) {
-  if (args.length < 5) {
-    return sock.sendMessage(msg.key.remoteJid, {
-      text:
-        "Format:\n" +
-        "!spamadv <level> <percent> <targetLv> <babMulai> <babAkhir>\n\n" +
-        "Contoh:\n!spamadv 180 0 220 2 5"
-    }, { quoted: msg })
+    while (expNow >= expToNextLevel(level)) {
+      expNow -= expToNextLevel(level)
+      level++
+
+      if (level >= targetLevel) {
+        expNow = 0
+        break
+      }
+    }
+
+    const percentNow =
+      level >= targetLevel
+        ? 0
+        : Math.floor((expNow / expToNextLevel(level)) * 100)
+
+    progress.push(`${run}x → Lv ${level} (${percentNow}%)`)
   }
 
-  const lv = parseInt(args[1])
-  const lvP = parseInt(args[2])
-  const targetLv = parseInt(args[3])
-  let babMulai = parseInt(args[4])
-  let babAkhir = parseInt(args[5])
-
-  if ([lv, lvP, targetLv, babMulai, babAkhir].some(isNaN)) {
-    return sock.sendMessage(msg.key.remoteJid, {
-      text: "Semua parameter harus berupa ANGKA"
-    }, { quoted: msg })
+  return {
+    run,
+    questXp,
+    progress
   }
+}
 
-  // ✅ AUTO FIX jika kebalik
-  if (babMulai > babAkhir) {
-    ;[babMulai, babAkhir] = [babAkhir, babMulai]
+/* =========================
+   COMMAND HANDLER
+========================= */
+export const spamadv = async (sock, chatId, text) => {
+  try {
+    // FORMAT:
+    // !spamadv level percent chapterAwal chapterAkhir targetLevel
+    // contoh:
+    // !spamadv 175 20 6 6 185
+
+    const args = text.trim().split(/\s+/)
+
+    if (args.length < 6) {
+      return sock.sendMessage(chatId, {
+        text:
+          `Format salah
+Contoh:
+!spamadv 175 20 6 6 185
+
+Keterangan:
+level awal
+persen exp
+chapter awal
+chapter akhir
+target level`
+      })
+    }
+
+    const level = parseInt(args[1])
+    const percent = parseInt(args[2])
+    const chapterStart = parseInt(args[3])
+    const chapterEnd = parseInt(args[4])
+    const targetLevel = parseInt(args[5])
+
+    if (
+      isNaN(level) ||
+      isNaN(percent) ||
+      isNaN(chapterStart) ||
+      isNaN(chapterEnd) ||
+      isNaN(targetLevel)
+    ) {
+      return sock.sendMessage(chatId, {
+        text: "Input harus berupa angka"
+      })
+    }
+
+    const sim = spmadvSimulator({
+      level,
+      percent,
+      chapterStart,
+      chapterEnd,
+      targetLevel
+    })
+
+    const result =
+      `SPMADV SIMULATOR
+
+Level Awal : ${level} (${percent}%)
+Chapter    : ${chapterStart} - ${chapterEnd}
+Quest XP   : ${sim.questXp.toLocaleString()}
+Target Lv  : ${targetLevel}
+Butuh Run  : ${sim.run}x
+
+Progress:
+${sim.progress.join("\n")}`
+
+    await sock.sendMessage(chatId, { text: result })
+
+  } catch (err) {
+    console.error(err)
+    await sock.sendMessage(chatId, {
+      text: "Terjadi kesalahan pada SPMADV simulator"
+    })
   }
-
-  const keys = Object.keys(mq_data)
-
-  const startIndex = keys.findIndex(k => k === `Chapter ${babMulai}`)
-  const endIndex = keys.findIndex(k => k === `Chapter ${babAkhir + 1}`)
-
-  if (startIndex === -1) {
-    return sock.sendMessage(msg.key.remoteJid, {
-      text: `Chapter ${babMulai} tidak ditemukan`
-    }, { quoted: msg })
-  }
-
-  const sliceEnd = endIndex !== -1 ? endIndex : keys.length
-
-  let totalXP = 0
-  for (let i = startIndex; i < sliceEnd; i++) {
-    const xp = Number(mq_data[keys[i]])
-    if (!isNaN(xp)) totalXP += xp
-  }
-
-  const [hasilLv, hasilLvP] = addXP(lv, lvP, totalXP)
-
-  const text = `
-*SPAM ADV (MAIN QUEST)*
-
-Chapter:
-${babMulai} → ${babAkhir}
-
-Total EXP:
-${totalXP.toLocaleString()}
-
-Hasil Level:
-Lv ${hasilLv} (${hasilLvP}%)
-`.trim()
-
-  await sock.sendMessage(msg.key.remoteJid, { text }, { quoted: msg })
 }
