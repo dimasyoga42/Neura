@@ -227,12 +227,13 @@ function parseCommand(args) {
     negativeStats: [],
     characterLevel: CONFIG.DEFAULT_LEVEL,
     startingPotential: CONFIG.DEFAULT_POTENTIAL,
-    profession: "NULL", // Default profession
+    profession: "NULL",
+    professionLevel: 0, // Default profession level
   };
 
   const fullCommand = args.join(" ").toLowerCase();
 
-  // Extract level
+  // Extract character level
   const levelMatch = fullCommand.match(/lv(\d+)/);
   if (levelMatch) {
     const level = parseInt(levelMatch[1], 10);
@@ -250,24 +251,41 @@ function parseCommand(args) {
     }
   }
 
-  // Extract profession
-  const profMatch = fullCommand.match(/prof\s*[:=]?\s*(\w+)/);
-  if (profMatch) {
-    const profValue = profMatch[1].toLowerCase();
-    const validProfs = ["bs", "alchemist", "null"];
+  // Extract profession and level
+  // Format: prof:bs:100 atau profbs100 atau bs100
+  const profPatterns = [
+    /prof\s*[:=]?\s*(bs|alchemist|null)\s*[:=]?\s*(\d+)/i,
+    /(bs|alchemist)(\d+)/i,
+  ];
 
-    if (validProfs.includes(profValue)) {
-      config.profession = profValue.toUpperCase();
-      console.log(`✓ Profession set: ${config.profession}`);
-    } else {
-      console.warn(`⚠️ Profession tidak valid: ${profValue}, menggunakan NULL`);
+  for (const pattern of profPatterns) {
+    const profMatch = fullCommand.match(pattern);
+    if (profMatch) {
+      const profType = profMatch[1].toLowerCase();
+      const profLevel = parseInt(profMatch[2], 10);
+
+      if (profType === "bs" || profType === "alchemist") {
+        config.profession = profType.toUpperCase();
+        config.professionLevel = !isNaN(profLevel) && profLevel >= 0 && profLevel <= 300 ? profLevel : 0;
+        console.log(`✓ Profession: ${config.profession} Level ${config.professionLevel}`);
+        break;
+      }
+    }
+  }
+
+  // Jika hanya prof tanpa level
+  if (config.profession === "NULL") {
+    const simpleProfMatch = fullCommand.match(/prof\s*[:=]?\s*(bs|alchemist|null)/i);
+    if (simpleProfMatch) {
+      config.profession = simpleProfMatch[1].toUpperCase();
+      console.log(`✓ Profession: ${config.profession} (no level specified)`);
     }
   }
 
   const statParts = fullCommand.split(',').map(s => s.trim());
 
   for (const part of statParts) {
-    if (!part || part.includes('lv') || part.includes('pot') || part.includes('prof')) continue;
+    if (!part || part.includes('lv') || part.includes('pot') || part.includes('prof') || part.includes('bs') || part.includes('alchemist')) continue;
 
     const match = part.match(/^([a-z%]+)\s*=\s*(.+)$/);
 
@@ -318,9 +336,9 @@ function parseCommand(args) {
   }
 
   console.log(`\n📊 Konfigurasi Final:`);
-  console.log(`- Level: ${config.characterLevel}`);
+  console.log(`- Character Level: ${config.characterLevel}`);
   console.log(`- Starting Potential: ${config.startingPotential}`);
-  console.log(`- Profession: ${config.profession}`);
+  console.log(`- Profession: ${config.profession} ${config.professionLevel > 0 ? `Level ${config.professionLevel}` : ''}`);
   console.log(
     `- Positive Stats (${config.positiveStats.length}/7):`,
     config.positiveStats.map((s) => `${s.name} ${s.level}`).join(", ") || "Tidak ada"
@@ -708,69 +726,6 @@ async function parseAllResults(page) {
   return result;
 }
 
-// --- MESSAGE FORMATTING ---
-// --- MESSAGE FORMATTING - SHOW ALL STEPS ---
-function formatResultMessage(result) {
-  if (result.error) {
-    return `*Error Tanaka Scraper:*\n${result.error}`;
-  }
-
-  if (!result.hasValidResult) {
-    let message = `*Tanaka Scraper:*\nHasil tidak lengkap atau gagal memuat\n\n`;
-    message += `Debug Info:\n`;
-    message += `- Success Rate Found: ${result.successRate}\n`;
-    message += `- Success Rate Value: ${result.successRateValue}\n`;
-    message += `- Final Stat: ${result.finalStat !== "Tidak ditemukan" ? "✓" : "✗"}\n`;
-    return message;
-  }
-
-  let message = `*Hasil Tanaka*\n\n`;
-
-  if (result.successRateValue !== null) {
-    message += `*Success Rate:* ${result.successRateValue}%\n`;
-  } else {
-    message += `*Success Rate:* ${result.successRate}\n`;
-  }
-
-  message += `*Starting Pot:* ${result.startingPot}\n`;
-
-  if (result.profession) {
-    message += `*Profession:* ${result.profession}\n`;
-  }
-
-  message += `*Total Steps:* ${result.totalSteps}\n`;
-
-  if (result.materialCost !== "Tidak ditemukan") {
-    message += `*Material Cost:* ${result.materialCost}\n`;
-  }
-
-  if (result.highestStepCost !== "Tidak ditemukan") {
-    message += `*Highest Step Cost:* ${result.highestStepCost}\n`;
-  }
-
-  if (result.materialDetails.breakdown) {
-    message += `*Material Breakdown:* ${result.materialDetails.breakdown}\n`;
-  }
-
-  if (result.materialDetails.reduction) {
-    message += `*Cost Reduction:* ${result.materialDetails.reduction}\n`;
-  }
-
-  if (result.steps.length > 0) {
-    message += `\n*Langkah Enhancement:*\n`;
-    result.steps.forEach((step) => {
-      message += `${step}\n`;
-    });
-  }
-
-  if (result.duration) {
-    message += `\n*Waktu Eksekusi:* ${Math.round(result.duration / 1000)}s`;
-  }
-
-  message += `\n*Dibuat:* ${new Date(result.timestamp).toLocaleString("id-ID")}`;
-
-  return message;
-}// --- OPTIMIZED MAIN TANAKA FUNCTION ---
 async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions = {}) {
   let sock, jid, statConfig, options;
 
@@ -784,6 +739,7 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
       characterLevel: CONFIG.DEFAULT_LEVEL,
       startingPotential: CONFIG.DEFAULT_POTENTIAL,
       profession: "NULL",
+      professionLevel: 0,
     };
   } else {
     statConfig = statConfigOrSocket;
@@ -854,12 +810,12 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
       console.log("📝 Mengisi formulir...");
       await page.waitForSelector("#paramLevel", { timeout: CONFIG.SELECTOR_TIMEOUT });
 
-      const { positiveStats, negativeStats, startingPotential, characterLevel, profession } = statConfig;
+      const { positiveStats, negativeStats, startingPotential, characterLevel, profession, professionLevel } = statConfig;
 
-      // Batch all form operations including profession
+      // Batch all form operations including profession and profession level
       await page.evaluate(
-        ({ level, positive, negative, pot, prof }) => {
-          // Set level
+        ({ level, positive, negative, pot, prof, profLvl }) => {
+          // Set character level
           const levelSelect = document.querySelector("#paramLevel");
           if (levelSelect) levelSelect.value = String(level);
 
@@ -868,6 +824,14 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
           if (profSelect) {
             profSelect.value = prof;
             console.log("Profession set to:", prof);
+          }
+
+          // Set profession level
+          const profLevelInput = document.querySelector("#shokugyouLv");
+          if (profLevelInput) {
+            profLevelInput.value = String(profLvl);
+            profLevelInput.dispatchEvent(new Event("input", { bubbles: true }));
+            console.log("Profession Level set to:", profLvl);
           }
 
           // Set positive stats
@@ -911,6 +875,7 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
           negative: negativeStats,
           pot: startingPotential,
           prof: profession,
+          profLvl: professionLevel,
         }
       );
 
@@ -920,7 +885,8 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
 
       const result = await autoWaitForResults(page, maxWaitTime, checkInterval);
       result.duration = Date.now() - startTime;
-      result.profession = profession; // Add profession to result
+      result.profession = profession;
+      result.professionLevel = professionLevel;
 
       console.log("\n🎉 --- HASIL AKHIR ---");
       console.log(JSON.stringify(result, null, 2));
@@ -967,7 +933,73 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
     };
   }
 }
-// --- MANUAL MODE ---
+
+// --- MESSAGE FORMATTING DENGAN PROF LEVEL ---
+function formatResultMessage(result) {
+  if (result.error) {
+    return `*Error Tanaka Scraper:*\n${result.error}`;
+  }
+
+  if (!result.hasValidResult) {
+    let message = `*Tanaka Scraper:*\nHasil tidak lengkap atau gagal memuat\n\n`;
+    message += `Debug Info:\n`;
+    message += `- Success Rate Found: ${result.successRate}\n`;
+    message += `- Success Rate Value: ${result.successRateValue}\n`;
+    message += `- Final Stat: ${result.finalStat !== "Tidak ditemukan" ? "✓" : "✗"}\n`;
+    return message;
+  }
+
+  let message = `*Hasil Tanaka*\n\n`;
+
+  if (result.successRateValue !== null) {
+    message += `*Success Rate:* ${result.successRateValue}%\n`;
+  } else {
+    message += `*Success Rate:* ${result.successRate}\n`;
+  }
+
+  message += `*Starting Pot:* ${result.startingPot}\n`;
+
+  if (result.profession && result.profession !== "NULL") {
+    message += `*Profession:* ${result.profession}`;
+    if (result.professionLevel && result.professionLevel > 0) {
+      message += ` Lv.${result.professionLevel}`;
+    }
+    message += `\n`;
+  }
+
+  message += `*Total Steps:* ${result.totalSteps}\n`;
+
+  if (result.materialCost !== "Tidak ditemukan") {
+    message += `*Material Cost:* ${result.materialCost}\n`;
+  }
+
+  if (result.highestStepCost !== "Tidak ditemukan") {
+    message += `*Highest Step Cost:* ${result.highestStepCost}\n`;
+  }
+
+  if (result.materialDetails.breakdown) {
+    message += `*Material Breakdown:* ${result.materialDetails.breakdown}\n`;
+  }
+
+  if (result.materialDetails.reduction) {
+    message += `*Cost Reduction:* ${result.materialDetails.reduction}\n`;
+  }
+
+  if (result.steps.length > 0) {
+    message += `\n*Langkah Enhancement:*\n`;
+    result.steps.forEach((step) => {
+      message += `${step}\n`;
+    });
+  }
+
+  if (result.duration) {
+    message += `\n*Waktu Eksekusi:* ${Math.round(result.duration / 1000)}s`;
+  }
+
+  message += `\n*Dibuat:* ${new Date(result.timestamp).toLocaleString("id-ID")}`;
+
+  return message;
+}// --- MANUAL MODE ---
 async function tanakaManual(sock, jid, statConfig = null, options = {}) {
   console.log("🔧 Mode Manual - Browser akan terbuka untuk interaksi manual");
 
