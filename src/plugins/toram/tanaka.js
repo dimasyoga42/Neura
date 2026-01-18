@@ -220,18 +220,19 @@ async function withRetry(fn, retries = CONFIG.MAX_RETRIES, delay = 1000) {
   }
 }
 
-// --- COMMAND PARSING - FORMAT BARU ---
+// --- COMMAND PARSING - DENGAN PROF ---
 function parseCommand(args) {
   const config = {
     positiveStats: [],
     negativeStats: [],
     characterLevel: CONFIG.DEFAULT_LEVEL,
     startingPotential: CONFIG.DEFAULT_POTENTIAL,
+    profession: "NULL", // Default profession
   };
 
   const fullCommand = args.join(" ").toLowerCase();
 
-  // Extract level dan potential
+  // Extract level
   const levelMatch = fullCommand.match(/lv(\d+)/);
   if (levelMatch) {
     const level = parseInt(levelMatch[1], 10);
@@ -240,6 +241,7 @@ function parseCommand(args) {
     }
   }
 
+  // Extract potential
   const potMatch = fullCommand.match(/pot(\d+)/);
   if (potMatch) {
     const potential = parseInt(potMatch[1], 10);
@@ -248,10 +250,24 @@ function parseCommand(args) {
     }
   }
 
+  // Extract profession
+  const profMatch = fullCommand.match(/prof\s*[:=]?\s*(\w+)/);
+  if (profMatch) {
+    const profValue = profMatch[1].toLowerCase();
+    const validProfs = ["bs", "alchemist", "null"];
+
+    if (validProfs.includes(profValue)) {
+      config.profession = profValue.toUpperCase();
+      console.log(`✓ Profession set: ${config.profession}`);
+    } else {
+      console.warn(`⚠️ Profession tidak valid: ${profValue}, menggunakan NULL`);
+    }
+  }
+
   const statParts = fullCommand.split(',').map(s => s.trim());
 
   for (const part of statParts) {
-    if (!part || part.includes('lv') || part.includes('pot')) continue;
+    if (!part || part.includes('lv') || part.includes('pot') || part.includes('prof')) continue;
 
     const match = part.match(/^([a-z%]+)\s*=\s*(.+)$/);
 
@@ -304,6 +320,7 @@ function parseCommand(args) {
   console.log(`\n📊 Konfigurasi Final:`);
   console.log(`- Level: ${config.characterLevel}`);
   console.log(`- Starting Potential: ${config.startingPotential}`);
+  console.log(`- Profession: ${config.profession}`);
   console.log(
     `- Positive Stats (${config.positiveStats.length}/7):`,
     config.positiveStats.map((s) => `${s.name} ${s.level}`).join(", ") || "Tidak ada"
@@ -315,7 +332,6 @@ function parseCommand(args) {
 
   return config;
 }
-
 // --- OPTIMIZED CAPTCHA HANDLING ---
 async function handleCaptcha(page) {
   try {
@@ -717,6 +733,11 @@ function formatResultMessage(result) {
   }
 
   message += `*Starting Pot:* ${result.startingPot}\n`;
+
+  if (result.profession) {
+    message += `*Profession:* ${result.profession}\n`;
+  }
+
   message += `*Total Steps:* ${result.totalSteps}\n`;
 
   if (result.materialCost !== "Tidak ditemukan") {
@@ -735,7 +756,6 @@ function formatResultMessage(result) {
     message += `*Cost Reduction:* ${result.materialDetails.reduction}\n`;
   }
 
-  // TAMPILKAN SEMUA LANGKAH - TIDAK DIPOTONG
   if (result.steps.length > 0) {
     message += `\n*Langkah Enhancement:*\n`;
     result.steps.forEach((step) => {
@@ -750,8 +770,7 @@ function formatResultMessage(result) {
   message += `\n*Dibuat:* ${new Date(result.timestamp).toLocaleString("id-ID")}`;
 
   return message;
-}
-// --- OPTIMIZED MAIN TANAKA FUNCTION ---
+}// --- OPTIMIZED MAIN TANAKA FUNCTION ---
 async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions = {}) {
   let sock, jid, statConfig, options;
 
@@ -764,6 +783,7 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
       negativeStats: [{ name: "Accuracy", level: "MAX" }],
       characterLevel: CONFIG.DEFAULT_LEVEL,
       startingPotential: CONFIG.DEFAULT_POTENTIAL,
+      profession: "NULL",
     };
   } else {
     statConfig = statConfigOrSocket;
@@ -794,7 +814,7 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
           "--disable-gpu",
           "--disable-software-rasterizer",
           "--disable-extensions",
-          "--disable-images", // Speed optimization
+          "--disable-images",
           "--disable-plugins",
           "--disable-background-networking",
           "--disable-default-apps",
@@ -810,13 +830,11 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
 
       const page = await browser.newPage();
 
-      // Optimize page performance
       await page.setViewport({ width: 1280, height: 800 });
       await page.setUserAgent(
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
       );
 
-      // Disable unnecessary resources for faster loading
       await page.setRequestInterception(true);
       page.on('request', (req) => {
         const resourceType = req.resourceType();
@@ -829,21 +847,28 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
 
       console.log(`📂 Membuka ${CONFIG.BASE_URL}...`);
       await page.goto(CONFIG.BASE_URL, {
-        waitUntil: "domcontentloaded", // Changed from networkidle2 for faster loading
+        waitUntil: "domcontentloaded",
         timeout: CONFIG.NAVIGATION_TIMEOUT,
       });
 
       console.log("📝 Mengisi formulir...");
       await page.waitForSelector("#paramLevel", { timeout: CONFIG.SELECTOR_TIMEOUT });
 
-      const { positiveStats, negativeStats, startingPotential, characterLevel } = statConfig;
+      const { positiveStats, negativeStats, startingPotential, characterLevel, profession } = statConfig;
 
-      // Batch all form operations for better performance
+      // Batch all form operations including profession
       await page.evaluate(
-        ({ level, positive, negative, pot }) => {
+        ({ level, positive, negative, pot, prof }) => {
           // Set level
           const levelSelect = document.querySelector("#paramLevel");
           if (levelSelect) levelSelect.value = String(level);
+
+          // Set profession
+          const profSelect = document.querySelector("#shokugyou");
+          if (profSelect) {
+            profSelect.value = prof;
+            console.log("Profession set to:", prof);
+          }
 
           // Set positive stats
           for (let i = 0; i < 7; i++) {
@@ -885,6 +910,7 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
           positive: positiveStats,
           negative: negativeStats,
           pot: startingPotential,
+          prof: profession,
         }
       );
 
@@ -894,6 +920,7 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
 
       const result = await autoWaitForResults(page, maxWaitTime, checkInterval);
       result.duration = Date.now() - startTime;
+      result.profession = profession; // Add profession to result
 
       console.log("\n🎉 --- HASIL AKHIR ---");
       console.log(JSON.stringify(result, null, 2));
@@ -940,7 +967,6 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
     };
   }
 }
-
 // --- MANUAL MODE ---
 async function tanakaManual(sock, jid, statConfig = null, options = {}) {
   console.log("🔧 Mode Manual - Browser akan terbuka untuk interaksi manual");
