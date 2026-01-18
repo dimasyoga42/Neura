@@ -803,7 +803,7 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
     try {
       console.log("🚀 Meluncurkan peramban...");
       browser = await puppeteer.launch({
-        headless: true,
+        headless: "new",
         args: [
           "--no-sandbox",
           "--disable-setuid-sandbox",
@@ -919,7 +919,7 @@ async function tanakaManual(sock, jid, statConfig = null, options = {}) {
   console.log("🔧 Mode Manual - Browser akan terbuka untuk interaksi manual");
 
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: "new",
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
   const page = await browser.newPage();
