@@ -32,7 +32,7 @@ import { bosboost } from "../plugins/toram/boost.js";
 import { buff } from "../plugins/toram/buff.js";
 import { searchMonster } from "../plugins/toram/monster.js";
 import { pet } from "../plugins/toram/pet.js";
-import { spamadv } from "../plugins/toram/adv.js";
+import { spmadv } from "../plugins/toram/adv.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!menu")) {
     if (isBan(sock, chatId, msg)) return;
@@ -293,7 +293,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
 
   if (text.startsWith("!spamadv")) {
     if (isBan(sock, chatId, msg)) return;
-    spamadv(sock, chatId, msg, text)
+    spmadv(sock, chatId, msg, text)
   }
 
 
