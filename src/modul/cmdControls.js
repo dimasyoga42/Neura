@@ -184,36 +184,57 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
       if (args.length === 0) {
         return sock.sendMessage(
           chatId,
-          { text: "Gunakan `!filarm help` untuk melihat cara penggunaan" },
+          { text: "Gunakan `!sheetfill` untuk melihat cara penggunaan" },
           { quoted: msg }
         );
       }
 
+      // Parse command
       const statConfig = parseCommand(args);
+
+      // Validate configuration
       const validation = validateStatConfig(statConfig);
 
       if (!validation.valid) {
         return sock.sendMessage(chatId, {
           text: `Konfigurasi tidak valid:\n${validation.errors.join("\n")}`
-        });
+        }, { quoted: msg });
       }
 
+      // Send processing message
+      await sock.sendMessage(chatId, {
+        text: `⏳ Memproses kalkulasi...\nMohon tunggu 30-60 detik...`
+      }, { quoted: msg });
+
+      // Execute tanaka with optimized settings
       const result = await tanaka(statConfig, {
         headless: true,
-        maxWaitTime: 60000
+        maxWaitTime: 90000,      // Changed from 60000 to 90000
+        checkInterval: 1000,      // Added for faster checks
+        enableRetry: true         // Added for reliability
       });
 
+      // Format and send result
       const replyMessage = formatResultMessage(result);
       await sock.sendMessage(chatId, { text: replyMessage }, { quoted: msg });
 
     } catch (error) {
       console.error("Error !filarm:", error);
+
+      // Better error message
+      let errorMsg = `Terjadi kesalahan:\n${error.message}`;
+
+      if (error.message.includes("timeout")) {
+        errorMsg += `\n\n💡 Tips: Coba lagi dalam beberapa saat`;
+      } else if (error.message.includes("CAPTCHA")) {
+        errorMsg += `\n\n💡 Server memerlukan verifikasi, coba lagi nanti`;
+      }
+
       await sock.sendMessage(chatId, {
-        text: `Terjadi kesalahan:\n${error.message}`
-      });
+        text: errorMsg
+      }, { quoted: msg });
     }
-  }
-  if (text.startsWith("!sheetfill")) {
+  } if (text.startsWith("!sheetfill")) {
     if (isBan(sock, chatId, msg)) return;
     sock.sendMessage(chatId, { text: stat }, { quoted: msg })
   }
