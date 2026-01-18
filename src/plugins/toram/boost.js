@@ -206,65 +206,45 @@ async function scrapeBoostBoss() {
 // HANDLER
 export const bosboost = async (sock, chatId, msg) => {
   try {
-    const result = await scrapeBoostBoss();
+    const data = await scrapeBoostBoss();
 
-    // Validasi Aktif/Expired
-    if (!result.active) {
-      let message = "Tidak ada event Boost Akhir Pekan yang sedang aktif.";
+    // 1. Handle Event Sudah Berakhir / Tidak Aktif
+    if (!data.active) {
+      let textMsg = "Tidak ada event Boost Boss yang sedang aktif saat ini.";
 
-      if (result.expired) {
-        message = `⚠️ **Event Sudah Berakhir**\n\nEvent Boost terakhir ditemukan selesai pada:\n📅 ${result.lastDate}`;
-      } else if (result.message) {
-        message = result.message;
+      if (data.expired) {
+        // Hapus emot, hanya text informasi polos
+        textMsg = `Event Boost Akhir Pekan sudah selesai pada:\n${data.lastDate}`;
       }
 
-      return sock.sendMessage(
-        String(chatId),
-        { text: `${message}\n\nBy Neura Sama` },
-        msg ? { quoted: msg } : {}
-      );
+      // Kirim text status saja karena tidak ada gambar untuk ditampilkan
+      return sock.sendMessage(chatId, { text: textMsg }, { quoted: msg });
     }
 
-    if (result.bosses.length === 0) {
-      return sock.sendMessage(
-        String(chatId),
-        { text: "Event Boost Aktif, namun daftar boss tidak ditemukan di dalam berita.\n\nBy Neura Sama" },
-        msg ? { quoted: msg } : {}
-      );
+    // 2. Handle Event Aktif tapi Parse Gagal
+    if (!data.bosses || data.bosses.length === 0) {
+      return sock.sendMessage(chatId, { text: "Event aktif, tapi gagal mengambil daftar boss." }, { quoted: msg });
     }
 
-    // Info Header
-    await sock.sendMessage(
-      String(chatId),
-      { text: `🔥 **BOOST BOSS EVENT** 🔥\n\nBerakhir pada:\n📅 ${result.endDateStr}\n\nBerikut daftar bossnya:` },
-      msg ? { quoted: msg } : {}
-    );
+    // 3. Tampilkan Boss (Looping Gambar Saja)
+    // Tidak ada pesan pembuka (Header) dan penutup (Footer)
 
-    // Kirim Gambar Boss
-    for (const boss of result.bosses) {
-      await sock.sendMessage(
-        String(chatId),
-        {
+    for (const boss of data.bosses) {
+      const cleanCaption = boss.fullName; // Nama boss polos (Lv123 Nama Boss)
+
+      if (boss.image) {
+        await sock.sendMessage(chatId, {
           image: { url: boss.image },
-          caption: `⚔️ **${boss.fullName}**`
-        },
-        msg ? { quoted: msg } : {}
-      );
+          caption: cleanCaption
+        });
+      } else {
+        // Fallback jika gambar gagal load, kirim nama bossnya saja
+        await sock.sendMessage(chatId, { text: cleanCaption });
+      }
     }
-
-    // Watermark akhir
-    await sock.sendMessage(
-      String(chatId),
-      { text: `Happy Farming!\nBy Neura Sama` },
-      msg ? { quoted: msg } : {}
-    );
 
   } catch (err) {
-    console.error("Error in bosboost:", err);
-    await sock.sendMessage(
-      String(chatId),
-      { text: `Gagal mengambil data boost boss.\nError: ${err.message}\n\nBy Neura Sama` },
-      msg ? { quoted: msg } : {}
-    );
+    console.error(err);
+    sock.sendMessage(chatId, { text: "Terjadi kesalahan sistem." }, { quoted: msg });
   }
 };
