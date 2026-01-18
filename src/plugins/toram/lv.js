@@ -192,6 +192,16 @@ Mini Bos: Wiltileaf
 }
 
 
+const getLevelRange = (level, dataLevel) => {
+  level = Number(level);
+  for (const range of Object.keys(dataLevel)) {
+    const [min, max] = range.split("-").map(Number);
+    if (level >= min && level <= max) {
+      return range;
+    }
+  }
+  return null;
+};
 
 
 export const leveling = async (sock, chatid, msg, text) => {
