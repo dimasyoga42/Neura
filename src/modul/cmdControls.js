@@ -203,7 +203,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
 
       // Send processing message
       await sock.sendMessage(chatId, {
-        text: `⏳ Memproses kalkulasi...\nMohon tunggu 30-60 detik...`
+        text: `Memproses kalkulasi...`
       }, { quoted: msg });
 
       // Execute tanaka with optimized settings

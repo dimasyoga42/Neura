@@ -466,70 +466,97 @@ DTE NEUTRAL
 
 
 export const stat = `
-Format: +[nama][level] untuk positive, -[nama][level] untuk negative
-contoh: !filarm lv280 pot120 +dteearthMax  +str%Max +critrateMax +critdmgMax -atk%Max -matk%Max  -acc%Max
+cara penggunaan nya:
+!filarm lv280, pot160, dtedark%=Max, cd%=10, cd=20, acc%=Min, Matk%=Min, acc=Min
+  // Critical Stats - dengan alias
+  critdmg: "Critical Damage",
+  cd: "Critical Damage",
+  "critdmg%": "Critical Damage %",
+  "cd%": "Critical Damage %",
+  critrate: "Critical Rate",
+  cr: "Critical Rate",
+  "critrate%": "Critical Rate %",
+  "cr%": "Critical Rate %",
 
-critdmg -> Critical Damage
-critdmg% -> Critical Damage %
-critrate -> Critical Rate
-critrate% -> Critical Rate %
+  // Attack Stats
+  atk: "ATK",
+  "atk%": "ATK %",
+  matk: "MATK",
+  "matk%": "MATK %",
 
-atk -> ATK
-atk% -> ATK %
-matk -> MATK
-matk% -> MATK %
+  // Defense Stats
+  def: "DEF",
+  "def%": "DEF %",
+  mdef: "MDEF",
+  "mdef%": "MDEF %",
 
-def -> DEF
-def% -> DEF %
-mdef -> MDEF
-mdef% -> MDEF %
+  // Accuracy Stats
+  acc: "Accuracy",
+  accuracy: "Accuracy",
+  "acc%": "Accuracy %",
+  "accuracy%": "Accuracy %",
 
-acc -> Accuracy
-accuracy -> Accuracy
-acc% -> Accuracy %
-accuracy% -> Accuracy %
+  // HP/MP Stats
+  hp: "MaxHP",
+  "hp%": "MaxHP %",
+  mp: "MaxMP",
+  "mp%": "MaxMP %",
 
-hp -> MaxHP
-hp% -> MaxHP %
-mp -> MaxMP
-mp% -> MaxMP %
+  // Status Stats
+  str: "STR",
+  "str%": "STR %",
+  int: "INT",
+  "int%": "INT %",
+  vit: "VIT",
+  "vit%": "VIT %",
+  agi: "AGI",
+  "agi%": "AGI %",
+  dex: "DEX",
+  "dex%": "DEX %",
 
-str -> STR
-str% -> STR %
-int -> INT
-int% -> INT %
-vit -> VIT
-vit% -> VIT %
-agi -> AGI
-agi% -> AGI %
-dex -> DEX
-dex% -> DEX %
+  // Speed Stats
+  aspd: "Kecepatan Serangan",
+  "aspd%": "Kecepatan Serangan %",
+  cspd: "Kecepatan Merapal",
+  "cspd%": "Kecepatan Merapal %",
 
-aspd -> Kecepatan Serangan
-aspd% -> Kecepatan Serangan %
-cspd -> Kecepatan Merapal
-cspd% -> Kecepatan Merapal %
+  // Dodge Stats
+  dodge: "Dodge",
+  "dodge%": "Dodge %",
 
-dodge -> Dodge
-dodge% -> Dodge %
+  // Regen Stats
+  hpreg: "Natural HP Regen",
+  "hpreg%": "Natural HP Regen %",
+  mpreg: "Natural MP Regen",
+  "mpreg%": "Natural MP Regen %",
 
-hpreg -> Natural HP Regen
-hpreg% -> Natural HP Regen %
-mpreg -> Natural MP Regen
-mpreg% -> Natural MP Regen %
+  // Special Stats
+  stab: "Stability %",
+  "stab%": "Stability %",
+  penfis: "Penetrasi Fisik %",
+  "penfis%": "Penetrasi Fisik %",
+  penmag: "Magic Pierce %",
+  "penmag%": "Magic Pierce %",
+  kebalfis: "Kekebalan Fisik %",
+  "kebalfis%": "Kekebalan Fisik %",
+  kebalmag: "Kekebalan Sihir %",
+  "kebalmag%": "Kekebalan Sihir %",
+  aggro: "Aggro %",
+  "aggro%": "Aggro %",
 
-stab% -> Stability %
-penfis% -> Penetrasi Fisik %
-penmag% -> Magic Pierce %
-kebalfis% -> Kekebalan Fisik %
-kebalmag% -> "Kekebalan Sihir %
-aggro% -> Aggro %
-dteearth% -> % luka ke Bumi
-dtefire% -> % luka ke Api
-dtewind% -> % luka ke Angin
-dtewater% -> % luka ke Air
-dtelight% -> % luka ke Cahaya
-dtedark% -> % luka ke Gelap
+  // Element damage
+  "dteearth%": "% luka ke Bumi",
+  dteearth: "% luka ke Bumi",
+  "dtefire%": "% luka ke Api",
+  dtefire: "% luka ke Api",
+  "dtewind%": "% luka ke Angin",
+  dtewind: "% luka ke Angin",
+  "dtewater%": "% luka ke Air",
+  dtewater: "% luka ke Air",
+  "dtelight%": "% luka ke Cahaya",
+  dtelight: "% luka ke Cahaya",
+  "dtedark%": "% luka ke Gelap",
+  dtedark: "% luka ke Gelap",
 
 `.trim();
 
