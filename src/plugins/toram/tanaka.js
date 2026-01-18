@@ -18,6 +18,7 @@ const CONFIG = {
   BASE_URL: "https://tanaka0.work/id/BouguProper",
 };
 
+// --- STAT MAP dengan ALIAS ---
 const statMap = {
   // Critical Stats - dengan alias
   critdmg: "Critical Damage",
@@ -215,7 +216,7 @@ async function withRetry(fn, retries = CONFIG.MAX_RETRIES, delay = 1000) {
   }
 }
 
-// --- COMMAND PARSING - UPDATED ---
+// --- COMMAND PARSING - FORMAT BARU ---
 function parseCommand(args) {
   const config = {
     positiveStats: [],
@@ -265,7 +266,6 @@ function parseCommand(args) {
 
     if (!fullName) {
       console.warn(`⚠️ Stat tidak dikenal: ${statKey}, diabaikan`);
-      console.warn(`📝 Stat yang tersedia: ${Object.keys(statMap).join(", ")}`);
       continue;
     }
 
@@ -489,11 +489,11 @@ async function autoWaitForResults(page, maxWaitTime, checkInterval) {
     }
   }
 
-  console.log("\nTimeout tercapai, mencoba parsing terakhir...");
+  console.log("\n⏱️ Timeout tercapai, mencoba parsing terakhir...");
   return await parseAllResults(page);
 }
 
-// --- RESULT PARSING - UPDATED WITH STRICTER REGEX ---
+// --- RESULT PARSING DENGAN REGEX KETAT ---
 async function parseAllResults(page) {
   console.log("\n📊 Parsing hasil dari halaman...");
 
@@ -568,14 +568,14 @@ async function parseAllResults(page) {
       }
     }
 
-    // Extract success rate dengan regex lebih ketat
+    // Extract success rate dengan regex KETAT
     if (div.hasSuccessRate) {
       const lines = text
         .split("\n")
         .map((l) => l.trim())
         .filter((l) => l);
 
-      // Regex ketat untuk success rate: harus ada angka + %
+      // Regex ketat: HARUS ada angka + %
       const successRatePatterns = [
         /Success\s+Rate\s*[：:]\s*(\d+(?:\.\d+)?)\s*%/i,
         /Success\s+Rate\s*[：:]\s*(\d+(?:\.\d+)?)%/i,
@@ -608,7 +608,7 @@ async function parseAllResults(page) {
         }
       }
 
-      // Extract starting pot dengan regex lebih ketat
+      // Extract starting pot dengan regex ketat
       const potPatterns = [
         /Starting\s+Pot[：:]\s*(\d+)\s*pt/i,
         /Starting\s+Pot[：:]\s*(\d+)pt/i,
@@ -655,7 +655,7 @@ async function parseAllResults(page) {
         console.log("✓ Material cost ditemukan:", result.materialCost);
       }
 
-      // Extract highest step cost dengan regex lebih ketat
+      // Extract highest step cost
       const highestPatterns = [
         /Highest\s+mats?\s+per\s+step[：:]\s*(\d+(?:,\d+)*(?:\.\d+)?)\s*pt/i,
         /Highest\s+material\s+per\s+step[：:]\s*(\d+(?:,\d+)*(?:\.\d+)?)\s*pt/i,
@@ -688,7 +688,7 @@ async function parseAllResults(page) {
 
   result.totalSteps = result.steps.length;
 
-  // Validasi lebih ketat: harus ada success rate VALUE (bukan cuma teks)
+  // Validasi KETAT: harus ada success rate VALUE
   result.hasValidResult =
     result.finalStat !== "Tidak ditemukan" &&
     result.successRateValue !== null &&
@@ -696,17 +696,17 @@ async function parseAllResults(page) {
     result.successRateValue <= 100;
 
   console.log("\n📊 Ringkasan hasil:");
-  console.log(`- Success Rate: ${result.successRate} (${result.successRateValue}%)`);
+  console.log(`- Success Rate: ${result.successRate} (Value: ${result.successRateValue}%)`);
   console.log(`- Material cost: ${result.materialCost}`);
   console.log(`- Highest step cost: ${result.highestStepCost}`);
   console.log(`- Starting Pot: ${result.startingPot}`);
   console.log(`- Total Steps: ${result.totalSteps}`);
-  console.log(`- Valid Result: ${result.hasValidResult}`);
+  console.log(`- Valid Result: ${result.hasValidResult ? '✅' : '❌'}`);
 
   return result;
 }
 
-// Updated message formatting function
+// --- MESSAGE FORMATTING ---
 function formatResultMessage(result) {
   if (result.error) {
     return `*Error Tanaka Scraper:*\n${result.error}`;
@@ -769,7 +769,7 @@ function formatResultMessage(result) {
 }
 
 // --- MAIN TANAKA FUNCTION ---
-export async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions = {}) {
+async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions = {}) {
   let sock, jid, statConfig, options;
 
   if (statConfigOrSocket && typeof statConfigOrSocket.sendMessage === "function") {
@@ -915,7 +915,7 @@ export async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOp
 }
 
 // --- MANUAL MODE ---
-export async function tanakaManual(sock, jid, statConfig = null, options = {}) {
+async function tanakaManual(sock, jid, statConfig = null, options = {}) {
   console.log("🔧 Mode Manual - Browser akan terbuka untuk interaksi manual");
 
   const browser = await puppeteer.launch({
@@ -978,7 +978,7 @@ export async function tanakaManual(sock, jid, statConfig = null, options = {}) {
 }
 
 // --- SMART MODE ---
-export async function tanakaSmart(sock, jid, statConfig = null, options = {}) {
+async function tanakaSmart(sock, jid, statConfig = null, options = {}) {
   console.log("🤖 Mode Smart - Otomatis dengan fallback manual");
 
   try {
@@ -1006,7 +1006,7 @@ export async function tanakaSmart(sock, jid, statConfig = null, options = {}) {
 }
 
 // --- HELPER FUNCTIONS ---
-export function getAvailableStats(sock, chatId, msg) {
+function getAvailableStats(sock, chatId, msg) {
   console.log("\n📋 Daftar Stat Yang Tersedia:");
   console.log("Format: statname=level (contoh: atk%=10, cr=Max, acc%=Min)");
   console.log("Level: angka (1-9) atau 'max' untuk positive / 'min' untuk negative\n");
@@ -1021,7 +1021,7 @@ export function getAvailableStats(sock, chatId, msg) {
   return statMap;
 }
 
-export function validateStatConfig(config) {
+function validateStatConfig(config) {
   const errors = [];
   const warnings = [];
 
@@ -1063,7 +1063,7 @@ export function validateStatConfig(config) {
   };
 }
 
-export function createExampleConfigs() {
+function createExampleConfigs() {
   return {
     dps: parseCommand(["cd=max,", "cr=max,", "atk%=max,", "aspd%=max,", "acc=min,", "dodge=min", "lv280", "pot100"]),
     tank: parseCommand(["def=max,", "mdef=max,", "hp%=max,", "vit%=max,", "cr=min,", "cd=min", "lv280", "pot100"]),
@@ -1072,9 +1072,35 @@ export function createExampleConfigs() {
   };
 }
 
-// --- EXPORTS ---
-export { parseCommand, parseAllResults, formatResultMessage, statMap, CONFIG };
+// --- EXPORTS - SEMUA DALAM SATU FILE ---
+export {
+  // Main functions
+  tanaka,
+  tanakaManual,
+  tanakaSmart,
 
+  // Parser & formatter
+  parseCommand,
+  parseAllResults,
+  formatResultMessage,
+
+  // Helper functions
+  getAvailableStats,
+  validateStatConfig,
+  createExampleConfigs,
+
+  // Data & config
+  statMap,
+  CONFIG,
+  enhancementInfo,
+
+  // Utilities
+  sleep,
+  waitForEnter,
+  withRetry
+};
+
+// Default export
 export default {
   tanaka,
   tanakaManual,
@@ -1087,4 +1113,5 @@ export default {
   createExampleConfigs,
   statMap,
   CONFIG,
+  enhancementInfo,
 };
