@@ -1,7 +1,7 @@
 
+
 import fetch from "node-fetch";
 import * as cheerio from "cheerio";
-import path from "path";
 
 export const Banner = async (sock, msg, chatId) => {
   try {
@@ -12,16 +12,6 @@ export const Banner = async (sock, msg, chatId) => {
       if (!url) return null;
       if (url.startsWith("http")) return url;
       return BASE_URL + url;
-    };
-
-    const getBannerName = (url) => {
-      try {
-        const clean = url.split("?")[0]; // buang query
-        const file = path.basename(clean); // toram_avatar_xxx.png
-        return file.replace(/\.(png|jpg|jpeg|webp)$/i, "");
-      } catch {
-        return "TORAM AVATAR";
-      }
     };
 
     // ===== FETCH LIST =====
@@ -38,30 +28,18 @@ export const Banner = async (sock, msg, chatId) => {
     const $ = cheerio.load(html);
 
     const parseDate = (dateStr) => {
-      if (!dateStr) return null;
-      const m = dateStr.match(/(\d{4})-(\d{2})-(\d{2})/);
+      const m = dateStr?.match(/(\d{4})-(\d{2})-(\d{2})/);
       return m ? new Date(m[1], m[2] - 1, m[3]) : null;
     };
 
+    // ===== AMBIL SEMUA BERITA =====
     const newsList = [];
-
     $(".common_list li a").each((_, el) => {
       const title = $(el).find(".news_title").text().trim();
       const dateStr = $(el).find(".time time").text().trim();
       const href = $(el).attr("href");
-
-      if (href && title) {
-        newsList.push({ title, date: dateStr, href });
-      }
+      if (href) newsList.push({ title, date: dateStr, href });
     });
-
-    if (newsList.length === 0) {
-      return sock.sendMessage(
-        String(chatId),
-        { text: "Tidak ditemukan berita.\nhttps://id.toram.jp" },
-        msg ? { quoted: msg } : {}
-      );
-    }
 
     let selectedNews = null;
     let banners = [];
@@ -77,37 +55,56 @@ export const Banner = async (sock, msg, chatId) => {
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
         },
       });
-
       if (!detailRes.ok) continue;
 
       const detailHtml = await detailRes.text();
       const $detail = cheerio.load(detailHtml);
 
-      const tempBanners = [];
+      const temp = [];
 
-      $detail("center img").each((_, el) => {
-        const src =
-          $detail(el).attr("src") ||
-          $detail(el).attr("data-src");
+      $detail("center").each((_, center) => {
+        const $center = $detail(center);
 
-        if (!src) return;
+        $center.find("img").each((_, img) => {
+          const src =
+            $detail(img).attr("src") ||
+            $detail(img).attr("data-src");
 
-        if (/toram_avatar/i.test(src)) {
-          const fullUrl = fixUrl(src);
-          if (!tempBanners.includes(fullUrl)) {
-            tempBanners.push(fullUrl);
+          if (!src || !/toram_avatar/i.test(src)) return;
+
+          // ===== AMBIL TEKS DI ATAS GAMBAR =====
+          let titleText = "";
+
+          // ambil text node / tag sebelum img
+          const prevNodes = $detail(img).prevAll();
+
+          for (let i = 0; i < prevNodes.length; i++) {
+            const text = $detail(prevNodes[i]).text().trim();
+            if (text) {
+              titleText = text;
+              break;
+            }
           }
-        }
+
+          // fallback jika tidak ketemu
+          if (!titleText) {
+            titleText = "TORAM AVATAR";
+          }
+
+          temp.push({
+            url: fixUrl(src),
+            title: titleText,
+          });
+        });
       });
 
-      if (tempBanners.length === 0) continue;
+      if (temp.length === 0) continue;
 
       const newsDate = parseDate(news.date);
-
-      if (!selectedNews || (newsDate && (!latestDate || newsDate > latestDate))) {
-        selectedNews = news;
+      if (!selectedNews || (newsDate && newsDate > latestDate)) {
         latestDate = newsDate;
-        banners = tempBanners;
+        selectedNews = news;
+        banners = temp;
       }
     }
 
@@ -119,19 +116,18 @@ export const Banner = async (sock, msg, chatId) => {
       );
     }
 
-    // ===== KIRIM SEMUA BANNER (CAPTION = NAMA FILE) =====
-    for (const bannerUrl of banners) {
-      const bannerName = getBannerName(bannerUrl);
-
+    // ===== KIRIM SEMUA BANNER =====
+    for (const banner of banners) {
       await sock.sendMessage(
         String(chatId),
         {
-          image: { url: bannerUrl },
-          caption: bannerName,
+          image: { url: banner.url },
+          caption: banner.title,
         },
         msg ? { quoted: msg } : {}
       );
     }
+
   } catch (err) {
     await sock.sendMessage(
       String(chatId),
