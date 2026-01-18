@@ -161,6 +161,7 @@ komunitas: https://whatsapp.com/channel/0029VbAmhBF7z4kjOQcoVV0A
 - !regist 
 - !item 
 - !appview 
+- !spamadv
 
 *Info Toram*
 - !listability 
