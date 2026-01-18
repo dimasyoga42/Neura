@@ -33,6 +33,7 @@ import { buff } from "../plugins/toram/buff.js";
 import { searchMonster } from "../plugins/toram/monster.js";
 import { pet } from "../plugins/toram/pet.js";
 import { spmadv } from "../plugins/toram/adv.js";
+import { formatResultMessage, parseCommand, tanaka, validateStatConfig } from "../plugins/toram/tanaka.js"
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!menu")) {
     if (isBan(sock, chatId, msg)) return;
@@ -173,22 +174,43 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   }
 
 
+
   if (text.startsWith("!filarm")) {
     if (isBan(sock, chatId, msg)) return;
+
     try {
-
       const args = text.split(" ").slice(1);
-      if (args.length === 0) return sock.sendMessage(chatId, { text: "gunakan `!sheetfill` untuk melihat cara penggunaan nya" }, { quoted: msg })
-      const statConfig = parseCommand(args);
 
-      console.log("Memulai scraper dengan konfigurasi:", statConfig);
-      const result = await tanaka(statConfig, { headless: "new" });
+      if (args.length === 0) {
+        return sock.sendMessage(
+          chatId,
+          { text: "Gunakan `!filarm help` untuk melihat cara penggunaan" },
+          { quoted: msg }
+        );
+      }
+
+      const statConfig = parseCommand(args);
+      const validation = validateStatConfig(statConfig);
+
+      if (!validation.valid) {
+        return sock.sendMessage(chatId, {
+          text: `Konfigurasi tidak valid:\n${validation.errors.join("\n")}`
+        });
+      }
+
+      const result = await tanaka(statConfig, {
+        headless: true,
+        maxWaitTime: 60000
+      });
 
       const replyMessage = formatResultMessage(result);
-      await sock.sendMessage(chatId, { text: replyMessage });
+      await sock.sendMessage(chatId, { text: replyMessage }, { quoted: msg });
+
     } catch (error) {
-      console.error("Error saat menjalankan perintah .filarm:", error);
-      await sock.sendMessage(chatId, { text: `Terjadi kesalahan: ${error.message}` });
+      console.error("Error !filarm:", error);
+      await sock.sendMessage(chatId, {
+        text: `Terjadi kesalahan:\n${error.message}`
+      });
     }
   }
   if (text.startsWith("!sheetfill")) {
