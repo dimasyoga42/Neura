@@ -693,6 +693,7 @@ async function parseAllResults(page) {
 }
 
 // --- MESSAGE FORMATTING ---
+// --- MESSAGE FORMATTING - SHOW ALL STEPS ---
 function formatResultMessage(result) {
   if (result.error) {
     return `*Error Tanaka Scraper:*\n${result.error}`;
@@ -734,14 +735,12 @@ function formatResultMessage(result) {
     message += `*Cost Reduction:* ${result.materialDetails.reduction}\n`;
   }
 
+  // TAMPILKAN SEMUA LANGKAH - TIDAK DIPOTONG
   if (result.steps.length > 0) {
     message += `\n*Langkah Enhancement:*\n`;
-    result.steps.slice(0, 5).forEach((step) => {
+    result.steps.forEach((step) => {
       message += `${step}\n`;
     });
-    if (result.steps.length > 5) {
-      message += `... dan ${result.steps.length - 5} langkah lainnya\n`;
-    }
   }
 
   if (result.duration) {
@@ -752,7 +751,6 @@ function formatResultMessage(result) {
 
   return message;
 }
-
 // --- OPTIMIZED MAIN TANAKA FUNCTION ---
 async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions = {}) {
   let sock, jid, statConfig, options;
