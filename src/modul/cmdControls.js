@@ -175,7 +175,6 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
 
   if (text.startsWith("!filarm")) {
     if (isBan(sock, chatId, msg)) return;
-    if (text.startsWith("!filarm")) return sock.sendMessage(chatId, { text: "sedang perbaikan" }, { quoted: msg })
     try {
 
       const args = text.split(" ").slice(1);
