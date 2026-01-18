@@ -7,24 +7,29 @@ export async function spmadv(sock, chatId, msg, text) {
     const args = text.replace(".spmadv", "").trim()
     if (!args) {
       return sock.sendMessage(chatId, {
-        text: "Format:\n.spmadv <level> <persenXP> <chapterAwal> - <chapterAkhir>\n\nContoh:\n.spmadv 175 20 6 - 6"
+        text: "Format:\n !spmadv <levelAwal> <persenXP> <targetLevel> <chapterAwal> - <chapterAkhir>\n\nContoh:\n.spmadv 175 20 180 6 - 6"
       })
     }
 
-    const match = args.match(/(\d+)\s+(\d+)\s+(\d+)\s*-\s*(\d+)/)
+    const match = args.match(/(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s*-\s*(\d+)/)
     if (!match) {
       return sock.sendMessage(chatId, {
-        text: "Format salah!\n\nContoh yang benar:\n.spmadv 175 20 6 - 6"
+        text: "Format salah!\n\nContoh yang benar:\n.spmadv 175 20 180 6 - 6"
       })
     }
 
     let level = parseInt(match[1])
     let percent = parseInt(match[2])
-    const chapterFrom = parseInt(match[3])
-    const chapterTo = parseInt(match[4])
+    const targetLevel = parseInt(match[3])
+    const chapterFrom = parseInt(match[4])
+    const chapterTo = parseInt(match[5])
 
     if (percent < 0 || percent >= 100) {
       return sock.sendMessage(chatId, { text: "Persen XP harus 0 - 99" })
+    }
+
+    if (targetLevel <= level) {
+      return sock.sendMessage(chatId, { text: "Target level harus lebih tinggi dari level awal!" })
     }
 
     // ================= FORMULA XP (TORAM TOOLS) =================
@@ -176,7 +181,7 @@ export async function spmadv(sock, chatId, msg, text) {
     const startPercent = percent
 
     // Simulasi grinding
-    while (true) {
+    while (level < targetLevel || (level === targetLevel && currentXP > 0)) {
       runs++
       currentXP += questXP
 
@@ -187,21 +192,28 @@ export async function spmadv(sock, chatId, msg, text) {
       }
 
       const pct = Math.floor((currentXP / needXP(level)) * 100)
-      progress.push(`${runs}x → Lv ${level} (${pct}%)`)
+      progress.push(`${runs}x - Lv ${level} (${pct}%)`)
 
-      // Stop jika sudah mencapai 0% di level baru atau sudah 20 run
-      if (pct === 0 && level > startLevel) break
-      if (runs >= 20) break
+      // Stop jika sudah mencapai atau melewati target level
+      if (level > targetLevel) break
+      if (level === targetLevel && pct === 0) break
+
+      // Safety limit
+      if (runs >= 1000) {
+        progress.push("... (limit 1000x tercapai)")
+        break
+      }
     }
 
     const result = `SPMADV SIMULATOR
 
-Level Awal : ${startLevel} (${startPercent}%)
-Chapter    : ${chapterFrom} - ${chapterTo}
-Quest XP   : ${questXP.toLocaleString()} exp
+Level Awal  : ${startLevel} (${startPercent}%)
+Target Level: ${targetLevel}
+Chapter     : ${chapterFrom} - ${chapterTo}
+Quest XP    : ${questXP.toLocaleString()} exp
 
-Target Lv  : ${level}
-Butuh Run  : ${runs}x
+Final Level : ${level}
+Butuh Run   : ${runs}x
 
 Progress:
 ${progress.join('\n')}
@@ -213,6 +225,6 @@ Referensi: Toram Tools`
 
   } catch (err) {
     console.error(err)
-    sock.sendMessage(chatId, { text: "❌ Terjadi kesalahan pada SPMADV simulator!" })
+    sock.sendMessage(chatId, { text: "Terjadi kesalahan pada SPMADV simulator!" })
   }
 }
