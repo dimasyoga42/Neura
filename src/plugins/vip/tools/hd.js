@@ -2,9 +2,22 @@ import { getContentType, downloadMediaMessage } from "@whiskeysockets/baileys";
 import axios from "axios";
 import FormData from "form-data";
 
+
+
+const getMediaMessage = (msg) => {
+  if (msg.message?.imageMessage || msg.message?.videoMessage) return msg
+
+  const quoted = msg.message?.extendedTextMessage?.contextInfo?.quotedMessage
+  if (quoted?.imageMessage || quoted?.videoMessage) {
+    return { message: quoted }
+  }
+  return null
+}
+
+
 export const hd = async (sock, chatId, msg) => {
   try {
-    const mediaType = getContentType(msg);
+    const mediaType = getMediaMessage(msg);
     if (mediaType !== "imageMessage") {
       return sock.sendMessage(
         chatId,
@@ -15,7 +28,7 @@ export const hd = async (sock, chatId, msg) => {
 
     // download image
     const buffer = await downloadMediaMessage(
-      msg,
+      mediaType,
       "buffer",
       {},
       { reuploadRequest: sock.updateMediaMessage }
