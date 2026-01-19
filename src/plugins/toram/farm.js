@@ -1,23 +1,5 @@
 import { supabase } from "../../model/supabase.js";
 
-const parseStat = (stat) => {
-  if (stat === null || stat === undefined) return "-";
-
-  const text = String(stat);
-  const result = [];
-  const regex = /([a-zA-Z% ]+)\s*(-?\d+(?:\.\d+)?)/g;
-
-  let match;
-  while ((match = regex.exec(text)) !== null) {
-    const label = match[1].trim();
-    const value = match[2];
-    result.push(`${label} : ${value}`);
-  }
-
-  if (result.length === 0) return text;
-  return result.join("\n");
-};
-
 export const farm = async (sock, chatId, msg, text) => {
   try {
     const query = text.replace("!listfarm", "").trim();
@@ -58,12 +40,12 @@ export const farm = async (sock, chatId, msg, text) => {
 
     const txts = data
       .map((item, i) => {
+        const dropList = item.drops ? item.drops.split(";").join("\n") : "-";
         return (
-          `${i + 1}.\n` +
-          `Nama: ${item.nama} (${item.element || "-"})\n` +
+          `${i + 1}. ${item.nama} (${item.element || "-"})\n` +
           `Map: ${item.map}\n` +
-          `Drop:\n${parseStat(item.drops)}\n` +
-          `Pts/Stk:\n${parseStat(item.pts_stk)}`
+          `Drop:\n${dropList}\n` +
+          `Pts/Stk: ${item.pts_stk}`
         );
       })
       .join("\n---\n");
