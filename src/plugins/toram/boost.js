@@ -6,7 +6,7 @@ const BASE_URL = "https://id.toram.jp";
 async function scrapeBoostBoss() {
   try {
     // 1. Ambil halaman utama berita
-    const listRes = await fetch(`${BASE_URL}/?type_code=event`, {
+    const listRes = await fetch(`${BASE_URL}/?type_code=event#contentArea`, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
       }
