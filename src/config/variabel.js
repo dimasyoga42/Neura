@@ -1,3 +1,4 @@
+
 export const guide = {
   padu: `
 *Leveling Padu*
@@ -156,6 +157,7 @@ komunitas: https://whatsapp.com/channel/0029VbAmhBF7z4kjOQcoVV0A
 
 *Guide Toram*
 - !pet 
+- !listfarm
 
 *Raid Fitur*
 - !createraid
