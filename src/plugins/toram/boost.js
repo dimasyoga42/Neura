@@ -6,7 +6,7 @@ const BASE_URL = "https://id.toram.jp";
 async function scrapeBoostBoss() {
   try {
     // 1. Ambil halaman utama berita
-    const listRes = await fetch(`${BASE_URL}/?type_code=all`, {
+    const listRes = await fetch(`${BASE_URL}/?type_code=event`, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
       }
@@ -36,7 +36,7 @@ async function scrapeBoostBoss() {
       const dateStr = $(el).find(".time time").text().trim();
 
       // Filter judul harus mengandung "boost" DAN "akhir pekan"
-      if (titleLower.includes("boost") && titleLower.includes("akhir pekan")) {
+      if (titleLower.includes("Boost") && titleLower.includes("akhir pekan")) {
         boostNews.push({
           title: title,
           href: href.startsWith("http") ? href : BASE_URL + href,
