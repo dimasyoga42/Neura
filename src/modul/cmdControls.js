@@ -35,6 +35,7 @@ import { pet } from "../plugins/toram/pet.js";
 import { spmadv } from "../plugins/toram/adv.js";
 import { formatResultMessage, parseCommand, tanaka, validateStatConfig } from "../plugins/toram/tanaka.js"
 import { hd } from "../plugins/vip/tools/hd.js";
+import { liveStream } from "../plugins/toram/live.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!menu")) {
     if (isBan(sock, chatId, msg)) return;
@@ -347,7 +348,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
 
   if (text.startsWith("!toramlive")) {
     if (isBan(sock, chatId, msg)) return;
-    listLeveling(sock, chatId, msg)
+    liveStream(sock, chatId, msg)
   }
 
 

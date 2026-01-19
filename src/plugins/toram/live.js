@@ -5,7 +5,7 @@ import moment from 'moment-timezone';
 /**
  * Scraping & kirim info Live Stream Toram Online
  */
-export async function liveStream(sock, chatId, msg) {
+export const liveStream = async (sock, chatId, msg) => {
   const TORAM_EVENT_URL = 'https://en.toram.jp/?type_code=event#contentArea';
   const TIMEZONE = 'Asia/Jakarta';
 
