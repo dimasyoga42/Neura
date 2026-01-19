@@ -5,30 +5,61 @@ export const farm = async (sock, chatId, msg, text) => {
     const query = text.replace("!listfarm", "").trim();
 
     if (!query) {
-      return sock.sendMessage(chatId, {
-        text: "Format salah.\nContoh: !listfarm metal\nKategori: Metal, Cloth, Wood, Medicine, Beast, Mana"
-      }, { quoted: msg });
+      return sock.sendMessage(
+        chatId,
+        {
+          text:
+            "Format salah.\n" +
+            "Contoh: !listfarm metal\n" +
+            "Kategori: Metal, Cloth, Wood, Medicine, Beast, Mana"
+        },
+        { quoted: msg }
+      );
     }
 
     const { data, error } = await supabase
       .from("farmList")
-      .select("nama, element, drops, pts/stk, map")
-      .ilike("mets", `%${query}%`);
+      .select(`
+        nama,
+        element,
+        drops,
+        map,
+        "pts/stk": pts_stk
+      `)
+      .ilike("material", `%${query}%`);
 
-    if (error) throw new Error(error.message);
+    if (error) throw error;
 
     if (!data || data.length === 0) {
-      return sock.sendMessage(chatId, { text: "Data tidak ditemukan." }, { quoted: msg });
+      return sock.sendMessage(
+        chatId,
+        { text: "Data tidak ditemukan." },
+        { quoted: msg }
+      );
     }
 
-    const txts = data.map((item) => {
-      return `Nama: ${item.nama} (${item.element})\nMap: ${item.map}\nDrop: ${item.drop}\nPts/Stk: ${item["pt/stk"]}`;
-    }).join("\n---\n");
+    const txts = data
+      .map((item, i) => {
+        return (
+          `${i + 1}.\n` +
+          `Nama: ${item.nama} (${item.element || "-"})\n` +
+          `Map: ${item.map}\n` +
+          `Drop: ${item.drops}\n` +
+          `Pts/Stk: ${item.pts_stk}`
+        );
+      })
+      .join("\n---\n");
 
-    await sock.sendMessage(chatId, { text: txts }, { quoted: msg });
-
+    await sock.sendMessage(
+      chatId,
+      { text: txts },
+      { quoted: msg }
+    );
   } catch (error) {
-    console.error(error);
-    await sock.sendMessage(chatId, { text: "Terjadi kesalahan sistem." }, { quoted: msg });
+    await sock.sendMessage(
+      chatId,
+      { text: "Terjadi kesalahan sistem." },
+      { quoted: msg }
+    );
   }
 };
