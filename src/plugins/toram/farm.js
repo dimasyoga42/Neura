@@ -63,8 +63,10 @@ export const farm = async (sock, chatId, msg, text) => {
           `${i + 1}.\n` +
           `Nama: ${item.nama} (${item.element || "-"})\n` +
           `Map: ${item.map}\n` +
-          `Drop: ${parseStat(item.drops)}\n` +
-          `Pts/Stk: ${parseStat(item.pts_stk)}`
+          `Drop: 
+          - ${parseStat(item.drops)}\n` +
+          `Pts/Stk: 
+          - ${parseStat(item.pts_stk)}`
         );
       })
       .join("\n---\n");
