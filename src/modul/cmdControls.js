@@ -34,6 +34,7 @@ import { searchMonster } from "../plugins/toram/monster.js";
 import { pet } from "../plugins/toram/pet.js";
 import { spmadv } from "../plugins/toram/adv.js";
 import { formatResultMessage, parseCommand, tanaka, validateStatConfig } from "../plugins/toram/tanaka.js"
+import { hd } from "../plugins/vip/tools/hd.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!menu")) {
     if (isBan(sock, chatId, msg)) return;
@@ -338,6 +339,10 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     spmadv(sock, chatId, msg, text)
   }
 
+  if (msg.message.imageMessage?.caption === "!hd") {
+    if (isBan(sock, chatId, msg)) return;
+    hd(sock, chatId, msg);
+  }
 
 
 

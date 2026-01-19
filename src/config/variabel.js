@@ -117,7 +117,16 @@ komunitas: https://whatsapp.com/channel/0029VbAmhBF7z4kjOQcoVV0A
 - !spotify
 - !ytmp3 
 - !pinterest 
-- !qc 
+- !qc
+- !brat (coming soon)
+- !mix (coming soon)
+- !hd
+
+*Menu Stalk* (next update)
+- !igstalk
+- !tiktokstalk
+- !mlstalk
+- !ffstalk
 
 *Menu Fun*
 - !caklontong 
@@ -573,7 +582,28 @@ cara penggunaan nya:
 
 
 export const messagePembolong = `
-invalid
+*extract*: 3 - 4M
+
+*OHS*
+0-1: 10-20M
+1-2: 150-160M
+
+*KNUCK*
+0-1: 23-30M
+1-2: 70-90M
+
+*STAFF*
+1-2: 100M
+*MD*
+
+*KTN*
+
+*2H*
+
+*HB*
+
+leg ornament: 700M
+leg silk: 1B++
 `.trim();
 
 export const listLeveling = `
