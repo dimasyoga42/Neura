@@ -39,16 +39,18 @@ export const farm = async (sock, chatId, msg, text) => {
     }
 
     const txts = data
-      .map((item, i) => {
+      .map((item) => {
         const dropList = item.drops ? item.drops.split(";").join("\n") : "-";
+        const ptsList = item.pts_stk ? item.pts_stk.split(";").join("\n") : "-";
+
         return (
-          `${i + 1}. ${item.nama} (${item.element || "-"})\n` +
+          `Nama: ${item.nama} (${item.element || "-"})\n` +
           `Map: ${item.map}\n` +
           `Drop:\n${dropList}\n` +
-          `Pts/Stk: ${item.pts_stk}`
+          `Pts/Stk:\n${ptsList}`
         );
       })
-      .join("\n---\n");
+      .join("\n-------------------\n");
 
     await sock.sendMessage(
       chatId,
