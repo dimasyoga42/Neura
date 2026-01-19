@@ -197,7 +197,7 @@ ${liveDetail.title}
 
     message += `Dicek: ${now.format('DD/MM/YYYY HH:mm')} WIB\n`;
     message += `Info: ${latestLive.url}\n\n`;
-    message += `Kirim !live untuk cek lagi`;
+    message += `Kirim !toramlive untuk cek lagi`;
 
     // Kirim pesan dengan gambar jika ada thumbnail
     if (liveDetail.thumbnailUrl) {
