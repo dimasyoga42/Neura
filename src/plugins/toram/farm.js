@@ -12,7 +12,7 @@ export const farm = async (sock, chatId, msg, text) => {
 
     const { data, error } = await supabase
       .from("farmList")
-      .select("mets, nama, element, drops, pts/stk, map")
+      .select("nama, element, drops, pts/stk, map")
       .ilike("mets", `%${query}%`);
 
     if (error) throw new Error(error.message);
