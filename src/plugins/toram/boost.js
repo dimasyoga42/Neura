@@ -1,12 +1,13 @@
 import fetch from "node-fetch";
 import * as cheerio from "cheerio";
 
+// Gunakan versi Indonesia agar lebih mudah dipahami user
 const BASE_URL = "https://id.toram.jp";
 
 async function scrapeBoostBoss() {
   try {
-    // 1. Ambil halaman utama berita
-    const listRes = await fetch(`${BASE_URL}/?type_code=event#contentArea`, {
+    // 1. Ambil halaman utama berita event
+    const listRes = await fetch(`${BASE_URL}/top/?type_code=event#contentArea`, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
       }
@@ -19,24 +20,33 @@ async function scrapeBoostBoss() {
 
     const parseDate = (dateStr) => {
       if (!dateStr) return null;
-      let match = dateStr.match(/(\d{4})-(\d{2})-(\d{2})/);
+      // Parse format: ［2026-01-19］
+      const match = dateStr.match(/(\d{4})-(\d{2})-(\d{2})/);
       if (match) {
         return new Date(match[1], match[2] - 1, match[3]);
       }
       return null;
     };
 
-    // 2. Cari semua berita "Boost" & "Akhir Pekan"
+    // 2. Cari semua berita boost (Daily/Weekly/Weekend Boost)
     const boostNews = [];
 
-    $(".common_list li a").each((i, el) => {
-      const title = $(el).find(".news_title").text().trim();
-      const titleLower = title.toLowerCase();
+    // Struktur: <li> > <a href="/information/detail/?information_id=...">
+    $("ul li a[href*='information_id']").each((i, el) => {
+      const fullText = $(el).text().trim();
+      const titleLower = fullText.toLowerCase();
       const href = $(el).attr("href");
-      const dateStr = $(el).find(".time time").text().trim();
 
-      // Filter judul harus mengandung "boost" DAN "akhir pekan"
-      if (titleLower.includes("Boost") && titleLower.includes("akhir pekan")) {
+      // Extract tanggal dari format ［2026-01-19］
+      const dateMatch = fullText.match(/［(\d{4}-\d{2}-\d{2})］/);
+      const dateStr = dateMatch ? dateMatch[1] : "";
+
+      // Filter: harus mengandung "boost" (case insensitive)
+      // Bisa: [Daily Boost Event], [Weekend Boost], [Weekly Boost Event]
+      if (titleLower.includes("boost")) {
+        // Extract judul setelah tanggal
+        const title = fullText.replace(/［\d{4}-\d{2}-\d{2}］/, '').trim();
+
         boostNews.push({
           title: title,
           href: href.startsWith("http") ? href : BASE_URL + href,
@@ -59,6 +69,8 @@ async function scrapeBoostBoss() {
       }
     }
 
+    console.log("Latest boost event:", latestBoost.title, latestBoost.date);
+
     const boostLink = latestBoost.href;
 
     // 4. Scrape detail berita
@@ -73,45 +85,71 @@ async function scrapeBoostBoss() {
     const detailHtml = await detailRes.text();
     const $detail = cheerio.load(detailHtml);
 
-    // 5. Validasi Tanggal Selesai (WIB)
+    // 5. Parse Event Period
     let eventEndDate = null;
     let readableEndString = "";
 
-    // Loop semua paragraf untuk mencari teks "Selesai :"
-    $detail(".pTxt, p").each((i, el) => {
-      const text = $detail(el).text().replace(/\s+/g, ' ').trim(); // Normalisasi spasi
+    const bodyText = $detail("body").text();
 
-      // Regex mencari pola: Selesai : [Hari], [Tgl] [Bulan] [Tahun] pukul [Jam]:[Menit]
-      // Contoh: "Selesai : Minggu, 18 Januari 2026 pukul 21:59 WIB"
-      const endDateMatch = text.match(/(?:Selesai|Berakhir)\s*[:]\s*.*?,?\s*(\d{1,2})\s+([a-zA-Z]+)\s+(\d{4})\s+(?:pukul|jam)?\s*(\d{1,2})[:.](\d{1,2})/i);
+    // Coba parse berbagai format tanggal
+    // Format 1: "Selesai : Minggu, 19 Januari 2026 pukul 23:59 WIB"
+    let untilMatch = bodyText.match(/(?:Selesai|Berakhir)\s*[:]\s*.*?,?\s*(\d{1,2})\s+([a-zA-Z]+)\s+(\d{4})\s+(?:pukul|jam)?\s*(\d{1,2})[:.](\d{1,2})\s*WIB/i);
 
-      if (endDateMatch) {
-        const day = parseInt(endDateMatch[1]);
-        const monthName = endDateMatch[2];
-        const year = parseInt(endDateMatch[3]);
-        const hour = parseInt(endDateMatch[4]);
-        const minute = parseInt(endDateMatch[5]);
+    if (untilMatch) {
+      const day = parseInt(untilMatch[1]);
+      const monthName = untilMatch[2];
+      const year = parseInt(untilMatch[3]);
+      const hour = parseInt(untilMatch[4]);
+      const minute = parseInt(untilMatch[5]);
+
+      const monthMap = {
+        'januari': 0, 'februari': 1, 'maret': 2, 'april': 3,
+        'mei': 4, 'juni': 5, 'juli': 6, 'agustus': 7,
+        'september': 8, 'oktober': 9, 'november': 10, 'desember': 11
+      };
+
+      const month = monthMap[monthName.toLowerCase()];
+
+      if (month !== undefined) {
+        // WIB adalah UTC+7
+        const utcTime = Date.UTC(year, month, day, hour, minute, 0);
+        const wibOffset = 7 * 60 * 60 * 1000;
+
+        eventEndDate = new Date(utcTime - wibOffset);
+        readableEndString = `${day} ${monthName} ${year} ${hour}:${minute < 10 ? '0' + minute : minute} WIB`;
+      }
+    } else {
+      // Format 2 (English): "Until:January 19th at 11:59 PM (JST/GMT+9)"
+      untilMatch = bodyText.match(/Until:\s*([A-Za-z]+)\s+(\d+)[a-z]{2}\s+at\s+(\d{1,2}):(\d{2})\s+(AM|PM)\s+\(JST/);
+
+      if (untilMatch) {
+        const monthName = untilMatch[1];
+        const day = parseInt(untilMatch[2]);
+        let hour = parseInt(untilMatch[3]);
+        const minute = parseInt(untilMatch[4]);
+        const ampm = untilMatch[5];
+
+        if (ampm === "PM" && hour !== 12) hour += 12;
+        if (ampm === "AM" && hour === 12) hour = 0;
 
         const monthMap = {
-          'januari': 0, 'februari': 1, 'maret': 2, 'april': 3,
-          'mei': 4, 'juni': 5, 'juli': 6, 'agustus': 7,
-          'september': 8, 'oktober': 9, 'november': 10, 'desember': 11
+          'january': 0, 'february': 1, 'march': 2, 'april': 3,
+          'may': 4, 'june': 5, 'july': 6, 'august': 7,
+          'september': 8, 'october': 9, 'november': 10, 'december': 11
         };
 
         const month = monthMap[monthName.toLowerCase()];
+        const currentYear = new Date().getFullYear();
 
         if (month !== undefined) {
-          // KONVERSI KE TIMESTAMP ABSOLUTE (WIB adalah UTC+7)
-          // Kita buat tanggal seolah-olah UTC, lalu kurangi 7 jam (dalam ms)
-          const utcTime = Date.UTC(year, month, day, hour, minute, 0);
-          const wibOffset = 7 * 60 * 60 * 1000; // 7 jam dalam milidetik
+          const utcTime = Date.UTC(currentYear, month, day, hour, minute, 0);
+          const jstOffset = 9 * 60 * 60 * 1000;
 
-          eventEndDate = new Date(utcTime - wibOffset);
-          readableEndString = `${day} ${monthName} ${year} ${hour}:${minute < 10 ? '0' + minute : minute} WIB`;
+          eventEndDate = new Date(utcTime - jstOffset);
+          readableEndString = `${day} ${monthName} ${currentYear} ${hour}:${minute < 10 ? '0' + minute : minute} JST`;
         }
-        return false; // Break loop
       }
-    });
+    }
 
     // Cek apakah sudah Expired
     const now = new Date();
@@ -121,10 +159,9 @@ async function scrapeBoostBoss() {
       if (now > eventEndDate) {
         isExpired = true;
       }
+      console.log("Event end date:", eventEndDate, "Now:", now, "Expired:", isExpired);
     } else {
-      // Jika tanggal tidak ditemukan di teks berita, kita asumsikan berdasarkan tanggal posting + 3 hari (fallback logic)
-      // Tapi lebih aman return warning saja
-      console.log("Warning: Tanggal selesai tidak dapat diparsing dari berita.");
+      console.log("Warning: Tanggal selesai tidak dapat diparsing.");
     }
 
     if (isExpired) {
@@ -139,62 +176,89 @@ async function scrapeBoostBoss() {
     // 6. Scrape Boss
     const bosses = [];
 
-    $detail(".subtitle").each((i, el) => {
-      const rawText = $detail(el).text().trim();
+    // Cari semua heading/subtitle yang dimulai dengan "Lv"
+    $detail("*").each((i, el) => {
+      const text = $detail(el).text().trim();
 
-      // Cek format subtitle Lv...
-      if (!rawText.match(/^Lv\d+/)) return;
+      // Skip jika bukan format boss (harus dimulai dengan Lv dan angka)
+      if (!text.match(/^Lv\d+\s+/)) return;
 
-      const match = rawText.match(/^(Lv\d+)\s+([^(]+)(?:\(([^)]+)\))?/);
+      // Parse format: Lv10 Boss Colon(Land Under Development)
+      // atau: Lv142 Ornlarf(Ultimea Palace: Corridor)
+      const match = text.match(/^(Lv\d+)\s+([^(]+)(?:\(([^)]+)\))?/);
+
       if (!match) return;
 
       const level = match[1];
       const bossName = match[2].trim();
       const location = match[3] || "";
 
-      // Logika pencarian gambar
+      // Cari gambar di sekitar elemen ini
       let img = null;
-      let currentEl = $detail(el);
 
-      // Cek elemen saudara selanjutnya sampai ketemu gambar
-      for (let j = 0; j < 6; j++) {
-        currentEl = currentEl.next();
-        if (currentEl.length === 0) break;
+      // Cek di parent
+      const parent = $detail(el).parent();
+      const imgInParent = parent.find("img");
+      if (imgInParent.length > 0) {
+        img = imgInParent.first().attr("src");
+      }
 
-        // Cek img di dalam div/p
-        const foundImg = currentEl.find("img");
-        if (foundImg.length > 0) {
-          img = foundImg.attr("src");
-          break;
-        }
-        // Cek jika elemen itu sendiri img
-        if (currentEl.is("img")) {
-          img = currentEl.attr("src");
-          break;
+      // Cek di sibling
+      if (!img) {
+        let sibling = $detail(el).next();
+        for (let j = 0; j < 5; j++) {
+          if (sibling.length === 0) break;
+
+          const foundImg = sibling.find("img");
+          if (foundImg.length > 0) {
+            img = foundImg.first().attr("src");
+            break;
+          }
+
+          if (sibling.is("img")) {
+            img = sibling.attr("src");
+            break;
+          }
+
+          sibling = sibling.next();
         }
       }
 
       if (img) {
-        const imageUrl = img.startsWith("http")
-          ? img
-          : img.startsWith("/")
-            ? BASE_URL + img
-            : BASE_URL + "/" + img;
+        // Handle URL gambar
+        let imageUrl;
+        if (img.startsWith("http")) {
+          imageUrl = img;
+        } else if (img.includes("toram-jp.akamaized.net")) {
+          imageUrl = "https://" + img.replace(/^\/+/, '');
+        } else if (img.startsWith("/")) {
+          imageUrl = "https://toram-jp.akamaized.net" + img;
+        } else {
+          imageUrl = "https://toram-jp.akamaized.net/" + img;
+        }
 
-        bosses.push({
-          level,
-          name: bossName,
-          location,
-          fullName: `${level} ${bossName}${location ? ` (${location})` : ""}`,
-          image: imageUrl
-        });
+        // Cek duplikat
+        const isDuplicate = bosses.some(b => b.name === bossName && b.level === level);
+
+        if (!isDuplicate) {
+          bosses.push({
+            level,
+            name: bossName,
+            location,
+            fullName: `${level} ${bossName}${location ? ` (${location})` : ""}`,
+            image: imageUrl
+          });
+        }
       }
     });
+
+    console.log(`Found ${bosses.length} bosses`);
 
     return {
       active: true,
       bosses,
-      endDateStr: readableEndString
+      endDateStr: readableEndString,
+      eventTitle: latestBoost.title
     };
 
   } catch (error) {
@@ -213,38 +277,46 @@ export const bosboost = async (sock, chatId, msg) => {
       let textMsg = "Tidak ada event Boost Boss yang sedang aktif saat ini.";
 
       if (data.expired) {
-        // Hapus emot, hanya text informasi polos
-        textMsg = `Event Boost Akhir Pekan sudah selesai pada:\n${data.lastDate}`;
+        textMsg = `Event Boost Boss sudah selesai pada:\n${data.lastDate}`;
       }
 
-      // Kirim text status saja karena tidak ada gambar untuk ditampilkan
       return sock.sendMessage(chatId, { text: textMsg }, { quoted: msg });
     }
 
     // 2. Handle Event Aktif tapi Parse Gagal
     if (!data.bosses || data.bosses.length === 0) {
-      return sock.sendMessage(chatId, { text: "Event aktif, tapi gagal mengambil daftar boss." }, { quoted: msg });
+      return sock.sendMessage(chatId, {
+        text: `Event aktif: ${data.eventTitle}\n\nTapi gagal mengambil daftar boss. Silakan cek manual di website Toram.`
+      }, { quoted: msg });
     }
 
-    // 3. Tampilkan Boss (Looping Gambar Saja)
-    // Tidak ada pesan pembuka (Header) dan penutup (Footer)
-
+    // 3. Tampilkan Boss (Looping Gambar)
     for (const boss of data.bosses) {
-      const cleanCaption = boss.fullName; // Nama boss polos (Lv123 Nama Boss)
+      try {
+        const cleanCaption = boss.fullName;
 
-      if (boss.image) {
-        await sock.sendMessage(chatId, {
-          image: { url: boss.image },
-          caption: cleanCaption
-        });
-      } else {
-        // Fallback jika gambar gagal load, kirim nama bossnya saja
-        await sock.sendMessage(chatId, { text: cleanCaption });
+        if (boss.image) {
+          await sock.sendMessage(chatId, {
+            image: { url: boss.image },
+            caption: cleanCaption
+          });
+        } else {
+          await sock.sendMessage(chatId, { text: cleanCaption });
+        }
+
+        // Delay kecil untuk menghindari spam
+        await new Promise(resolve => setTimeout(resolve, 700));
+      } catch (imgError) {
+        console.error(`Error mengirim gambar ${boss.name}:`, imgError);
+        // Kirim text saja jika gambar gagal
+        await sock.sendMessage(chatId, { text: boss.fullName });
       }
     }
 
   } catch (err) {
-    console.error(err);
-    sock.sendMessage(chatId, { text: "Terjadi kesalahan sistem." }, { quoted: msg });
+    console.error("Error di handler bosboost:", err);
+    sock.sendMessage(chatId, {
+      text: `Terjadi kesalahan: ${err.message}\n\nSilakan coba lagi atau cek manual di https://id.toram.jp`
+    }, { quoted: msg });
   }
 };
