@@ -1,5 +1,24 @@
 import { supabase } from "../../model/supabase.js";
 
+
+
+
+
+const parseStat = (stat) => {
+  if (!stat) return "-";
+
+  const result = [];
+  const regex = /([a-zA-Z% ]+)\s*(-?\d+(?:\.\d+)?)/g;
+
+  let match;
+  while ((match = regex.exec(stat)) !== null) {
+    const label = match[1].trim();
+    const value = match[2];
+    result.push(`${label} : ${value}`);
+  }
+
+  return result.length ? result.join("\n- ") : "-";
+};
 export const farm = async (sock, chatId, msg, text) => {
   try {
     const query = text.replace("!listfarm", "").trim();
@@ -44,8 +63,8 @@ export const farm = async (sock, chatId, msg, text) => {
           `${i + 1}.\n` +
           `Nama: ${item.nama} (${item.element || "-"})\n` +
           `Map: ${item.map}\n` +
-          `Drop: ${item.drops}\n` +
-          `Pts/Stk: ${item.pts_stk}`
+          `Drop: ${parseStat(item.drops)}\n` +
+          `Pts/Stk: ${parseStat(item.pts_stk)}`
         );
       })
       .join("\n---\n");
