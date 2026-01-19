@@ -173,150 +173,77 @@ async function scrapeBoostBoss() {
       };
     }
 
-    // 6. Scrape Boss
+    // 6. Scrape Boss dengan gambar yang benar
     const bosses = [];
 
-    // Cari semua heading/subtitle yang dimulai dengan "Lv"
-    $detail("*").each((i, el) => {
-      const text = $detail(el).text().trim();
+    // Cari elemen dengan class "subtitle" yang berisi info boss
+    $detail(".subtitle").each((i, el) => {
 
-      // Skip jika bukan format boss (harus dimulai dengan Lv dan angka)
-      if (!text.match(/^Lv\d+\s+/)) return;
+      console.log(`Found ${bosses.length} bosses`);
 
-      // Parse format: Lv10 Boss Colon(Land Under Development)
-      // atau: Lv142 Ornlarf(Ultimea Palace: Corridor)
-      const match = text.match(/^(Lv\d+)\s+([^(]+)(?:\(([^)]+)\))?/);
+      return {
+        active: true,
+        bosses,
+        endDateStr: readableEndString,
+        eventTitle: latestBoost.title
+      };
 
-      if (!match) return;
-
-      const level = match[1];
-      const bossName = match[2].trim();
-      const location = match[3] || "";
-
-      // Cari gambar di sekitar elemen ini
-      let img = null;
-
-      // Cek di parent
-      const parent = $detail(el).parent();
-      const imgInParent = parent.find("img");
-      if (imgInParent.length > 0) {
-        img = imgInParent.first().attr("src");
-      }
-
-      // Cek di sibling
-      if (!img) {
-        let sibling = $detail(el).next();
-        for (let j = 0; j < 5; j++) {
-          if (sibling.length === 0) break;
-
-          const foundImg = sibling.find("img");
-          if (foundImg.length > 0) {
-            img = foundImg.first().attr("src");
-            break;
-          }
-
-          if (sibling.is("img")) {
-            img = sibling.attr("src");
-            break;
-          }
-
-          sibling = sibling.next();
-        }
-      }
-
-      if (img) {
-        // Handle URL gambar
-        let imageUrl;
-        if (img.startsWith("http")) {
-          imageUrl = img;
-        } else if (img.includes("toram-jp.akamaized.net")) {
-          imageUrl = "https://" + img.replace(/^\/+/, '');
-        } else if (img.startsWith("/")) {
-          imageUrl = "https://toram-jp.akamaized.net" + img;
-        } else {
-          imageUrl = "https://toram-jp.akamaized.net/" + img;
-        }
-
-        // Cek duplikat
-        const isDuplicate = bosses.some(b => b.name === bossName && b.level === level);
-
-        if (!isDuplicate) {
-          bosses.push({
-            level,
-            name: bossName,
-            location,
-            fullName: `${level} ${bossName}${location ? ` (${location})` : ""}`,
-            image: imageUrl
-          });
-        }
-      }
-    });
-
-    console.log(`Found ${bosses.length} bosses`);
-
-    return {
-      active: true,
-      bosses,
-      endDateStr: readableEndString,
-      eventTitle: latestBoost.title
-    };
-
-  } catch (error) {
-    console.error("Error scraping boost boss:", error);
-    throw error;
+    } catch (error) {
+      console.error("Error scraping boost boss:", error);
+      throw error;
+    }
   }
-}
 
 // HANDLER
 export const bosboost = async (sock, chatId, msg) => {
-  try {
-    const data = await scrapeBoostBoss();
+    try {
+      const data = await scrapeBoostBoss();
 
-    // 1. Handle Event Sudah Berakhir / Tidak Aktif
-    if (!data.active) {
-      let textMsg = "Tidak ada event Boost Boss yang sedang aktif saat ini.";
+      // 1. Handle Event Sudah Berakhir / Tidak Aktif
+      if (!data.active) {
+        let textMsg = "Tidak ada event Boost Boss yang sedang aktif saat ini.";
 
-      if (data.expired) {
-        textMsg = `Event Boost Boss sudah selesai pada:\n${data.lastDate}`;
-      }
-
-      return sock.sendMessage(chatId, { text: textMsg }, { quoted: msg });
-    }
-
-    // 2. Handle Event Aktif tapi Parse Gagal
-    if (!data.bosses || data.bosses.length === 0) {
-      return sock.sendMessage(chatId, {
-        text: `Event aktif: ${data.eventTitle}\n\nTapi gagal mengambil daftar boss. Silakan cek manual di website Toram.`
-      }, { quoted: msg });
-    }
-
-    // 3. Tampilkan Boss (Looping Gambar)
-    for (const boss of data.bosses) {
-      try {
-        const cleanCaption = boss.fullName;
-
-        if (boss.image) {
-          await sock.sendMessage(chatId, {
-            image: { url: boss.image },
-            caption: cleanCaption
-          });
-        } else {
-          await sock.sendMessage(chatId, { text: cleanCaption });
+        if (data.expired) {
+          textMsg = `Event Boost Boss sudah selesai pada:\n${data.lastDate}`;
         }
 
-        // Delay kecil untuk menghindari spam
-        await new Promise(resolve => setTimeout(resolve, 700));
-      } catch (imgError) {
-        console.error(`Error mengirim gambar ${boss.name}:`, imgError);
-        // Kirim text saja jika gambar gagal
-        await sock.sendMessage(chatId, { text: boss.fullName });
+        return sock.sendMessage(chatId, { text: textMsg }, { quoted: msg });
       }
-    }
 
-  } catch (err) {
-    console.error("Error di handler bosboost:", err);
-    sock.sendMessage(chatId, {
-      text: `Terjadi kesalahan: ${err.message}\n\nSilakan coba lagi atau cek manual di https://id.toram.jp`
-    }, { quoted: msg });
-  }
-};
+      // 2. Handle Event Aktif tapi Parse Gagal
+      if (!data.bosses || data.bosses.length === 0) {
+        return sock.sendMessage(chatId, {
+          text: `Event aktif: ${data.eventTitle}\n\nTapi gagal mengambil daftar boss. Silakan cek manual di website Toram.`
+        }, { quoted: msg });
+      }
+
+      // 3. Tampilkan Boss (Looping Gambar)
+      for (const boss of data.bosses) {
+        try {
+          const cleanCaption = boss.fullName;
+
+          if (boss.image) {
+            await sock.sendMessage(chatId, {
+              image: { url: boss.image },
+              caption: cleanCaption
+            });
+          } else {
+            await sock.sendMessage(chatId, { text: cleanCaption });
+          }
+
+          // Delay kecil untuk menghindari spam
+          await new Promise(resolve => setTimeout(resolve, 700));
+        } catch (imgError) {
+          console.error(`Error mengirim gambar ${boss.name}:`, imgError);
+          // Kirim text saja jika gambar gagal
+          await sock.sendMessage(chatId, { text: boss.fullName });
+        }
+      }
+
+    } catch (err) {
+      console.error("Error di handler bosboost:", err);
+      sock.sendMessage(chatId, {
+        text: `Terjadi kesalahan: ${err.message}\n\nSilakan coba lagi atau cek manual di https://id.toram.jp`
+      }, { quoted: msg });
+    }
+  };
