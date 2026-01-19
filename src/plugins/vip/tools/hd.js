@@ -18,7 +18,7 @@ const getMediaMessage = (msg) => {
 export const hd = async (sock, chatId, msg) => {
   try {
     const mediaType = getMediaMessage(msg);
-    if (mediaType !== "imageMessage") {
+    if (!mediaType) {
       return sock.sendMessage(
         chatId,
         { text: "Kirim atau reply gambar untuk di-HD-kan" },
