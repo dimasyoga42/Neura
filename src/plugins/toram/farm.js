@@ -23,10 +23,10 @@ export const farm = async (sock, chatId, msg, text) => {
         nama,
         element,
         drops,
-        map,
-        "pts/stk": pts_stk
+        pts_stk,
+        map
       `)
-      .ilike("material", `%${query}%`);
+      .ilike("mets", `%${query}%`);
 
     if (error) throw error;
 
