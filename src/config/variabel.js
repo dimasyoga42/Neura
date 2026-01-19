@@ -152,6 +152,7 @@ komunitas: https://whatsapp.com/channel/0029VbAmhBF7z4kjOQcoVV0A
 - !toramboost
 - !dye
 - !torammt 
+- !toramlive
 
 *Guide Toram*
 - !pet 

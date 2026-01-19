@@ -345,7 +345,10 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   }
 
 
-
+  if (text.startsWith("!toramlive")) {
+    if (isBan(sock, chatId, msg)) return;
+    listLeveling(sock, chatId, msg)
+  }
 
 
 
