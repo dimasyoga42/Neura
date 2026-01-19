@@ -1,19 +1,21 @@
 import { supabase } from "../../model/supabase.js";
 
 const parseStat = (stat) => {
-  if (!stat) return "-";
+  if (stat === null || stat === undefined) return "-";
 
+  const text = String(stat);
   const result = [];
   const regex = /([a-zA-Z% ]+)\s*(-?\d+(?:\.\d+)?)/g;
 
   let match;
-  while ((match = regex.exec(stat)) !== null) {
+  while ((match = regex.exec(text)) !== null) {
     const label = match[1].trim();
     const value = match[2];
     result.push(`${label} : ${value}`);
   }
 
-  return result.length ? result.join("\n") : "-";
+  if (result.length === 0) return text;
+  return result.join("\n");
 };
 
 export const farm = async (sock, chatId, msg, text) => {
