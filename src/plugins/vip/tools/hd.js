@@ -35,7 +35,8 @@ export const hd = async (sock, chatId, msg) => {
 
     // HD API
     const hdUrl = `https://api.deline.web.id/tools/hd?url=${encodeURIComponent(imgUrl)}`;
-
+    console.log(hdUrl)
+    sock.sendMessage(chatId, { text: "mohon tunggu..." }, { quoted: msg })
     await sock.sendMessage(
       chatId,
       { image: { url: hdUrl }, caption: "HD Result" },
