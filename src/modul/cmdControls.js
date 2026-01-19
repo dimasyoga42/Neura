@@ -339,7 +339,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     spmadv(sock, chatId, msg, text)
   }
 
-  if (msg.message.imageMessage?.caption === "!hd") {
+  if (text.startsWith("!hd") || msg.message.imageMessage?.caption === "!hd") {
     if (isBan(sock, chatId, msg)) return;
     hd(sock, chatId, msg);
   }
