@@ -3,14 +3,7 @@ import axios from 'axios'
 const Bossdef = async (sock, chatId, msg, text) => {
   try {
     const name = text.replace("!bos", "").trim()
-
-    if (!name) {
-      return sock.sendMessage(
-        chatId,
-        { text: "Mohon masukkan nama boss setelah perintah !bos" },
-        { quoted: msg }
-      )
-    }
+    if (!name) return sock.sendMessage(chatId, { text: "Mohon masukkan nama boss setelah perintah !bos" }, { quoted: msg })
 
     // Melakukan request ke API
     const res = await axios.get(
