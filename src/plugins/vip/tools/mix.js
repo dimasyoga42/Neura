@@ -79,7 +79,7 @@ async function mixTwoEmojis(emoji1, emoji2) {
 }
 
 // Handler untuk bot WhatsApp
-export const mix = async (sock, chatId, msg, args) => {
+export const Mix = async (sock, chatId, msg, args) => {
   try {
     const text = args.join(' ').trim();
 
