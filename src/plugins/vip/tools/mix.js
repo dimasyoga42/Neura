@@ -1,4 +1,3 @@
-
 import axios from "axios";
 import Sticker, { StickerTypes } from "wa-sticker-formatter";
 
@@ -16,22 +15,26 @@ export const Mix = async (sock, chatId, msg, text) => {
       );
     }
 
-    const url =
+    const apiUrl =
       "https://api.deline.web.id/maker/emojimix" +
       `?emoji1=${encodeURIComponent(emt1)}` +
       `&emoji2=${encodeURIComponent(emt2)}`;
 
-    const { data } = await axios.get(url);
+    const res = await axios.get(apiUrl);
+    const imgUrl = res?.data?.result?.png;
 
-    if (!data || !data.result || !data.result.png) {
+    if (!imgUrl) {
       return sock.sendMessage(
         chatId,
-        { text: "gagal membuat emojimix" },
+        { text: "emojimix tidak ditemukan" },
         { quoted: msg }
       );
     }
 
-    const stickerBuffer = await new Sticker(data.result.png, {
+    const img = await axios.get(imgUrl, { responseType: "arraybuffer" });
+    const buffer = Buffer.from(img.data);
+
+    const stickerBuffer = await new Sticker(buffer, {
       pack: "Neura",
       author: "Neura Sama",
       type: StickerTypes.FULL,
@@ -51,4 +54,3 @@ export const Mix = async (sock, chatId, msg, text) => {
     );
   }
 };
-
