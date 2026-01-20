@@ -122,6 +122,7 @@ komunitas: https://whatsapp.com/channel/0029VbAmhBF7z4kjOQcoVV0A
 - !brat (coming soon)
 - !mix (coming soon)
 - !hd
+- !remini (replay foto)
 
 *Menu Stalk* (next update)
 - !igstalk
