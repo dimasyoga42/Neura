@@ -37,6 +37,7 @@ import { formatResultMessage, parseCommand, tanaka, validateStatConfig } from ".
 import { hd } from "../plugins/vip/tools/hd.js";
 import { liveStream } from "../plugins/toram/live.js";
 import { farm } from "../plugins/toram/farm.js";
+import { Mix } from "../plugins/vip/tools/mix.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!menu")) {
     if (isBan(sock, chatId, msg)) return;
@@ -357,7 +358,10 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     farm(sock, chatId, msg, text)
   }
 
-
+  if (text.startsWith("!mix")) {
+    if (isBan(sock, chatId, msg)) return;
+    Mix(sock, chatId, msg, text)
+  }
 
 
 
