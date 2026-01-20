@@ -135,6 +135,7 @@ komunitas: https://whatsapp.com/channel/0029VbAmhBF7z4kjOQcoVV0A
 - !tebakgambar 
 - !waifu
 - !husbu
+- !khodam
 - !cek
 - !j <answer>
 
