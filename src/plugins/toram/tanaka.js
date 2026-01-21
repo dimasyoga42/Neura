@@ -24,171 +24,66 @@ const CONFIG = {
 
 // --- STAT MAP dengan ALIAS ---
 const statMap = {
-  // Critical Stats - dengan alias
-  critdmg: "Critical Damage",
-  cd: "Critical Damage",
-  "critdmg%": "Critical Damage %",
-  "cd%": "Critical Damage %",
-  critrate: "Critical Rate",
-  cr: "Critical Rate",
-  "critrate%": "Critical Rate %",
-  "cr%": "Critical Rate %",
+  // Critical Stats
+  critdmg: "Critical Damage", cd: "Critical Damage", "critdmg%": "Critical Damage %", "cd%": "Critical Damage %",
+  critrate: "Critical Rate", cr: "Critical Rate", "critrate%": "Critical Rate %", "cr%": "Critical Rate %",
 
   // Attack Stats
-  atk: "ATK",
-  "atk%": "ATK %",
-  matk: "MATK",
-  "matk%": "MATK %",
+  atk: "ATK", "atk%": "ATK %", matk: "MATK", "matk%": "MATK %",
 
   // Defense Stats
-  def: "DEF",
-  "def%": "DEF %",
-  mdef: "MDEF",
-  "mdef%": "MDEF %",
+  def: "DEF", "def%": "DEF %", mdef: "MDEF", "mdef%": "MDEF %",
 
   // Accuracy Stats
-  acc: "Accuracy",
-  accuracy: "Accuracy",
-  "acc%": "Accuracy %",
-  "accuracy%": "Accuracy %",
+  acc: "Accuracy", accuracy: "Accuracy", "acc%": "Accuracy %", "accuracy%": "Accuracy %",
 
   // HP/MP Stats
-  hp: "MaxHP",
-  "hp%": "MaxHP %",
-  mp: "MaxMP",
-  "mp%": "MaxMP %",
+  hp: "MaxHP", "hp%": "MaxHP %", mp: "MaxMP", "mp%": "MaxMP %",
 
   // Status Stats
-  str: "STR",
-  "str%": "STR %",
-  int: "INT",
-  "int%": "INT %",
-  vit: "VIT",
-  "vit%": "VIT %",
-  agi: "AGI",
-  "agi%": "AGI %",
-  dex: "DEX",
-  "dex%": "DEX %",
+  str: "STR", "str%": "STR %", int: "INT", "int%": "INT %", vit: "VIT", "vit%": "VIT %",
+  agi: "AGI", "agi%": "AGI %", dex: "DEX", "dex%": "DEX %",
 
   // Speed Stats
-  aspd: "Kecepatan Serangan",
-  "aspd%": "Kecepatan Serangan %",
-  cspd: "Kecepatan Merapal",
-  "cspd%": "Kecepatan Merapal %",
+  aspd: "Kecepatan Serangan", "aspd%": "Kecepatan Serangan %", cspd: "Kecepatan Merapal", "cspd%": "Kecepatan Merapal %",
 
   // Dodge Stats
-  dodge: "Dodge",
-  "dodge%": "Dodge %",
+  dodge: "Dodge", "dodge%": "Dodge %",
 
   // Regen Stats
-  hpreg: "Natural HP Regen",
-  "hpreg%": "Natural HP Regen %",
-  mpreg: "Natural MP Regen",
-  "mpreg%": "Natural MP Regen %",
+  hpreg: "Natural HP Regen", "hpreg%": "Natural HP Regen %", mpreg: "Natural MP Regen", "mpreg%": "Natural MP Regen %",
 
   // Special Stats
-  stab: "Stability %",
-  "stab%": "Stability %",
-  penfis: "Penetrasi Fisik %",
-  "penfis%": "Penetrasi Fisik %",
-  penmag: "Magic Pierce %",
-  "penmag%": "Magic Pierce %",
-  kebalfis: "Kekebalan Fisik %",
-  "kebalfis%": "Kekebalan Fisik %",
-  kebalmag: "Kekebalan Sihir %",
-  "kebalmag%": "Kekebalan Sihir %",
-  aggro: "Aggro %",
-  "aggro%": "Aggro %",
+  stab: "Stability %", "stab%": "Stability %",
+  penfis: "Penetrasi Fisik %", "penfis%": "Penetrasi Fisik %",
+  penmag: "Magic Pierce %", "penmag%": "Magic Pierce %",
+  kebalfis: "Kekebalan Fisik %", "kebalfis%": "Kekebalan Fisik %",
+  kebalmag: "Kekebalan Sihir %", "kebalmag%": "Kekebalan Sihir %",
+  aggro: "Aggro %", "aggro%": "Aggro %",
 
   // Element damage
-  "dteearth%": "% luka ke Bumi",
-  dteearth: "% luka ke Bumi",
-  "dtefire%": "% luka ke Api",
-  dtefire: "% luka ke Api",
-  "dtewind%": "% luka ke Angin",
-  dtewind: "% luka ke Angin",
-  "dtewater%": "% luka ke Air",
-  dtewater: "% luka ke Air",
-  "dtelight%": "% luka ke Cahaya",
-  dtelight: "% luka ke Cahaya",
-  "dtedark%": "% luka ke Gelap",
-  dtedark: "% luka ke Gelap",
+  "dteearth%": "% luka ke Bumi", dteearth: "% luka ke Bumi",
+  "dtefire%": "% luka ke Api", dtefire: "% luka ke Api",
+  "dtewind%": "% luka ke Angin", dtewind: "% luka ke Angin",
+  "dtewater%": "% luka ke Air", dtewater: "% luka ke Air",
+  "dtelight%": "% luka ke Cahaya", dtelight: "% luka ke Cahaya",
+  "dtedark%": "% luka ke Gelap", dtedark: "% luka ke Gelap",
 };
 
 // --- ENHANCEMENT INFO DATA ---
 const enhancementInfo = {
-  "Critical Damage": {
-    maxLevel: 22,
-    potentialCost: 3,
-    category: "Critical",
-    returnValue: 19,
-  },
-  "Critical Damage %": {
-    maxLevel: 11,
-    potentialCost: 10,
-    category: "Critical",
-    returnValue: 32,
-  },
-  ATK: {
-    maxLevel: 28,
-    potentialCost: 6,
-    category: "Attack",
-    returnValue: 43,
-  },
-  "ATK %": {
-    maxLevel: 14,
-    potentialCost: 20,
-    category: "Attack",
-    returnValue: 73,
-  },
-  MATK: {
-    maxLevel: 28,
-    potentialCost: 6,
-    category: "Attack",
-    returnValue: 43,
-  },
-  "MATK %": {
-    maxLevel: 14,
-    potentialCost: 20,
-    category: "Attack",
-    returnValue: 73,
-  },
-  DEF: {
-    maxLevel: 28,
-    potentialCost: 3,
-    category: "Defense",
-    returnValue: 21,
-  },
-  "DEF %": {
-    maxLevel: 12,
-    potentialCost: 10,
-    category: "Defense",
-    returnValue: 33,
-  },
-  MDEF: {
-    maxLevel: 28,
-    potentialCost: 3,
-    category: "Defense",
-    returnValue: 21,
-  },
-  "MDEF %": {
-    maxLevel: 12,
-    potentialCost: 10,
-    category: "Defense",
-    returnValue: 33,
-  },
-  Accuracy: {
-    maxLevel: 15,
-    potentialCost: 20,
-    category: "Accuracy",
-    returnValue: 76,
-  },
-  "Accuracy %": {
-    maxLevel: 6,
-    potentialCost: 40,
-    category: "Accuracy",
-    returnValue: 67,
-  },
+  "Critical Damage": { maxLevel: 22, potentialCost: 3, category: "Critical", returnValue: 19 },
+  "Critical Damage %": { maxLevel: 11, potentialCost: 10, category: "Critical", returnValue: 32 },
+  ATK: { maxLevel: 28, potentialCost: 6, category: "Attack", returnValue: 43 },
+  "ATK %": { maxLevel: 14, potentialCost: 20, category: "Attack", returnValue: 73 },
+  MATK: { maxLevel: 28, potentialCost: 6, category: "Attack", returnValue: 43 },
+  "MATK %": { maxLevel: 14, potentialCost: 20, category: "Attack", returnValue: 73 },
+  DEF: { maxLevel: 28, potentialCost: 3, category: "Defense", returnValue: 21 },
+  "DEF %": { maxLevel: 12, potentialCost: 10, category: "Defense", returnValue: 33 },
+  MDEF: { maxLevel: 28, potentialCost: 3, category: "Defense", returnValue: 21 },
+  "MDEF %": { maxLevel: 12, potentialCost: 10, category: "Defense", returnValue: 33 },
+  Accuracy: { maxLevel: 15, potentialCost: 20, category: "Accuracy", returnValue: 76 },
+  "Accuracy %": { maxLevel: 6, potentialCost: 40, category: "Accuracy", returnValue: 67 },
 };
 
 // --- UTILITY FUNCTIONS ---
@@ -220,21 +115,20 @@ async function withRetry(fn, retries = CONFIG.MAX_RETRIES, delay = 1000) {
   }
 }
 
-// --- COMMAND PARSING - DENGAN PROF ---
+// --- COMMAND PARSING (UPDATED for BS Level) ---
 function parseCommand(args) {
   const config = {
     positiveStats: [],
     negativeStats: [],
     characterLevel: CONFIG.DEFAULT_LEVEL,
     startingPotential: CONFIG.DEFAULT_POTENTIAL,
-    profession: "NULL",
-    professionLevel: 0, // Default profession level
+    professionLevel: 0, // Default BS Level
   };
 
   const fullCommand = args.join(" ").toLowerCase();
 
   // Extract character level
-  const levelMatch = fullCommand.match(/lv(\d+)/);
+  const levelMatch = fullCommand.match(/lv\s*[:=]?\s*(\d+)/i);
   if (levelMatch) {
     const level = parseInt(levelMatch[1], 10);
     if (!isNaN(level) && level >= 1 && level <= 500) {
@@ -243,7 +137,7 @@ function parseCommand(args) {
   }
 
   // Extract potential
-  const potMatch = fullCommand.match(/pot(\d+)/);
+  const potMatch = fullCommand.match(/pot\s*[:=]?\s*(\d+)/i);
   if (potMatch) {
     const potential = parseInt(potMatch[1], 10);
     if (!isNaN(potential) && potential >= 0 && potential <= 200) {
@@ -251,49 +145,27 @@ function parseCommand(args) {
     }
   }
 
-  // Extract profession and level
-  // Format: prof:bs:100 atau profbs100 atau bs100
-  const profPatterns = [
-    /prof\s*[:=]?\s*(bs|alchemist|null)\s*[:=]?\s*(\d+)/i,
-    /(bs|alchemist)(\d+)/i,
-  ];
-
-  for (const pattern of profPatterns) {
-    const profMatch = fullCommand.match(pattern);
-    if (profMatch) {
-      const profType = profMatch[1].toLowerCase();
-      const profLevel = parseInt(profMatch[2], 10);
-
-      if (profType === "bs" || profType === "alchemist") {
-        config.profession = profType.toUpperCase();
-        config.professionLevel = !isNaN(profLevel) && profLevel >= 0 && profLevel <= 300 ? profLevel : 0;
-        console.log(`✓ Profession: ${config.profession} Level ${config.professionLevel}`);
-        break;
-      }
-    }
-  }
-
-  // Jika hanya prof tanpa level
-  if (config.profession === "NULL") {
-    const simpleProfMatch = fullCommand.match(/prof\s*[:=]?\s*(bs|alchemist|null)/i);
-    if (simpleProfMatch) {
-      config.profession = simpleProfMatch[1].toUpperCase();
-      console.log(`✓ Profession: ${config.profession} (no level specified)`);
+  // Extract Profession Level (Format: bs300, prof300, prof:bs:300)
+  const profMatch = fullCommand.match(/(?:bs|prof|prof\s*[:=]?\s*bs)\s*[:=]?\s*(\d+)/i);
+  if (profMatch) {
+    const profLvl = parseInt(profMatch[1], 10);
+    if (!isNaN(profLvl)) {
+      config.professionLevel = profLvl;
+      console.log(`✓ Profession Level (BS) set: ${config.professionLevel}`);
     }
   }
 
   const statParts = fullCommand.split(',').map(s => s.trim());
 
   for (const part of statParts) {
-    if (!part || part.includes('lv') || part.includes('pot') || part.includes('prof') || part.includes('bs') || part.includes('alchemist')) continue;
+    // Skip command keywords agar tidak dianggap stat
+    if (!part || /^(lv|pot|prof|bs)/i.test(part)) continue;
 
-    const match = part.match(/^([a-z%]+)\s*=\s*(.+)$/);
-
+    const match = part.match(/^([a-z%]+)\s*[:=]\s*(.+)$/i) || part.match(/^([a-z%]+)\s+(.+)$/i);
     if (!match) continue;
 
     const [, statKey, valueStr] = match;
     const value = valueStr.trim();
-
     const fullName = statMap[statKey];
 
     if (!fullName) {
@@ -303,8 +175,8 @@ function parseCommand(args) {
 
     const isNegative = value === 'min';
     const isPositive = value === 'max';
-
     let level;
+
     if (isPositive || isNegative) {
       level = 'MAX';
     } else {
@@ -338,24 +210,18 @@ function parseCommand(args) {
   console.log(`\n📊 Konfigurasi Final:`);
   console.log(`- Character Level: ${config.characterLevel}`);
   console.log(`- Starting Potential: ${config.startingPotential}`);
-  console.log(`- Profession: ${config.profession} ${config.professionLevel > 0 ? `Level ${config.professionLevel}` : ''}`);
-  console.log(
-    `- Positive Stats (${config.positiveStats.length}/7):`,
-    config.positiveStats.map((s) => `${s.name} ${s.level}`).join(", ") || "Tidak ada"
-  );
-  console.log(
-    `- Negative Stats (${config.negativeStats.length}/7):`,
-    config.negativeStats.map((s) => `${s.name} ${s.level}`).join(", ") || "Tidak ada"
-  );
+  console.log(`- BS Profession Level: ${config.professionLevel}`);
+  console.log(`- Positive Stats (${config.positiveStats.length}/7)`);
+  console.log(`- Negative Stats (${config.negativeStats.length}/7)`);
 
   return config;
 }
+
 // --- OPTIMIZED CAPTCHA HANDLING ---
 async function handleCaptcha(page) {
   try {
     console.log("🔍 Menganalisis CAPTCHA...");
 
-    // Reduced wait time
     for (let i = 0; i < CONFIG.MAX_CAPTCHA_WAIT; i++) {
       await sleep(1000);
 
@@ -421,7 +287,7 @@ async function handleCaptcha(page) {
 
     if (clickResult.clicked) {
       console.log(`✅ Diklik: ${clickResult.type} - "${clickResult.text}"`);
-      await sleep(3000); // Reduced from 5000
+      await sleep(3000);
 
       const solved = await page.evaluate(() => {
         const pageText = document.body.innerText.toLowerCase();
@@ -486,12 +352,11 @@ async function autoWaitForResults(page, maxWaitTime, checkInterval) {
         }
       }
 
-      // Optimized result detection with consecutive checks
       if (pageState.hasResults) {
         consecutiveResults++;
-        if (consecutiveResults >= 2) { // Confirm result stability
+        if (consecutiveResults >= 2) {
           console.log("🎯 Hasil stabil ditemukan! Memulai parsing...");
-          await sleep(500); // Brief wait for final rendering
+          await sleep(500);
           return await parseAllResults(page);
         }
       } else {
@@ -585,10 +450,7 @@ async function parseAllResults(page) {
 
     // Extract final stats
     if (div.hasStatting && text.includes("Result")) {
-      const lines = text
-        .split("\n")
-        .map((l) => l.trim())
-        .filter((l) => l);
+      const lines = text.split("\n").map((l) => l.trim()).filter((l) => l);
       const statLines = lines.filter(
         (l) =>
           l.includes("Critical Damage") ||
@@ -606,10 +468,7 @@ async function parseAllResults(page) {
 
     // Extract success rate
     if (div.hasSuccessRate) {
-      const lines = text
-        .split("\n")
-        .map((l) => l.trim())
-        .filter((l) => l);
+      const lines = text.split("\n").map((l) => l.trim()).filter((l) => l);
 
       const successRatePatterns = [
         /Success\s+Rate\s*[：:]\s*(\d+(?:\.\d+)?)\s*%/i,
@@ -726,6 +585,7 @@ async function parseAllResults(page) {
   return result;
 }
 
+// --- MAIN SCRAPER FUNCTION (UPDATED) ---
 async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions = {}) {
   let sock, jid, statConfig, options;
 
@@ -738,7 +598,6 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
       negativeStats: [{ name: "Accuracy", level: "MAX" }],
       characterLevel: CONFIG.DEFAULT_LEVEL,
       startingPotential: CONFIG.DEFAULT_POTENTIAL,
-      profession: "NULL",
       professionLevel: 0,
     };
   } else {
@@ -762,7 +621,7 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
     try {
       console.log("🚀 Meluncurkan peramban...");
       browser = await puppeteer.launch({
-        headless: true,
+        headless: true, // Ubah ke false untuk debugging visual
         args: [
           "--no-sandbox",
           "--disable-setuid-sandbox",
@@ -807,66 +666,63 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
         timeout: CONFIG.NAVIGATION_TIMEOUT,
       });
 
+      // --- [NEW] STEP: KLIK TOMBOL RELOAD ---
+      console.log("🔄 Mencoba klik tombol Reload untuk reset form...");
+      await page.evaluate(() => {
+        const buttons = Array.from(document.querySelectorAll("button, input[type='button'], input[type='submit'], .btn"));
+        const reloadBtn = buttons.find(b =>
+          b.innerText?.toLowerCase().includes("reload") ||
+          b.value?.toLowerCase().includes("reload") ||
+          b.innerText?.toLowerCase().includes("reset")
+        );
+        if (reloadBtn) {
+          reloadBtn.click();
+          console.log("Tombol Reload diklik.");
+        }
+      });
+      await sleep(1500); // Tunggu sebentar setelah reload
+
       console.log("📝 Mengisi formulir...");
       await page.waitForSelector("#paramLevel", { timeout: CONFIG.SELECTOR_TIMEOUT });
 
-      const { positiveStats, negativeStats, startingPotential, characterLevel, profession, professionLevel } = statConfig;
+      const { positiveStats, negativeStats, startingPotential, characterLevel, professionLevel } = statConfig;
 
-      // Batch all form operations including profession and profession level
+      // --- [UPDATED] FORM FILLING (Include Jukurendo/BS Prof) ---
       await page.evaluate(
-        ({ level, positive, negative, pot, prof, profLvl }) => {
-          // Set character level
-          const levelSelect = document.querySelector("#paramLevel");
-          if (levelSelect) levelSelect.value = String(level);
+        ({ level, positive, negative, pot, profLvl }) => {
+          const setVal = (sel, val) => {
+            const el = document.querySelector(sel);
+            if (el) {
+              el.value = String(val);
+              el.dispatchEvent(new Event('change', { bubbles: true })); // Penting!
+            }
+          };
 
-          // Set profession
-          const profSelect = document.querySelector("#shokugyou");
-          if (profSelect) {
-            profSelect.value = prof;
-            console.log("Profession set to:", prof);
-          }
+          // 1. Character Level
+          setVal("#paramLevel", level);
 
-          // Set profession level
-          const profLevelInput = document.querySelector("#shokugyouLv");
-          if (profLevelInput) {
-            profLevelInput.value = String(profLvl);
-            profLevelInput.dispatchEvent(new Event("input", { bubbles: true }));
-            console.log("Profession Level set to:", profLvl);
-          }
+          // 2. Starting Potential
+          setVal("#shokiSenzai", pot);
 
-          // Set positive stats
+          // 3. Smith Proficiency (BS Level) - ID: #jukurendo
+          setVal("#jukurendo", profLvl);
+
+          // 4. Positive Stats
           for (let i = 0; i < 7; i++) {
             const stat = positive[i];
-            const nameSelect = document.querySelector(`#plus_name_${i}`);
-            const valueSelect = document.querySelector(`#plus_value_${i}`);
-
-            if (nameSelect) {
-              nameSelect.value = stat ? stat.name : "";
-            }
-            if (valueSelect && stat) {
-              valueSelect.value = String(stat.level);
+            if (stat) {
+              setVal(`#plus_name_${i}`, stat.name);
+              setVal(`#plus_value_${i}`, stat.level);
             }
           }
 
-          // Set negative stats
+          // 5. Negative Stats
           for (let i = 0; i < 7; i++) {
             const stat = negative[i];
-            const nameSelect = document.querySelector(`#minus_name_${i}`);
-            const valueSelect = document.querySelector(`#minus_value_${i}`);
-
-            if (nameSelect) {
-              nameSelect.value = stat ? stat.name : "";
+            if (stat) {
+              setVal(`#minus_name_${i}`, stat.name);
+              setVal(`#minus_value_${i}`, stat.level);
             }
-            if (valueSelect && stat) {
-              valueSelect.value = String(stat.level);
-            }
-          }
-
-          // Set potential
-          const potInput = document.querySelector("#shokiSenzai");
-          if (potInput) {
-            potInput.value = String(pot);
-            potInput.dispatchEvent(new Event("input", { bubbles: true }));
           }
         },
         {
@@ -874,8 +730,7 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
           positive: positiveStats,
           negative: negativeStats,
           pot: startingPotential,
-          prof: profession,
-          profLvl: professionLevel,
+          profLvl: professionLevel || 0,
         }
       );
 
@@ -885,7 +740,6 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
 
       const result = await autoWaitForResults(page, maxWaitTime, checkInterval);
       result.duration = Date.now() - startTime;
-      result.profession = profession;
       result.professionLevel = professionLevel;
 
       console.log("\n🎉 --- HASIL AKHIR ---");
@@ -959,12 +813,8 @@ function formatResultMessage(result) {
 
   message += `*Starting Pot:* ${result.startingPot}\n`;
 
-  if (result.profession && result.profession !== "NULL") {
-    message += `*Profession:* ${result.profession}`;
-    if (result.professionLevel && result.professionLevel > 0) {
-      message += ` Lv.${result.professionLevel}`;
-    }
-    message += `\n`;
+  if (result.professionLevel && result.professionLevel > 0) {
+    message += `*BS Prof:* Lv.${result.professionLevel}\n`;
   }
 
   message += `*Total Steps:* ${result.totalSteps}\n`;
@@ -987,7 +837,9 @@ function formatResultMessage(result) {
 
   if (result.steps.length > 0) {
     message += `\n*Langkah Enhancement:*\n`;
-    result.steps.forEach((step) => {
+    // Limit steps for WhatsApp message readability
+    const stepsToShow = result.steps.length > 20 ? result.steps.slice(0, 20).concat(["... (lihat web untuk lengkapnya)"]) : result.steps;
+    stepsToShow.forEach((step) => {
       message += `${step}\n`;
     });
   }
@@ -999,7 +851,9 @@ function formatResultMessage(result) {
   message += `\n*Dibuat:* ${new Date(result.timestamp).toLocaleString("id-ID")}`;
 
   return message;
-}// --- MANUAL MODE ---
+}
+
+// --- MANUAL MODE (UPDATED) ---
 async function tanakaManual(sock, jid, statConfig = null, options = {}) {
   console.log("🔧 Mode Manual - Browser akan terbuka untuk interaksi manual");
 
@@ -1017,40 +871,51 @@ async function tanakaManual(sock, jid, statConfig = null, options = {}) {
 
     if (statConfig) {
       console.log("📝 Mengisi formulir secara otomatis...");
+
+      // Klik Reload di mode manual juga
+      await page.evaluate(() => {
+        const buttons = Array.from(document.querySelectorAll("button, input[type='button'], input[type='submit']"));
+        const reloadBtn = buttons.find(b => b.innerText?.toLowerCase().includes("reload") || b.value?.toLowerCase().includes("reload"));
+        if (reloadBtn) reloadBtn.click();
+      });
+      await sleep(1500);
+
       await page.waitForSelector("#paramLevel", { timeout: CONFIG.SELECTOR_TIMEOUT });
 
-      const { positiveStats, negativeStats, startingPotential, characterLevel } = statConfig;
+      const { positiveStats, negativeStats, startingPotential, characterLevel, professionLevel } = statConfig;
 
-      // Use batch operation for manual mode too
       await page.evaluate(
-        ({ level, positive, negative, pot }) => {
-          const levelSelect = document.querySelector("#paramLevel");
-          if (levelSelect) levelSelect.value = String(level);
+        ({ level, positive, negative, pot, profLvl }) => {
+          const setVal = (sel, val) => {
+            const el = document.querySelector(sel);
+            if (el) {
+              el.value = String(val);
+              el.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+          };
+
+          setVal("#paramLevel", level);
+          setVal("#shokiSenzai", pot);
+          setVal("#jukurendo", profLvl); // Fill BS Prof
 
           for (let i = 0; i < Math.min(7, positive.length); i++) {
             const stat = positive[i];
-            const nameSelect = document.querySelector(`#plus_name_${i}`);
-            const valueSelect = document.querySelector(`#plus_value_${i}`);
-            if (nameSelect) nameSelect.value = stat.name;
-            if (valueSelect) valueSelect.value = String(stat.level);
+            setVal(`#plus_name_${i}`, stat.name);
+            setVal(`#plus_value_${i}`, stat.level);
           }
 
           for (let i = 0; i < Math.min(7, negative.length); i++) {
             const stat = negative[i];
-            const nameSelect = document.querySelector(`#minus_name_${i}`);
-            const valueSelect = document.querySelector(`#minus_value_${i}`);
-            if (nameSelect) nameSelect.value = stat.name;
-            if (valueSelect) valueSelect.value = String(stat.level);
+            setVal(`#minus_name_${i}`, stat.name);
+            setVal(`#minus_value_${i}`, stat.level);
           }
-
-          const potInput = document.querySelector("#shokiSenzai");
-          if (potInput) potInput.value = String(pot);
         },
         {
           level: characterLevel,
           positive: positiveStats,
           negative: negativeStats,
           pot: startingPotential,
+          profLvl: professionLevel || 0,
         }
       );
 
