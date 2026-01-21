@@ -1,5 +1,8 @@
 import { supabase } from "../../model/supabase.js"
 
+function toCodeBlock(text) {
+  return "```\n" + text.trim() + "\n```"
+}
 const Bossdef = async (sock, chatId, msg, text) => {
   try {
     const name = text.replace("!bos", "").trim()
@@ -46,7 +49,7 @@ Element:
 ${boss.element}
 Spawn: ${boss.spawn}
 
-> ${boss.stat}
+${toCodeBlock(boss.stat)}
     `.trim()
 
     await sock.sendMessage(
