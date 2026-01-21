@@ -71,4 +71,56 @@ ${toCodeBlock(boss.stat)}
   }
 }
 
+
+export const listboss = async (sock, chatId, msg) => {
+  try {
+    const { data, error } = await supabase
+      .from("bosdif")
+      .select("name")
+
+    if (error) {
+      console.error("Supabase Error:", error)
+      return sock.sendMessage(
+        chatId,
+        { text: "Gagal mengambil data boss dari database." },
+        { quoted: msg }
+      )
+    }
+
+    if (!data || data.length === 0) {
+      return sock.sendMessage(
+        chatId,
+        { text: "Daftar boss kosong atau tidak ditemukan." },
+        { quoted: msg }
+      )
+    }
+
+    const listText = data
+      .map((item, i) => `${i + 1}. ${item.name}`)
+      .join("\n")
+
+    const ctx = `
+*Daftar Boss*
+Total: ${data.length}
+
+${toCodeBlock(listText)}
+    `.trim()
+
+    await sock.sendMessage(
+      chatId,
+      { text: ctx },
+      { quoted: msg }
+    )
+
+  } catch (err) {
+    console.error("Kesalahan Sistem:", err)
+    await sock.sendMessage(
+      chatId,
+      { text: "internal server error" },
+      { quoted: msg }
+    )
+  }
+}
+
+
 export default Bossdef

@@ -16,7 +16,7 @@ import { getNews, setNews } from "../plugins/sosial/news.js";
 import { qc } from "../plugins/sosial/qc.js";
 import { getRules, setrules } from "../plugins/sosial/rules.js";
 import { ability, searchAbility, searchApp, searchItem, searchRegist, searchXtall } from "../plugins/toram/anyitems.js";
-import Bossdef from "../plugins/toram/bos.js";
+import Bossdef, { listboss } from "../plugins/toram/bos.js";
 import { dyePredictor } from "../plugins/toram/dye.js";
 import { leveling } from "../plugins/toram/lv.js";
 import { clearRaid, createRaid, joinRaid, leaveRaid, viewRaid } from "../plugins/toram/raidControl.js";
@@ -366,6 +366,10 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!shdb")) {
     if (isBan(sock, chatId, msg)) return;
     searchHdb(sock, chatId, msg, text)
+  }
+  if (text.startsWith("!listbos")) {
+    if (isBan(sock, chatId, msg)) return;
+    listboss(sock, chatId, msg)
   }
 
 
