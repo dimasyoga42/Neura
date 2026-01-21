@@ -75,7 +75,7 @@ ${toCodeBlock(boss.stat)}
 export const listboss = async (sock, chatId, msg) => {
   try {
     const { data, error } = await supabase
-      .from("bosdif")
+      .from("bosdef")
       .select("name")
 
     if (error) {
