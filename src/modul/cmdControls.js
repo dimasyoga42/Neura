@@ -38,6 +38,7 @@ import { hd } from "../plugins/vip/tools/hd.js";
 import { liveStream } from "../plugins/toram/live.js";
 import { farm } from "../plugins/toram/farm.js";
 import { khodam } from "../plugins/vip/tools/khodam.js";
+import { searchHdb } from "../plugins/toram/hdb.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!menu")) {
     if (isBan(sock, chatId, msg)) return;
@@ -361,6 +362,10 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!khodam")) {
     if (isBan(sock, chatId, msg)) return;
     khodam(sock, chatId, msg)
+  }
+  if (text.startsWith("!hdb")) {
+    if (isBan(sock, chatId, msg)) return;
+    searchHdb(sock, chatId, msg, text)
   }
 
 
