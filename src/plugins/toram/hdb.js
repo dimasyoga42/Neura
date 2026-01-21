@@ -7,7 +7,7 @@ export const searchHdb = async (sock, chatId, msg, text) => {
     if (!arg) {
       return sock.sendMessage(
         chatId,
-        { text: "kamu harus tulis nama bos hdb setelah cmd !hdb etoise" },
+        { text: "kamu harus tulis nama bos hdb setelah cmd !shdb etoise" },
         { quoted: msg }
       );
     }
