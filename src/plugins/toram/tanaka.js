@@ -18,13 +18,13 @@ const CONFIG = {
   BASE_URL: "https://tanaka0.work/id/BouguProper",
   // New optimization configs
   NAVIGATION_TIMEOUT: 60000, // Increased for stability
-  SELECTOR_TIMEOUT: 10000,
+  SELECTOR_TIMEOUT: 15000,
   MAX_CAPTCHA_WAIT: 20, // Reduced from 30
 };
 
 // --- STAT MAP dengan ALIAS ---
 const statMap = {
-  // Critical Stats - dengan alias
+  // Critical Stats
   critdmg: "Critical Damage", cd: "Critical Damage", "critdmg%": "Critical Damage %", "cd%": "Critical Damage %",
   critrate: "Critical Rate", cr: "Critical Rate", "critrate%": "Critical Rate %", "cr%": "Critical Rate %",
 
@@ -147,7 +147,6 @@ function parseCommand(args) {
   }
 
   // Extract profession and level (UPDATED REGEX)
-  // Format: prof:bs:100 atau profbs100 atau bs100
   const profPatterns = [
     /prof\s*[:=]?\s*(bs|alchemist|null)\s*[:=]?\s*(\d+)/i,
     /(bs|alchemist)(\d+)/i,
@@ -157,10 +156,9 @@ function parseCommand(args) {
   for (const pattern of profPatterns) {
     const profMatch = fullCommand.match(pattern);
     if (profMatch) {
-      // Logic deteksi sederhana: jika match angka ada di index terakhir
       const potentialLevel = parseInt(profMatch[profMatch.length - 1], 10);
       if (!isNaN(potentialLevel)) {
-        config.profession = "BS"; // Default ke BS jika format bs300
+        config.profession = "BS";
         config.professionLevel = potentialLevel;
         console.log(`✓ Profession Level detected: ${config.professionLevel}`);
         break;
@@ -191,6 +189,7 @@ function parseCommand(args) {
     const isPositive = value === 'max';
 
     let level;
+    // PENTING: Set 'MAX' string agar diproses di browser sebagai perintah khusus
     if (isPositive || isNegative) {
       level = 'MAX';
     } else {
@@ -714,13 +713,11 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
 
       const { positiveStats, negativeStats, startingPotential, characterLevel, profession, professionLevel } = statConfig;
 
-      // --- [PERBAIKAN] 2. PENGISIAN FORM YANG LEBIH KUAT ---
-      // Batch all form operations including profession and profession level
+      // --- [PERBAIKAN] 2. PENGISIAN FORM (DENGAN HELPER SETSELECTSMART) ---
       await page.evaluate(
         ({ level, positive, negative, pot, prof, profLvl }) => {
 
-          // Helper Function: Set Value + Trigger Event Beruntun
-          // Ini mengatasi masalah "hasil tidak muncul" karena data tidak terdeteksi
+          // Helper 1: Untuk Input Text Biasa
           const setVal = (sel, val) => {
             const el = document.querySelector(sel);
             if (el) {
@@ -730,6 +727,40 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
               el.dispatchEvent(new Event('input', { bubbles: true }));
               el.dispatchEvent(new Event('change', { bubbles: true }));
               el.dispatchEvent(new Event('blur', { bubbles: true }));
+            }
+          };
+
+          // Helper 2: KHUSUS DROPDOWN (Penting untuk Smith Prof & Max)
+          // Mencari option berdasarkan value atau text content (misal: "300" -> "Lv300")
+          const setSelectSmart = (selector, value) => {
+            const el = document.querySelector(selector);
+            if (!el) return;
+
+            const target = String(value);
+            const option =
+              [...el.options].find(o => o.value === target) ||
+              [...el.options].find(o => o.value.includes(target)) ||
+              [...el.options].find(o => o.textContent.includes(target));
+
+            if (!option) return;
+
+            el.value = option.value;
+            el.dispatchEvent(new Event("change", { bubbles: true }));
+          };
+
+          // Helper 3: Isi Stat (Gabungan Max & setVal)
+          const fillStat = (nameSel, valSel, statName, statLevel) => {
+            setVal(nameSel, statName);
+
+            // Logic Max: Ambil value terakhir dari dropdown jika user minta 'MAX'
+            const valEl = document.querySelector(valSel);
+            if (statLevel === 'MAX') {
+              if (valEl && valEl.options && valEl.options.length > 0) {
+                const maxVal = valEl.options[valEl.options.length - 1].value;
+                setVal(valSel, maxVal);
+              }
+            } else {
+              setVal(valSel, statLevel);
             }
           };
 
@@ -743,20 +774,17 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
             profSelect.dispatchEvent(new Event('change', { bubbles: true }));
           }
 
-          // 3. Set Profession Level (#jukurendo / #shokugyouLv)
-          // Script menggunakan #jukurendo untuk BS Prof sesuai request
-          setVal("#jukurendo", profLvl);
-          // Backup jika ID website berubah ke shokugyouLv
-          setVal("#shokugyouLv", profLvl);
+          // 3. Set Profession Level (GUNAKAN SETSELECTSMART)
+          if (profLvl > 0) {
+            setSelectSmart("#jukurendo", profLvl);
+            setSelectSmart("#shokugyouLv", profLvl); // Backup
+          }
 
           // 4. Set Positive Stats
           for (let i = 0; i < 7; i++) {
             const stat = positive[i];
             if (stat) {
-              setVal(`#plus_name_${i}`, stat.name);
-              // Jeda mikro simulasi user
-              const start = Date.now(); while (Date.now() - start < 10) { };
-              setVal(`#plus_value_${i}`, stat.level);
+              fillStat(`#plus_name_${i}`, `#plus_value_${i}`, stat.name, stat.level);
             }
           }
 
@@ -764,9 +792,7 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
           for (let i = 0; i < 7; i++) {
             const stat = negative[i];
             if (stat) {
-              setVal(`#minus_name_${i}`, stat.name);
-              const start = Date.now(); while (Date.now() - start < 10) { };
-              setVal(`#minus_value_${i}`, stat.level);
+              fillStat(`#minus_name_${i}`, `#minus_value_${i}`, stat.name, stat.level);
             }
           }
 
@@ -934,6 +960,7 @@ async function tanakaManual(sock, jid, statConfig = null, options = {}) {
 
       await page.evaluate(
         ({ level, positive, negative, pot, profLvl }) => {
+          // --- Helper Definitions (Duplicated for manual context) ---
           const setVal = (sel, val) => {
             const el = document.querySelector(sel);
             if (el) {
@@ -945,20 +972,29 @@ async function tanakaManual(sock, jid, statConfig = null, options = {}) {
             }
           };
 
+          const setSelectSmart = (selector, value) => {
+            const el = document.querySelector(selector);
+            if (!el) return;
+            const target = String(value);
+            const option = [...el.options].find(o => o.value === target || o.value.includes(target) || o.textContent.includes(target));
+            if (option) { el.value = option.value; el.dispatchEvent(new Event("change", { bubbles: true })); }
+          };
+
           setVal("#paramLevel", level);
           setVal("#shokiSenzai", pot);
-          setVal("#jukurendo", profLvl); // BS Prof
+
+          if (profLvl > 0) setSelectSmart("#jukurendo", profLvl);
 
           for (let i = 0; i < Math.min(7, positive.length); i++) {
             const stat = positive[i];
             setVal(`#plus_name_${i}`, stat.name);
-            setVal(`#plus_value_${i}`, stat.level);
+            setVal(`#plus_value_${i}`, stat.level === 'MAX' ? '10' : stat.level); // Fallback manual
           }
 
           for (let i = 0; i < Math.min(7, negative.length); i++) {
             const stat = negative[i];
             setVal(`#minus_name_${i}`, stat.name);
-            setVal(`#minus_value_${i}`, stat.level);
+            setVal(`#minus_value_${i}`, stat.level === 'MAX' ? '10' : stat.level);
           }
         },
         {
@@ -966,7 +1002,7 @@ async function tanakaManual(sock, jid, statConfig = null, options = {}) {
           positive: positiveStats,
           negative: negativeStats,
           pot: startingPotential,
-          profLvl: professionLevel || 0,
+          profLvl: professionLevel,
         }
       );
 
