@@ -2,7 +2,7 @@ import { supabase } from "../../model/supabase.js";
 
 export const searchHdb = async (sock, chatId, msg, text) => {
   try {
-    const arg = text.replace("!hdb", "").trim();
+    const arg = text.replace("!shdb", "").trim();
 
     if (!arg) {
       return sock.sendMessage(
