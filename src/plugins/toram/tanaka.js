@@ -10,16 +10,15 @@ puppeteer.use(StealthPlugin());
 
 // --- CONFIGURATION - OPTIMIZED ---
 const CONFIG = {
-  MAX_RETRIES: 2, // Reduced from 3
-  DEFAULT_TIMEOUT: 90000, // Reduced from 120000
-  CHECK_INTERVAL: 1000, // Reduced from 2000 for faster checks
+  MAX_RETRIES: 2,
+  DEFAULT_TIMEOUT: 90000,
+  CHECK_INTERVAL: 1000,
   DEFAULT_LEVEL: 280,
   DEFAULT_POTENTIAL: 110,
   BASE_URL: "https://tanaka0.work/id/BouguProper",
-  // New optimization configs
-  NAVIGATION_TIMEOUT: 20000, // Faster navigation timeout
-  SELECTOR_TIMEOUT: 5000, // Faster selector timeout
-  MAX_CAPTCHA_WAIT: 20, // Reduced from 30
+  NAVIGATION_TIMEOUT: 20000,
+  SELECTOR_TIMEOUT: 5000,
+  MAX_CAPTCHA_WAIT: 20,
 };
 
 // --- STAT MAP dengan ALIAS ---
@@ -115,7 +114,7 @@ async function withRetry(fn, retries = CONFIG.MAX_RETRIES, delay = 1000) {
   }
 }
 
-// --- COMMAND PARSING (UPDATED for BS Level) ---
+// --- COMMAND PARSING (UPDATED: Handle BS Level) ---
 function parseCommand(args) {
   const config = {
     positiveStats: [],
@@ -621,7 +620,7 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
     try {
       console.log("🚀 Meluncurkan peramban...");
       browser = await puppeteer.launch({
-        headless: true, // Ubah ke false untuk debugging visual
+        headless: true, // Set false untuk melihat proses browser (debugging)
         args: [
           "--no-sandbox",
           "--disable-setuid-sandbox",
@@ -666,35 +665,44 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
         timeout: CONFIG.NAVIGATION_TIMEOUT,
       });
 
-      // --- [NEW] STEP: KLIK TOMBOL RELOAD ---
-      console.log("🔄 Mencoba klik tombol Reload untuk reset form...");
+      // --- [NEW] STEP: KLIK TOMBOL RELOAD (RESET) ---
+      console.log("🔄 Mencoba klik tombol Reload...");
       await page.evaluate(() => {
         const buttons = Array.from(document.querySelectorAll("button, input[type='button'], input[type='submit'], .btn"));
+        // Cari tombol dengan value atau text "Reload"
         const reloadBtn = buttons.find(b =>
-          b.innerText?.toLowerCase().includes("reload") ||
-          b.value?.toLowerCase().includes("reload") ||
-          b.innerText?.toLowerCase().includes("reset")
+          (b.value && b.value.toLowerCase() === 'reload') ||
+          (b.innerText && b.innerText.toLowerCase() === 'reload') ||
+          (b.innerText && b.innerText.toLowerCase() === 'reset')
         );
         if (reloadBtn) {
           reloadBtn.click();
           console.log("Tombol Reload diklik.");
         }
       });
-      await sleep(1500); // Tunggu sebentar setelah reload
+      // JEDA SANGAT PENTING SETELAH RELOAD
+      await sleep(2500);
 
       console.log("📝 Mengisi formulir...");
       await page.waitForSelector("#paramLevel", { timeout: CONFIG.SELECTOR_TIMEOUT });
 
       const { positiveStats, negativeStats, startingPotential, characterLevel, professionLevel } = statConfig;
 
-      // --- [UPDATED] FORM FILLING (Include Jukurendo/BS Prof) ---
+      // --- [UPDATED] FORM FILLING (Lebih Agresif trigger event) ---
       await page.evaluate(
         ({ level, positive, negative, pot, profLvl }) => {
+
+          // Helper Function: Set Value + Trigger Multiple Events
+          // Ini kunci perbaikan "data tidak muncul"
           const setVal = (sel, val) => {
             const el = document.querySelector(sel);
             if (el) {
+              el.focus(); // Fokus dulu
               el.value = String(val);
-              el.dispatchEvent(new Event('change', { bubbles: true })); // Penting!
+              // Trigger semua event yang mungkin didengar oleh website
+              el.dispatchEvent(new Event('input', { bubbles: true }));
+              el.dispatchEvent(new Event('change', { bubbles: true }));
+              el.dispatchEvent(new Event('blur', { bubbles: true }));
             }
           };
 
@@ -704,7 +712,7 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
           // 2. Starting Potential
           setVal("#shokiSenzai", pot);
 
-          // 3. Smith Proficiency (BS Level) - ID: #jukurendo
+          // 3. [NEW] Smith Proficiency (#jukurendo)
           setVal("#jukurendo", profLvl);
 
           // 4. Positive Stats
@@ -735,7 +743,7 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
       );
 
       console.log("📤 Mengirim formulir...");
-      await page.click("#sendData");
+      await page.click("#sendData"); // Klik tombol calculate
       console.log("✅ Formulir dikirim, memulai pemantauan otomatis...");
 
       const result = await autoWaitForResults(page, maxWaitTime, checkInterval);
@@ -837,7 +845,6 @@ function formatResultMessage(result) {
 
   if (result.steps.length > 0) {
     message += `\n*Langkah Enhancement:*\n`;
-    // Limit steps for WhatsApp message readability
     const stepsToShow = result.steps.length > 20 ? result.steps.slice(0, 20).concat(["... (lihat web untuk lengkapnya)"]) : result.steps;
     stepsToShow.forEach((step) => {
       message += `${step}\n`;
@@ -878,7 +885,7 @@ async function tanakaManual(sock, jid, statConfig = null, options = {}) {
         const reloadBtn = buttons.find(b => b.innerText?.toLowerCase().includes("reload") || b.value?.toLowerCase().includes("reload"));
         if (reloadBtn) reloadBtn.click();
       });
-      await sleep(1500);
+      await sleep(2500);
 
       await page.waitForSelector("#paramLevel", { timeout: CONFIG.SELECTOR_TIMEOUT });
 
@@ -889,8 +896,11 @@ async function tanakaManual(sock, jid, statConfig = null, options = {}) {
           const setVal = (sel, val) => {
             const el = document.querySelector(sel);
             if (el) {
+              el.focus();
               el.value = String(val);
+              el.dispatchEvent(new Event('input', { bubbles: true }));
               el.dispatchEvent(new Event('change', { bubbles: true }));
+              el.dispatchEvent(new Event('blur', { bubbles: true }));
             }
           };
 
