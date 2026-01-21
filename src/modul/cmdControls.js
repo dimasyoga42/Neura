@@ -363,7 +363,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     khodam(sock, chatId, msg)
   }
-  if (text.startsWith("!hdb")) {
+  if (text.startsWith("!shdb")) {
     if (isBan(sock, chatId, msg)) return;
     searchHdb(sock, chatId, msg, text)
   }

@@ -156,6 +156,7 @@ komunitas: https://whatsapp.com/channel/0029VbAmhBF7z4kjOQcoVV0A
 - !dye
 - !torammt 
 - !toramlive
+- !shdb
 
 *Guide Toram*
 - !pet 
