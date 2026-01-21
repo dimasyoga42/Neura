@@ -10,20 +10,21 @@ puppeteer.use(StealthPlugin());
 
 // --- CONFIGURATION - OPTIMIZED ---
 const CONFIG = {
-  MAX_RETRIES: 2,
-  DEFAULT_TIMEOUT: 90000,
-  CHECK_INTERVAL: 1000,
+  MAX_RETRIES: 2, // Reduced from 3
+  DEFAULT_TIMEOUT: 90000, // Reduced from 120000
+  CHECK_INTERVAL: 1000, // Reduced from 2000 for faster checks
   DEFAULT_LEVEL: 280,
   DEFAULT_POTENTIAL: 110,
   BASE_URL: "https://tanaka0.work/id/BouguProper",
-  NAVIGATION_TIMEOUT: 20000,
-  SELECTOR_TIMEOUT: 5000,
-  MAX_CAPTCHA_WAIT: 20,
+  // New optimization configs
+  NAVIGATION_TIMEOUT: 60000, // Increased for stability
+  SELECTOR_TIMEOUT: 10000,
+  MAX_CAPTCHA_WAIT: 20, // Reduced from 30
 };
 
 // --- STAT MAP dengan ALIAS ---
 const statMap = {
-  // Critical Stats
+  // Critical Stats - dengan alias
   critdmg: "Critical Damage", cd: "Critical Damage", "critdmg%": "Critical Damage %", "cd%": "Critical Damage %",
   critrate: "Critical Rate", cr: "Critical Rate", "critrate%": "Critical Rate %", "cr%": "Critical Rate %",
 
@@ -114,20 +115,21 @@ async function withRetry(fn, retries = CONFIG.MAX_RETRIES, delay = 1000) {
   }
 }
 
-// --- COMMAND PARSING (UPDATED: Handle BS Level) ---
+// --- COMMAND PARSING - DENGAN PROF (UPDATED) ---
 function parseCommand(args) {
   const config = {
     positiveStats: [],
     negativeStats: [],
     characterLevel: CONFIG.DEFAULT_LEVEL,
     startingPotential: CONFIG.DEFAULT_POTENTIAL,
-    professionLevel: 0, // Default BS Level
+    profession: "NULL",
+    professionLevel: 0, // Default profession level
   };
 
   const fullCommand = args.join(" ").toLowerCase();
 
   // Extract character level
-  const levelMatch = fullCommand.match(/lv\s*[:=]?\s*(\d+)/i);
+  const levelMatch = fullCommand.match(/lv(\d+)/);
   if (levelMatch) {
     const level = parseInt(levelMatch[1], 10);
     if (!isNaN(level) && level >= 1 && level <= 500) {
@@ -136,7 +138,7 @@ function parseCommand(args) {
   }
 
   // Extract potential
-  const potMatch = fullCommand.match(/pot\s*[:=]?\s*(\d+)/i);
+  const potMatch = fullCommand.match(/pot(\d+)/);
   if (potMatch) {
     const potential = parseInt(potMatch[1], 10);
     if (!isNaN(potential) && potential >= 0 && potential <= 200) {
@@ -144,27 +146,40 @@ function parseCommand(args) {
     }
   }
 
-  // Extract Profession Level (Format: bs300, prof300, prof:bs:300)
-  const profMatch = fullCommand.match(/(?:bs|prof|prof\s*[:=]?\s*bs)\s*[:=]?\s*(\d+)/i);
-  if (profMatch) {
-    const profLvl = parseInt(profMatch[1], 10);
-    if (!isNaN(profLvl)) {
-      config.professionLevel = profLvl;
-      console.log(`✓ Profession Level (BS) set: ${config.professionLevel}`);
+  // Extract profession and level (UPDATED REGEX)
+  // Format: prof:bs:100 atau profbs100 atau bs100
+  const profPatterns = [
+    /prof\s*[:=]?\s*(bs|alchemist|null)\s*[:=]?\s*(\d+)/i,
+    /(bs|alchemist)(\d+)/i,
+    /(?:bs|prof|prof\s*[:=]?\s*bs)\s*[:=]?\s*(\d+)/i // Tambahan
+  ];
+
+  for (const pattern of profPatterns) {
+    const profMatch = fullCommand.match(pattern);
+    if (profMatch) {
+      // Logic deteksi sederhana: jika match angka ada di index terakhir
+      const potentialLevel = parseInt(profMatch[profMatch.length - 1], 10);
+      if (!isNaN(potentialLevel)) {
+        config.profession = "BS"; // Default ke BS jika format bs300
+        config.professionLevel = potentialLevel;
+        console.log(`✓ Profession Level detected: ${config.professionLevel}`);
+        break;
+      }
     }
   }
 
   const statParts = fullCommand.split(',').map(s => s.trim());
 
   for (const part of statParts) {
-    // Skip command keywords agar tidak dianggap stat
-    if (!part || /^(lv|pot|prof|bs)/i.test(part)) continue;
+    if (!part || part.includes('lv') || part.includes('pot') || part.includes('prof') || part.includes('bs') || part.includes('alchemist')) continue;
 
-    const match = part.match(/^([a-z%]+)\s*[:=]\s*(.+)$/i) || part.match(/^([a-z%]+)\s+(.+)$/i);
+    const match = part.match(/^([a-z%]+)\s*=\s*(.+)$/);
+
     if (!match) continue;
 
     const [, statKey, valueStr] = match;
     const value = valueStr.trim();
+
     const fullName = statMap[statKey];
 
     if (!fullName) {
@@ -174,8 +189,8 @@ function parseCommand(args) {
 
     const isNegative = value === 'min';
     const isPositive = value === 'max';
-    let level;
 
+    let level;
     if (isPositive || isNegative) {
       level = 'MAX';
     } else {
@@ -209,9 +224,7 @@ function parseCommand(args) {
   console.log(`\n📊 Konfigurasi Final:`);
   console.log(`- Character Level: ${config.characterLevel}`);
   console.log(`- Starting Potential: ${config.startingPotential}`);
-  console.log(`- BS Profession Level: ${config.professionLevel}`);
-  console.log(`- Positive Stats (${config.positiveStats.length}/7)`);
-  console.log(`- Negative Stats (${config.negativeStats.length}/7)`);
+  console.log(`- Profession Level: ${config.professionLevel}`);
 
   return config;
 }
@@ -221,6 +234,7 @@ async function handleCaptcha(page) {
   try {
     console.log("🔍 Menganalisis CAPTCHA...");
 
+    // Reduced wait time
     for (let i = 0; i < CONFIG.MAX_CAPTCHA_WAIT; i++) {
       await sleep(1000);
 
@@ -286,7 +300,7 @@ async function handleCaptcha(page) {
 
     if (clickResult.clicked) {
       console.log(`✅ Diklik: ${clickResult.type} - "${clickResult.text}"`);
-      await sleep(3000);
+      await sleep(3000); // Reduced from 5000
 
       const solved = await page.evaluate(() => {
         const pageText = document.body.innerText.toLowerCase();
@@ -351,11 +365,12 @@ async function autoWaitForResults(page, maxWaitTime, checkInterval) {
         }
       }
 
+      // Optimized result detection with consecutive checks
       if (pageState.hasResults) {
         consecutiveResults++;
-        if (consecutiveResults >= 2) {
+        if (consecutiveResults >= 2) { // Confirm result stability
           console.log("🎯 Hasil stabil ditemukan! Memulai parsing...");
-          await sleep(500);
+          await sleep(500); // Brief wait for final rendering
           return await parseAllResults(page);
         }
       } else {
@@ -363,12 +378,16 @@ async function autoWaitForResults(page, maxWaitTime, checkInterval) {
       }
 
       if (pageState.hasError) {
-        console.log("❌ Error terdeteksi pada halaman");
-        return {
-          error: "Terjadi error pada website",
-          pageContent: pageState.pageText.substring(0, 300),
-          hasValidResult: false,
-        };
+        // Cek apakah errornya fatal atau cuma teks biasa
+        const isFatal = pageState.pageText.includes("504") || pageState.pageText.includes("timeout");
+        if (isFatal) {
+          console.log("❌ Error fatal terdeteksi pada halaman");
+          return {
+            error: "Terjadi error pada website",
+            pageContent: pageState.pageText.substring(0, 300),
+            hasValidResult: false,
+          };
+        }
       }
 
       const elapsed = Math.round((Date.now() - startTime) / 1000);
@@ -449,7 +468,10 @@ async function parseAllResults(page) {
 
     // Extract final stats
     if (div.hasStatting && text.includes("Result")) {
-      const lines = text.split("\n").map((l) => l.trim()).filter((l) => l);
+      const lines = text
+        .split("\n")
+        .map((l) => l.trim())
+        .filter((l) => l);
       const statLines = lines.filter(
         (l) =>
           l.includes("Critical Damage") ||
@@ -467,7 +489,10 @@ async function parseAllResults(page) {
 
     // Extract success rate
     if (div.hasSuccessRate) {
-      const lines = text.split("\n").map((l) => l.trim()).filter((l) => l);
+      const lines = text
+        .split("\n")
+        .map((l) => l.trim())
+        .filter((l) => l);
 
       const successRatePatterns = [
         /Success\s+Rate\s*[：:]\s*(\d+(?:\.\d+)?)\s*%/i,
@@ -584,7 +609,7 @@ async function parseAllResults(page) {
   return result;
 }
 
-// --- MAIN SCRAPER FUNCTION (UPDATED) ---
+// --- MAIN FUNCTION (UPDATED) ---
 async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions = {}) {
   let sock, jid, statConfig, options;
 
@@ -597,6 +622,7 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
       negativeStats: [{ name: "Accuracy", level: "MAX" }],
       characterLevel: CONFIG.DEFAULT_LEVEL,
       startingPotential: CONFIG.DEFAULT_POTENTIAL,
+      profession: "NULL",
       professionLevel: 0,
     };
   } else {
@@ -620,7 +646,7 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
     try {
       console.log("🚀 Meluncurkan peramban...");
       browser = await puppeteer.launch({
-        headless: true, // Set false untuk melihat proses browser (debugging)
+        headless: true, // Ubah ke false untuk debug visual
         args: [
           "--no-sandbox",
           "--disable-setuid-sandbox",
@@ -665,35 +691,36 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
         timeout: CONFIG.NAVIGATION_TIMEOUT,
       });
 
-      // --- [NEW] STEP: KLIK TOMBOL RELOAD (RESET) ---
+      // --- [PERBAIKAN] 1. KLIK TOMBOL RELOAD (RESET) ---
       console.log("🔄 Mencoba klik tombol Reload...");
       await page.evaluate(() => {
         const buttons = Array.from(document.querySelectorAll("button, input[type='button'], input[type='submit'], .btn"));
-        // Cari tombol dengan value atau text "Reload"
+        // Cari tombol dengan value atau text "Reload" / "Reset"
         const reloadBtn = buttons.find(b =>
-          (b.value && b.value.toLowerCase() === 'reload') ||
-          (b.innerText && b.innerText.toLowerCase() === 'reload') ||
-          (b.innerText && b.innerText.toLowerCase() === 'reset')
+          (b.value && b.value.toLowerCase().includes("reload")) ||
+          (b.innerText && b.innerText.toLowerCase().includes("reload")) ||
+          (b.innerText && b.innerText.toLowerCase().includes("reset"))
         );
         if (reloadBtn) {
           reloadBtn.click();
           console.log("Tombol Reload diklik.");
         }
       });
-      // JEDA SANGAT PENTING SETELAH RELOAD
+      // [PENTING] Tunggu formulir refresh
       await sleep(2500);
 
       console.log("📝 Mengisi formulir...");
       await page.waitForSelector("#paramLevel", { timeout: CONFIG.SELECTOR_TIMEOUT });
 
-      const { positiveStats, negativeStats, startingPotential, characterLevel, professionLevel } = statConfig;
+      const { positiveStats, negativeStats, startingPotential, characterLevel, profession, professionLevel } = statConfig;
 
-      // --- [UPDATED] FORM FILLING (Lebih Agresif trigger event) ---
+      // --- [PERBAIKAN] 2. PENGISIAN FORM YANG LEBIH KUAT ---
+      // Batch all form operations including profession and profession level
       await page.evaluate(
-        ({ level, positive, negative, pot, profLvl }) => {
+        ({ level, positive, negative, pot, prof, profLvl }) => {
 
-          // Helper Function: Set Value + Trigger Multiple Events
-          // Ini kunci perbaikan "data tidak muncul"
+          // Helper Function: Set Value + Trigger Event Beruntun
+          // Ini mengatasi masalah "hasil tidak muncul" karena data tidak terdeteksi
           const setVal = (sel, val) => {
             const el = document.querySelector(sel);
             if (el) {
@@ -706,48 +733,64 @@ async function tanaka(statConfigOrSocket, jidOrOptions = {}, additionalOptions =
             }
           };
 
-          // 1. Character Level
+          // 1. Set Character Level
           setVal("#paramLevel", level);
 
-          // 2. Starting Potential
-          setVal("#shokiSenzai", pot);
+          // 2. Set Profession (Dropdown)
+          const profSelect = document.querySelector("#shokugyou");
+          if (profSelect) {
+            profSelect.value = prof;
+            profSelect.dispatchEvent(new Event('change', { bubbles: true }));
+          }
 
-          // 3. [NEW] Smith Proficiency (#jukurendo)
+          // 3. Set Profession Level (#jukurendo / #shokugyouLv)
+          // Script menggunakan #jukurendo untuk BS Prof sesuai request
           setVal("#jukurendo", profLvl);
+          // Backup jika ID website berubah ke shokugyouLv
+          setVal("#shokugyouLv", profLvl);
 
-          // 4. Positive Stats
+          // 4. Set Positive Stats
           for (let i = 0; i < 7; i++) {
             const stat = positive[i];
             if (stat) {
               setVal(`#plus_name_${i}`, stat.name);
+              // Jeda mikro simulasi user
+              const start = Date.now(); while (Date.now() - start < 10) { };
               setVal(`#plus_value_${i}`, stat.level);
             }
           }
 
-          // 5. Negative Stats
+          // 5. Set Negative Stats
           for (let i = 0; i < 7; i++) {
             const stat = negative[i];
             if (stat) {
               setVal(`#minus_name_${i}`, stat.name);
+              const start = Date.now(); while (Date.now() - start < 10) { };
               setVal(`#minus_value_${i}`, stat.level);
             }
           }
+
+          // 6. Set Potential
+          setVal("#shokiSenzai", pot);
+
         },
         {
           level: characterLevel,
           positive: positiveStats,
           negative: negativeStats,
           pot: startingPotential,
-          profLvl: professionLevel || 0,
+          prof: profession,
+          profLvl: professionLevel,
         }
       );
 
       console.log("📤 Mengirim formulir...");
-      await page.click("#sendData"); // Klik tombol calculate
+      await page.click("#sendData");
       console.log("✅ Formulir dikirim, memulai pemantauan otomatis...");
 
       const result = await autoWaitForResults(page, maxWaitTime, checkInterval);
       result.duration = Date.now() - startTime;
+      result.profession = profession;
       result.professionLevel = professionLevel;
 
       console.log("\n🎉 --- HASIL AKHIR ---");
@@ -845,8 +888,7 @@ function formatResultMessage(result) {
 
   if (result.steps.length > 0) {
     message += `\n*Langkah Enhancement:*\n`;
-    const stepsToShow = result.steps.length > 20 ? result.steps.slice(0, 20).concat(["... (lihat web untuk lengkapnya)"]) : result.steps;
-    stepsToShow.forEach((step) => {
+    result.steps.forEach((step) => {
       message += `${step}\n`;
     });
   }
@@ -860,7 +902,7 @@ function formatResultMessage(result) {
   return message;
 }
 
-// --- MANUAL MODE (UPDATED) ---
+// --- MANUAL MODE ---
 async function tanakaManual(sock, jid, statConfig = null, options = {}) {
   console.log("🔧 Mode Manual - Browser akan terbuka untuk interaksi manual");
 
@@ -878,16 +920,15 @@ async function tanakaManual(sock, jid, statConfig = null, options = {}) {
 
     if (statConfig) {
       console.log("📝 Mengisi formulir secara otomatis...");
+      await page.waitForSelector("#paramLevel", { timeout: CONFIG.SELECTOR_TIMEOUT });
 
-      // Klik Reload di mode manual juga
+      // [PERBAIKAN MANUAL MODE JUGA]
       await page.evaluate(() => {
-        const buttons = Array.from(document.querySelectorAll("button, input[type='button'], input[type='submit']"));
-        const reloadBtn = buttons.find(b => b.innerText?.toLowerCase().includes("reload") || b.value?.toLowerCase().includes("reload"));
+        const buttons = Array.from(document.querySelectorAll("button, input[type='button']"));
+        const reloadBtn = buttons.find(b => b.value === 'Reload' || b.innerText === 'Reload');
         if (reloadBtn) reloadBtn.click();
       });
-      await sleep(2500);
-
-      await page.waitForSelector("#paramLevel", { timeout: CONFIG.SELECTOR_TIMEOUT });
+      await sleep(1500);
 
       const { positiveStats, negativeStats, startingPotential, characterLevel, professionLevel } = statConfig;
 
@@ -906,7 +947,7 @@ async function tanakaManual(sock, jid, statConfig = null, options = {}) {
 
           setVal("#paramLevel", level);
           setVal("#shokiSenzai", pot);
-          setVal("#jukurendo", profLvl); // Fill BS Prof
+          setVal("#jukurendo", profLvl); // BS Prof
 
           for (let i = 0; i < Math.min(7, positive.length); i++) {
             const stat = positive[i];
