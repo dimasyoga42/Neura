@@ -100,6 +100,7 @@ export const tebakGambar = async (sock, chatId, msg) => {
 
 export const jawab = async (sock, chatId, msg, text) => {
   try {
+    if (!text.startsWith("!j")) return;
     if (!answer.has(chatId)) {
       return sock.sendMessage(
         chatId,

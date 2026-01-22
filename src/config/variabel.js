@@ -81,11 +81,39 @@ export const xsubMenu = {
   `.trim()
 }
 
+export const mq = `
+BAHAN MQ
+- Daun Colon (Colon Leaf) x5
+- Sisik Naga (Hard Dragon Skin) x2
+- Daging Domba (Lamb Meat) x1
+- Sulur (Vine) x3
+- Paruh Tebal (Thick Beak) x3
+- Sayap Peri (Fairy Feather) x3
+- Koin Ksatria (Swordsman Stone Coin) x20
+- Daging Tikus Pasir (Sand Mole Meat) x1
+- Cakar binatang buas (Beast Claw) 3x
+- Kulit Kodok Pasir (Sand Frog Skin) x5
+- Taring Bergerigi (Jagged Fang) x10
+- Kristal Saham (Saham Crystal) x5
+- Permata Jiwa (Spiritual Gemstone) x1
+- Anggur Rokoko (Rokoko Grape) x5
+- Kayu Labilans (Labilans Wood) x10
+- Tanduk Patah ( Broken Horn) x20
+- Biji Berkembang (Growing Ore ) x5
+- Batu Jabali (Jabali Stone) x5
+- Kulit Tebal Berlendir (Slimy Thick Skin) x20
+- Akar Melilit (Tangled Roots) x10
+- Kayu Menabra (Menabra Wood) x10
+- Pupuk Keruh (Stagnant Fertilizer) x10
+
+`.trim()
+
 export const menuMessage = `
 *Neura Bot*\n> gunakan bot dengan bijak, dukung bot agar bisa hidup lebih lama dengan donet seiklasnya
 vps exp: 20 febuari 2026
 donate: https://sociabuzz.com/neurabot/tribe
 komunitas: https://whatsapp.com/channel/0029VbAmhBF7z4kjOQcoVV0A
+website official Neura: https://neuraarchive.vercel.app/
 *Rules Bot:*
 - gunakan bot sewajarnya jangan spam
 - dilarang membuat stiker jamok / vulgar / mesum 
@@ -607,6 +635,7 @@ export const messagePembolong = `
 *2H*
 
 *HB*
+0-1 10-20M
 
 leg ornament: 700M
 leg silk: 1B++

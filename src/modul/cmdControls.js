@@ -1,6 +1,6 @@
 import { ColdownUser } from "../admin/coldownChat.js";
 import { hidetag } from "../admin/hidetag.js";
-import { guide, listLeveling, menuMessage, messagePembolong, stat, upbagId } from "../config/variabel.js";
+import { guide, listLeveling, menuMessage, messagePembolong, mq, stat, upbagId } from "../config/variabel.js";
 import { isBan } from "../plugins/fitur/ban.js"
 import { Banner } from "../plugins/fitur/benner.js";
 import { setMenu } from "../plugins/fitur/img.js";
@@ -371,6 +371,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     listboss(sock, chatId, msg)
   }
+
+  if (text.startsWith("!mq")) {
+    if (isBan(sock, chatId, msg)) return;
+    sock.sendMessage(chatId, { text: mq }, { quoted: msg })
+  }
+
 
 
 
