@@ -74,7 +74,7 @@ ${toCodeBlock(boss.stat)}
 export const setBos = async (sock, chatId, msg, text) => {
   try {
     const args = text.split("|").map(item => item.trim());
-    const [, name, spawn, image_url, element, stat, type] = args;
+    const [name, spawn, image_url, element, stat, type] = args;
 
     if (!name || !spawn || !image_url || !stat) {
       return sock.sendMessage(chatId, { text: "Format input tidak valid. Pastikan semua parameter wajib terisi." }, { quoted: msg });
