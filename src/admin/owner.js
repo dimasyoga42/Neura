@@ -21,9 +21,12 @@ export const ownerControls = async (sock, chatId, msg, text) => {
     if (!isOwner(sock, msg, chatId)) return;
     handleBroadcast(sock, msg);
   }
-  if (text.startsWith("!setbos") || msg.message.imageMessage?.caption === "!bc") {
+  if (text.startsWith("!setbos")) {
     if (!isOwner(sock, msg, chatId)) return;
     setBos(sock, chatId, msg, text);
   }
-
+  if (text.startsWith("!setxtall")) {
+    if (!isOwner(sock, msg, chatId)) return;
+    setBos(sock, chatId, msg, text);
+  }
 }

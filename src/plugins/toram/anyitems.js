@@ -25,6 +25,68 @@ const parseStat = (stat) => {
   return result.length ? result.join("\n- ") : "-";
 };
 
+
+export const setxtall = async (sock, chatId, msg, text) => {
+  try {
+    const arg = text.split('-').map(v => v.trim())
+
+    const name = arg[1]
+    const upgrade = arg[2]
+    const type = arg[3]
+    const stat = arg[4]
+    const rute = arg[5]
+
+    // Validasi input
+    if (!name || !upgrade || !type || !stat || !rute) {
+      return sock.sendMessage(
+        chatId,
+        {
+          text: `Format salah!\nGunakan:\n!setxtall-nama-upgrade-type-stat-rute`
+        },
+        { quoted: msg }
+      )
+    }
+
+    const { error } = await supabase
+      .from('xtall')
+      .insert({
+        name: name,
+        upgrade: upgrade,
+        type: type,
+        stat: stat,
+        rute: rute
+      })
+
+    if (error) {
+      return sock.sendMessage(
+        chatId,
+        {
+          text: `Gagal menambahkan xtall:\n${error.message}`
+        },
+        { quoted: msg }
+      )
+    }
+
+    sock.sendMessage(
+      chatId,
+      {
+        text: `${name} berhasil ditambahkan`
+      },
+      { quoted: msg }
+    )
+
+  } catch (err) {
+    sock.sendMessage(
+      chatId,
+      {
+        text: `Terjadi error:\n${err.message}`
+      },
+      { quoted: msg }
+    )
+  }
+}
+
+
 export const searchXtall = async (sock, chatId, msg, text) => {
   try {
     const nama = text.replace("!xtall", "").trim();
