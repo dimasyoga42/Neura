@@ -71,6 +71,33 @@ ${toCodeBlock(boss.stat)}
   }
 }
 
+export const setBos = async (sock, chatId, msg, text) => {
+  try {
+    const args = text.split("|").map(item => item.trim());
+    const [, name, spawn, image_url, element, stat, type] = args;
+
+    if (!name || !spawn || !image_url || !stat) {
+      return sock.sendMessage(chatId, { text: "Format input tidak valid. Pastikan semua parameter wajib terisi." }, { quoted: msg });
+    }
+
+    const { data, error } = await supabase.from("bosdef").insert({
+      name,
+      type: type || "General",
+      image_url,
+      spawn,
+      element: element || "Neutral",
+      stat
+    });
+
+    if (error) throw error;
+
+    await sock.sendMessage(chatId, { text: `Data bos "${name}" berhasil ditambahkan ke database.` }, { quoted: msg });
+
+  } catch (error) {
+    console.error("Database Error:", error);
+    await sock.sendMessage(chatId, { text: "Terjadi kesalahan internal saat mencoba menyimpan data ke database." }, { quoted: msg });
+  }
+}
 
 export const listboss = async (sock, chatId, msg) => {
   try {

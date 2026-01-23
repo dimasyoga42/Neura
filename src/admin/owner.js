@@ -1,4 +1,5 @@
 import { ban, isOwner, unBan } from "../plugins/fitur/ban.js"
+import { setBos } from "../plugins/toram/bos.js";
 import { handleBroadcast } from "./bc.js";
 import { setNocoldown } from "./coldownChat.js";
 
@@ -20,4 +21,9 @@ export const ownerControls = async (sock, chatId, msg, text) => {
     if (!isOwner(sock, msg, chatId)) return;
     handleBroadcast(sock, msg);
   }
+  if (text.startsWith("!setbos") || msg.message.imageMessage?.caption === "!bc") {
+    if (!isOwner(sock, msg, chatId)) return;
+    setBos(sock, chatId, msg, text);
+  }
+
 }
