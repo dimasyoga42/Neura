@@ -285,6 +285,45 @@ DTE NEUTRAL
 ━━━━━━━━━━━━━━━━━━━━
 `.trim();
 
+export const setBuff = async (sock, chatId, msg, text) => {
+  try {
+    // Memisahkan string berdasarkan karakter pipa (|)
+    const args = text.split("|").map(item => item.trim());
+    const command = args[0];
+    const targetName = args[1];
+    const rawValue = args[2];
+
+    if (!targetName || !rawValue) {
+      return sock.sendMessage(chatId, {
+        text: "Format salah. Gunakan: !setbuff | nama_stat | nilai\nContoh: !setbuff | maxmp | 3060306\nnama stat kalian bisa lihat di !listbuff"
+      }, { quoted: msg });
+    }
+
+    const isPercent = rawValue.includes("%");
+    const numericValue = parseInt(rawValue.replace(/[^0-9-]/g, ""));
+
+
+    const buffData = {
+      val: numericValue,
+    };
+
+    // Melakukan pembaruan ke Supabase
+    const { data, error } = await supabase
+      .from("nama_tabel_anda") // Sesuaikan dengan nama tabel di gambar
+      .update({ code: buffData })
+      .eq("name", targetName.toLowerCase());
+
+    if (error) throw error;
+
+    await sock.sendMessage(chatId, {
+      text: `✅ Berhasil memperbarui buff *${targetName}*\nNilai: ${numericValue}${isPercent ? "%" : ""}\nFormat: JSON disimpan.`
+    }, { quoted: msg });
+
+  } catch (error) {
+    console.error("Error pada !setbuff:", error);
+    await sock.sendMessage(chatId, { text: "Terjadi kesalahan saat memperbarui database." }, { quoted: msg });
+  }
+};
 
 // ================= SEARCH FUNCTION =================
 export const searchBuff = (keyword) => {
