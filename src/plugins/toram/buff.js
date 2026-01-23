@@ -307,7 +307,7 @@ export const setBuff = async (sock, chatId, msg, text) => {
 
     if (fetchError && fetchError.code !== 'PGRST116') throw fetchError;
 
-    const newEntry = `numericValue: ${rawValue}`;
+    const newEntry = `${rawValue}`;
     let updatedCode;
 
     if (existingData && existingData.code) {
