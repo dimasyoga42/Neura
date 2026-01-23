@@ -1,3 +1,5 @@
+
+import { supabase } from "../../model/supabase.js"
 // ================= BUFF MESSAGE =================
 export const buffMessage = `
 Code buff
