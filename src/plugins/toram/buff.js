@@ -287,52 +287,61 @@ DTE NEUTRAL
 ━━━━━━━━━━━━━━━━━━━━
 `.trim();
 
+
 export const setBuff = async (sock, chatId, msg, text) => {
   try {
-    const args = text.split("|").map(item => item.trim());
-    const targetName = args[1]?.toLowerCase();
-    const rawValue = args[2];
+    const args = text.split("|").map(item => item.trim())
+    const targetName = args[1]?.toLowerCase()
+    const rawValue = args[2]
 
     if (!targetName || !rawValue) {
-      return sock.sendMessage(chatId, {
-        text: "Format salah. Gunakan: !setbuff | nama_stat | nilai"
-      }, { quoted: msg });
+      return sock.sendMessage(
+        chatId,
+        { text: "Format salah.\nGunakan: !setbuff | nama_stat | nilai" },
+        { quoted: msg }
+      )
     }
 
-    const { data: existingData, error: fetchError } = await supabase
+    const { data, error } = await supabase
       .from("buff")
       .select("code")
       .eq("name", targetName)
-      .single();
+      .single()
 
-    if (fetchError && fetchError.code !== 'PGRST116') throw fetchError;
-
-    const newEntry = `${rawValue}`;
-    let updatedCode;
-
-    if (existingData && existingData.code) {
-      updatedCode = `${existingData.code}\n${newEntry}`;
-    } else {
-      updatedCode = newEntry;
+    if (error) {
+      return sock.sendMessage(
+        chatId,
+        { text: `Buff *${targetName}* tidak ditemukan.` },
+        { quoted: msg }
+      )
     }
+
+    const updatedCode = data.code
+      ? `${data.code}\n${rawValue}`
+      : rawValue
 
     const { error: updateError } = await supabase
       .from("buff")
       .update({ code: updatedCode })
-      .eq("name", targetName);
+      .eq("name", targetName)
 
-    if (updateError) throw updateError;
+    if (updateError) throw updateError
 
-    await sock.sendMessage(chatId, {
-      text: "Data berhasil ditambahkan ke baris baru."
-    }, { quoted: msg });
+    await sock.sendMessage(
+      chatId,
+      { text: `Buff *${targetName}* berhasil ditambahkan.` },
+      { quoted: msg }
+    )
 
   } catch (error) {
-    console.error(error);
-    await sock.sendMessage(chatId, { text: "Gagal memperbarui database." }, { quoted: msg });
+    console.error(error)
+    await sock.sendMessage(
+      chatId,
+      { text: "Gagal menambahkan buff." },
+      { quoted: msg }
+    )
   }
-};
-
+}
 
 export const getAllBuff = async (sock, chatId, msg) => {
   try {
@@ -346,12 +355,11 @@ export const getAllBuff = async (sock, chatId, msg) => {
     }
 
     if (!data || data.length === 0) {
-      sock.sendMessage(
+      return sock.sendMessage(
         chatId,
         { text: "Data buff kosong." },
         { quoted: msg }
       )
-      return
     }
 
     const msgtext = data
