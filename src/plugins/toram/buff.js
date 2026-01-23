@@ -289,41 +289,47 @@ DTE NEUTRAL
 
 export const setBuff = async (sock, chatId, msg, text) => {
   try {
-    // Memisahkan string berdasarkan karakter pipa (|)
     const args = text.split("|").map(item => item.trim());
-    const command = args[0];
-    const targetName = args[1];
+    const targetName = args[1]?.toLowerCase();
     const rawValue = args[2];
 
     if (!targetName || !rawValue) {
       return sock.sendMessage(chatId, {
-        text: "Format salah. Gunakan: !setbuff | nama_stat | nilai\nContoh: !setbuff | maxmp | 3060306\nnama stat kalian bisa lihat di !listbuff"
+        text: "Format salah. Gunakan: !setbuff | nama_stat | nilai"
       }, { quoted: msg });
     }
 
-    const isPercent = rawValue.includes("%");
-    const numericValue = parseInt(rawValue.replace(/[^0-9-]/g, ""));
+    const { data: existingData, error: fetchError } = await supabase
+      .from("buff")
+      .select("code")
+      .eq("name", targetName)
+      .single();
 
+    if (fetchError && fetchError.code !== 'PGRST116') throw fetchError;
 
-    const buffData = {
-      numericValue,
-    };
+    const newEntry = `numericValue: ${rawValue}`;
+    let updatedCode;
 
-    // Melakukan pembaruan ke Supabase
-    const { data, error } = await supabase
-      .from("buff") // Sesuaikan dengan nama tabel di gambar
-      .update({ code: buffData })
-      .eq("name", targetName.toLowerCase());
+    if (existingData && existingData.code) {
+      updatedCode = `${existingData.code}\n${newEntry}`;
+    } else {
+      updatedCode = newEntry;
+    }
 
-    if (error) throw error;
+    const { error: updateError } = await supabase
+      .from("buff")
+      .update({ code: updatedCode })
+      .eq("name", targetName);
+
+    if (updateError) throw updateError;
 
     await sock.sendMessage(chatId, {
-      text: `✅ Berhasil memperbarui buff *${targetName}*\nNilai: ${numericValue}${isPercent ? "%" : ""}\nFormat: JSON disimpan.`
+      text: "Data berhasil ditambahkan ke baris baru."
     }, { quoted: msg });
 
   } catch (error) {
-    console.error("Error pada !setbuff:", error);
-    await sock.sendMessage(chatId, { text: "Terjadi kesalahan saat memperbarui database." }, { quoted: msg });
+    console.error(error);
+    await sock.sendMessage(chatId, { text: "Gagal memperbarui database." }, { quoted: msg });
   }
 };
 
