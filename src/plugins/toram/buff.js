@@ -306,7 +306,7 @@ export const setBuff = async (sock, chatId, msg, text) => {
 
 
     const buffData = {
-      val: numericValue,
+      numericValue,
     };
 
     // Melakukan pembaruan ke Supabase
