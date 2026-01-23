@@ -309,7 +309,7 @@ export const setBuff = async (sock, chatId, msg, text) => {
 
     // Melakukan pembaruan ke Supabase
     const { data, error } = await supabase
-      .from("nama_tabel_anda") // Sesuaikan dengan nama tabel di gambar
+      .from("buff") // Sesuaikan dengan nama tabel di gambar
       .update({ code: buffData })
       .eq("name", targetName.toLowerCase());
 
