@@ -367,11 +367,11 @@ export const getAllBuff = async (sock, chatId, msg, text) => {
         )
       }
 
-      const msgtext = `*${data.name}*\n${data.code}\n> gunakan !setidbuff untuk menambahkan code buff mu kedalam database neura`
+      const msgtext = `*${data.name}*\n${data.code}\n`
 
       return await sock.sendMessage(
         chatId,
-        { text: msgtext },
+        { text: `${msgtext}\n> gunakan !setidbuff unuk menambahkan code buff mu kedalam database neura` },
         { quoted: msg }
       )
     }
@@ -395,13 +395,13 @@ export const getAllBuff = async (sock, chatId, msg, text) => {
 
     const msgtext = data
       .map((item, i) => {
-        return `*${item.name}*\n${item.code}\n> gunakan !setidbuff unuk menambahkan code mu ke dalam database Neura`
+        return `*${item.name}*\n${item.code}`
       })
       .join("\n")
 
     await sock.sendMessage(
       chatId,
-      { text: msgtext },
+      { text: `${msgtext}\n> gunakan !setidbuff untuk menambahkan code kedalam database neura` },
       { quoted: msg }
     )
 
