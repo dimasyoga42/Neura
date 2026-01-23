@@ -333,6 +333,45 @@ export const setBuff = async (sock, chatId, msg, text) => {
   }
 };
 
+
+export const getAllBuff = async (sock, chatId, msg) => {
+  try {
+    const { data, error } = await supabase
+      .from("buff")
+      .select("*")
+
+    if (error) {
+      console.error(error)
+      return
+    }
+
+    if (!data || data.length === 0) {
+      sock.sendMessage(
+        chatId,
+        { text: "Data buff kosong." },
+        { quoted: msg }
+      )
+      return
+    }
+
+    const msgtext = data
+      .map((item, i) => {
+        return `*${i + 1}. ${item.name}*\n${item.code}`
+      })
+      .join("\n\n")
+
+    await sock.sendMessage(
+      chatId,
+      { text: msgtext },
+      { quoted: msg }
+    )
+
+  } catch (rrr) {
+    console.error(rrr)
+  }
+}
+
+
 // ================= SEARCH FUNCTION =================
 export const searchBuff = (keyword) => {
   if (!keyword) return null;

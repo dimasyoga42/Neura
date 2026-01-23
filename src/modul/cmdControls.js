@@ -29,7 +29,7 @@ import { autoGempa } from "../plugins/vip/tools/bmkg.js";
 import { listSkill, skill } from "../plugins/toram/skill.js";
 import { Spotifysearch } from "../plugins/vip/downloader/spotify.js";
 import { bosboost } from "../plugins/toram/boost.js";
-import { buff, setBuff } from "../plugins/toram/buff.js";
+import { buff, getAllBuff, setBuff } from "../plugins/toram/buff.js";
 import { searchMonster } from "../plugins/toram/monster.js";
 import { pet } from "../plugins/toram/pet.js";
 import { spmadv } from "../plugins/toram/adv.js";
@@ -381,7 +381,10 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     setBuff(sock, chatId, msg, text);
   }
 
-
+  if (text.startsWith("!buffs")) {
+    if (isBan(sock, chatId, msg)) return;
+    getAllBuff(sock, chatId, msg);
+  }
 
 
 
