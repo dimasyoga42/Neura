@@ -212,7 +212,8 @@ website official Neura: https://neuraarchive.vercel.app/
 - !listskill 
 - !ability 
 - !skill 
-- !buff 
+- !buff
+- !setidbuff
 - !pembolong
 - !bos 
 - !monster 

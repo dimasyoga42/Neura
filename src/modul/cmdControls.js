@@ -46,7 +46,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   }
   if (text.startsWith("!buff")) {
     if (isBan(sock, chatId, msg)) return;
-    buff(sock, chatId, msg, text);
+    getAllBuff(sock, chatId, msg, text)
   }
 
 
@@ -379,11 +379,6 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!setidbuff")) {
     if (isBan(sock, chatId, msg)) return;
     setBuff(sock, chatId, msg, text);
-  }
-
-  if (text.startsWith("!buffs")) {
-    if (isBan(sock, chatId, msg)) return;
-    getAllBuff(sock, chatId, msg);
   }
 
 

@@ -343,8 +343,39 @@ export const setBuff = async (sock, chatId, msg, text) => {
   }
 }
 
-export const getAllBuff = async (sock, chatId, msg) => {
+
+export const getAllBuff = async (sock, chatId, msg, text) => {
   try {
+    const args = text
+      ? text.split("|").map(item => item.trim())
+      : []
+
+    const targetName = args[1]?.toLowerCase()
+
+    if (targetName) {
+      const { data, error } = await supabase
+        .from("buff")
+        .select("name, code")
+        .eq("name", targetName)
+        .single()
+
+      if (error || !data) {
+        return sock.sendMessage(
+          chatId,
+          { text: `Buff *${targetName}* tidak ditemukan.` },
+          { quoted: msg }
+        )
+      }
+
+      const msgtext = `*${data.name}*\n${data.code}\n> gunakan !setidbuff untuk menambahkan code buff mu kedalam database neura`
+
+      return await sock.sendMessage(
+        chatId,
+        { text: msgtext },
+        { quoted: msg }
+      )
+    }
+
     const { data, error } = await supabase
       .from("buff")
       .select("*")
@@ -364,9 +395,9 @@ export const getAllBuff = async (sock, chatId, msg) => {
 
     const msgtext = data
       .map((item, i) => {
-        return `*${i + 1}. ${item.name}*\n${item.code}`
+        return `*${item.name}*\n${item.code}\n> gunakan !setidbuff unuk menambahkan code mu ke dalam database Neura`
       })
-      .join("\n\n")
+      .join("\n")
 
     await sock.sendMessage(
       chatId,
@@ -374,8 +405,13 @@ export const getAllBuff = async (sock, chatId, msg) => {
       { quoted: msg }
     )
 
-  } catch (rrr) {
-    console.error(rrr)
+  } catch (error) {
+    console.error(error)
+    await sock.sendMessage(
+      chatId,
+      { text: "Gagal mengambil data buff." },
+      { quoted: msg }
+    )
   }
 }
 
