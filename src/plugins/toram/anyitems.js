@@ -148,11 +148,12 @@ Rute: ${xtall.route}
     );
   }
 };
+
 export const Xtall = async (sock, chatId, msg) => {
   try {
     const { data, error } = await supabase
       .from("xtall")
-      .select("name")
+      .select("name");
 
     if (error) {
       console.log(error);
@@ -163,13 +164,19 @@ export const Xtall = async (sock, chatId, msg) => {
       );
     }
 
-
+    if (!data || data.length === 0) {
+      return sock.sendMessage(
+        chatId,
+        { text: "Data xtall masih kosong" },
+        { quoted: msg }
+      );
+    }
 
     const messageData = `
 *LIST XTALL (${data.length})*
-${data.map((xtall, i) => `
-${i + 1}. ${xtall.name}
-`)}
+${data
+        .map((xtall, i) => `${i + 1}. ${xtall.name}`)
+        .join("\n")}
 `.trim();
 
     await sock.sendMessage(
@@ -187,6 +194,7 @@ ${i + 1}. ${xtall.name}
     );
   }
 };
+
 
 
 export const searchRegist = async (sock, chatId, msg, text) => {
