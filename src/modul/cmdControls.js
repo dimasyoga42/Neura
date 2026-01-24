@@ -39,6 +39,7 @@ import { liveStream } from "../plugins/toram/live.js";
 import { farm } from "../plugins/toram/farm.js";
 import { khodam } from "../plugins/vip/tools/khodam.js";
 import { searchHdb } from "../plugins/toram/hdb.js";
+import { lvl } from "../plugins/toram/lvl.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!menu")) {
     if (isBan(sock, chatId, msg)) return;
@@ -98,7 +99,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   }
   if (text.startsWith("!lv")) {
     if (isBan(sock, chatId, msg)) return;
-    leveling(sock, chatId, msg, text);
+    lvl(sock, chatId, msg, text);
   }
 
   if (text.startsWith("!bos")) {
