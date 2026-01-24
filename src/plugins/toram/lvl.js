@@ -21,27 +21,35 @@ export const lvl = async (sock, chatId, msg, text) => {
     const $ = cheerio.load(html)
 
     let result = `Leveling Info untuk Level ${lv}\n\n`
+    let found = false
 
-    // Ambil hanya section Boss
-    const bossSection = $('h3:contains("Boss")').parent()
+    // Cari semua div dengan class table-grid item-leveling
+    $('.table-grid.item-leveling').each((idx, table) => {
+      const heading = $(table).find('h3').text().trim()
 
-    if (bossSection.length > 0) {
-      result += "BOSS\n"
+      // Hanya ambil yang Boss
+      if (heading === 'Boss') {
+        result += "BOSS\n\n"
 
-      bossSection.find('.level-row').each((i, element) => {
-        const level = $(element).find('.level-col-1 b').text().trim()
-        const name = $(element).find('.level-col-2 b a').text().trim()
-        const location = $(element).find('.level-col-2 p:nth-child(2)').text().trim()
-        const exp = $(element).find('.level-col-3 p:first b').text().trim()
+        $(table).find('.level-row').each((i, row) => {
+          const level = $(row).find('.level-col-1 b').text().trim()
+          const name = $(row).find('.level-col-2 b a').text().trim()
+          const location = $(row).find('.level-col-2 p').eq(1).text().trim()
+          const expElement = $(row).find('.level-col-3 p b').first()
+          const exp = expElement.text().trim()
 
-        if (name && exp) {
-          result += `${level} - ${name}\n`
-          result += `Lokasi: ${location}\n`
-          result += `EXP: ${exp}\n\n`
-        }
-      })
-    } else {
-      result += "Tidak ada Boss untuk level ini\n"
+          if (name && exp) {
+            found = true
+            result += `${level} - ${name}\n`
+            result += `${location}\n`
+            result += `${exp}\n\n`
+          }
+        })
+      }
+    })
+
+    if (!found) {
+      result += "Tidak ada Boss untuk level ini"
     }
 
     await sock.sendMessage(chatId, { text: result }, { quoted: msg })
@@ -49,7 +57,7 @@ export const lvl = async (sock, chatId, msg, text) => {
   } catch (err) {
     console.error("Error:", err)
     await sock.sendMessage(chatId, {
-      text: "Terjadi error saat mengambil data leveling. Pastikan level yang Anda masukkan valid."
+      text: "Terjadi error saat mengambil data leveling."
     }, { quoted: msg })
   }
 }
