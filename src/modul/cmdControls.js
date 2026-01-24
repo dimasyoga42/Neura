@@ -15,7 +15,7 @@ import { cekProfile, myBio, myProfile, setDesc, setidBuff, setPP } from "../plug
 import { getNews, setNews } from "../plugins/sosial/news.js";
 import { qc } from "../plugins/sosial/qc.js";
 import { getRules, setrules } from "../plugins/sosial/rules.js";
-import { ability, searchAbility, searchApp, searchItem, searchRegist, searchXtall } from "../plugins/toram/anyitems.js";
+import { ability, searchAbility, searchApp, searchItem, searchRegist, searchXtall, Xtall } from "../plugins/toram/anyitems.js";
 import Bossdef, { listboss } from "../plugins/toram/bos.js";
 import { dyePredictor } from "../plugins/toram/dye.js";
 import { leveling } from "../plugins/toram/lv.js";
@@ -307,7 +307,10 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     listSkill(sock, chatId, msg)
   }
-
+  if (text.startsWith("!listxtall")) {
+    if (isBan(sock, chatId, msg)) return;
+    Xtall(sock, chatId, msg)
+  }
   if (text.startsWith("!husbu")) {
     if (isBan(sock, chatId, msg)) return;
     husbu(sock, chatId, msg)

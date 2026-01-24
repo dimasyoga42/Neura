@@ -148,7 +148,45 @@ Rute: ${xtall.route}
     );
   }
 };
+export const Xtall = async (sock, chatId, msg) => {
+  try {
+    const { data, error } = await supabase
+      .from("xtall")
+      .select("name")
 
+    if (error) {
+      console.log(error);
+      return sock.sendMessage(
+        chatId,
+        { text: "Internal server error" },
+        { quoted: msg }
+      );
+    }
+
+
+
+    const messageData = `
+*LIST XTALL (${data.length})*
+${data.map((xtall, i) => `
+${i + 1}. ${xtall.name}
+`).join("\n")}
+`.trim();
+
+    await sock.sendMessage(
+      chatId,
+      { text: messageData },
+      { quoted: msg }
+    );
+
+  } catch (err) {
+    console.log(err);
+    await sock.sendMessage(
+      chatId,
+      { text: "Terjadi kesalahan" },
+      { quoted: msg }
+    );
+  }
+};
 
 
 export const searchRegist = async (sock, chatId, msg, text) => {

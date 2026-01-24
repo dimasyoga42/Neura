@@ -186,7 +186,7 @@ website official Neura: https://neuraarchive.vercel.app/
 - !toramlive
 - !shdb
 - !mq
-
+- !listxtall
 *Guide Toram*
 - !pet 
 - !listfarm
