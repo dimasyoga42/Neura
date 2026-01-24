@@ -169,7 +169,7 @@ export const Xtall = async (sock, chatId, msg) => {
 *LIST XTALL (${data.length})*
 ${data.map((xtall, i) => `
 ${i + 1}. ${xtall.name}
-`).join("\n")}
+`)}
 `.trim();
 
     await sock.sendMessage(
