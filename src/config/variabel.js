@@ -15,34 +15,34 @@ export const guide = {
 export const xsubMenu = {
   menuadmin: `
 *Menu Admin By Neura Sama*
-- !kick 
-- !open 
-- !close 
-- !setnews 
-- !setrules 
-- !clear 
-- !hidetag 
+- !kick
+- !open
+- !close
+- !setnews
+- !setrules
+- !clear
+- !hidetag
 - !creatraid
-- !setwc 
+- !setwc
   `.trim(),
   menutoram: `
 *Menu Toram By Neura Sama*
 - !xtall <nama xtall>
 - !item <nama item>
 - !appview <nama app>
-- !benner 
+- !benner
 - !lv <level>
-- !buff 
+- !buff
 - !ability <nama ability>
-- !mt 
+- !mt
 - !regist <nama regist>
 - !bos <nama bos>
-- !filarm 
+- !filarm
 - !sheetfill
-- !upbag 
+- !upbag
 - !listleveling
-- !raid 
-- !join 
+- !raid
+- !join
 - !leave
 - !pembolong
 - !padu
@@ -52,8 +52,8 @@ export const xsubMenu = {
   `.trim(),
   menufun: `
   *Menu fun By Neura Sama*
-  - !caklontong 
-  - !tebakgambar 
+  - !caklontong
+  - !tebakgambar
   - !waifu
   - !husbu
   - !cek
@@ -61,7 +61,7 @@ export const xsubMenu = {
   `.trim(),
   menutools: `
   *Menu Tools By Neura Sama*
-  - !stiker 
+  - !stiker
   - !play <title music>
   - !ytmp3 <link yt>
   - !pinterest <any txt>
@@ -69,13 +69,13 @@ export const xsubMenu = {
   `.trim(),
   menugrub: `
 *Menu Grub By Neura Sama*
-- !profil 
-- !mybio 
+- !profil
+- !mybio
 - !setdesc <text>
-- !setpp 
-- !rules 
-- !raid 
-- !setbuff <code> 
+- !setpp
+- !rules
+- !raid
+- !setbuff <code>
 - !afk <any text>
 - !gempa
   `.trim()
@@ -113,39 +113,39 @@ export const menuMessage = `
 vps exp: 20 febuari 2026
 donate: https://sociabuzz.com/neurabot/tribe
 komunitas: https://whatsapp.com/channel/0029VbAmhBF7z4kjOQcoVV0A
-website official Neura: https://neuraarchive.vercel.app/
+website official Neura: https://neuraaa.vercel.app/
 *Rules Bot:*
 - gunakan bot sewajarnya jangan spam
-- dilarang membuat stiker jamok / vulgar / mesum 
+- dilarang membuat stiker jamok / vulgar / mesum
 - jika ingin request fitur gunakan !report <request>
 
 *info*
 - !report <any req / bug report>
-- !donet 
+- !donet
 
 *Sub Menu*
-- !menuadmin 
-- !menutoram 
-- !menufun 
+- !menuadmin
+- !menutoram
+- !menufun
 - !menutools
 
 *Menu Admin*
-- !kick 
-- !open 
-- !close 
-- !setnews 
-- !setrules 
-- !clear 
-- !hidetag 
-- !createraid 
-- !setwc 
+- !kick
+- !open
+- !close
+- !setnews
+- !setrules
+- !clear
+- !hidetag
+- !createraid
+- !setwc
 
 *Menu Tools*
-- !stiker 
-- !play 
+- !stiker
+- !play
 - !spotify
-- !ytmp3 
-- !pinterest 
+- !ytmp3
+- !pinterest
 - !qc
 - !brat (coming soon)
 - !mix (coming soon)
@@ -159,8 +159,8 @@ website official Neura: https://neuraarchive.vercel.app/
 - !ffstalk
 
 *Menu Fun*
-- !caklontong 
-- !tebakgambar 
+- !caklontong
+- !tebakgambar
 - !waifu
 - !husbu
 - !khodam
@@ -168,56 +168,56 @@ website official Neura: https://neuraarchive.vercel.app/
 - !j <answer>
 
 *Menu Grub*
-- !profil 
-- !mybio 
-- !setdesc 
-- !setpp 
-- !rules 
-- !raid 
-- !setbuff  
-- !afk 
+- !profil
+- !mybio
+- !setdesc
+- !setpp
+- !rules
+- !raid
+- !setbuff
+- !afk
 - !gempa
 
 *Info Toram*
-- !torambanner 
+- !torambanner
 - !toramboost
 - !dye
-- !torammt 
+- !torammt
 - !toramlive
 - !shdb
 - !mq
 - !listxtall
 *Guide Toram*
-- !pet 
+- !pet
 - !listfarm
 
 *Raid Fitur*
 - !createraid
-- !join 
-- !leave 
-- !clear 
-- !raid 
+- !join
+- !leave
+- !clear
+- !raid
 
 *tools Toram*
 - !filarm
-- !xtall 
-- !lv 
-- !regist 
-- !item 
-- !appview 
+- !xtall
+- !lv
+- !regist
+- !item
+- !appview
 - !spamadv
 
 *Info Toram*
-- !listability 
-- !listskill 
-- !ability 
-- !skill 
+- !listability
+- !listskill
+- !ability
+- !skill
 - !buff
 - !setidbuff
 - !pembolong
-- !bos 
-- !monster 
-- !upbag 
+- !bos
+- !monster
+- !upbag
 - !padu
 - !listLeveling
 - !sheetfill
@@ -280,15 +280,15 @@ Code buff\n> by Neura Bot
 - 4040088
 - 1016969
 
-ATK 
+ATK
 - 1119876
 - 7170717
 
-MATK 
+MATK
 - 1024649
 - 1021684 Lv 9
 
-STR 
+STR
 - 1010055
 - 1010968
 - 1011069
@@ -304,60 +304,60 @@ STR
 - 1026234
 
 
-DEX 
-- 2020222 
-- 1010058 
-- 5010031 
-- 4084545 
-- 1010058 
-- 5010092 
-- 1010106 
-- 7011001 
+DEX
+- 2020222
+- 1010058
+- 5010031
+- 4084545
+- 1010058
+- 5010092
+- 1010106
+- 7011001
 - 3111999
 - 3220777
 - 7012899
 
-INT 
-- 2020707 
-- 6061294 
-- 1010489 
-- 6010701 
-- 1032222 
+INT
+- 2020707
+- 6061294
+- 1010489
+- 6010701
+- 1032222
 - 1010140
 - 1010498
 - 1047777
 - 2020707
 - 7012899
 
-AGI 
+AGI
 - 1220777
 - 2020037
 - 4262222
 - 2010750
 
-VIT 
+VIT
 - 5130123 Lv 9
 - 2020909 Lv 9
 - 4032850
 
-CRITICAL RATE 
-- 1069927 
-- 1012000 
-- 1010433 
-- 3020108 
-- 6065000 
-- 7162029 
-- 6022292 
-- 1200069 
-- 1010006 
-- 1010092 
-- 1010017 
-- 1010050 
-- 1011010 
-- 1012000 
-- 1100000 
+CRITICAL RATE
+- 1069927
+- 1012000
+- 1010433
+- 3020108
+- 6065000
+- 7162029
+- 6022292
+- 1200069
+- 1010006
+- 1010092
+- 1010017
+- 1010050
+- 1011010
+- 1012000
+- 1100000
 
-ACCURACY 
+ACCURACY
 - 4261111
 - 1010013 Lv 9
 - 7010077 Lv 9
@@ -368,70 +368,70 @@ WEAPON ATK
 - 1011122
 - 1180020
 - 2020404
-- 1010029 
-- 1010099 
-- 6010024 
-- 1011126 
-- 2020404 
-- 2010136 
-- 7050301 
-- 1010810 
-- 3081024 
+- 1010029
+- 1010099
+- 6010024
+- 1011126
+- 2020404
+- 2010136
+- 7050301
+- 1010810
+- 3081024
 
--AGGRO 
-- 1010147 
-- 1016646 
-- 6010009 
-- 3010018 
-- 1010038 
-- 1010002 
+-AGGRO
+- 1010147
+- 1016646
+- 6010009
+- 3010018
+- 1010038
+- 1010002
 
-+AGGRO 
-- 6262000 
-- 1010207 
-- 3204544 
-- 3158668 
-- 1016646 
-- 1264321 
-- 2020606 
-- 3053131 
-- 1010297 
-- 1140002 
-- 3030110 
-- 7171717 
-- 3030110 
++AGGRO
+- 6262000
+- 1010207
+- 3204544
+- 3158668
+- 1016646
+- 1264321
+- 2020606
+- 3053131
+- 1010297
+- 1140002
+- 3030110
+- 7171717
+- 3030110
 
-PHYSICAL RESIST 
-- 3010034 
-- 7010014 
+PHYSICAL RESIST
+- 3010034
+- 7010014
 - 6011415 Lv 9
 - 4200069 Lv 9
 - 6010701 Lv 9
 - 1018989 Lv 9
 - 3011999 Lv 9
-- 1020001 
-- 1010081 
-- 1100000 
+- 1020001
+- 1010081
+- 1100000
 
-MAGICAL RESIST 
-- 1111575 
-- 2020505 
-- 5200052 
-- 1010004 
-- 7010016 
-- 7030023 
+MAGICAL RESIST
+- 1111575
+- 2020505
+- 5200052
+- 1010004
+- 7010016
+- 7030023
 - 1100002 Lv 9
 - 4080087 Lv 9
 - 7227777 Lv 9
 
-FRACTIONAL BARRIER 
+FRACTIONAL BARRIER
 - 1222002 Lv 8
 - 6181999 Lv 8
 - 6010062 Lv 8
 - 6010062 Lv 8
 - 7010082 Lv 10
 
-DTE FIRE 
+DTE FIRE
 - 7088807 Lv 9
 - 3210106 Lv 9
 - 7011001 Lv 8
@@ -439,7 +439,7 @@ DTE FIRE
 - 1012610 Lv 7
 - 2010091 Lv 6
 
-DTE WATER 
+DTE WATER
 - 1023844 Lv 7
 - 3010018 Lv 7
 - 1110007 Lv 7
@@ -453,7 +453,7 @@ DTE WATER
 - 6070013 Lv 7
 - 1010067 Lv 7
 
-DTE EARTH 
+DTE EARTH
 - 3210103 Lv 10
 - 2020202 Lv 9
 - 1010216 Lv 8
@@ -467,7 +467,7 @@ DTE EARTH
 - 1010002 Lv 6
 - 5236969 Lv 6
 
-DTE WIND 
+DTE WIND
 - 1010055 Lv 7
 - 3210101 Lv 9
 - 3030303 Lv 8
@@ -475,13 +475,13 @@ DTE WIND
 - 1010055 Lv 7
 - 4099876 Lv 7
 
-DTE LIGHT 
+DTE LIGHT
 - 3210105 Lv 10
 - 1020345 Lv 9
 - 4046666 Lv 8
 - 4016699 Lv 6
 
-DTE DARK 
+DTE DARK
 - 1020345 Lv 9
 - 3210106 Lv 9
 - 5010092 Lv 9
@@ -495,12 +495,12 @@ DTE DARK
 - 3210104 Lv 10
 - 3210105 Lv 9
 
-DROP RATE 
+DROP RATE
 - 1010084 Lv 6
 - 4196969 Lv 6
 - 4196969 Lv 6
 
-DTE NEUTRAL 
+DTE NEUTRAL
 - 3210102 Lv 10
 - 3099876 Lv 7
 - 1011902 Lv 7
@@ -984,9 +984,9 @@ A magic attack based on MATK. Chance to inflict [Armor Break] on target.
 *Menghitung Max Level Fusion*
 Rumus: (Pet A + Pet B) : 2 + 1
 contoh kita memiliki pet a berlevel 47 dan pet b berlevel 77
-jika menggunakan rumus maka 
-(47 + 77):2 +1 = 124 : 2 + 1 = 62 + 1 = 63 
-maka max Level dari fusion kedua pet tersebut adalah 63 
+jika menggunakan rumus maka
+(47 + 77):2 +1 = 124 : 2 + 1 = 62 + 1 = 63
+maka max Level dari fusion kedua pet tersebut adalah 63
 `.trim(),
   trainingPet: `
   *Training Pet By Neura Sama*
