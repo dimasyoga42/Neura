@@ -147,7 +147,7 @@ website official Neura: https://neuraaa.vercel.app/
 - !ytmp3
 - !pinterest
 - !qc
-- !brat (coming soon)
+- !brat
 - !mix (coming soon)
 - !hd
 - !remini (replay foto)
@@ -212,7 +212,7 @@ website official Neura: https://neuraaa.vercel.app/
 - !listskill
 - !ability
 - !skill
-- !buff
+- !Buff
 - !setidbuff
 - !pembolong
 - !bos

@@ -40,12 +40,13 @@ import { farm } from "../plugins/toram/farm.js";
 import { khodam } from "../plugins/vip/tools/khodam.js";
 import { searchHdb } from "../plugins/toram/hdb.js";
 import { lvl } from "../plugins/toram/lvl.js";
+import { brat } from "../plugins/vip/tools/brat.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!menu")) {
     if (isBan(sock, chatId, msg)) return;
     setMenu(sock, chatId, msg, text);
   }
-  if (text.startsWith("!buff")) {
+  if (text.startsWith("!Buff")) {
     if (isBan(sock, chatId, msg)) return;
     getAllBuff(sock, chatId, msg, text)
   }
@@ -383,6 +384,10 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!setidbuff")) {
     if (isBan(sock, chatId, msg)) return;
     setBuff(sock, chatId, msg, text);
+  }
+  if (text.startsWith("!brat")) {
+    if (isBan(sock, chatId, msg)) return;
+    brat(sock, chatId, msg, text);
   }
 
 
