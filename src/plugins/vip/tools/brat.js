@@ -1,4 +1,4 @@
-import Sticker from "wa-sticker-formatter";
+import { Sticker } from "wa-sticker-formatter";
 
 export const brat = async (sock, chatId, msg, text) => {
   try {
@@ -15,8 +15,8 @@ export const brat = async (sock, chatId, msg, text) => {
     const lnk = `https://api.deline.web.id/maker/brat?text=${encodeURIComponent(cx)}`;
 
     const sticker = new Sticker(lnk, {
-      pack: "Neura",
-      author: "Neura Sama",
+      pack: "Brat Sticker",
+      author: "Neura Bot",
       type: "full",
       quality: 80
     });
@@ -33,7 +33,7 @@ export const brat = async (sock, chatId, msg, text) => {
     console.error(error);
     await sock.sendMessage(
       chatId,
-      { text: "terjadi error saat membuat sticker" },
+      { text: "error saat membuat sticker" },
       { quoted: msg }
     );
   }
