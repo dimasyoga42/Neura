@@ -165,6 +165,7 @@ website official Neura: https://neuraaa.vercel.app/
 - !husbu
 - !khodam
 - !cek
+- !artinama
 - !j <answer>
 
 *Menu Grub*

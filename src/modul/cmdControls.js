@@ -42,6 +42,7 @@ import { searchHdb } from "../plugins/toram/hdb.js";
 import { lvl } from "../plugins/toram/lvl.js";
 import { brat } from "../plugins/vip/tools/brat.js";
 import { mix } from "../plugins/vip/tools/mix.js";
+import { artiNama } from "../plugins/vip/tools/prim.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!menu")) {
     if (isBan(sock, chatId, msg)) return;
@@ -393,6 +394,10 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!mix")) {
     if (isBan(sock, chatId, msg)) return;
     mix(sock, chatId, msg, text);
+  }
+  if (text.startsWith("!artinama")) {
+    if (isBan(sock, chatId, msg)) return;
+    artiNama(sock, chatId, msg, text);
   }
 
 
