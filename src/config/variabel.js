@@ -148,7 +148,7 @@ website official Neura: https://neuraaa.vercel.app/
 - !pinterest
 - !qc
 - !brat
-- !mix (coming soon)
+- !mix
 - !hd
 - !remini (replay foto)
 
