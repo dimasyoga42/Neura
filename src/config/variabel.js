@@ -619,7 +619,7 @@ cara penggunaan nya:
 
 
 export const messagePembolong = `
-*extract*: 3 - 4M
+*extract*: 4 - 5M
 
 *OHS*
 0-1: 10-20M
@@ -631,14 +631,17 @@ export const messagePembolong = `
 
 *STAFF*
 1-2: 100-150M
+
 *MD*
+0-1 10-15M
+1-2 40-60M
 
 *KTN*
 
 *2H*
 
 *HB*
-0-1 10-20M
+0-1 15-20M
 
 leg ornament: 700M
 leg silk: 1B++
