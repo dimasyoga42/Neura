@@ -12,35 +12,42 @@ export const setMenu = async (sock, chatId, msg, text) => {
     }
 
     // Fetch data dari supabase dengan error handling
-    const fetchData = async (table, column = "name") => {
+    const fetchCount = async (table, column = "name") => {
       try {
-        const { data, error } = await supabase.from(table).select(column)
+        const { count, error } = await supabase
+          .from(table)
+          .select(column, { count: 'exact', head: true })
+
         if (error) throw error
-        return data || []
+        return count || 0
       } catch (err) {
-        console.error(`Error fetching ${table}:`, err)
-        return []
+        console.error(`Error fetching count from ${table}:`, err)
+        return 0
       }
     }
 
-    // Fetch semua data secara parallel
+    // Fetch semua count secara parallel
     const [
-      bosdefData,
-      appviewData,
-      monsterData,
-      xtalData,
-      abilityData,
-      itemData,
-      registData
+      bosdefCount,
+      appviewCount,
+      monsterCount,
+      xtalCount,
+      abilityCount,
+      itemCount,
+      registCount
     ] = await Promise.all([
-      fetchData("bosdef"),
-      fetchData("appview"),
-      fetchData("monster"),
-      fetchData("xtall"),
-      fetchData("ability"),
-      fetchData("item", "nama"),
-      fetchData("regist")
+      fetchCount("bosdef"),
+      fetchCount("appview"),
+      fetchCount("monster"),
+      fetchCount("xtall"),
+      fetchCount("ability"),
+      fetchCount("item", "nama"),
+      fetchCount("regist")
     ])
+
+    // Hitung total semua data
+    const totalData = bosdefCount + appviewCount + monsterCount + xtalCount +
+      abilityCount + itemCount + registCount
 
     // Get user info
     const user = msg.key.participant || msg.key.remoteJid
@@ -67,13 +74,15 @@ export const setMenu = async (sock, chatId, msg, text) => {
       return sock.sendMessage(chatId, {
         text: `
 *Database Statistik*
-📊 Data Boss: ${bosdefData.length}
-📱 Data AppView: ${appviewData.length}
-👹 Data Monster: ${monsterData.length}
-💎 Data Xtal: ${xtalData.length}
-📝 Data Regist: ${registData.length}
-🎒 Data Items: ${itemData.length}
-⚡ Data Ability: ${abilityData.length}
+ Data Boss: ${bosdefCount.toLocaleString()}
+ Data AppView: ${appviewCount.toLocaleString()}
+ Data Monster: ${monsterCount.toLocaleString()}
+ Data Xtal: ${xtalCount.toLocaleString()}
+ Data Regist: ${registCount.toLocaleString()}
+ Data Items: ${itemCount.toLocaleString()}
+ Data Ability: ${abilityCount.toLocaleString()}
+ *Total Database: ${totalData.toLocaleString()}*
+
 
 ${menuMessage}`,
         mentions: [user]
@@ -85,14 +94,14 @@ ${menuMessage}`,
       image,
       caption: `
 *Database Statistik*
- Data Boss: ${bosdefData.length}
- Data AppView: ${appviewData.length}
- Data Monster: ${monsterData.length}
- Data Xtal: ${xtalData.length}
- Data Regist: ${registData.length}
- Data Items: ${itemData.length}
- Data Ability: ${abilityData.length}
-
+ Data Boss: ${bosdefCount.toLocaleString()}
+ Data AppView: ${appviewCount.toLocaleString()}
+ Data Monster: ${monsterCount.toLocaleString()}
+ Data Xtal: ${xtalCount.toLocaleString()}
+ Data Regist: ${registCount.toLocaleString()}
+ Data Items: ${itemCount.toLocaleString()}
+ Data Ability: ${abilityCount.toLocaleString()}
+*Total Database: ${totalData.toLocaleString()}*
 ${menuMessage}`.trim(),
       mentions: [user]
     }, { quoted: msg })
