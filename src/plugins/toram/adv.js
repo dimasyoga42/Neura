@@ -190,30 +190,25 @@ export async function spmadv(sock, chatId, msg, text) {
     const startLevel = level
     const startPercent = percent
 
-    while (level < targetLevel && level < MAX_LEVEL) {
+    // ================= SIMULASI =================
+    while (runs < 1000) {
       runs++
       currentXP += questXP
 
-      while (currentXP >= needXP(level) && level < MAX_LEVEL) {
+      // Level up hanya sampai 315
+      while (level < MAX_LEVEL && currentXP >= needXP(level)) {
         currentXP -= needXP(level)
         level++
       }
 
-      if (level >= MAX_LEVEL) {
-        level = MAX_LEVEL
-        currentXP = 0
-        progress.push(`${runs}x - Lv ${level} (MAX)`)
-        break
-      }
-
+      // Kalau sudah 315, XP tetap dihitung persen saja
       const pct = Math.floor((currentXP / needXP(level)) * 100)
       progress.push(`${runs}x - Lv ${level} (${pct}%)`)
 
-      if (runs >= 1000) {
-        progress.push("... (limit 1000x tercapai)")
-        break
-      }
+      if (level === targetLevel && level < MAX_LEVEL && pct === 0) break
+      if (level === MAX_LEVEL) break
     }
+
 
     const result = `
 *Spam Adv By Neura Sama*
