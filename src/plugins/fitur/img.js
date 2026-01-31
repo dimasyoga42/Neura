@@ -6,13 +6,13 @@ export const setMenu = async (sock, chatId, msg, text) => {
   try {
     if (text !== "!menu") return
     if (!chatId.endsWith("@g.us")) return sock.sendMessage(chatId, { text: menuMessage }, { quoted: msg })
-    const { data, err } = await supabase.from("bosdef").select("name")
-    const { appview, erro } = await supabase.from("appview").select("name")
-    const { monster, errorMons } = await supabase.from("monster").select("name")
-    const { xtal, errorxtal } = await supabase.from("xtall").select("name")
-    const { abili, errorabili } = await supabase.from("ability").select("name")
-    const { item, erroritem } = await supabase.from("item").select("nama")
-    const { regis, errorregis } = await supabase.from("regist").select("name")
+    const { data } = await supabase.from("bosdef").select("name")
+    const { appview } = await supabase.from("appview").select("name")
+    const { monster } = await supabase.from("monster").select("name")
+    const { xtal } = await supabase.from("xtall").select("name")
+    const { abili } = await supabase.from("ability").select("name")
+    const { item } = await supabase.from("item").select("nama")
+    const { regis } = await supabase.from("regist").select("name")
     const user = msg.key.participant || msg.key.remoteJid
     const userName =
       msg.pushName ||
