@@ -7,7 +7,12 @@ export const setMenu = async (sock, chatId, msg, text) => {
     if (text !== "!menu") return
     if (!chatId.endsWith("@g.us")) return sock.sendMessage(chatId, { text: menuMessage }, { quoted: msg })
     const { data, err } = await supabase.from("bosdef").select("name")
-
+    const { appview, erro } = await supabase.from("appview").select("name")
+    const { monster, errorMons } = await supabase.from("monster").select("name")
+    const { xtal, errorxtal } = await supabase.from("xtall").select("name")
+    const { abili, errorabili } = await supabase.from("ability").select("name")
+    const { item, erroritem } = await supabase.from("item").select("nama")
+    const { regis, errorregis } = await supabase.from("regist").select("name")
     const user = msg.key.participant || msg.key.remoteJid
     const userName =
       msg.pushName ||
@@ -28,7 +33,16 @@ export const setMenu = async (sock, chatId, msg, text) => {
 
     await sock.sendMessage(chatId, {
       image,
-      caption: `data bos:${data.length}\n${menuMessage}`,
+      caption: `
+      *Database statistik*
+      Data bos:${data.length}
+      Data appView: ${appview.length}
+      Data Monster: ${monster.length}
+      Data Xtall: ${xtal.length}
+      Data regist: ${regis.length}
+      Data Items: ${item.length}
+      Data Ability: ${abili.length}
+      \n\n${menuMessage}`,
       mentions: [user]
     }, { quoted: msg })
 
