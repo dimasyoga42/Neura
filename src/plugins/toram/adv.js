@@ -4,6 +4,7 @@
 
 export async function spmadv(sock, chatId, msg, text) {
   try {
+    const MAX_LEVEL = 315
     const args = text.replace(".spmadv", "").trim()
     if (!args) {
       return sock.sendMessage(chatId, {
@@ -20,9 +21,17 @@ export async function spmadv(sock, chatId, msg, text) {
 
     let level = parseInt(match[1])
     let percent = parseInt(match[2])
-    const targetLevel = parseInt(match[3])
+    let targetLevel = parseInt(match[3])
     const chapterFrom = parseInt(match[4])
     const chapterTo = parseInt(match[5])
+
+    if (level >= MAX_LEVEL) {
+      return sock.sendMessage(chatId, { text: `Level awal sudah mencapai max level (${MAX_LEVEL})` })
+    }
+
+    if (targetLevel > MAX_LEVEL) {
+      targetLevel = MAX_LEVEL
+    }
 
     if (percent < 0 || percent >= 100) {
       return sock.sendMessage(chatId, { text: "Persen XP harus 0 - 99" })
@@ -33,8 +42,10 @@ export async function spmadv(sock, chatId, msg, text) {
     }
 
     // ================= FORMULA XP (TORAM TOOLS) =================
-    // Formula: (level^4 / 40) + (level * 2)
-    const needXP = (lvl) => Math.floor((Math.pow(lvl, 4) / 40) + (lvl * 2))
+    const needXP = (lvl) => {
+      if (lvl >= MAX_LEVEL) return Infinity
+      return Math.floor((Math.pow(lvl, 4) / 40) + (lvl * 2))
+    }
     // ============================================================
 
     // ================= DATA MAIN QUEST =================
@@ -164,7 +175,6 @@ export async function spmadv(sock, chatId, msg, text) {
     ]
     // ==================================================
 
-    // Filter quest berdasarkan chapter
     const questXP = MQ
       .filter(q => q.chapter >= chapterFrom && q.chapter <= chapterTo)
       .reduce((a, b) => a + b.exp, 0)
@@ -173,32 +183,32 @@ export async function spmadv(sock, chatId, msg, text) {
       return sock.sendMessage(chatId, { text: "Chapter tidak valid atau tidak ada quest di range tersebut!" })
     }
 
-    // Hitung XP awal
     let currentXP = Math.floor((percent / 100) * needXP(level))
     let runs = 0
     let progress = []
+
     const startLevel = level
     const startPercent = percent
 
-    // Simulasi grinding
-    while (level < targetLevel || (level === targetLevel && currentXP > 0)) {
+    while (level < targetLevel && level < MAX_LEVEL) {
       runs++
       currentXP += questXP
 
-      // Level up jika XP cukup
-      while (currentXP >= needXP(level)) {
+      while (currentXP >= needXP(level) && level < MAX_LEVEL) {
         currentXP -= needXP(level)
         level++
+      }
+
+      if (level >= MAX_LEVEL) {
+        level = MAX_LEVEL
+        currentXP = 0
+        progress.push(`${runs}x - Lv ${level} (MAX)`)
+        break
       }
 
       const pct = Math.floor((currentXP / needXP(level)) * 100)
       progress.push(`${runs}x - Lv ${level} (${pct}%)`)
 
-      // Stop jika sudah mencapai atau melewati target level
-      if (level > targetLevel) break
-      if (level === targetLevel && pct === 0) break
-
-      // Safety limit
       if (runs >= 1000) {
         progress.push("... (limit 1000x tercapai)")
         break
@@ -212,13 +222,11 @@ Target Level: ${targetLevel}
 Chapter     : ${chapterFrom} - ${chapterTo}
 Quest XP    : ${questXP.toLocaleString()} exp
 
-Final Level : ${level}
+Final Level : ${level}${level === MAX_LEVEL ? " (MAX)" : ""}
 Butuh Run   : ${runs}x
 
 Progress:
 ${progress.join('\n')}
-
-> Formula: (level^4 / 40) + (level * 2)
 Referensi: Toram Tools`.trim()
 
     await sock.sendMessage(chatId, { text: result })
