@@ -1,5 +1,6 @@
 import { generateWelcomeImage } from "../../config/imgaetext.js"
 import { menuMessage } from "../../config/variabel.js"
+import { supabase } from "../../model/supabase.js"
 
 export const setMenu = async (sock, chatId, msg, text) => {
   try {
