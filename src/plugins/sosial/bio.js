@@ -218,7 +218,7 @@ export const myProfile = async (sock, chatId, msg) => {
       );
     }
 
-    const caption = `buff: ${user.idBuff || "Belum diatur"}\n${user.bio || ""}`;
+    const caption = `Buff: ${user.idBuff || "Belum diatur"}\n${user.bio || ""}`;
 
     if (user.profilPath && fs.existsSync(user.profilPath)) {
       return sock.sendMessage(

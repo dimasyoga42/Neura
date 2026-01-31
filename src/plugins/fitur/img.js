@@ -5,6 +5,7 @@ export const setMenu = async (sock, chatId, msg, text) => {
   try {
     if (text !== "!menu") return
     if (!chatId.endsWith("@g.us")) return sock.sendMessage(chatId, { text: menuMessage }, { quoted: msg })
+    const { data, err } = await supabase.from("bosdef").select("name")
 
     const user = msg.key.participant || msg.key.remoteJid
     const userName =
@@ -26,7 +27,7 @@ export const setMenu = async (sock, chatId, msg, text) => {
 
     await sock.sendMessage(chatId, {
       image,
-      caption: menuMessage,
+      caption: `data bos:${data.length}\n${menuMessage}`,
       mentions: [user]
     }, { quoted: msg })
 

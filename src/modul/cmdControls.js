@@ -43,6 +43,7 @@ import { lvl } from "../plugins/toram/lvl.js";
 import { brat } from "../plugins/vip/tools/brat.js";
 import { mix } from "../plugins/vip/tools/mix.js";
 import { artiNama } from "../plugins/vip/tools/prim.js";
+import { supabase } from "../model/supabase.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!menu")) {
     if (isBan(sock, chatId, msg)) return;
