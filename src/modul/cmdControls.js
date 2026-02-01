@@ -44,6 +44,7 @@ import { brat } from "../plugins/vip/tools/brat.js";
 import { mix } from "../plugins/vip/tools/mix.js";
 import { artiNama } from "../plugins/vip/tools/prim.js";
 import { supabase } from "../model/supabase.js";
+import { note, setNote } from "../plugins/fitur/note.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!menu")) {
     if (isBan(sock, chatId, msg)) return;
@@ -401,8 +402,14 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     artiNama(sock, chatId, msg, text);
   }
 
-
-
+  if (text.startsWith("!note")) {
+    if (isBan(sock, chatId, msg)) return;
+    note(sock, chatId, msg, text);
+  }
+  if (text.startsWith("!setnote")) {
+    if (isBan(sock, chatId, msg)) return;
+    setNote(sock, chatId, msg, text);
+  }
 
 
 
