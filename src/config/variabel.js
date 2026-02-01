@@ -188,6 +188,10 @@ website official Neura: https://neuraaa.vercel.app/
 - !shdb
 - !mq
 - !listxtall
+- !note
+- !listnote
+- !setnote
+
 *Guide Toram*
 - !pet
 - !listfarm
