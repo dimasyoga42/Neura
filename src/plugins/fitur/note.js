@@ -106,3 +106,47 @@ ${note.isi}
     );
   }
 };
+export const notelist = async (sock, chatId, msg) => {
+  try {
+    const { data, error } = await supabase
+      .from("note")
+      .select("note_name")
+      .eq("grubId", chatId)
+      .order("id", { ascending: true });
+
+    if (error) {
+      return sock.sendMessage(
+        chatId,
+        { text: "gagal mengambil daftar note" },
+        { quoted: msg }
+      );
+    }
+
+    if (!data || data.length === 0) {
+      return sock.sendMessage(
+        chatId,
+        { text: "belum ada note yang tersimpan di grup ini" },
+        { quoted: msg }
+      );
+    }
+
+    let list = "*Daftar Judul Note:*\n";
+
+    data.forEach((item, index) => {
+      list += `${index + 1}. ${item.note_name}\n`;
+    });
+
+    sock.sendMessage(
+      chatId,
+      { text: list.trim() },
+      { quoted: msg }
+    );
+
+  } catch (error) {
+    sock.sendMessage(
+      chatId,
+      { text: String(error) },
+      { quoted: msg }
+    );
+  }
+};
