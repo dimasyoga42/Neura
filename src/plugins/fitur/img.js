@@ -45,18 +45,18 @@ export const setMenu = async (sock, chatId, msg, text) => {
       fetchCount("regist")
     ])
 
-    // Hitung total semua data
+    
     const totalData = bosdefCount + appviewCount + monsterCount + xtalCount +
       abilityCount + itemCount + registCount
 
-    // Get user info
+    
     const user = msg.key.participant || msg.key.remoteJid
     const userName = msg.pushName || sock.contacts?.[user]?.notify || user.split("@")[0]
 
-    // Get group name
+    
     const groupName = sock.groupMetadataCache?.[chatId]?.subject || "Group"
 
-    // Get profile picture
+    
     let ppUrl
     try {
       ppUrl = await sock.profilePictureUrl(user, "image")
@@ -64,13 +64,12 @@ export const setMenu = async (sock, chatId, msg, text) => {
       ppUrl = "https://i.imgur.com/6VBx3io.png"
     }
 
-    // Generate welcome image
+    
     let image
     try {
       image = await generateWelcomeImage(ppUrl, userName, groupName)
     } catch (err) {
       console.error("Error generating image:", err)
-      // Fallback: kirim menu text saja jika gagal generate image
       return sock.sendMessage(chatId, {
         text: `
 *Database Statistik*
@@ -89,7 +88,7 @@ ${menuMessage}`,
       }, { quoted: msg })
     }
 
-    // Send message with image
+    
     await sock.sendMessage(chatId, {
       image,
       caption: `
@@ -109,7 +108,7 @@ ${menuMessage}`.trim(),
   } catch (err) {
     console.error("Error in setMenu:", err)
 
-    // Fallback error handling - kirim menu basic
+    
     try {
       await sock.sendMessage(chatId, {
         text: `⚠️ Terjadi kesalahan saat memuat menu.\n\n${menuMessage}`
