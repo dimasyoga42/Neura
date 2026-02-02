@@ -45,6 +45,7 @@ import { mix } from "../plugins/vip/tools/mix.js";
 import { artiNama } from "../plugins/vip/tools/prim.js";
 import { supabase } from "../model/supabase.js";
 import { note, notelist, setNote } from "../plugins/fitur/note.js";
+import { bosTesting } from "../plugins/testing/bos.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!menu")) {
     if (isBan(sock, chatId, msg)) return;
@@ -414,7 +415,10 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     notelist(sock, chatId, msg);
   }
-
+  if (text.startsWith("!bostesting")) {
+    if (isBan(sock, chatId, msg)) return;
+    bosTesting(sock, chatId, msg);
+  }
 
 
 
