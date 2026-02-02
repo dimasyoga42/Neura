@@ -2,6 +2,7 @@ import { supabase } from "./../../model/supabase.js";
 
 export const bosTesting = async (sock, chatId, msg) => {
   try {
+    // Dataset Lokal: Daftar referensi lengkap nama boss
     const nameBos = [
       "Astol", "Ancient Empress Mezzaluna", "Arachnidemon", "Aranea", "B.B. Goblin",
       "Bexiz", "Biskyva", "Black Knight of Delusion", "Black Shadow", "Boss Colon",
@@ -25,32 +26,39 @@ export const bosTesting = async (sock, chatId, msg) => {
       "Wicked Dragon Fazzino", "York", "Zahhak Machina", "Zapo", "Zelbuse", "Zolban"
     ];
 
-    // Mengambil data dari Supabase dengan destructuring untuk menangkap error
-    const { data: dbData, error } = await supabase.from("bosdef").select("name");
+    // Tahap 1: Mengakuisisi data eksisting dari tabel 'bosdef' di Supabase
+    const { data: dbData, error } = await supabase
+      .from("bosdef")
+      .select("name");
 
-    if (error) throw error;
-
-    // Ekstraksi nama dari database ke dalam Set untuk efisiensi pencarian O(1)
-    const dbNames = new Set(dbData.map(item => item.name));
-
-    // Identifikasi entitas yang belum terdaftar di database (Set Difference)
-    const missingBosses = nameBos.filter(boss => !dbNames.has(boss));
-
-    // Konstruksi pesan laporan
-    let reportMessage = "";
-    if (missingBosses.length > 0) {
-      reportMessage = `*Laporan Sinkronisasi Data*\n` +
-        `Terdapat *${missingBosses.length}* data baru yang belum masuk ke database:\n` +
-        missingBosses.map((name, i) => `${i + 1}. ${name}`).join("\n");
-    } else {
-      reportMessage = `*Data Sinkron*\nSeluruh data boss (${nameBos.length} entitas) sudah terdaftar di database.`;
+    if (error) {
+      throw new Error(`Kegagalan pengambilan data database: ${error.message}`);
     }
 
-    // Mengirimkan laporan kembali ke chat WhatsApp
-    await sock.sendMessage(chatId, { text: reportMessage }, { quoted: msg });
+    // Tahap 2: Transformasi data database menjadi Himpunan (Set) untuk efisiensi komparasi
+    // Penggunaan Set mengubah kompleksitas pencarian dari O(n) menjadi O(1)
+    const registeredNames = new Set(dbData.map(entry => entry.name));
+
+    // Tahap 3: Operasi Selisih Himpunan (Set Difference)
+    // Memfilter 'nameBos' untuk mengambil elemen yang TIDAK ADA di 'registeredNames'
+    const unregisteredBosses = nameBos.filter(boss => !registeredNames.has(boss));
+
+    // Tahap 4: Eksekusi Respons
+    if (unregisteredBosses.length > 0) {
+      // Mengonversi array hasil filter menjadi string yang dipisahkan baris baru
+      const resultList = unregisteredBosses.join("\n");
+
+      // Mengirimkan HANYA daftar nama yang belum ada
+      await sock.sendMessage(chatId, { text: resultList }, { quoted: msg });
+
+      console.log(`[LOG] Ditemukan ${unregisteredBosses.length} data yang belum terdaftar.`);
+    } else {
+      // Opsional: Memberi tahu jika semua data sudah lengkap
+      await sock.sendMessage(chatId, { text: "Nihil. Seluruh data boss pada daftar lokal sudah tercatat di database." }, { quoted: msg });
+    }
 
   } catch (error) {
-    console.error("Error in bosTesting execution:", error);
-    await sock.sendMessage(chatId, { text: "❌ Terjadi kesalahan saat memproses validasi data." });
+    console.error("Kesalahan Sistem pada bosTesting:", error);
+    await sock.sendMessage(chatId, { text: "Terjadi kesalahan sistem saat memvalidasi data." });
   }
 }
