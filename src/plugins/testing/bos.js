@@ -118,19 +118,22 @@ export const bosTesting = async (sock, chatId, msg) => {
       throw new Error(`Kegagalan pengambilan data: ${error.message}`);
     }
 
-    // Validasi data dari database
     if (!dbData || !Array.isArray(dbData)) {
       throw new Error("Data dari database tidak valid");
     }
 
-    // Tahap 2: Transformasi data menjadi Set untuk efisiensi O(1)
+    // Tahap 2: Normalisasi dan buat Set
+    // Konversi ke lowercase dan trim untuk perbandingan case-insensitive
     const registeredNames = new Set(
-      dbData.map(entry => entry?.name).filter(Boolean)
+      dbData
+        .map(entry => entry?.name)
+        .filter(Boolean)
+        .map(name => name.toLowerCase().trim())
     );
 
-    // Tahap 3: Filter boss yang belum terdaftar
+    // Tahap 3: Filter boss yang belum terdaftar dengan normalisasi
     const unregisteredBosses = nameBos.filter(
-      boss => !registeredNames.has(boss)
+      boss => !registeredNames.has(boss.toLowerCase().trim())
     );
 
     // Tahap 4: Kirim response
