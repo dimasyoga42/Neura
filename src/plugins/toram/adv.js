@@ -196,7 +196,7 @@ export async function spmadv(sock, chatId, msg, text) {
       currentXP += questXP
 
       // Level up hanya sampai 315
-      while (level < MAX_LEVEL && currentXP >= needXP(level)) {
+      while (level < targetLevel && currentXP >= needXP(level)) {
         currentXP -= needXP(level)
         level++
       }
