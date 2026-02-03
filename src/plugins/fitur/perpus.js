@@ -74,7 +74,6 @@ export const bacaBuku = async (sock, chatId, msg, text) => {
     const { data, error } = await supabase
       .from("perpus")
       .select("judulPerpus, isiBuku")
-      .eq("grubId", chatId)
       .ilike("judulPerpus", `%${noteName}%`)
       .limit(1);
 
