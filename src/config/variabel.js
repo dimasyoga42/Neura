@@ -195,6 +195,8 @@ website official Neura: https://neuraaa.vercel.app/
 *Guide Toram*
 - !pet
 - !listfarm
+- !perpus
+- !baca
 
 *Raid Fitur*
 - !createraid
