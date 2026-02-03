@@ -632,7 +632,7 @@ export const messagePembolong = `
 1-2: 150-160M
 
 *KNUCK*
-0-1: 23-30M
+0-1: 20-30M
 1-2: 70-90M
 
 *STAFF*
