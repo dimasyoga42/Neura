@@ -6,7 +6,7 @@ export const setperpus = async (sock, chatId, msg, text) => {
     const judul = arg[1]?.trim();
     const isi = arg[2]?.trim();
     if (!judul || !isi) return sock.sendMessage(chatId, { text: "Format: !setperpus|Judul|Isi" }, { quoted: msg });
-    const { error } = await supabase.from("perpus").insert({ JudulPerpus: judul, isiBuku: isi });
+    const { error } = await supabase.from("perpus").insert({ judulPerpus: judul, isiBuku: isi });
     if (error) throw error;
     sock.sendMessage(chatId, { text: "Buku ditambahkan" }, { quoted: msg });
   } catch (error) {
