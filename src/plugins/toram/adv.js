@@ -205,7 +205,7 @@ export async function spmadv(sock, chatId, msg, text) {
       const pct = Math.floor((currentXP / needXP(level)) * 100)
       progress.push(`${runs}x - Lv ${level} (${pct}%)`)
 
-      if (level === targetLevel && level < targetLevel && pct === 0) break
+      if (level === MAX_LEVEL && level < MAX_LEVEL && pct === 0) break
       if (level === MAX_LEVEL) break
     }
 
