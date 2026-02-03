@@ -58,3 +58,61 @@ export const hapusperpus = async (sock, chatId, msg, text) => {
     throw error;
   }
 };
+
+export const bacaBuku = async (sock, chatId, msg, text) => {
+  try {
+    const noteName = text.replace("!baca", "").trim();
+
+    if (!noteName) {
+      return sock.sendMessage(
+        chatId,
+        { text: "mana judul catatan yang di cari" },
+        { quoted: msg }
+      );
+    }
+
+    const { data, error } = await supabase
+      .from("perpus")
+      .select("judulPerpus, isiBuku")
+      .eq("grubId", chatId)
+      .ilike("judulPerpus", `%${noteName}%`)
+      .limit(1);
+
+    if (error) {
+      return sock.sendMessage(
+        chatId,
+        { text: "gagal mengambil data Buku" },
+        { quoted: msg }
+      );
+    }
+
+    if (!data || data.length === 0) {
+      return sock.sendMessage(
+        chatId,
+        { text: "Buku tidak ditemukan" },
+        { quoted: msg }
+      );
+    }
+
+    const note = data[0];
+
+    const cxMessage = `
+Judul: *${note.note_name}*
+
+${note.isi}
+`.trim();
+
+    sock.sendMessage(
+      chatId,
+      { text: cxMessage },
+      { quoted: msg }
+    );
+
+  } catch (error) {
+    sock.sendMessage(
+      chatId,
+      { text: String(error) },
+      { quoted: msg }
+    );
+  }
+};
