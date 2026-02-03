@@ -21,7 +21,7 @@ export const listperpus = async (sock, chatId, msg) => {
     if (error) throw error;
     if (!data || data.length === 0) return sock.sendMessage(chatId, { text: "Perpustakaan kosong" }, { quoted: msg });
     let teks = "Daftar Buku\n";
-    data.forEach((item, i) => { teks += `${i + 1}. ${item.JudulPerpus} (${item.id})\n`; });
+    data.forEach((item, i) => { teks += `${i + 1}. ${item.judulPerpus} (${item.id})\n`; });
     sock.sendMessage(chatId, { text: teks.trim() }, { quoted: msg });
   } catch (error) {
     sock.sendMessage(chatId, { text: error.message }, { quoted: msg });
