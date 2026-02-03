@@ -1,4 +1,5 @@
 import { ban, isOwner, unBan } from "../plugins/fitur/ban.js"
+import { editperpus, hapusperpus, setperpus } from "../plugins/fitur/perpus.js";
 import { setBos } from "../plugins/toram/bos.js";
 import { handleBroadcast } from "./bc.js";
 import { setNocoldown } from "./coldownChat.js";
@@ -28,5 +29,17 @@ export const ownerControls = async (sock, chatId, msg, text) => {
   if (text.startsWith("!setxtall")) {
     if (!isOwner(sock, msg, chatId)) return;
     setBos(sock, chatId, msg, text);
+  }
+  if (text.startsWith("!setbuku")) {
+    if (!isOwner(sock, msg, chatId)) return;
+    setperpus(sock, chatId, msg, text);
+  }
+  if (text.startsWith("!editbuku")) {
+    if (!isOwner(sock, msg, chatId)) return;
+    editperpus(sock, chatId, msg, text);
+  }
+  if (text.startsWith("!hapusbuku")) {
+    if (!isOwner(sock, msg, chatId)) return;
+    hapusperpus(sock, chatId, msg, text);
   }
 }
