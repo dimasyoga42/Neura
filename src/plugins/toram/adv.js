@@ -206,7 +206,7 @@ export async function spmadv(sock, chatId, msg, text) {
       progress.push(`${runs}x - Lv ${level} (${pct}%)`)
 
       if (level === targetLevel && level < MAX_LEVEL && pct === 0) break
-      if (level === MAX_LEVEL) break
+      if (level === targetLevel) break
     }
 
 
@@ -217,7 +217,7 @@ Target Level: ${targetLevel}
 Chapter     : ${chapterFrom} - ${chapterTo}
 Quest XP    : ${questXP.toLocaleString()} exp
 
-Final Level : ${level}${level === MAX_LEVEL ? " (MAX)" : ""}
+Final Level : ${targetLevel}
 Butuh Run   : ${runs}x
 
 Progress:
