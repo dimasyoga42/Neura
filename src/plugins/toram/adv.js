@@ -215,7 +215,7 @@ export async function spmadv(sock, chatId, msg, text) {
         ? 100                                              // sudah capai target, tunjukin 100%
         : Math.min(99, Math.floor((currentXP / needXP(level)) * 100))
 
-      progress.push(`${runs}x - Lv ${level} (${pct}%)`)
+      progress.push(`${runs}x - Lv ${level})`)
 
       // Stop begitu level sudah mencapai atau lewat target
       if (level >= targetLevel) break
@@ -235,7 +235,7 @@ Target Level: ${targetLevel}
 Chapter     : ${chapterFrom} - ${chapterTo}
 Quest XP    : ${questXP.toLocaleString()} exp
 
-${statusLine}
+
 Butuh Run   : ${runs}x
 
 Progress:
