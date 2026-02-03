@@ -96,9 +96,9 @@ export const bacaBuku = async (sock, chatId, msg, text) => {
     const note = data[0];
 
     const cxMessage = `
-Judul: *${note.note_name}*
+Judul: *${note.judulPerpus}*
 
-${note.isi}
+${note.isiBuku}
 `.trim();
 
     sock.sendMessage(
