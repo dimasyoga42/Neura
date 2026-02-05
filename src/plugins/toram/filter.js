@@ -10,8 +10,8 @@ export const itemStat = async (sock, chatId, msg, text) => {
     const msgTxt = `
     Hasil dari Pencarian: ${stat}
     ${data.map((item, i) =>
-      `[${i + 1}] ${item.nama}\nTipe: ${item.jenis}\nStat:\n${item.stat}\nDrop: ${item.drop}`
-    ).join("\n")}
+      `[${i + 1}] ${item.nama}\nTipe: ${item.jenis}\nStat:\n${item.stat}\nDrop: ${item.drop}\n\n`
+    )}
     >Neura Sama
     `.trim()
     sock.sendMessage(chatId, { text: msgTxt }, { quoted: msg })
