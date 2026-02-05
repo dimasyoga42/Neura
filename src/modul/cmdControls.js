@@ -430,7 +430,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     bacaBuku(sock, chatId, msg, text);
   }
-  if (text.startsWith("!itemstat")) {
+  if (text.startsWith("!statitem")) {
     if (isBan(sock, chatId, msg)) return;
     itemStat(sock, chatId, msg, text);
   }

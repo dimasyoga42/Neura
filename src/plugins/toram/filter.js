@@ -1,7 +1,7 @@
 import { supabase } from "../../model/supabase.js"
 export const itemStat = async (sock, chatId, msg, text) => {
   try {
-    const stat = text.replace("!itemstat", "");
+    const stat = text.replace("!statitem", "");
     if (!stat) return sock.sendMessage(chatId, { text: "tambahkan stat yang ingin di cari setelah !itemstat" }, { quoted: msg });
 
     const { data, error: errItem } = await supabase.from("item").select("nama, jenis, stat, drop").ilike("stat", `%${stat}%`).limit(20);
