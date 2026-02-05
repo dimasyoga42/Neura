@@ -123,11 +123,12 @@ export const searchXtall = async (sock, chatId, msg, text) => {
 
     const messageData = `
 *SEARCH XTALL (${data.length})*
+> source: https://coryn.club/
 ${data.map((xtall, i) => `
 ${xtall.name}
 Type    : ${xtall.type}
 Upgrade : ${xtall.upgrade}
-Stat    : 
+Stat    :
 - ${parseStat(xtall.stat)}
 Rute: ${xtall.route}
 `).join("━━━━━━━━━━━━━━━━━━━━\n")}
@@ -232,7 +233,7 @@ export const searchRegist = async (sock, chatId, msg, text) => {
     }
 
     const messageData = `
-*SEARCH REGIST*
+*SEARCH REGIST*\n> source: https://coryn.club/
 ${data.map((rg, i) => `
 ${rg.name}
 Effect         : ${rg.effect}
@@ -388,6 +389,7 @@ export const searchItem = async (sock, chatId, msg, text) => {
     const messageData = `
 *SEARCH ITEM*
 > By Neura Bot
+> source: https://coryn.club/
 ${data.map((item, i) => `
   ${item.nama}
 Jenis : ${item.jenis}
@@ -453,6 +455,7 @@ export const searchApp = async (sock, chatId, msg, text) => {
 
     const messageData = `
 Nama App : ${app.name}
+> Source: https://coryn.club/
 `.trim();
 
     await sock.sendMessage(
