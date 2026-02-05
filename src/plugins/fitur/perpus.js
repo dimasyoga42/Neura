@@ -20,7 +20,7 @@ export const listperpus = async (sock, chatId, msg) => {
     const { data, error } = await supabase.from("perpus").select("id,judulPerpus").order("id", { ascending: true });
     if (error) throw error;
     if (!data || data.length === 0) return sock.sendMessage(chatId, { text: "Perpustakaan kosong" }, { quoted: msg });
-    let teks = "Daftar Buku\n> gunakan !baca nama buku";
+    let teks = "Daftar Buku\n> gunakan !baca nama buku\n";
     data.forEach((item, i) => { teks += `${i + 1}. ${item.judulPerpus} (${item.id})\n`; });
     sock.sendMessage(chatId, { text: teks.trim() }, { quoted: msg });
   } catch (error) {
