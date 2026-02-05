@@ -4,7 +4,7 @@ export const itemStat = async (sock, chatId, msg, text) => {
     const stat = text.replace("!itemstat", "");
     if (!stat) return sock.sendMessage(chatId, { text: "tambahkan stat yang ingin di cari setelah !itemstat" }, { quoted: msg });
 
-    const { data, error: errItem } = await supabase.from("item").select("nama, jenis, stat, drop").ilike("stat", `%${stat}%`);
+    const { data, error: errItem } = await supabase.from("item").select("nama, jenis, stat, drop").ilike("stat", `%${stat}%`).limit(20);
     if (!data || data.length === 0 || errItem) return sock.sendMessage(chatId, { text: "tidak menemukan hasil yang sama gunakan versi bahasa inggris" }, { quoted: msg });
 
     const msgTxt = `
@@ -12,7 +12,7 @@ export const itemStat = async (sock, chatId, msg, text) => {
     ${data.map((item, i) =>
       `[${i + 1}] ${item.nama}\nTipe: ${item.jenis}\nStat:\n${item.stat}\nDrop: ${item.drop}\n\n`
     )}
-    >Neura Sama
+    > Neura Sama
     `.trim()
     sock.sendMessage(chatId, { text: msgTxt }, { quoted: msg })
   } catch (error) {
