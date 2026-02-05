@@ -49,7 +49,7 @@ Element:
 ${boss.element}
 Spawn: ${boss.spawn}
 
-${toCodeBlock(boss.stat)}
+${toCodeBlock(boss.stat)}\n> source: Phantom library
     `.trim()
 
     await sock.sendMessage(
