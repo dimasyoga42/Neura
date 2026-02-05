@@ -181,7 +181,7 @@ function parseCommand(args) {
     const fullName = statMap[statKey];
 
     if (!fullName) {
-      console.warn(`⚠️ Stat tidak dikenal: ${statKey}, diabaikan`);
+      console.warn(`Stat tidak dikenal: ${statKey}, diabaikan`);
       continue;
     }
 
@@ -195,7 +195,7 @@ function parseCommand(args) {
     } else {
       const numValue = parseInt(value, 10);
       if (isNaN(numValue)) {
-        console.warn(`⚠️ Level tidak valid untuk ${statKey}: ${value}, diabaikan`);
+        console.warn(` Level tidak valid untuk ${statKey}: ${value}, diabaikan`);
         continue;
       }
       level = numValue.toString();

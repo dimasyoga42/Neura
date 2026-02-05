@@ -51,7 +51,7 @@ const start = async () => {
         console.log(" Bot WhatsApp berhasil terhubung!");
       }
     } catch (err) {
-      console.error("⚠️ Error:", err);
+      console.error("Error:", err);
       setTimeout(start, 5000);
     }
   });

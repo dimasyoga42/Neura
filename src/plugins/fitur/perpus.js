@@ -98,7 +98,7 @@ export const bacaBuku = async (sock, chatId, msg, text) => {
     const cxMessage = `
 Judul: *${note.judulPerpus}*
 
-${note.isiBuku}
+${note.isiBuku}\n> gunakan !baca nama buku
 `.trim();
 
     sock.sendMessage(
