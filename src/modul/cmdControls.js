@@ -24,7 +24,7 @@ import fs from "fs";
 import { Remini } from "../plugins/vip/tools/remini.js";
 import { play, ytmp3 } from "../plugins/vip/downloader/play.js";
 import { pin } from "../plugins/vip/downloader/pinterst.js";
-import { Caklontong, Family100, jawab, tebakGambar } from "../plugins/fun/caklontong.js";
+import { Caklontong, Family100, tebakGambar } from "../plugins/fun/caklontong.js";
 import { autoGempa } from "../plugins/vip/tools/bmkg.js";
 import { listSkill, skill } from "../plugins/toram/skill.js";
 import { Spotifysearch } from "../plugins/vip/downloader/spotify.js";
@@ -289,10 +289,6 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith("!caklontong")) {
     if (isBan(sock, chatId, msg)) return;
     Caklontong(sock, chatId, msg, text)
-  }
-  if (text.startsWith("!j")) {
-    if (isBan(sock, chatId, msg)) return;
-    jawab(sock, chatId, msg, text)
   }
 
   if (text.startsWith("!tebakgambar")) {
