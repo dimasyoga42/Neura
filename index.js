@@ -13,6 +13,7 @@ import { CekColdown } from "./src/admin/coldownChat.js";
 import { HandleWelcome, outGC } from "./src/admin/wellcome.js";
 import { messageHandler } from "./src/plugins/ai/message.js";
 import { subMenu } from "./src/modul/subMenu.js";
+import { jawab } from "./src/plugins/fun/caklontong.js";
 dotenv.config();
 const start = async () => {
   const { state, saveCreds } = await useMultiFileAuthState("./auth_save");
@@ -72,6 +73,7 @@ const start = async () => {
       Admincontrols(sock, chatId, msg, text);
       ownerControls(sock, chatId, msg, text);
       cmdMenucontrol(sock, chatId, msg, text);
+      jawab(sock, chatId, msg)
       subMenu(sock, chatId, msg, text);
     } catch (err) {
       console.log(err)
