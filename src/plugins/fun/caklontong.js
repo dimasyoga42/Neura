@@ -2,20 +2,114 @@ import axios from "axios"
 
 const answer = new Map()
 
+/* =========================
+   CAKLONTONG
+========================= */
+export const Caklontong = async (sock, chatId, msg) => {
+  try {
+    if (answer.has(chatId)) {
+      return sock.sendMessage(chatId, { text: "selesaikan game sebelumnya" }, { quoted: msg })
+    }
+
+    const res = await axios.get("https://api.deline.web.id/game/caklontong")
+    const data = res.data.data
+
+    const sent = await sock.sendMessage(
+      chatId,
+      {
+        text:
+          `caklontong\n\n` +
+          `${data.soal}\n\n` +
+          `waktu: 60 detik\n` +
+          `jawab dengan reply pesan ini`,
+      },
+      { quoted: msg }
+    )
+
+    const timeout = setTimeout(async () => {
+      if (!answer.has(chatId)) return
+      answer.delete(chatId)
+      await sock.sendMessage(
+        chatId,
+        {
+          text:
+            `waktu habis\n` +
+            `jawaban: ${data.jawaban}\n` +
+            `penjelasan: ${data.deskripsi}`,
+        },
+        { quoted: sent }
+      )
+    }, 60000)
+
+    answer.set(chatId, {
+      type: "caklontong",
+      jawaban: data.jawaban.toUpperCase(),
+      timeout,
+      msgId: sent.key.id,
+    })
+  } catch {
+    sock.sendMessage(chatId, { text: "terjadi kesalahan" }, { quoted: msg })
+  }
+}
+
+/* =========================
+   TEBAK GAMBAR
+========================= */
+export const TebakGambar = async (sock, chatId, msg) => {
+  try {
+    if (answer.has(chatId)) {
+      return sock.sendMessage(chatId, { text: "selesaikan game sebelumnya" }, { quoted: msg })
+    }
+
+    const res = await axios.get("https://api.deline.web.id/game/tebakgambar")
+    const data = res.data.result
+
+    const sent = await sock.sendMessage(
+      chatId,
+      {
+        image: { url: data.img },
+        caption:
+          `tebak gambar\n\n` +
+          `${data.deskripsi}\n\n` +
+          `waktu: 60 detik\n` +
+          `jawab dengan reply gambar ini`,
+      },
+      { quoted: msg }
+    )
+
+    const timeout = setTimeout(async () => {
+      if (!answer.has(chatId)) return
+      answer.delete(chatId)
+      await sock.sendMessage(
+        chatId,
+        { text: `waktu habis\njawaban: ${data.jawaban}` },
+        { quoted: sent }
+      )
+    }, 60000)
+
+    answer.set(chatId, {
+      type: "tebakgambar",
+      jawaban: data.jawaban.toUpperCase(),
+      timeout,
+      msgId: sent.key.id,
+    })
+  } catch {
+    sock.sendMessage(chatId, { text: "gagal memuat tebak gambar" }, { quoted: msg })
+  }
+}
+
+/* =========================
+   FAMILY100
+========================= */
 export const Family100 = async (sock, chatId, msg) => {
   try {
     if (answer.has(chatId)) {
-      return sock.sendMessage(
-        chatId,
-        { text: "selesaikan game sebelumnya" },
-        { quoted: msg }
-      )
+      return sock.sendMessage(chatId, { text: "selesaikan game sebelumnya" }, { quoted: msg })
     }
 
     const res = await axios.get("https://api.deline.web.id/game/family100")
     const data = res.data.data
 
-    const soal = data.soal
     const jawabanList = data.jawaban.map(v => v.toUpperCase())
 
     const sent = await sock.sendMessage(
@@ -23,10 +117,10 @@ export const Family100 = async (sock, chatId, msg) => {
       {
         text:
           `family100\n\n` +
-          `${soal}\n\n` +
+          `${data.soal}\n\n` +
           `jumlah jawaban: ${jawabanList.length}\n` +
-          `jawab dengan reply pesan ini\n` +
-          `waktu: 60 detik`,
+          `waktu: 60 detik\n` +
+          `jawab dengan reply pesan ini`,
       },
       { quoted: msg }
     )
@@ -59,9 +153,13 @@ export const Family100 = async (sock, chatId, msg) => {
   }
 }
 
-export const jawab = async (sock, chatId, msg) => {
+/* =========================
+   JAWAB (REPLY ONLY)
+========================= */
+export const Jawab = async (sock, chatId, msg) => {
   try {
     if (!answer.has(chatId)) return
+
     const game = answer.get(chatId)
 
     const ctx = msg.message?.extendedTextMessage?.contextInfo
@@ -70,6 +168,18 @@ export const jawab = async (sock, chatId, msg) => {
     const userAnswer = msg.message.extendedTextMessage.text.trim().toUpperCase()
     if (!userAnswer) return
 
+    /* ===== CAKLONTONG & TEBAK GAMBAR ===== */
+    if (game.type === "caklontong" || game.type === "tebakgambar") {
+      const correct = game.jawaban
+      if (userAnswer === correct || correct.includes(userAnswer)) {
+        clearTimeout(game.timeout)
+        answer.delete(chatId)
+        return sock.sendMessage(chatId, { text: "jawaban benar" }, { quoted: msg })
+      }
+      return sock.sendMessage(chatId, { text: "jawaban salah" }, { quoted: msg })
+    }
+
+    /* ===== FAMILY100 ===== */
     if (game.type === "family100") {
       const index = game.list.findIndex(v => v === userAnswer || v.includes(userAnswer))
       if (index !== -1) {
