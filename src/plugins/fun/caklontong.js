@@ -108,7 +108,7 @@ export const Family100 = async (sock, chatId, msg) => {
     }
 
     const res = await axios.get("https://api.deline.web.id/game/family100")
-    const data = res.data.data
+    const data = res.data.result
 
     const jawabanList = data.jawaban.map(v => v.toUpperCase())
 
