@@ -15,14 +15,14 @@ export const Caklontong = async (sock, chatId, msg) => {
     const res = await axios.get("https://api.deline.web.id/game/caklontong")
     const data = res.data.data
 
-    await sock.sendMessage(
+    const sent = await sock.sendMessage(
       chatId,
       {
         text:
           `caklontong\n\n` +
           `${data.soal}\n\n` +
           `waktu: 60 detik\n` +
-          `jawab dengan: !j jawaban`,
+          `jawab dengan reply pesan ini`,
       },
       { quoted: msg }
     )
@@ -38,13 +38,14 @@ export const Caklontong = async (sock, chatId, msg) => {
             `jawaban: ${data.jawaban}\n` +
             `penjelasan: ${data.deskripsi}`,
         },
-        { quoted: msg }
+        { quoted: sent }
       )
     }, 60000)
 
     answer.set(chatId, {
       jawaban: data.jawaban,
       timeout,
+      msgId: sent.key.id,
     })
   } catch {
     sock.sendMessage(chatId, { text: "terjadi kesalahan" }, { quoted: msg })
@@ -66,14 +67,14 @@ export const tebakGambar = async (sock, chatId, msg) => {
 
     await sock.sendMessage(chatId, { text: "memuat..." }, { quoted: msg })
 
-    await sock.sendMessage(
+    const sent = await sock.sendMessage(
       chatId,
       {
         image: { url: data.img },
         caption:
           `tebak gambar\n\n` +
           `${data.deskripsi}\n\n` +
-          `jawab dengan: !j jawaban\n` +
+          `jawab dengan reply gambar ini\n` +
           `waktu: 60 detik`,
       },
       { quoted: msg }
@@ -85,40 +86,33 @@ export const tebakGambar = async (sock, chatId, msg) => {
       await sock.sendMessage(
         chatId,
         { text: `waktu habis\njawaban: ${data.jawaban}` },
-        { quoted: msg }
+        { quoted: sent }
       )
     }, 60000)
 
     answer.set(chatId, {
       jawaban: data.jawaban,
       timeout,
+      msgId: sent.key.id,
     })
   } catch {
     sock.sendMessage(chatId, { text: "gagal memuat tebak gambar" }, { quoted: msg })
   }
 }
 
-export const jawab = async (sock, chatId, msg, text) => {
+export const jawab = async (sock, chatId, msg) => {
   try {
-    if (!text.startsWith("!j")) return;
-    if (!answer.has(chatId)) {
-      return sock.sendMessage(
-        chatId,
-        { text: "tidak ada game yang berjalan" },
-        { quoted: msg }
-      )
-    }
-
-    const userAnswer = text.replace("!j", "").trim()
-    if (!userAnswer) {
-      return sock.sendMessage(
-        chatId,
-        { text: "jawaban kosong" },
-        { quoted: msg }
-      )
-    }
+    if (!answer.has(chatId)) return
 
     const game = answer.get(chatId)
+
+    const ctx = msg.message?.extendedTextMessage?.contextInfo
+    if (!ctx || !ctx.stanzaId) return
+
+    if (ctx.stanzaId !== game.msgId) return
+
+    const userAnswer = msg.message.extendedTextMessage.text.trim()
+    if (!userAnswer) return
 
     const user = userAnswer.toUpperCase()
     const correct = game.jawaban.toUpperCase()
