@@ -156,7 +156,7 @@ export const Family100 = async (sock, chatId, msg) => {
 /* =========================
    JAWAB (REPLY ONLY)
 ========================= */
-export const Jawab = async (sock, chatId, msg) => {
+export const jawab = async (sock, chatId, msg) => {
   try {
     if (!answer.has(chatId)) return
 
