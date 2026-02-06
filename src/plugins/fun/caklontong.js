@@ -55,7 +55,7 @@ export const Caklontong = async (sock, chatId, msg) => {
 /* =========================
    TEBAK GAMBAR
 ========================= */
-export const TebakGambar = async (sock, chatId, msg) => {
+export const tebakGambar = async (sock, chatId, msg) => {
   try {
     if (answer.has(chatId)) {
       return sock.sendMessage(chatId, { text: "selesaikan game sebelumnya" }, { quoted: msg })
