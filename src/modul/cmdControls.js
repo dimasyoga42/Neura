@@ -440,16 +440,6 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     Loli(sock, chatId, msg);
   }
-
-  registerCommand({
-    name: "testing",
-    alias: ["test"],
-    category: "menu info",
-    desc: 'Mengirim gambar waifu acak',
-    run: async (sock, chatId, msg) => {
-      sock.sendMessage(chatId, { text: "testing" }, { quoted: msg })
-    }
-  })
   registerCommand({
     name: "help",
     alias: ["menu"],
