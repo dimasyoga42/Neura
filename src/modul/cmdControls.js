@@ -467,7 +467,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
       Object.keys(grouped).forEach((cat) => {
         menutext += `*${cat}*\n`
         grouped[cat].forEach((cmd) => {
-          menutext += `.${cmd.alias} - ${cmd.desc}\n`
+          menutext += `.${cmd.name} - ${cmd.desc}\n`
         })
         menutext += `\n`
       })
