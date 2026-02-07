@@ -49,7 +49,7 @@ import { bosTesting } from "../plugins/testing/bos.js";
 import { bacaBuku, listperpus } from "../plugins/fitur/perpus.js";
 import { itemStat } from "../plugins/toram/filter.js";
 import { Loli } from "../plugins/fun/loli.js";
-import { commands, registerCommand } from "../../setting.js";
+import { commands, fetchdata, registerCommand } from "../../setting.js";
 
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   // Register all commands
@@ -62,7 +62,8 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     run: async (sock, chatId, msg) => {
       let menutext = `*Neura Sama Menu*\n\n`
       const grouped = {}
-
+      const data = await fetchdata("https://raw.githubusercontent.com/dimasyoga42/dataset/main/image/menu/menu.json")
+      console.log(data)
       commands.forEach((cmd, key) => {
         // skip alias
         if (cmd.name !== key) return
