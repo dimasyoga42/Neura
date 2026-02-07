@@ -4,7 +4,7 @@ export const brat = async (sock, chatId, msg, text) => {
   try {
     let cx = text.replace(".brat", "").trim();
     if (text.startsWit("!brt")) {
-      cx = text.replace("!brt").trim()
+      cx = text.replace("!brt", "").trim()
     }
 
     if (!cx) {
