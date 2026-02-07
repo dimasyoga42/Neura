@@ -462,9 +462,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
         // Menghindari duplikasi alias di daftar help
         console.log(val)
         console.log(key)
-        if (key === val.name) {
-          menutext += `${key.category}\n*.${val}*: ${key.desc}\n`;
-        }
+        menutext += `${key.category}\n*.${val}*: ${key.desc}\n`;
       });
       await sock.sendMessage(chatId, { text: menutext });
     }
