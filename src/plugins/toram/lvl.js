@@ -29,7 +29,7 @@ export const lvl = async (sock, chatId, msg, text) => {
           const exp = $(row).find(".level-col-3 p b").first().text().trim()
           if (name && exp) {
             found = true
-            result += `${level} - ${name}\n${loc}\n${exp}\n`
+            result += `- ${level} - ${name} ${loc} ${exp}\n`
           }
         })
         result += "\n"

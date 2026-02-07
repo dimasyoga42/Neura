@@ -2,8 +2,10 @@ import { generateWelcomeImage } from "../../config/imgaetext.js"
 import { menuMessage } from "../../config/variabel.js"
 import { supabase } from "../../model/supabase.js"
 
+const random = Math.floor(Math.random(1, 4))
 export const setMenu = async (sock, chatId, msg, text) => {
   try {
+    console.log(random)
     if (text !== "!menu") return
 
     // Jika bukan group, kirim menu text saja
@@ -45,18 +47,18 @@ export const setMenu = async (sock, chatId, msg, text) => {
       fetchCount("regist")
     ])
 
-    
+
     const totalData = bosdefCount + appviewCount + monsterCount + xtalCount +
       abilityCount + itemCount + registCount
 
-    
+
     const user = msg.key.participant || msg.key.remoteJid
     const userName = msg.pushName || sock.contacts?.[user]?.notify || user.split("@")[0]
 
-    
+
     const groupName = sock.groupMetadataCache?.[chatId]?.subject || "Group"
 
-    
+
     let ppUrl
     try {
       ppUrl = await sock.profilePictureUrl(user, "image")
@@ -64,7 +66,7 @@ export const setMenu = async (sock, chatId, msg, text) => {
       ppUrl = "https://i.imgur.com/6VBx3io.png"
     }
 
-    
+
     let image
     try {
       image = await generateWelcomeImage(ppUrl, userName, groupName)
@@ -88,9 +90,9 @@ ${menuMessage}`,
       }, { quoted: msg })
     }
 
-    
+
     await sock.sendMessage(chatId, {
-      image,
+      image: { url: `https://raw.githubusercontent.com/dimasyoga42/dataset/main/image/menu/menu_1.gif` },
       caption: `
 *Database Statistik*
  Data Boss: ${bosdefCount.toLocaleString()}
@@ -108,7 +110,7 @@ ${menuMessage}`.trim(),
   } catch (err) {
     console.error("Error in setMenu:", err)
 
-    
+
     try {
       await sock.sendMessage(chatId, {
         text: `⚠️ Terjadi kesalahan saat memuat menu.\n\n${menuMessage}`

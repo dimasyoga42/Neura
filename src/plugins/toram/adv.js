@@ -224,8 +224,8 @@ export async function spmadv(sock, chatId, msg, text) {
     // Kalau 1000 run habis tapi belum capai target, kasih info
     const reachedTarget = level >= targetLevel
     const statusLine = reachedTarget
-      ? `✅ Target Lv ${targetLevel} tercapai!`
-      : `⚠️ Belum capai target setelah 1000x run (Lv ${level})`
+      ? ` Target Lv ${targetLevel} tercapai!`
+      : ` Belum capai target setelah 1000x run (Lv ${level})`
 
     const result = `
 *Spam Adv By Neura Sama*
