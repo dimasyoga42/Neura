@@ -449,7 +449,22 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
       sock.sendMessage(chatId, { text: "testing" }, { quoted: msg })
     }
   })
+  registerCommand({
+    name: "help",
+    alias: ["menu"],
+    category: "menu info",
+    run: async (sock, chatId, msg) => {
+      let menutext = `*Neura Sama Menu\n*`
 
+      commands.forEach((val, key) => {
+        // Menghindari duplikasi alias di daftar help
+        if (key === val.name) {
+          menuText += `• *${key}*: ${val.desc}\n`;
+        }
+      });
+      await sock.sendMessage(chatId, { text: menutext });
+    }
+  })
 
 
 
