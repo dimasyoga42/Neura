@@ -1,7 +1,7 @@
 import { downloadMediaMessage } from "@whiskeysockets/baileys";
 export const hidetag = async (sock, chatId, msg, text) => {
   try {
-    const arg = text.replace("!hidetag", "");
+    const arg = text.replace(".hidetag", "");
 
     // Validate group chat
     if (!chatId.endsWith("@g.us")) {
