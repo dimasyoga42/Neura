@@ -217,7 +217,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     name: "lv",
     alias: ["lv"],
     category: "Toram Tools",
-    desc: "menghitung level up requirements",
+    desc: "memberikan rekomendasi spot leveling",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
       lvl(sock, chatId, msg, text);
@@ -226,7 +226,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
 
   registerCommand({
     name: "bos",
-    alias: ["boss"],
+    alias: ["bos"],
     category: "Toram Info",
     desc: "melihat informasi boss",
     run: async (sock, chatId, msg, args, text) => {
@@ -283,7 +283,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     name: "pembolong",
     alias: ["pembolong"],
     category: "Toram Info",
-    desc: "informasi pembolong equipment",
+    desc: "informasi harga pembolong equipment",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
       sock.sendMessage(chatId, { text: messagePembolong }, { quoted: msg });
@@ -316,7 +316,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     name: "dye",
     alias: ["dye"],
     category: "Toram Tools",
-    desc: "memprediksi hasil dye armor",
+    desc: "memprediksi hasil dye",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
       dyePredictor(sock, chatId, msg, text);
@@ -430,7 +430,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     name: "filarm",
     alias: ["filarm"],
     category: "Toram Tools",
-    desc: "menghitung statistik armor dengan tanaka",
+    desc: "filstat armor dengan tanaka",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
       try {
