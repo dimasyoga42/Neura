@@ -4,7 +4,7 @@ export const setNote = async (sock, chatId, msg, text) => {
   try {
     // contoh input:
     // !setnote ,judul note, isi note panjang bebas
-    const args = text.replace("!setnote", "").split(",");
+    const args = text.replace(".setnote", "").split(",");
 
     const noteName = args[1]?.trim();
     const notemessage = args.slice(2).join(",").trim();
@@ -50,7 +50,7 @@ export const setNote = async (sock, chatId, msg, text) => {
 
 export const note = async (sock, chatId, msg, text) => {
   try {
-    const noteName = text.replace("!note", "").trim();
+    const noteName = text.replace(".note", "").trim();
 
     if (!noteName) {
       return sock.sendMessage(

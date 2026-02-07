@@ -7,7 +7,7 @@ export const mix = async (sock, chatId, msg, text) => {
     const arg = text.split(" ")
     const emj1 = arg[1]
     const emj2 = arg[2]
-    if (!emj1) return sock.sendMessage(chatId, { text: "emoji harus ada dua\ncontoh: !mix 🤣 👾" }, { quoted: msg });
+    if (!emj1) return sock.sendMessage(chatId, { text: "emoji harus ada dua\ncontoh: .mix 🤣 👾" }, { quoted: msg });
     const link = `https://api.deline.web.id/maker/emojimix?emoji1=${emj1}&emoji2=${encodeURIComponent(emj2)}`
     const res = await axios.get(link)
     const data = res.data.result

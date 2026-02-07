@@ -8,12 +8,12 @@ export const setNews = async (sock, chatId, msg, text) => {
   try {
     if (!chatId?.endsWith("@g.us")) return sock.sendMessage(chatId, { text: "cmd ini hanya bisa digunakan di grub" }, { quoted: msg })
     adminValid(sock, chatId, msg, text);
-    const newsText = text.replace("!setnews", "").trim();
+    const newsText = text.replace(".setnews", "").trim();
 
     if (!newsText) {
       return sock.sendMessage(
         chatId,
-        { text: "Format salah\n> gunakan !setnews <isi berita>" },
+        { text: "Format salah\n> gunakan .setnews <isi berita>" },
         { quoted: msg }
       );
     }
@@ -75,7 +75,7 @@ export const getNews = async (sock, chatId, msg) => {
     if (!newsData || !newsData.news) {
       return sock.sendMessage(
         chatId,
-        { text: "Belum ada news di grup ini\ngunakan !setnews untuk menambahkan berita" },
+        { text: "Belum ada news di grup ini\ngunakan .setnews untuk menambahkan berita" },
         { quoted: msg }
       );
     }

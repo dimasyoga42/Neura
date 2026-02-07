@@ -4,11 +4,11 @@ import axios from "axios"
 // Fungsi SetWelcome (Tidak berubah)
 export const SetWelcome = async (sock, chatId, msg, text) => {
   try {
-    const arg = text.replace("!setwc", "").trim()
+    const arg = text.replace(".setwc", "").trim()
 
     if (!arg) return sock.sendMessage(
       chatId,
-      { text: `Format salah!\n\nCara penggunaan:\n!setwc Teks Welcome Kamu\ntag yang tersedia:\n@user : untuk tag member yang join\n@group : untuk mengambil nama grub\n@count : untuk menampilkan jumlah member\n@desc : untuk menampilkan deskripsi grub` },
+      { text: `Format salah!\n\nCara penggunaan:\n.setwc Teks Welcome Kamu\ntag yang tersedia:\n@user : untuk tag member yang join\n@group : untuk mengambil nama grub\n@count : untuk menampilkan jumlah member\n@desc : untuk menampilkan deskripsi grub` },
       { quoted: msg }
     )
 

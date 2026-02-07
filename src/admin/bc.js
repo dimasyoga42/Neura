@@ -84,11 +84,11 @@ export const handleBroadcast = async (sock, msg) => {
     msg.message?.extendedTextMessage?.text ||
     ""
 
-  const caption = text.replace(/^!bc\s*/i, "").trim()
+  const caption = text.replace(/^.bc\s*/i, "").trim()
 
   if (!caption && !msg.message?.imageMessage) {
     return sock.sendMessage(chatId, {
-      text: "Gunakan:\n!bc teks\natau kirim gambar dengan caption !bc"
+      text: "Gunakan:\n.bc teks\natau kirim gambar dengan caption .bc"
     }, { quoted: msg })
   }
 

@@ -2,12 +2,12 @@ import { Sticker } from "wa-sticker-formatter";
 
 export const brat = async (sock, chatId, msg, text) => {
   try {
-    const cx = text.replace("!brat", "").trim();
+    const cx = text.replace(".brat", "").trim();
 
     if (!cx) {
       return sock.sendMessage(
         chatId,
-        { text: "mana teksnya?\ncontoh: !brat owner ganteng" },
+        { text: "mana teksnya?\ncontoh: .brat owner ganteng" },
         { quoted: msg }
       );
     }

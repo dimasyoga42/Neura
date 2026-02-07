@@ -3,10 +3,10 @@ import path from "path";
 const db = path.resolve("database", "afk/database.json");
 export const setAfk = async (sock, chatId, msg, text) => {
   try {
-    const pesan = text.replace("!afk", "");
+    const pesan = text.replace(".afk", "");
     if (!chatId?.endsWith("@g.us")) return sock.sendMessage(chatId, { text: "cmd ini hanya bisa digunakan di grub" }, { quoted: msg })
 
-    if (!pesan) return sock.sendMessage(chatId, { text: "harap masukan pesan setelah !afk\ncontoh !afk makan" }, { quoted: msg })
+    if (!pesan) return sock.sendMessage(chatId, { text: "harap masukan pesan setelah .afk\ncontoh .afk makan" }, { quoted: msg })
     const data = getUserData(db)
     const userId = msg.key.participant || msg.key.remoteJid;
     let afkEntry = data.find((i) => i.userId === userId)

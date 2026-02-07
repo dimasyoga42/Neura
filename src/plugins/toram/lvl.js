@@ -3,7 +3,7 @@ import * as cheerio from "cheerio"
 
 export const lvl = async (sock, chatId, msg, text) => {
   try {
-    const lv = text.replace("!lv", "").trim()
+    const lv = text.replace(".lv", "").trim()
     if (!lv) {
       return sock.sendMessage(chatId, { text: "Masukkan level setelah !lv\nContoh: !lv 299" }, { quoted: msg })
     }

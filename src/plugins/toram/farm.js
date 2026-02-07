@@ -2,7 +2,7 @@ import { supabase } from "../../model/supabase.js";
 
 export const farm = async (sock, chatId, msg, text) => {
   try {
-    const query = text.replace("!listfarm", "").trim();
+    const query = text.replace(".listfarm", "").trim();
 
     if (!query) {
       return sock.sendMessage(
@@ -10,7 +10,7 @@ export const farm = async (sock, chatId, msg, text) => {
         {
           text:
             "Format salah.\n" +
-            "Contoh: !listfarm metal\n" +
+            "Contoh: .listfarm metal\n" +
             "Kategori: Metal, Cloth, Wood, Medicine, Beast, Mana"
         },
         { quoted: msg }
