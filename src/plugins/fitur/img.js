@@ -2,7 +2,7 @@ import { generateWelcomeImage } from "../../config/imgaetext.js"
 import { menuMessage } from "../../config/variabel.js"
 import { supabase } from "../../model/supabase.js"
 
-const random = Math.random(1, 4)
+const randomMenu = Math.floor(Math.random() * 4) + 1
 export const setMenu = async (sock, chatId, msg, text) => {
   try {
     console.log(random)
@@ -92,7 +92,8 @@ ${menuMessage}`,
 
 
     await sock.sendMessage(chatId, {
-      image: { url: `https://raw.githubusercontent.com/dimasyoga42/dataset/main/image/menu/menu_1.gif` },
+      video: { url: `https://raw.githubusercontent.com/dimasyoga42/dataset/main/image/menu/menu_${randomMenu}.gif` },
+      gifPlayback: true,
       caption: `
 *Database Statistik*
  Data Boss: ${bosdefCount.toLocaleString()}
