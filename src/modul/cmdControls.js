@@ -603,7 +603,7 @@ nomer owner: 085664393331 (dimas)`
     name: "padu",
     alias: ["padu"],
     category: "Toram Info",
-    desc: "panduan padu gear",
+    desc: "panduan padu",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
       sock.sendMessage(chatId, { text: guide.padu }, { quoted: msg });
@@ -823,7 +823,7 @@ nomer owner: 085664393331 (dimas)`
     name: "mix",
     alias: ["mix"],
     category: "Menu Tools",
-    desc: "mencampur warna",
+    desc: "memadukan emot menjadi stiker",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
       mix(sock, chatId, msg, text);
