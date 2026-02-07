@@ -448,37 +448,45 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     }
   })
   registerCommand({
-    name: "menu",
-    alias: ["help"],
+    name: "help",
+    alias: ["menu"],
     category: "menu info",
     desc: "memunculkan daftar menu",
     run: async (sock, chatId, msg) => {
-      if (isBan(sock, chatId, msg)) return;
       let menutext = `*Neura Sama Menu*\n\n`
       const grouped = {}
 
       commands.forEach((cmd, key) => {
-        // hanya tampilkan command utama, skip alias
+        // skip alias
         if (cmd.name !== key) return
 
-        if (!grouped[cmd.category]) grouped[cmd.category] = []
-        grouped[cmd.category].push(cmd)
+        // normalisasi kategori
+        let cat = (cmd.category || "other").toLowerCase().trim()
+
+        if (!grouped[cat]) grouped[cat] = []
+        grouped[cat].push(cmd)
       })
 
-      Object.keys(grouped).forEach((cat) => {
+      // sort kategori A-Z
+      const sortedCategory = Object.keys(grouped).sort()
+
+      sortedCategory.forEach((cat) => {
         menutext += `*${cat}*\n`
-        grouped[cat].forEach((cmd) => {
-          const alias = cmd.alias.length ? ` (${cmd.alias.join(", ")})` : ""
-          menutext += `.${cmd.name}${alias} - ${cmd.desc}\n`
-        })
+
+        // sort command A-Z
+        grouped[cat]
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .forEach((cmd) => {
+            const alias = cmd.alias.length ? ` (${cmd.alias.join(", ")})` : ""
+            menutext += `.${cmd.name}${alias} - ${cmd.desc}\n`
+          })
+
         menutext += `\n`
       })
 
       await sock.sendMessage(chatId, { text: menutext })
     }
   })
-
-
 
 
 
