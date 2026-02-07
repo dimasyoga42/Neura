@@ -50,6 +50,7 @@ import { bacaBuku, listperpus } from "../plugins/fitur/perpus.js";
 import { itemStat } from "../plugins/toram/filter.js";
 import { Loli } from "../plugins/fun/loli.js";
 import { commands, fetchdata, registerCommand } from "../../setting.js";
+import { addOverlayFromUrl } from "../config/overlay.js";
 
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   // Register all commands
@@ -77,10 +78,9 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
 
       // sort kategori A-Z
       const sortedCategory = Object.keys(grouped).sort()
-
+      const imageoverlay = await addOverlayFromUrl(`${data[key]}`, "Neura Sama")
       sortedCategory.forEach((cat) => {
         menutext += `*${cat}*\n`
-
         // sort command A-Z
         grouped[cat]
           .sort((a, b) => a.name.localeCompare(b.name))
@@ -92,7 +92,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
         menutext += `\n`
       })
 
-      await sock.sendMessage(chatId, { image: { url: `${data[key]}` }, caption: menutext })
+      await sock.sendMessage(chatId, { image: imageoverlay, caption: menutext })
     }
   })
 
