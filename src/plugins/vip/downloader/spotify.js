@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const Spotifysearch = async (sock, chatId, msg, text) => {
   try {
-    const lagu = text.replace("!spotify", "");
+    const lagu = text.replace(".spotify", "");
     if (!lagu) return sock.sendMessage(chatId, { text: "mana judulnya?" }, { quoted: msg })
     sock.sendMessage(chatId, { text: `sedang mencari lagu: ${lagu}` })
     const response = await axios.get(`https://api.deline.web.id/downloader/spotifyplay?q=${decodeURIComponent(lagu)}`);
