@@ -15,6 +15,7 @@ import { messageHandler } from "./src/plugins/ai/message.js";
 import { subMenu } from "./src/modul/subMenu.js";
 import { jawab } from "./src/plugins/fun/caklontong.js";
 import { commands } from "./setting.js";
+import smsg from "./proto.js";
 dotenv.config();
 const start = async () => {
   const { state, saveCreds } = await useMultiFileAuthState("./auth_save");
@@ -62,7 +63,7 @@ const start = async () => {
     await outGC(sock, update)
   })
   sock.ev.on("messages.upsert", async ({ messages }) => {
-    const msg = messages[0]
+    const msg = smsg(sock, messages[0])
 
     try {
       const chatId = msg.key.remoteJid;
