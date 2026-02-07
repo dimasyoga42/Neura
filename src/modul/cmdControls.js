@@ -85,7 +85,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
           .sort((a, b) => a.name.localeCompare(b.name))
           .forEach((cmd) => {
             const alias = cmd.alias.length ? ` (${cmd.alias.join(", ")})` : ""
-            menutext += `.${cmd.name}${alias} - ${cmd.desc}\n`
+            menutext += `- .${cmd.name}${alias} - ${cmd.desc}\n`
           })
 
         menutext += `\n`
