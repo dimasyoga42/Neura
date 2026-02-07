@@ -424,10 +424,17 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     itemStat(sock, chatId, msg, text);
   }
-  if (text.startsWith(".family100")) {
-    if (isBan(sock, chatId, msg)) return;
-    Family100(sock, chatId, msg);
-  }
+
+  registerCommand({
+    name: "family100",
+    alias: ["fmly"],
+    category: "Menu Fun",
+    desc: "permainan family 100",
+    run: async (sock, chatId, msg, args, text) => {
+      if (isBan(sock, chatId, msg)) return;
+      Family100(sock, chatId, msg)
+    }
+  })
 
   registerCommand({
     name: "loli",
