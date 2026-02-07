@@ -89,13 +89,28 @@ const start = async () => {
 
         if (command) {
           try {
-            // Eksekusi fungsi run yang didaftarkan sebelumnya
-            await command.run(sock, msg.key.remoteJid, msg, args, text);
+            // pastikan args & text aman
+            const safeArgs = Array.isArray(args) ? args : [];
+            const safeText = typeof text === "string"
+              ? text
+              : safeArgs.join(" "); // fallback dari args
+
+            await command.run(
+              sock,
+              msg.key.remoteJid,
+              msg,
+              safeArgs,
+              safeText
+            );
+
           } catch (error) {
             console.error(`Error eksekusi [${commandName}]:`, error);
-            await sock.sendMessage(msg.key.remoteJid, { text: "Gagal menjalankan perintah." });
+            await sock.sendMessage(msg.key.remoteJid, {
+              text: "Gagal menjalankan perintah."
+            });
           }
         }
+
       }
 
     } catch (err) {
