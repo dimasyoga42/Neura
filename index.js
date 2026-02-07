@@ -16,6 +16,7 @@ import { subMenu } from "./src/modul/subMenu.js";
 import { jawab } from "./src/plugins/fun/caklontong.js";
 import { commands } from "./setting.js";
 import smsg from "./proto.js";
+import { decodeJid } from "./src/config/dcode.js";
 dotenv.config();
 const start = async () => {
   const { state, saveCreds } = await useMultiFileAuthState("./auth_save");
@@ -25,7 +26,7 @@ const start = async () => {
     auth: state,
     printQRInTerminal: false
   });
-
+  sock.decodeJid = decodeJid
   sock.ev.on("creds.update", saveCreds);
 
   sock.ev.on("connection.update", ({ connection, lastDisconnect, qr }) => {
