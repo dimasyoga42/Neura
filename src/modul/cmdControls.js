@@ -713,7 +713,7 @@ nomer owner: 085664393331 (dimas)`
     name: "spamadv",
     alias: ["spamadv"],
     category: "Toram Tools",
-    desc: "spam advertisement toram",
+    desc: "kalkulasi spam adv toram",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
       spmadv(sock, chatId, msg, text);
