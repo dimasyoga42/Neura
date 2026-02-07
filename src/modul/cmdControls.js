@@ -436,16 +436,24 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     Family100(sock, chatId, msg);
   }
-  if (text.startsWith(".loli")) {
-    if (isBan(sock, chatId, msg)) return;
-    Loli(sock, chatId, msg);
-  }
+
   registerCommand({
-    name: "help",
-    alias: ["menu"],
+    name: "loli",
+    alias: ["pdf"],
+    category: "Menu Fun",
+    decs: "memunculkan foto loli random",
+    run: async (sock, chatId, msg) => {
+      if (isBan(sock, chatId, msg)) return;
+      Loli(sock, chatId, msg)
+    }
+  })
+  registerCommand({
+    name: "menu",
+    alias: ["help"],
     category: "menu info",
     desc: "memunculkan daftar menu",
     run: async (sock, chatId, msg) => {
+      if (isBan(sock, chatId, msg)) return;
       let menutext = `*Neura Sama Menu*\n\n`
       const grouped = {}
 
