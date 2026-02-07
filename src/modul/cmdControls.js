@@ -454,9 +454,9 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     alias: ["baca"],
     category: "Toram Info",
     desc: "memunculkan detail Guide",
-    run: async (sock, chatId, msg, text) => {
+    run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
-      bacaBuku(sock, chatId, msg, text)
+      bacaBuku(sock, chatId, msg, text);
     }
   })
   registerCommand({
