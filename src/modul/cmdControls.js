@@ -454,7 +454,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     alias: ["menu"],
     category: "menu info",
     run: async (sock, chatId, msg) => {
-      let menutext = `*Neura Sama Menu\n*`
+      let menutext = `*Neura Sama Menu*\n`
 
       commands.forEach((val, key) => {
         // Menghindari duplikasi alias di daftar help
