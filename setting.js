@@ -17,11 +17,14 @@ export const fetchdata = async (url) => {
 }
 
 export const commands = new Map();
-export const registerCommand = (config) => {
-  const { name, alias, category, desc, run } = config;
-  commands.set(name, { alias, category, desc, run });
 
-  if (config.alias) {
-    config.alias.forEach(alias => commands.set(alias, commands.get(name)));
-  }
+export const registerCommand = (config) => {
+  const { name, alias = [], category, desc, run } = config;
+
+  const commandObj = { name, alias, category, desc, run };
+
+  commands.set(name, commandObj);
+
+  alias.forEach(a => commands.set(a, commandObj));
 };
+
