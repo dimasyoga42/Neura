@@ -449,8 +449,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
       let menutext = `*Neura Sama Menu*\n\n`
       const grouped = {}
 
-      commands.forEach((cmd, key) => {
-        if (cmd.name !== key) return
+      commands.forEach((cmd) => {
         if (!grouped[cmd.category]) grouped[cmd.category] = []
         grouped[cmd.category].push(cmd)
       })
@@ -458,7 +457,8 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
       Object.keys(grouped).forEach((cat) => {
         menutext += `*${cat}*\n`
         grouped[cat].forEach((cmd) => {
-          menutext += `.${cmd.alias} - ${cmd.desc}\n`
+          const alias = cmd.alias?.length ? ` (${cmd.alias.join(", ")})` : ""
+          menutext += `.${cmd.name}${alias} - ${cmd.desc}\n`
         })
         menutext += `\n`
       })
