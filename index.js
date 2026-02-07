@@ -90,7 +90,7 @@ const start = async () => {
         if (command) {
           try {
             // Eksekusi fungsi run yang didaftarkan sebelumnya
-            await command.run(sock, msg.key.remoteJid, msg, args);
+            await command.run(sock, msg.key.remoteJid, msg, args, text);
           } catch (error) {
             console.error(`Error eksekusi [${commandName}]:`, error);
             await sock.sendMessage(msg.key.remoteJid, { text: "Gagal menjalankan perintah." });

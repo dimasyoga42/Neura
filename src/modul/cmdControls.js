@@ -419,15 +419,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     bosTesting(sock, chatId, msg);
   }
-  if (text.startsWith(".perpus")) {
-    if (isBan(sock, chatId, msg)) return;
-    listperpus(sock, chatId, msg);
-  }
 
-  if (text.startsWith(".baca")) {
-    if (isBan(sock, chatId, msg)) return;
-    bacaBuku(sock, chatId, msg, text);
-  }
   if (text.startsWith(".statitem")) {
     if (isBan(sock, chatId, msg)) return;
     itemStat(sock, chatId, msg, text);
@@ -445,6 +437,26 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
       Loli(sock, chatId, msg)
+    }
+  })
+  registerCommand({
+    name: "perpus",
+    alias: ["perpus"],
+    category: "Toram Info",
+    desc: "memunculkan daftar Guide",
+    run: async (sock, chatId, msg) => {
+      if (isBan(sock, chatId, msg)) return;
+      listperpus(sock, chatId, msg)
+    }
+  })
+  registerCommand({
+    name: "baca",
+    alias: ["baca"],
+    category: "Toram Info",
+    desc: "memunculkan detail Guide",
+    run: async (sock, chatId, msg, text) => {
+      if (isBan(sock, chatId, msg)) return;
+      bacaBuku(sock, chatId, msg, text)
     }
   })
   registerCommand({
