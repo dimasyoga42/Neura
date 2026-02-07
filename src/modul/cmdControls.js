@@ -445,6 +445,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     name: "testing",
     alias: ["test"],
     category: "menu info",
+    desc: 'Mengirim gambar waifu acak',
     run: async (sock, chatId, msg) => {
       sock.sendMessage(chatId, { text: "testing" }, { quoted: msg })
     }
@@ -460,7 +461,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
       commands.forEach((val, key) => {
         // Menghindari duplikasi alias di daftar help
         if (key === val.name) {
-          menutext += `• *.${key}*: ${val.desc}\n`;
+          menutext += `• ${key.category} *.${key.alias}*: ${val.desc}\n`;
         }
       });
       await sock.sendMessage(chatId, { text: menutext });
