@@ -14,6 +14,7 @@ import { HandleWelcome, outGC } from "./src/admin/wellcome.js";
 import { messageHandler } from "./src/plugins/ai/message.js";
 import { subMenu } from "./src/modul/subMenu.js";
 import { jawab } from "./src/plugins/fun/caklontong.js";
+import { loadPlugins } from "./setting.js";
 dotenv.config();
 const start = async () => {
   const { state, saveCreds } = await useMultiFileAuthState("./auth_save");
@@ -75,6 +76,7 @@ const start = async () => {
       cmdMenucontrol(sock, chatId, msg, text);
       jawab(sock, chatId, msg)
       subMenu(sock, chatId, msg, text);
+      await loadPlugins()
     } catch (err) {
       console.log(err)
     }
