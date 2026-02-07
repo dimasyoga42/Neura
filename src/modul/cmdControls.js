@@ -456,15 +456,23 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     category: "menu info",
     desc: "memunculkan daftar menu",
     run: async (sock, chatId, msg) => {
-      let menutext = `*Neura Sama Menu*\n`
+      let menutext = `*Neura Sama Menu*\n\n`
+      const grouped = {}
 
-      commands.forEach((val, key) => {
-        // Menghindari duplikasi alias di daftar help
-        console.log(val)
-        console.log(val[key].desc)
-        menutext += `${key.category}\n*.${val[key].name}*: ${key.desc}\n`;
-      });
-      await sock.sendMessage(chatId, { text: menutext });
+      commands.forEach((cmd) => {
+        if (!grouped[cmd.category]) grouped[cmd.category] = []
+        grouped[cmd.category].push(cmd)
+      })
+
+      Object.keys(grouped).forEach((cat) => {
+        menutext += `*${cat}*\n`
+        grouped[cat].forEach((cmd) => {
+          menutext += `.${cmd.name} - ${cmd.desc}\n`
+        })
+        menutext += `\n`
+      })
+
+      await sock.sendMessage(chatId, { text: menutext })
     }
   })
 
