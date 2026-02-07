@@ -64,7 +64,6 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
       const grouped = {}
       const key = Math.floor(Math.random() * 4) + 1
       const data = await fetchdata("https://raw.githubusercontent.com/dimasyoga42/dataset/main/image/menu/menu.json")
-      console.log(data[key])
       commands.forEach((cmd, key) => {
         // skip alias
         if (cmd.name !== key) return
@@ -93,7 +92,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
         menutext += `\n`
       })
 
-      await sock.sendMessage(chatId, { text: menutext })
+      await sock.sendMessage(chatId, { image: { url: `${data[key]}` }, caption: menutext })
     }
   })
 
