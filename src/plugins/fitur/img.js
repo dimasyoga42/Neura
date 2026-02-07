@@ -6,7 +6,7 @@ import { supabase } from "../../model/supabase.js"
 const randomMenu = Math.floor(Math.random() * 4) + 1
 export const setMenu = async (sock, chatId, msg, text) => {
   try {
-    const thumbUrl = `https://raw.githubusercontent.com/dimasyoga42/dataset/main/image/menu/menu_${randomMenu}.jpg`
+    const thumbUrl = `https://raw.githubusercontent.com/dimasyoga42/dataset/main/image/menu/menu_${randomMenu}.gif`
     const { data: thumb } = await axios.get(thumbUrl, { responseType: "arraybuffer" })
     console.log(randomMenu)
     if (text !== "!menu") return
