@@ -1,4 +1,6 @@
 import axios from "axios";
+import { registerCommand } from "../../../../setting.js";
+import { isBan } from "../../fitur/ban";
 
 export const autoGempa = async (sock, chatId, msg) => {
   try {
@@ -22,3 +24,14 @@ potensi: ${data.gempa.Potensi}
     console.log(err.message);
   }
 }
+
+registerCommand({
+  name: "gempa",
+  alias: ["infogempa"],
+  category: "Menu info",
+  desc: "memberikan data terbaru terkait gempa",
+  run: async (sock, chatId, msg) => {
+    if (isBan(sock, chatId, msg)) return;
+    autoGempa(sock, chatId, msg)
+  }
+})
