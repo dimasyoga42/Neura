@@ -1,3 +1,4 @@
+import axios from "axios"
 import { generateWelcomeImage } from "../../config/imgaetext.js"
 import { menuMessage } from "../../config/variabel.js"
 import { supabase } from "../../model/supabase.js"
@@ -5,6 +6,8 @@ import { supabase } from "../../model/supabase.js"
 const randomMenu = Math.floor(Math.random() * 4) + 1
 export const setMenu = async (sock, chatId, msg, text) => {
   try {
+    const thumbUrl = `https://raw.githubusercontent.com/dimasyoga42/dataset/main/image/menu/menu_${randomMenu}.jpg`
+    const { data: thumb } = await axios.get(thumbUrl, { responseType: "arraybuffer" })
     console.log(randomMenu)
     if (text !== "!menu") return
 
@@ -92,7 +95,8 @@ ${menuMessage}`,
 
 
     await sock.sendMessage(chatId, {
-      video: { url: `https://raw.githubusercontent.com/dimasyoga42/dataset/main/image/menu/menu_${randomMenu}.gif` },
+      image: { url: `https://raw.githubusercontent.com/dimasyoga42/dataset/main/image/menu/menu_${randomMenu}.gif` },
+      jpegThumbnail: thumb,
       gifPlayback: true,
       caption: `
 *Database Statistik*
