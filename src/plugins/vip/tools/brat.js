@@ -3,8 +3,8 @@ import { Sticker } from "wa-sticker-formatter";
 export const brat = async (sock, chatId, msg, text) => {
   try {
     let cx
-    if (text.startsWith("!brt")) {
-      cx = text.replace("!brt", "").trim()
+    if (text.startsWith(".brt")) {
+      cx = text.replace(".brt", "").trim()
     } else {
       cx = text.replace(".brat", "").trim();
     }
