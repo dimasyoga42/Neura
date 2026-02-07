@@ -14,7 +14,7 @@ import { HandleWelcome, outGC } from "./src/admin/wellcome.js";
 import { messageHandler } from "./src/plugins/ai/message.js";
 import { subMenu } from "./src/modul/subMenu.js";
 import { jawab } from "./src/plugins/fun/caklontong.js";
-import { commands, loadPlugins } from "./setting.js";
+import { commands } from "./setting.js";
 dotenv.config();
 const start = async () => {
   const { state, saveCreds } = await useMultiFileAuthState("./auth_save");
