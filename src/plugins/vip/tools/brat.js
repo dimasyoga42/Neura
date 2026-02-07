@@ -38,7 +38,7 @@ export const brat = async (sock, chatId, msg, text) => {
     console.error(error);
     await sock.sendMessage(
       chatId,
-      { text: "error saat membuat sticker" },
+      { text: error.message },
       { quoted: msg }
     );
   }
