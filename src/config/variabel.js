@@ -15,69 +15,69 @@ export const guide = {
 export const xsubMenu = {
   menuadmin: `
 *Menu Admin By Neura Sama*
-- !kick
-- !open
-- !close
-- !setnews
-- !setrules
-- !clear
-- !hidetag
-- !creatraid
-- !setwc
+- .kick
+- .open
+- .close
+- .setnews
+- .setrules
+- .clear
+- .hidetag
+- .creatraid
+- .setwc
   `.trim(),
   menutoram: `
 *Menu Toram By Neura Sama*
-- !xtall <nama xtall>
-- !item <nama item>
-- !appview <nama app>
-- !benner
-- !lv <level>
-- !buff
-- !ability <nama ability>
-- !mt
-- !regist <nama regist>
-- !bos <nama bos>
-- !filarm
-- !sheetfill
-- !upbag
-- !listleveling
-- !raid
-- !join
-- !leave
-- !pembolong
-- !padu
-- !listability
-- !listskill
-- !skill
+- .xtall <nama xtall>
+- .item <nama item>
+- .appview <nama app>
+- .benner
+- .lv <level>
+- .buff
+- .ability <nama ability>
+- .mt
+- .regist <nama regist>
+- .bos <nama bos>
+- .filarm
+- .sheetfill
+- .upbag
+- .listleveling
+- .raid
+- .join
+- .leave
+- .pembolong
+- .padu
+- .listability
+- .listskill
+- .skill
   `.trim(),
   menufun: `
   *Menu fun By Neura Sama*
-  - !caklontong
-  - !tebakgambar
-  - !waifu
-  - !husbu
-  - !cek
-  - !j <answer>
+  - .caklontong
+  - .tebakgambar
+  - .waifu
+  - .husbu
+  - .cek
+  - .j <answer>
   `.trim(),
   menutools: `
   *Menu Tools By Neura Sama*
-  - !stiker
-  - !play <title music>
-  - !ytmp3 <link yt>
-  - !pinterest <any txt>
-  - !qc <txt>
+  - .stiker
+  - .play <title music>
+  - .ytmp3 <link yt>
+  - .pinterest <any txt>
+  - .qc <txt>
   `.trim(),
   menugrub: `
 *Menu Grub By Neura Sama*
-- !profil
-- !mybio
-- !setdesc <text>
-- !setpp
-- !rules
-- !raid
-- !setbuff <code>
-- !afk <any text>
-- !gempa
+- .profil
+- .mybio
+- .setdesc <text>
+- .setpp
+- .rules
+- .raid
+- .setbuff <code>
+- .afk <any text>
+- .gempa
   `.trim()
 }
 
@@ -117,129 +117,129 @@ website official Neura: https://neuraaa.vercel.app/
 *Rules Bot:*
 - gunakan bot sewajarnya jangan spam
 - dilarang membuat stiker jamok / vulgar / mesum
-- jika ingin request fitur gunakan !report <request>
+- jika ingin request fitur gunakan .report <request>
 
 *info*
-- !report <any req / bug report>
-- !donet
+- .report <any req / bug report>
+- .donet
 
 *Sub Menu*
-- !menuadmin
-- !menutoram
-- !menufun
-- !menutools
+- .menuadmin
+- .menutoram
+- .menufun
+- .menutools
 
 *Menu Admin*
-- !kick
-- !open
-- !close
-- !setnews
-- !setrules
-- !clear
-- !hidetag
-- !createraid
-- !setwc
+- .kick
+- .open
+- .close
+- .setnews
+- .setrules
+- .clear
+- .hidetag
+- .createraid
+- .setwc
 
 *Menu Tools*
-- !stiker
-- !play
-- !spotify
-- !ytmp3
-- !pinterest
-- !qc
-- !brat
-- !mix
-- !hd
-- !remini (replay foto)
+- .stiker
+- .play
+- .spotify
+- .ytmp3
+- .pinterest
+- .qc
+- .brat
+- .mix
+- .hd
+- .remini (replay foto)
 
 *Menu Stalk* (next update)
-- !igstalk
-- !tiktokstalk
-- !mlstalk
-- !ffstalk
+- .igstalk
+- .tiktokstalk
+- .mlstalk
+- .ffstalk
 
 *Menu Fun*
-- !caklontong
-- !tebakgambar
-- !waifu
-- !husbu
-- !khodam
-- !cek
-- !artinama
-- !family100
-- !loli
-- !j <answer>
+- .caklontong
+- .tebakgambar
+- .waifu
+- .husbu
+- .khodam
+- .cek
+- .artinama
+- .family100
+- .loli
+- .j <answer>
 
 *Menu Grub*
-- !profil
-- !mybio
-- !setdesc
-- !setpp
-- !rules
-- !raid
-- !setbuff
-- !afk
-- !gempa
+- .profil
+- .mybio
+- .setdesc
+- .setpp
+- .rules
+- .raid
+- .setbuff
+- .afk
+- .gempa
 
 *Info Toram*
-- !torambanner
-- !toramboost
-- !dye
-- !torammt
-- !toramlive
-- !shdb
-- !mq
-- !listxtall
-- !note
-- !listnote
-- !setnote
+- .torambanner
+- .toramboost
+- .dye
+- .torammt
+- .toramlive
+- .shdb
+- .mq
+- .listxtall
+- .note
+- .listnote
+- .setnote
 
 *Guide Toram*
-- !pet
-- !listfarm
-- !perpus
-- !baca
+- .pet
+- .listfarm
+- .perpus
+- .baca
 
 *Raid Fitur*
-- !createraid
-- !join
-- !leave
-- !clear
-- !raid
+- .createraid
+- .join
+- .leave
+- .clear
+- .raid
 
 *tools Toram*
-- !filarm
-- !xtall
-- !lv
-- !regist
-- !item
-- !appview
-- !spamadv
-- !statitem
+- .filarm
+- .xtall
+- .lv
+- .regist
+- .item
+- .appview
+- .spamadv
+- .statitem
 
 *Info Toram*
-- !listability
-- !listskill
-- !ability
-- !skill
-- !Buff
-- !setidbuff
-- !pembolong
-- !bos
-- !monster
-- !upbag
-- !padu
-- !listLeveling
-- !sheetfill
+- .listability
+- .listskill
+- .ability
+- .skill
+- .Buff
+- .setidbuff
+- .pembolong
+- .bos
+- .monster
+- .upbag
+- .padu
+- .listLeveling
+- .sheetfill
 
 
 
-> banyak banyak literasi dalam membaca menu!!
+> banyak banyak literasi dalam membaca menu..
 `.trim();
 
 export const buffMessage = `
 Code buff\n> by Neura Bot
-> use !report <nama buff, code buff> untuk menambahkan code buff mu kedalam bot
+> use .report <nama buff, code buff> untuk menambahkan code buff mu kedalam bot
 *Max HP*
 - 2020096
 - 1010032
@@ -522,7 +522,7 @@ DTE NEUTRAL
 
 export const stat = `
 cara penggunaan nya:
-!filarm lv280, pot160, dtedark%=Max, cd%=10, cd=20, acc%=Min, Matk%=Min, acc=Min
+.filarm lv280, pot160, dtedark%=Max, cd%=10, cd=20, acc%=Min, Matk%=Min, acc=Min
   // Critical Stats - dengan alias
   critdmg: "Critical Damage",
   cd: "Critical Damage",
