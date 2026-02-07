@@ -2,7 +2,7 @@ import { generateWelcomeImage } from "../../config/imgaetext.js"
 import { menuMessage } from "../../config/variabel.js"
 import { supabase } from "../../model/supabase.js"
 
-const random = Math.floor(Math.random(1, 4))
+const random = Math.random(1, 4)
 export const setMenu = async (sock, chatId, msg, text) => {
   try {
     console.log(random)
