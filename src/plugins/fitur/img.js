@@ -96,8 +96,6 @@ ${menuMessage}`,
 
     await sock.sendMessage(chatId, {
       image: { url: `https://raw.githubusercontent.com/dimasyoga42/dataset/main/image/menu/menu_${randomMenu}.gif` },
-      jpegThumbnail: thumb,
-      gifPlayback: true,
       caption: `
 *Database Statistik*
  Data Boss: ${bosdefCount.toLocaleString()}
