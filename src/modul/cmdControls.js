@@ -449,7 +449,8 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
       let menutext = `*Neura Sama Menu*\n\n`
       const grouped = {}
 
-      commands.forEach((cmd) => {
+      commands.forEach((cmd, key) => {
+        if (cmd.name !== key) return
         if (!grouped[cmd.category]) grouped[cmd.category] = []
         grouped[cmd.category].push(cmd)
       })
