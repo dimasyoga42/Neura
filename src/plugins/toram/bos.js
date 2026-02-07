@@ -5,11 +5,11 @@ function toCodeBlock(text) {
 }
 const Bossdef = async (sock, chatId, msg, text) => {
   try {
-    const name = text.replace("!bos", "").trim()
+    const name = text.replace(".bos", "").trim()
     if (!name) {
       return sock.sendMessage(
         chatId,
-        { text: "Mohon masukkan nama boss setelah perintah !bos" },
+        { text: "Mohon masukkan nama boss setelah perintah .bos" },
         { quoted: msg }
       )
     }
