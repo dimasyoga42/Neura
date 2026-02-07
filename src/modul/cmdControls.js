@@ -390,10 +390,18 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     if (isBan(sock, chatId, msg)) return;
     setBuff(sock, chatId, msg, text);
   }
-  if (text.startsWith(".brat")) {
-    if (isBan(sock, chatId, msg)) return;
-    brat(sock, chatId, msg, text);
-  }
+
+  registerCommand({
+    name: "brat",
+    alias: ["brt"],
+    category: "Menu Tools",
+    desc: "membuat stiker brat",
+    run: async (sock, chatId, msg, args, text) => {
+      if (isBan(sock, chatId, msg)) return
+      brat(sock, chatId, msg, text)
+    }
+
+  })
   if (text.startsWith(".mix")) {
     if (isBan(sock, chatId, msg)) return;
     mix(sock, chatId, msg, text);
@@ -423,7 +431,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
     name: "statitem",
     alias: ["statitem"],
-    category: "Toram Info",
+    category: "Toram Tools",
     desc: "mencari item berdasarkan stat",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;

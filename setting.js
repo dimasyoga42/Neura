@@ -16,6 +16,7 @@ export const fetchdata = async (url) => {
   }
 }
 
+
 export const commands = new Map();
 
 export const registerCommand = (config) => {
