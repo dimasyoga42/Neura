@@ -441,7 +441,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     name: "loli",
     alias: ["pdf"],
     category: "Menu Fun",
-    decs: "memunculkan foto loli random",
+    desc: "memunculkan foto loli random",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
       Loli(sock, chatId, msg)
