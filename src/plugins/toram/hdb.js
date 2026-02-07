@@ -2,12 +2,12 @@ import { supabase } from "../../model/supabase.js";
 
 export const searchHdb = async (sock, chatId, msg, text) => {
   try {
-    const arg = text.replace("!shdb", "").trim();
+    const arg = text.replace(".shdb", "").trim();
 
     if (!arg) {
       return sock.sendMessage(
         chatId,
-        { text: "kamu harus tulis nama bos hdb setelah cmd !shdb etoise" },
+        { text: "kamu harus tulis nama bos hdb setelah cmd .shdb etoise" },
         { quoted: msg }
       );
     }

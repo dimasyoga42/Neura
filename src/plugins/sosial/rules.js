@@ -7,12 +7,12 @@ const db = path.resolve("database", "rules.json");
 export const setrules = async (sock, chatId, msg, text) => {
   try {
     if (!chatId?.endsWith("@g.us")) return sock.sendMessage(chatId, { text: "cmd ini hanya bisa digunakan di grub" }, { quoted: msg })
-    const newsText = text.replace("!setrules", "").trim();
+    const newsText = text.replace(".setrules", "").trim();
 
     if (!newsText) {
       return sock.sendMessage(
         chatId,
-        { text: "Format salah\n> gunakan !seteules <isi berita>" },
+        { text: "Format salah\n> gunakan .seteules <isi berita>" },
         { quoted: msg }
       );
     }
@@ -64,7 +64,7 @@ export const getRules = async (sock, chatId, msg) => {
     if (!Array.isArray(data) || data.length === 0) {
       return sock.sendMessage(
         chatId,
-        { text: "Belum ada rules di grup ini\ngunakan !setrules untuk menambahkan rules" },
+        { text: "Belum ada rules di grup ini\ngunakan .setrules untuk menambahkan rules" },
         { quoted: msg }
       );
     }

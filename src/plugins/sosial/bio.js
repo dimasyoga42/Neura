@@ -41,7 +41,7 @@ export const setPP = async (sock, chatId, msg) => {
         chatId,
         {
           text:
-            "Silakan kirim gambar.\n\nContoh:\n•  gambar caption !setpp",
+            "Silakan kirim gambar.\n\nContoh:\n•  gambar caption .setpp",
         },
         { quoted: msg }
       );
@@ -93,14 +93,14 @@ export const setPP = async (sock, chatId, msg) => {
 export const setDesc = async (sock, chatId, msg, arg) => {
   try {
     if (!chatId?.endsWith("@g.us")) return sock.sendMessage(chatId, { text: "cmd ini hanya bisa digunakan di grub" }, { quoted: msg })
-    const text = arg.replace("!setdesc", "");
+    const text = arg.replace(".setdesc", "");
 
     if (!text?.trim()) {
       return sock.sendMessage(
         chatId,
         {
           text:
-            "Masukkan deskripsi bio.\n\nContoh:\n!setdesc Mahasiswa | Coding",
+            "Masukkan deskripsi bio.\n\nContoh:\n.setdesc Mahasiswa | Coding",
         },
         { quoted: msg }
       );
@@ -174,7 +174,7 @@ export const cekBio = async (sock, chatId, msg) => {
     if (!mention) {
       return sock.sendMessage(
         chatId,
-        { text: "Mention user.\nContoh: !cekbio @628xxxx" },
+        { text: "Mention user.\nContoh: .cekbio @628xxxx" },
         { quoted: msg }
       );
     }
@@ -213,7 +213,7 @@ export const myProfile = async (sock, chatId, msg) => {
     if (!user) {
       return sock.sendMessage(
         chatId,
-        { text: "Profil belum dibuat.\ncara membuat bio:\n - gunakan !setdesc untuk menambahkan bio\n - gunakan !setpp untuk menambahkan foto profil\n - gunakan !setbuff untuk menambahkan buff code pada profile\n - gunakan !profil <tag target> untuk melihat profil orang" },
+        { text: "Profil belum dibuat.\ncara membuat bio:\n - gunakan .setdesc untuk menambahkan bio\n - gunakan .setpp untuk menambahkan foto profil\n - gunakan .setbuff untuk menambahkan buff code pada profile\n - gunakan .profil <tag target> untuk melihat profil orang" },
         { quoted: msg }
       );
     }
@@ -253,7 +253,7 @@ export const cekProfile = async (sock, chatId, msg) => {
     if (!mention) {
       return sock.sendMessage(
         chatId,
-        { text: "Mention user.\nContoh: !pofil @628xxxx" },
+        { text: "Mention user.\nContoh: .pofil @628xxxx" },
         { quoted: msg }
       );
     }
@@ -299,11 +299,11 @@ export const cekProfile = async (sock, chatId, msg) => {
 export const setidBuff = async (sock, chatId, msg, text) => {
   try {
     if (!chatId?.endsWith("@g.us")) return sock.sendMessage(chatId, { text: "cmd ini hanya bisa digunakan di grub" }, { quoted: msg })
-    const arg = text.replace("!setbuff", "");
+    const arg = text.replace(".setbuff", "");
     if (!arg?.trim()) {
       return sock.sendMessage(
         chatId,
-        { text: "Masukkan code buff.\nContoh: !setbuff ATK+10%" },
+        { text: "Masukkan code buff.\nContoh: .setbuff ATK+10%" },
         { quoted: msg }
       );
     }
@@ -315,7 +315,7 @@ export const setidBuff = async (sock, chatId, msg, text) => {
     if (!user) {
       return sock.sendMessage(
         chatId,
-        { text: "Buat bio terlebih dahulu dengan !setdesc" },
+        { text: "Buat bio terlebih dahulu dengan .setdesc" },
         { quoted: msg }
       );
     }

@@ -26,7 +26,7 @@ const getMediaMessage = (msg) => {
 }
 
 const parseText = (text = "") => {
-  const input = text.replace("!stiker", "").trim()
+  const input = text.replace(".stiker", "").trim()
   const [top = "_", bottom = "_"] = input.split("|")
   return {
     top: encodeURIComponent(top || "_"),
@@ -45,10 +45,10 @@ const Smeme = async (sock, chatId, msg, text) => {
         chatId,
         {
           text:
-            "Reply gambar / video dengan `!stiker`\n" +
+            "Reply gambar / video dengan `.stiker`\n" +
             "Contoh:\n" +
-            "`!stiker Halo | Dunia`\n" +
-            "`Reply video + !stiker`",
+            "`.stiker Halo | Dunia`\n" +
+            "`Reply video + .stiker`",
         },
         { quoted: msg }
       )

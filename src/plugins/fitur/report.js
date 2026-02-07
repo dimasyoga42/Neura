@@ -5,7 +5,7 @@ const db = path.resolve("database", "report.json");
 
 export const report = async (sock, chatId, msg, text) => {
   try {
-    const rep = text.replace("!report", "").trim();
+    const rep = text.replace(".report", "").trim();
     if (!rep) {
       return sock.sendMessage(
         chatId,

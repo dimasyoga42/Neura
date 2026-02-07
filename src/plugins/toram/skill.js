@@ -2,13 +2,13 @@ import { supabase } from "../../model/supabase.js";
 
 export const skill = async (sock, chatId, msg, text) => {
   try {
-    const input = text.replace("!skill", "").trim();
+    const input = text.replace(".skill", "").trim();
 
     // Validasi input kosong
     if (!input) {
       return sock.sendMessage(
         chatId,
-        { text: "Format salah.\nContoh penggunaan: !skill Assassin" },
+        { text: "Format salah.\nContoh penggunaan: .skill Assassin" },
         { quoted: msg }
       );
     }

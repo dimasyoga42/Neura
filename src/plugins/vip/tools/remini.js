@@ -14,14 +14,14 @@ const getMedia = (msg) => {
 export const Remini = async (sock, chatId, msg) => {
   try {
     const text = msg.message?.conversation || msg.message?.extendedTextMessage?.text || ""
-    if (!text.startsWith("!remini")) return
+    if (!text.startsWith(".remini")) return
 
     const mediaMsg = getMedia(msg)
     if (!mediaMsg) {
-      return sock.sendMessage(chatId, { text: "❗ Kirim/reply gambar dengan `!remini`" }, { quoted: msg })
+      return sock.sendMessage(chatId, { text: "Kirim/reply gambar dengan `!remini`" }, { quoted: msg })
     }
 
-    await sock.sendMessage(chatId, { text: "⏳ Sedang diproses..." }, { quoted: msg })
+    await sock.sendMessage(chatId, { text: "Sedang diproses..." }, { quoted: msg })
 
     // Download & upload
     const buffer = await downloadMediaMessage(mediaMsg, "buffer", {}, { reuploadRequest: sock.updateMediaMessage })

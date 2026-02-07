@@ -9,14 +9,14 @@ export async function spmadv(sock, chatId, msg, text) {
     const args = text.replace(".spmadv", "").trim()
     if (!args) {
       return sock.sendMessage(chatId, {
-        text: "Format:\n !spmadv <level> <persen> <target level> <chapter dari> - <chapter sampai>\n\nContoh:\n.spmadv 175 20 180 6 - 6"
+        text: "Format:\n .spmadv <level> <persen> <target level> <chapter dari> - <chapter sampai>\n\nContoh:\n.spmadv 175 20 180 6 - 6"
       })
     }
 
     const match = args.match(/(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s*-\s*(\d+)/)
     if (!match) {
       return sock.sendMessage(chatId, {
-        text: "Format:\n !spmadv <level> <persen> <target level> <chapter dari> - <chapter sampai>\n\nContoh:\n!spmadv 175 20 180 6 - 6"
+        text: "Format:\n .spmadv <level> <persen> <target level> <chapter dari> - <chapter sampai>\n\nContoh:\n!spmadv 175 20 180 6 - 6"
       })
     }
 

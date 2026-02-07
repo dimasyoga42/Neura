@@ -13,12 +13,12 @@ const parseDrops = (drops) => {
 
 export const searchMonster = async (sock, chatId, msg, text) => {
   try {
-    const nama = text.replace("!monster", "").trim();
+    const nama = text.replace(".monster", "").trim();
 
     if (!nama) {
       return sock.sendMessage(
         chatId,
-        { text: "Format salah\n> gunakan !monster name" },
+        { text: "Format salah\n> gunakan .monster name" },
         { quoted: msg }
       );
     }

@@ -41,7 +41,7 @@ export const setxtall = async (sock, chatId, msg, text) => {
       return sock.sendMessage(
         chatId,
         {
-          text: `Format salah!\nGunakan:\n!setxtall-nama-upgrade-type-stat-rute`
+          text: `Format salah!\nGunakan:\n.setxtall-nama-upgrade-type-stat-rute`
         },
         { quoted: msg }
       )
@@ -89,12 +89,12 @@ export const setxtall = async (sock, chatId, msg, text) => {
 
 export const searchXtall = async (sock, chatId, msg, text) => {
   try {
-    const nama = text.replace("!xtall", "").trim();
+    const nama = text.replace(".xtall", "").trim();
 
     if (!nama) {
       return sock.sendMessage(
         chatId,
-        { text: "Format salah\n> gunakan !xtall <name>" },
+        { text: "Format salah\n> gunakan .xtall <name>" },
         { quoted: msg }
       );
     }
@@ -200,12 +200,12 @@ ${data
 
 export const searchRegist = async (sock, chatId, msg, text) => {
   try {
-    const nama = text.replace("!regist", "").trim();
+    const nama = text.replace(".regist", "").trim();
 
     if (!nama) {
       return sock.sendMessage(
         chatId,
-        { text: "Format salah\n> gunakan !regist <nama regist>" },
+        { text: "Format salah\n> gunakan .regist <nama regist>" },
         { quoted: msg }
       );
     }
@@ -292,12 +292,12 @@ export const ability = async (sock, chatId, msg) => {
 }
 export const searchAbility = async (sock, chatId, msg, text) => {
   try {
-    const nama = text.replace("!ability", "").trim();
+    const nama = text.replace(".ability", "").trim();
 
     if (!nama) {
       return sock.sendMessage(
         chatId,
-        { text: "Format salah\n> gunakan !ability <nama ability>" },
+        { text: "Format salah\n> gunakan .ability <nama ability>" },
         { quoted: msg }
       );
     }
@@ -354,12 +354,12 @@ Stat Effect : ${ab.stat_effect}
 
 export const searchItem = async (sock, chatId, msg, text) => {
   try {
-    const namaItem = text.replace("!item", "").trim();
+    const namaItem = text.replace(".item", "").trim();
 
     if (!namaItem) {
       return sock.sendMessage(
         chatId,
-        { text: "Format salah\n> gunakan !item <nama item>" },
+        { text: "Format salah\n> gunakan .item <nama item>" },
         { quoted: msg }
       );
     }
@@ -418,12 +418,12 @@ Drop  : ${item.drop}
 
 export const searchApp = async (sock, chatId, msg, text) => {
   try {
-    const nama = text.replace("!appview", "").trim();
+    const nama = text.replace(".appview", "").trim();
 
     if (!nama) {
       return sock.sendMessage(
         chatId,
-        { text: "Gunakan: !appview <nama>" },
+        { text: "Gunakan: .appview <nama>" },
         { quoted: msg }
       );
     }

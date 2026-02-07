@@ -22,44 +22,44 @@ export const Admincontrols = async (sock, chatId, msg, text) => {
     const isAdmin = admin.some(a => a.jid === msg.key.participant)
     const isBotadmin = admin.some(a => a.jid === botId)
     //cmd
-    if (text.startsWith("!setrules")) {
+    if (text.startsWith(".setrules")) {
       if (!isAdmin) return sock.sendMessage(chatId, { text: "admin only" }, { quoted: msg });
       setrules(sock, chatId, msg, text)
     }
-    if (text === "!close") {
+    if (text === ".close") {
       if (!isBotadmin) return sock.sendMessage(chatId, { text: "bot tidak diberikan akses admin\njadikan bot sebagai admin grub untuk menggunakan cmd ini" }, { quoted: msg })
       if (!isAdmin) return sock.sendMessage(chatId, { text: "admin only" }, { quoted: msg });
       await sock.groupSettingUpdate(chatId, 'announcement');
     }
-    if (text === "!open") {
+    if (text === ".open") {
       if (!isBotadmin) return sock.sendMessage(chatId, { text: "bot tidak diberikan akses admin\njadikan bot sebagai admin grub untuk menggunakan cmd ini" }, { quoted: msg })
       if (!isAdmin) return sock.sendMessage(chatId, { text: "admin only" }, { quoted: msg });
       await sock.groupSettingUpdate(chatId, 'not_announcement')
     }
-    if (text.startsWith("!kick")) {
+    if (text.startsWith(".kick")) {
       if (!isBotadmin) return sock.sendMessage(chatId, { text: "bot tidak diberikan akses admin\njadikan bot sebagai admin grub untuk menggunakan cmd ini" }, { quoted: msg })
       if (!isAdmin) return sock.sendMessage(chatId, { text: "admin only" }, { quoted: msg });
       const mentions = msg.message.extendedTextMessage?.contextInfo?.mentionedJid || [];
       if (!mentions.length) return sock.sendMessage(chatId, { text: "tag target yang akan di kick" }, { quoted: msg });
       await sock.groupParticipantsUpdate(chatId, mentions, 'remove')
     }
-    if (text.startsWith("!hidetag")) {
+    if (text.startsWith(".hidetag")) {
       if (!isAdmin) return sock.sendMessage(chatId, { text: "admin only" }, { quoted: msg });
       if (isBan(sock, chatId, msg)) return;
       hidetag(sock, chatId, msg, text);
     }
-    if (text.startsWith("!setnews")) {
+    if (text.startsWith(".setnews")) {
       if (isBan(sock, chatId, msg)) return;
       if (!isAdmin) return sock.sendMessage(chatId, { text: "admin only" }, { quoted: msg });
       setNews(sock, chatId, msg, text);
     }
-    if (text.startsWith("!setwc")) {
+    if (text.startsWith(".setwc")) {
       if (isBan(sock, chatId, msg)) return;
       if (!isAdmin) return sock.sendMessage(chatId, { text: "admin only" }, { quoted: msg });
       SetWelcome(sock, chatId, msg, text);
     }
 
-    if (text.startsWith("!createraid")) {
+    if (text.startsWith(".createraid")) {
       if (isBan(sock, chatId, msg)) return;
       const arg = text.split(" ");
       const element = arg[1];
@@ -75,7 +75,7 @@ export const Admincontrols = async (sock, chatId, msg, text) => {
 
       createRaid(sock, chatId, msg, text, element, hadiah);
     }
-    if (text.startsWith("!clear")) {
+    if (text.startsWith(".clear")) {
       if (isBan(sock, chatId, msg)) return;
       if (!isAdmin) return sock.sendMessage(chatId, { text: "admin only" }, { quoted: msg });
       clearRaid(sock, chatId, msg, text);

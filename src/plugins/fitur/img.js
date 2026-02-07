@@ -9,7 +9,7 @@ export const setMenu = async (sock, chatId, msg, text) => {
     const thumbUrl = `https://raw.githubusercontent.com/dimasyoga42/dataset/main/image/menu/menu_${randomMenu}.gif`
     const { data: thumb } = await axios.get(thumbUrl, { responseType: "arraybuffer" })
     console.log(randomMenu)
-    if (text !== "!menu") return
+    if (text !== ".menu") return
 
     // Jika bukan group, kirim menu text saja
     if (!chatId.endsWith("@g.us")) {

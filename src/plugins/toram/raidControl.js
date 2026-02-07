@@ -12,7 +12,7 @@ export const createRaid = async (sock, chatId, msg, text, element, count) => {
     if (raidExist) {
       return sock.sendMessage(
         chatId,
-        { text: "Party raid sudah dibuat\n> gunakan !clear untuk membubarkan" },
+        { text: "Party raid sudah dibuat\n> gunakan .clear untuk membubarkan" },
         { quoted: msg }
       );
     }
@@ -34,7 +34,7 @@ export const createRaid = async (sock, chatId, msg, text, element, count) => {
 
     const messageUp = `
 Join Party Raid
-> !join <pt1-pt4> <ign>\ncontoh: !join pt1 Sheyzo
+> !join <pt1-pt4> <ign>\ncontoh: .join pt1 Sheyzo
 Element Boss: ${element}
 Hadiah: ${count}
 
@@ -60,7 +60,7 @@ export const joinRaid = async (sock, chatId, msg, text) => {
     if (!pt || !ign) {
       return sock.sendMessage(
         chatId,
-        { text: "Format salah\n> !join <pt1-pt4> <ign>" },
+        { text: "Format salah\n> .join <pt1-pt4> <ign>" },
         { quoted: msg }
       );
     }
@@ -81,7 +81,7 @@ export const joinRaid = async (sock, chatId, msg, text) => {
     if (!raid) {
       return sock.sendMessage(
         chatId,
-        { text: "Raid belum dibuat\n> gunakan !creatraid terlebih dahulu" },
+        { text: "Raid belum dibuat\n> gunakan .creatraid terlebih dahulu" },
         { quoted: msg }
       );
     }
@@ -180,7 +180,7 @@ export const viewRaid = async (sock, chatId, msg) => {
     if (!raid) {
       return sock.sendMessage(
         chatId,
-        { text: "Raid belum dibuat\n> gunakan !creatraid terlebih dahulu" },
+        { text: "Raid belum dibuat\n> gunakan .creatraid terlebih dahulu" },
         { quoted: msg }
       );
     }
@@ -207,7 +207,7 @@ ${list("pt3")}
 party 4 (${raid.party.pt4.length}/4)
 ${list("pt4")}
 
-> join party: !join <pt1-pt4> <ign>
+> join party: .join <pt1-pt4> <ign>
 `.trim();
 
     sock.sendMessage(chatId, { text: message }, { quoted: msg });
@@ -325,7 +325,7 @@ ${list("pt3")}
 pt4 (${raid.party.pt4.length}/4)
 ${list("pt4")}
 
-> join: !join <pt1-pt4> <ign>
+> join: .join <pt1-pt4> <ign>
 `.trim();
 
     sock.sendMessage(chatId, { text: message }, { quoted: msg });

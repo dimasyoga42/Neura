@@ -50,139 +50,139 @@ import { bacaBuku, listperpus } from "../plugins/fitur/perpus.js";
 import { itemStat } from "../plugins/toram/filter.js";
 import { Loli } from "../plugins/fun/loli.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
-  if (text.startsWith("!menu")) {
+  if (text.startsWith(".menu")) {
     if (isBan(sock, chatId, msg)) return;
     setMenu(sock, chatId, msg, text);
   }
-  if (text.startsWith("!Buff")) {
+  if (text.startsWith(".Buff")) {
     if (isBan(sock, chatId, msg)) return;
     getAllBuff(sock, chatId, msg, text)
   }
 
 
-  if (text.startsWith("!join")) {
+  if (text.startsWith(".join")) {
     if (isBan(sock, chatId, msg)) return;
 
     const args = text.split(" ");
     if (args.length < 3) {
       return sock.sendMessage(
         chatId,
-        { text: "Format salah\n> !join <pt1-pt4> <ign>" },
+        { text: "Format salah\n> .join <pt1-pt4> <ign>" },
         { quoted: msg }
       );
     }
 
     joinRaid(sock, chatId, msg, text);
   }
-  if (text.startsWith("!raid")) {
+  if (text.startsWith(".raid")) {
     if (isBan(sock, chatId, msg)) return;
     viewRaid(sock, chatId, msg);
   }
-  if (text.startsWith("!leave")) {
+  if (text.startsWith(".leave")) {
     if (isBan(sock, chatId, msg)) return;
     leaveRaid(sock, chatId, msg)
   }
-  if (text.startsWith("!appview")) {
+  if (text.startsWith(".appview")) {
     if (isBan(sock, chatId, msg)) return;
     searchApp(sock, chatId, msg, text);
   }
-  if (text.startsWith("!xtall")) {
+  if (text.startsWith(".xtall")) {
     if (isBan(sock, chatId, msg)) return;
     searchXtall(sock, chatId, msg, text);
   }
-  if (text.startsWith("!item")) {
+  if (text.startsWith(".item")) {
     if (isBan(sock, chatId, msg)) return;
     searchItem(sock, chatId, msg, text);
   }
-  if (text.startsWith("!regist")) {
+  if (text.startsWith(".regist")) {
     if (isBan(sock, chatId, msg)) return;
     searchRegist(sock, chatId, msg, text);
   }
-  if (text.startsWith("!ability")) {
+  if (text.startsWith(".ability")) {
     if (isBan(sock, chatId, msg)) return;
     searchAbility(sock, chatId, msg, text);
   }
-  if (text.startsWith("!news")) {
+  if (text.startsWith(".news")) {
     if (isBan(sock, chatId, msg)) return;
     getNews(sock, chatId, msg);
   }
-  if (text.startsWith("!lv")) {
+  if (text.startsWith(".lv")) {
     if (isBan(sock, chatId, msg)) return;
     lvl(sock, chatId, msg, text);
   }
 
-  if (text.startsWith("!bos")) {
+  if (text.startsWith(".bos")) {
     if (isBan(sock, chatId, msg)) return;
     Bossdef(sock, chatId, msg, text)
   }
-  if (text.startsWith("!mybio")) {
+  if (text.startsWith(".mybio")) {
     if (isBan(sock, chatId, msg)) return;
     myProfile(sock, chatId, msg);
   }
-  if (text.startsWith("!setpp") || msg.message.imageMessage?.caption === "!setpp") {
+  if (text.startsWith(".setpp") || msg.message.imageMessage?.caption === ".setpp") {
     if (isBan(sock, chatId, msg)) return;
     setPP(sock, chatId, msg);
   }
-  if (text.startsWith("!profil")) {
+  if (text.startsWith(".profil")) {
     if (isBan(sock, chatId, msg)) return;
     cekProfile(sock, chatId, msg);
   }
-  if (text.startsWith("!setdesc")) {
+  if (text.startsWith(".setdesc")) {
     if (isBan(sock, chatId, msg)) return;
     setDesc(sock, chatId, msg, text);
   }
-  if (text.startsWith("!pembolong")) {
+  if (text.startsWith(".pembolong")) {
     if (isBan(sock, chatId, msg)) return;
     sock.sendMessage(chatId, { text: messagePembolong }, { quoted: msg })
   }
-  if (text.startsWith("!rules")) {
+  if (text.startsWith(".rules")) {
     if (isBan(sock, chatId, msg)) return;
     getRules(sock, chatId, msg)
   }
-  if (text.startsWith("!afk")) {
+  if (text.startsWith(".afk")) {
     if (isBan(sock, chatId, msg)) return;
     setAfk(sock, chatId, msg, text);
   }
-  if (text.startsWith("!dye")) {
+  if (text.startsWith(".dye")) {
     if (isBan(sock, chatId, msg)) return;
     dyePredictor(sock, chatId, msg, text);
   }
-  if (text.startsWith("!qc")) {
+  if (text.startsWith(".qc")) {
     if (isBan(sock, chatId, msg)) return;
     qc(sock, chatId, msg, text);
   }
-  if (text.startsWith("!stiker") || msg.message.imageMessage?.caption === "!stiker") {
+  if (text.startsWith(".stiker") || msg.message.imageMessage?.caption === ".stiker") {
     if (isBan(sock, chatId, msg)) return;
-    const allow = await ColdownUser(sock, chatId, msg, "!stiker")
+    const allow = await ColdownUser(sock, chatId, msg, ".stiker")
     if (!allow) return;
     Smeme(sock, chatId, msg, text);
   }
-  if (text.startsWith("!setbuff")) {
+  if (text.startsWith(".setbuff")) {
     if (isBan(sock, chatId, msg)) return;
     setidBuff(sock, chatId, msg, text);
   }
-  if (text.startsWith("!torambanner")) {
+  if (text.startsWith(".torambanner")) {
     if (isBan(sock, chatId, msg)) return;
     Banner(sock, msg, chatId);
   }
-  if (text.startsWith("!torammt")) {
+  if (text.startsWith(".torammt")) {
     if (isBan(sock, chatId, msg)) return;
     getMt(sock, chatId, msg)
   }
-  if (text.startsWith("!report")) {
+  if (text.startsWith(".report")) {
     if (isBan(sock, chatId, msg)) return;
     report(sock, chatId, msg, text)
   }
-  if (text.startsWith("!grep")) {
+  if (text.startsWith(".grep")) {
     if (isBan(sock, chatId, msg)) return;
     getAllReport(sock, chatId, msg)
   }
-  if (text.startsWith("!listleveling")) {
+  if (text.startsWith(".listleveling")) {
     if (isBan(sock, chatId, msg)) return;
     sock.sendMessage(chatId, { text: listLeveling }, { quoted: msg });
   }
-  if (text.startsWith("!waifu")) {
-    const allow = await ColdownUser(sock, chatId, msg, "!waifu")
+  if (text.startsWith(".waifu")) {
+    const allow = await ColdownUser(sock, chatId, msg, ".waifu")
     if (!allow) return;
     if (isBan(sock, chatId, msg)) return;
     waifu(sock, chatId, msg)
@@ -190,7 +190,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
 
 
 
-  if (text.startsWith("!filarm")) {
+  if (text.startsWith(".filarm")) {
     if (isBan(sock, chatId, msg)) return;
 
     try {
@@ -199,7 +199,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
       if (args.length === 0) {
         return sock.sendMessage(
           chatId,
-          { text: "Gunakan `!sheetfill` untuk melihat cara penggunaan" },
+          { text: "Gunakan `.sheetfill` untuk melihat cara penggunaan" },
           { quoted: msg }
         );
       }
@@ -234,7 +234,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
       await sock.sendMessage(chatId, { text: replyMessage }, { quoted: msg });
 
     } catch (error) {
-      console.error("Error !filarm:", error);
+      console.error("Error .filarm:", error);
 
       // Better error message
       let errorMsg = `Terjadi kesalahan:\n${error.message}`;
@@ -249,23 +249,23 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
         text: errorMsg
       }, { quoted: msg });
     }
-  } if (text.startsWith("!sheetfill")) {
+  } if (text.startsWith(".sheetfill")) {
     if (isBan(sock, chatId, msg)) return;
     sock.sendMessage(chatId, { text: stat }, { quoted: msg })
   }
-  if (text.startsWith("!cek")) {
+  if (text.startsWith(".cek")) {
     if (isBan(sock, chatId, msg)) return;
     cek(sock, chatId, msg, text);
   }
-  if (text.startsWith("!remini") || msg.message.imageMessage?.caption === "!remini") {
+  if (text.startsWith(".remini") || msg.message.imageMessage?.caption === ".remini") {
     if (isBan(sock, chatId, msg)) return;
     Remini(sock, chatId, msg);
   }
-  if (text.startsWith("!upbag")) {
+  if (text.startsWith(".upbag")) {
     if (isBan(sock, chatId, msg)) return;
     sock.sendMessage(chatId, { text: upbagId }, { quoted: msg })
   }
-  if (text.startsWith("!donet")) {
+  if (text.startsWith(".donet")) {
     if (isBan(sock, chatId, msg)) return;
     sock.sendMessage(chatId, {
       text: `
@@ -275,167 +275,167 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     nomer owner: 085664393331 (dimas)
       `}, { quoted: msg })
   }
-  if (text.startsWith("!play")) {
+  if (text.startsWith(".play")) {
     if (isBan(sock, chatId, msg)) return;
     play(sock, chatId, msg, text)
   }
-  if (text.startsWith("!ytmp3")) {
+  if (text.startsWith(".ytmp3")) {
     if (isBan(sock, chatId, msg)) return;
     ytmp3(sock, chatId, msg, text)
   }
-  if (text.startsWith("!pinterest")) {
+  if (text.startsWith(".pinterest")) {
     if (isBan(sock, chatId, msg)) return;
     pin(sock, chatId, msg, text)
   }
-  if (text.startsWith("!caklontong")) {
+  if (text.startsWith(".caklontong")) {
     if (isBan(sock, chatId, msg)) return;
     Caklontong(sock, chatId, msg, text)
   }
 
-  if (text.startsWith("!tebakgambar")) {
+  if (text.startsWith(".tebakgambar")) {
     if (isBan(sock, chatId, msg)) return;
     tebakGambar(sock, chatId, msg, text)
   }
-  if (text.startsWith("!gempa")) {
+  if (text.startsWith(".gempa")) {
     if (isBan(sock, chatId, msg)) return;
     autoGempa(sock, chatId, msg)
   }
-  if (text.startsWith("!padu")) {
+  if (text.startsWith(".padu")) {
     if (isBan(sock, chatId, msg)) return;
     sock.sendMessage(chatId, { text: guide.padu }, { quoted: msg })
   }
-  if (text.startsWith("!skill")) {
+  if (text.startsWith(".skill")) {
     if (isBan(sock, chatId, msg)) return;
     skill(sock, chatId, msg, text)
   }
 
-  if (text.startsWith("!listskill")) {
+  if (text.startsWith(".listskill")) {
     if (isBan(sock, chatId, msg)) return;
     listSkill(sock, chatId, msg)
   }
-  if (text.startsWith("!listxtall")) {
+  if (text.startsWith(".listxtall")) {
     if (isBan(sock, chatId, msg)) return;
     Xtall(sock, chatId, msg)
   }
-  if (text.startsWith("!husbu")) {
+  if (text.startsWith(".husbu")) {
     if (isBan(sock, chatId, msg)) return;
     husbu(sock, chatId, msg)
   }
 
 
-  if (text.startsWith("!listability")) {
+  if (text.startsWith(".listability")) {
     if (isBan(sock, chatId, msg)) return;
     ability(sock, chatId, msg)
   }
 
-  if (text.startsWith("!toramboost")) {
+  if (text.startsWith(".toramboost")) {
     if (isBan(sock, chatId, msg)) return;
     bosboost(sock, chatId, msg)
   }
 
-  if (text.startsWith("!spotify")) {
+  if (text.startsWith(".spotify")) {
     if (isBan(sock, chatId, msg)) return;
     Spotifysearch(sock, chatId, msg, text)
   }
-  if (text.startsWith("!monster")) {
+  if (text.startsWith(".monster")) {
     if (isBan(sock, chatId, msg)) return;
     searchMonster(sock, chatId, msg, text)
   }
 
-  if (text.startsWith("!pet")) {
+  if (text.startsWith(".pet")) {
     if (isBan(sock, chatId, msg)) return;
     pet(sock, chatId, msg, text)
   }
 
-  if (text.startsWith("!spamadv")) {
+  if (text.startsWith(".spamadv")) {
     if (isBan(sock, chatId, msg)) return;
     spmadv(sock, chatId, msg, text)
   }
 
-  if (text.startsWith("!hd") || msg.message.imageMessage?.caption === "!hd") {
+  if (text.startsWith(".hd") || msg.message.imageMessage?.caption === ".hd") {
     if (isBan(sock, chatId, msg)) return;
     hd(sock, chatId, msg);
   }
 
 
-  if (text.startsWith("!toramlive")) {
+  if (text.startsWith(".toramlive")) {
     if (isBan(sock, chatId, msg)) return;
     liveStream(sock, chatId, msg)
   }
 
-  if (text.startsWith("!listfarm")) {
+  if (text.startsWith(".listfarm")) {
     if (isBan(sock, chatId, msg)) return;
     farm(sock, chatId, msg, text)
   }
 
-  if (text.startsWith("!khodam")) {
+  if (text.startsWith(".khodam")) {
     if (isBan(sock, chatId, msg)) return;
     khodam(sock, chatId, msg)
   }
-  if (text.startsWith("!shdb")) {
+  if (text.startsWith(".shdb")) {
     if (isBan(sock, chatId, msg)) return;
     searchHdb(sock, chatId, msg, text)
   }
-  if (text.startsWith("!listbos")) {
+  if (text.startsWith(".listbos")) {
     if (isBan(sock, chatId, msg)) return;
     listboss(sock, chatId, msg)
   }
 
-  if (text.startsWith("!mq")) {
+  if (text.startsWith(".mq")) {
     if (isBan(sock, chatId, msg)) return;
     sock.sendMessage(chatId, { text: mq }, { quoted: msg })
   }
-  if (text.startsWith("!setidbuff")) {
+  if (text.startsWith(".setidbuff")) {
     if (isBan(sock, chatId, msg)) return;
     setBuff(sock, chatId, msg, text);
   }
-  if (text.startsWith("!brat")) {
+  if (text.startsWith(".brat")) {
     if (isBan(sock, chatId, msg)) return;
     brat(sock, chatId, msg, text);
   }
-  if (text.startsWith("!mix")) {
+  if (text.startsWith(".mix")) {
     if (isBan(sock, chatId, msg)) return;
     mix(sock, chatId, msg, text);
   }
-  if (text.startsWith("!artinama")) {
+  if (text.startsWith(".artinama")) {
     if (isBan(sock, chatId, msg)) return;
     artiNama(sock, chatId, msg, text);
   }
 
-  if (text.startsWith("!note")) {
+  if (text.startsWith(".note")) {
     if (isBan(sock, chatId, msg)) return;
     note(sock, chatId, msg, text);
   }
-  if (text.startsWith("!setnote")) {
+  if (text.startsWith(".setnote")) {
     if (isBan(sock, chatId, msg)) return;
     setNote(sock, chatId, msg, text);
   }
-  if (text.startsWith("!listnote")) {
+  if (text.startsWith(".listnote")) {
     if (isBan(sock, chatId, msg)) return;
     notelist(sock, chatId, msg);
   }
-  if (text.startsWith("!bostesting")) {
+  if (text.startsWith(".bostesting")) {
     if (isBan(sock, chatId, msg)) return;
     bosTesting(sock, chatId, msg);
   }
-  if (text.startsWith("!perpus")) {
+  if (text.startsWith(".perpus")) {
     if (isBan(sock, chatId, msg)) return;
     listperpus(sock, chatId, msg);
   }
 
-  if (text.startsWith("!baca")) {
+  if (text.startsWith(".baca")) {
     if (isBan(sock, chatId, msg)) return;
     bacaBuku(sock, chatId, msg, text);
   }
-  if (text.startsWith("!statitem")) {
+  if (text.startsWith(".statitem")) {
     if (isBan(sock, chatId, msg)) return;
     itemStat(sock, chatId, msg, text);
   }
-  if (text.startsWith("!family100")) {
+  if (text.startsWith(".family100")) {
     if (isBan(sock, chatId, msg)) return;
     Family100(sock, chatId, msg);
   }
-  if (text.startsWith("!loli")) {
+  if (text.startsWith(".loli")) {
     if (isBan(sock, chatId, msg)) return;
     Loli(sock, chatId, msg);
   }

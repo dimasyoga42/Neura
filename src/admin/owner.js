@@ -5,40 +5,40 @@ import { handleBroadcast } from "./bc.js";
 import { setNocoldown } from "./coldownChat.js";
 
 export const ownerControls = async (sock, chatId, msg, text) => {
-  if (text.startsWith("!ban")) {
+  if (text.startsWith(".ban")) {
     if (!isOwner(sock, msg, chatId)) return;
     ban(sock, chatId, msg);
 
   }
-  if (text.startsWith("!unban")) {
+  if (text.startsWith(".unban")) {
     if (!isOwner(sock, msg, chatId)) return;
     unBan(sock, chatId, msg);
   }
-  if (text === "!nocdgroup") {
+  if (text === ".nocdgroup") {
     if (!isOwner(sock, msg, chatId)) return;
     await setNocoldown(sock, chatId, msg)
   }
-  if (text.startsWith("!bc") || msg.message.imageMessage?.caption === "!bc") {
+  if (text.startsWith(".bc") || msg.message.imageMessage?.caption === "!bc") {
     if (!isOwner(sock, msg, chatId)) return;
     handleBroadcast(sock, msg);
   }
-  if (text.startsWith("!setbos")) {
+  if (text.startsWith(".setbos")) {
     if (!isOwner(sock, msg, chatId)) return;
     setBos(sock, chatId, msg, text);
   }
-  if (text.startsWith("!setxtall")) {
+  if (text.startsWith(".setxtall")) {
     if (!isOwner(sock, msg, chatId)) return;
     setBos(sock, chatId, msg, text);
   }
-  if (text.startsWith("!setbuku")) {
+  if (text.startsWith(".setbuku")) {
     if (!isOwner(sock, msg, chatId)) return;
     setperpus(sock, chatId, msg, text);
   }
-  if (text.startsWith("!editbuku")) {
+  if (text.startsWith(".editbuku")) {
     if (!isOwner(sock, msg, chatId)) return;
     editperpus(sock, chatId, msg, text);
   }
-  if (text.startsWith("!hapusbuku")) {
+  if (text.startsWith(".hapusbuku")) {
     if (!isOwner(sock, msg, chatId)) return;
     hapusperpus(sock, chatId, msg, text);
   }
