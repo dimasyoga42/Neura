@@ -18,8 +18,8 @@ export const fetchdata = async (url) => {
 
 export const commands = new Map();
 export const registerCommand = (config) => {
-  const { name, category, desc, run } = config;
-  commands.set(name, { category, desc, run });
+  const { name, alias, category, desc, run } = config;
+  commands.set(name, { name, alias, category, desc, run });
 
   if (config.alias) {
     config.alias.forEach(alias => commands.set(alias, commands.get(name)));
