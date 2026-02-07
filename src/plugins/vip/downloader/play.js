@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const play = async (sock, chatId, msg, text) => {
   try {
-    const query = text.replace("!play", "").trim();
+    const query = text.replace(".play", "").trim();
 
     if (!query) {
       return sock.sendMessage(chatId, { text: "Mana judul lagunya?" }, { quoted: msg });
@@ -45,7 +45,7 @@ Ukuran: ${data.pick?.size || data.size || 'N/A'}
 
 export const ytmp3 = async (sock, chatId, msg, text) => {
   try {
-    const urlDat = text.replace("!ytmp3", "");
+    const urlDat = text.replace(".ytmp3", "");
     if (!urlDat) return sock.sendMessage(chatId, { text: "mana link youtubenya" }, { quoted: msg });
     const res = await axios.get(`https://api.deline.web.id/downloader/ytmp3?url=${encodeURIComponent(urlDat)}`);
     const data = res.data.result;
