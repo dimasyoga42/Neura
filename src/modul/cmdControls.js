@@ -62,8 +62,9 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     run: async (sock, chatId, msg) => {
       let menutext = `*Neura Sama Menu*\n\n`
       const grouped = {}
+      const key = Math.floor(Math.random() * 4) + 1
       const data = await fetchdata("https://raw.githubusercontent.com/dimasyoga42/dataset/main/image/menu/menu.json")
-      console.log(data)
+      console.log(data[key])
       commands.forEach((cmd, key) => {
         // skip alias
         if (cmd.name !== key) return
