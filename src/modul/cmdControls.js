@@ -49,7 +49,7 @@ import { bosTesting } from "../plugins/testing/bos.js";
 import { bacaBuku, listperpus } from "../plugins/fitur/perpus.js";
 import { itemStat } from "../plugins/toram/filter.js";
 import { Loli } from "../plugins/fun/loli.js";
-import { registerCommand } from "../../setting.js";
+import { commands, registerCommand } from "../../setting.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   if (text.startsWith(".menu")) {
     if (isBan(sock, chatId, msg)) return;
