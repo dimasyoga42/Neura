@@ -420,11 +420,16 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     bosTesting(sock, chatId, msg);
   }
 
-  if (text.startsWith(".statitem")) {
-    if (isBan(sock, chatId, msg)) return;
-    itemStat(sock, chatId, msg, text);
-  }
-
+  registerCommand({
+    name: "statitem",
+    alias: ["statitem"],
+    category: "Toram Info",
+    desc: "mencari item berdasarkan stat",
+    run: async (sock, chatId, msg, args, text) => {
+      if (isBan(sock, chatId, msg)) return;
+      itemStat(sock, chatId, msg, text)
+    }
+  })
   registerCommand({
     name: "family100",
     alias: ["fmly"],
@@ -466,46 +471,46 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
       bacaBuku(sock, chatId, msg, text);
     }
   })
-  registerCommand({
-    name: "help",
-    alias: ["menu"],
-    category: "menu info",
-    desc: "memunculkan daftar menu",
-    run: async (sock, chatId, msg) => {
-      let menutext = `*Neura Sama Menu*\n\n`
-      const grouped = {}
+  // registerCommand({
+  //   name: "help",
+  //   alias: ["menu"],
+  //   category: "menu info",
+  //   desc: "memunculkan daftar menu",
+  //   run: async (sock, chatId, msg) => {
+  //     let menutext = `*Neura Sama Menu*\n\n`
+  //     const grouped = {}
 
-      commands.forEach((cmd, key) => {
-        // skip alias
-        if (cmd.name !== key) return
+  //     commands.forEach((cmd, key) => {
+  //       // skip alias
+  //       if (cmd.name !== key) return
 
-        // normalisasi kategori
-        let cat = (cmd.category || "other").toLowerCase().trim()
+  //       // normalisasi kategori
+  //       let cat = (cmd.category || "other").toLowerCase().trim()
 
-        if (!grouped[cat]) grouped[cat] = []
-        grouped[cat].push(cmd)
-      })
+  //       if (!grouped[cat]) grouped[cat] = []
+  //       grouped[cat].push(cmd)
+  //     })
 
-      // sort kategori A-Z
-      const sortedCategory = Object.keys(grouped).sort()
+  //     // sort kategori A-Z
+  //     const sortedCategory = Object.keys(grouped).sort()
 
-      sortedCategory.forEach((cat) => {
-        menutext += `*${cat}*\n`
+  //     sortedCategory.forEach((cat) => {
+  //       menutext += `*${cat}*\n`
 
-        // sort command A-Z
-        grouped[cat]
-          .sort((a, b) => a.name.localeCompare(b.name))
-          .forEach((cmd) => {
-            const alias = cmd.alias.length ? ` (${cmd.alias.join(", ")})` : ""
-            menutext += `.${cmd.name}${alias} - ${cmd.desc}\n`
-          })
+  //       // sort command A-Z
+  //       grouped[cat]
+  //         .sort((a, b) => a.name.localeCompare(b.name))
+  //         .forEach((cmd) => {
+  //           const alias = cmd.alias.length ? ` (${cmd.alias.join(", ")})` : ""
+  //           menutext += `.${cmd.name}${alias} - ${cmd.desc}\n`
+  //         })
 
-        menutext += `\n`
-      })
+  //       menutext += `\n`
+  //     })
 
-      await sock.sendMessage(chatId, { text: menutext })
-    }
-  })
+  //     await sock.sendMessage(chatId, { text: menutext })
+  //   }
+  // })
 
 
 
