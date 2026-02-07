@@ -16,25 +16,12 @@ export const fetchdata = async (url) => {
   }
 }
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const pluginDir = path.join(__dirname, "plugins")
-export const loadPlugins = async () => {
-  const files = fs.readFileSync(pluginDir).filter(file => file.endsWith(".js"))
-  for (const file of files) {
-    const filePath = path.join(pluginDir, file)
-    try {
-      const module = await import(`file://${filePath}`);
-      if (module.cmd && module.cmd.name) {
-        commands.set(module.cmd.name, module.cmd);
+export const commands = new Map();
+export const registerCommand = (config) => {
+  const { name, category, desc, run } = config;
+  commands.set(name, { category, desc, run });
 
-        // Daftarkan alias jika ada
-        if (module.cmd.alias) {
-          module.cmd.alias.forEach(alias => commands.set(alias, module.cmd));
-        }
-        console.log(`Successfully loaded plugin: ${file}`);
-      }
-    } catch (error) {
-      console.error(`Failed to load plugin ${file}:`, error);
-    }
+  if (config.alias) {
+    config.alias.forEach(alias => commands.set(alias, commands.get(name)));
   }
-}
+};
