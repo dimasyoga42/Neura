@@ -1,6 +1,6 @@
 import axios from "axios";
 import { registerCommand } from "../../../../setting.js";
-import { isBan } from "../../fitur/ban";
+import { isBan } from "../../fitur/ban.js";
 
 export const autoGempa = async (sock, chatId, msg) => {
   try {
