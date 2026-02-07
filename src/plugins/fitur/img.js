@@ -5,7 +5,7 @@ import { supabase } from "../../model/supabase.js"
 const randomMenu = Math.floor(Math.random() * 4) + 1
 export const setMenu = async (sock, chatId, msg, text) => {
   try {
-    console.log(random)
+    console.log(randomMenu)
     if (text !== "!menu") return
 
     // Jika bukan group, kirim menu text saja
