@@ -1,11 +1,12 @@
 import axios from "axios";
 import { supabase } from "../../model/supabase.js"
+import { fetchdata, registerCommand } from "../../../setting.js";
+import { ColdownUser } from "../../admin/coldownChat.js";
 export const waifu = async (sock, chatId, msg) => {
   try {
 
-    const { data } = await axios.get("https://api.waifu.pics/sfw/waifu");
-
-    if (!data?.url) {
+    const data = await fetchdata("https://api.waifu.im/images?IncludedTags=waifu")
+    if (!data.items.url) {
       return sock.sendMessage(
         chatId,
         { text: "gagal mengambil foto" },
@@ -13,14 +14,16 @@ export const waifu = async (sock, chatId, msg) => {
       );
     }
 
-    await sock.sendMessage(
-      chatId,
-      {
-        image: { url: data.url },
-        caption: "waifu"
-      },
-      { quoted: msg }
-    );
+    data.items.map((item) => {
+      sock.sendMessage(
+        chatId,
+        {
+          image: { url: item.url },
+          caption: `ini adalah waifu mu\n> source: ${item.source} || artists: ${item.artists[0].name}`
+        },
+        { quoted: msg }
+      );
+    })
 
   } catch (err) {
     await sock.sendMessage(
@@ -56,3 +59,15 @@ export const husbu = async (sock, chatId, msg) => {
     await sock.sendMessage(chatId, { text: `[husbu error] ${error.message}` }, { quoted: msg });
   }
 }
+registerCommand({
+  name: "waifu",
+  alias: ["waifu"],
+  category: "Menu Fun",
+  desc: "mendapatkan gambar waifu random",
+  run: async (sock, chatId, msg) => {
+    const allow = await ColdownUser(sock, chatId, msg, ".waifu");
+    if (!allow) return;
+    if (isBan(sock, chatId, msg)) return;
+    waifu(sock, chatId, msg);
+  }
+});

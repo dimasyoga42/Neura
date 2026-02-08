@@ -418,18 +418,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     }
   });
 
-  registerCommand({
-    name: "waifu",
-    alias: ["waifu"],
-    category: "Menu Fun",
-    desc: "mendapatkan gambar waifu random",
-    run: async (sock, chatId, msg) => {
-      const allow = await ColdownUser(sock, chatId, msg, ".waifu");
-      if (!allow) return;
-      if (isBan(sock, chatId, msg)) return;
-      waifu(sock, chatId, msg);
-    }
-  });
+
 
   registerCommand({
     name: "filarm",
