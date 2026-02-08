@@ -1,4 +1,5 @@
 import axios from "axios";
+import sharp from "sharp";
 
 export async function addOverlayFromUrl(imageUrl, text) {
   try {
