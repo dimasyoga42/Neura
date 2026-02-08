@@ -2,6 +2,7 @@ import axios from "axios";
 import { supabase } from "../../model/supabase.js"
 import { fetchdata, registerCommand } from "../../../setting.js";
 import { ColdownUser } from "../../admin/coldownChat.js";
+import { isBan } from "../fitur/ban.js";
 export const waifu = async (sock, chatId, msg) => {
   try {
 
