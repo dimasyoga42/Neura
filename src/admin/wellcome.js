@@ -72,7 +72,7 @@ const getDisplayName = async (sock, jid, groupId) => {
     } catch (e) {
     }
 
-    return displayName; // Return nomor jika semua metode gagal
+    return displayName;
 
   } catch (err) {
     console.error('Error getDisplayName:', err);

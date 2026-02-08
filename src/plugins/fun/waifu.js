@@ -18,9 +18,8 @@ export const waifu = async (sock, chatId, msg) => {
       );
     }
 
-    // Melakukan iterasi pada array 'items'
+
     data.items.forEach((item) => {
-      // Mengambil nama artis dengan pengecekan ketersediaan data (null safety)
       const artistName = (item.artists && item.artists.length > 0)
         ? item.artists[0].name
         : "Anonim";
@@ -36,7 +35,6 @@ export const waifu = async (sock, chatId, msg) => {
     });
 
   } catch (err) {
-    // Penanganan galat jika terjadi masalah pada koneksi atau server
     await sock.sendMessage(
       chatId,
       { text: `Error Internal Server:\n${err.message}` },

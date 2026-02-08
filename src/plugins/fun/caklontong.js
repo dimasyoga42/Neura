@@ -1,4 +1,6 @@
 import axios from "axios"
+import { registerCommand } from "../../../setting.js"
+import { isBan } from "../fitur/ban.js"
 
 const answer = new Map()
 
@@ -212,3 +214,25 @@ export const jawab = async (sock, chatId, msg) => {
 
   } catch { }
 }
+const Skip = async (sock, chatId, msg) => {
+  try {
+    if (!answer.get(chatId)) return;
+    sock.sendMessage(chatId, { text: `yaah payah gitu aja nyerah` }, { quoted: msg })
+    answer.delete(chatId);
+  } catch (error) {
+    sock.sendMessage(chatId, { text: "terjadi kesalaha" }, { quoted: msg })
+  }
+}
+
+registerCommand({
+  name: "skip",
+  alias: ["nyerah"],
+  category: "Menu Fun",
+  desc: "skip all mini game",
+  run: async (sock, chatId, msg) => {
+    //const allow = await ColdownUser(sock, chatId, msg, ".waifu");
+    //if (!allow) return;
+    if (isBan(sock, chatId, msg)) return;
+    Skip(sock, chatId, msg);
+  }
+});
