@@ -61,9 +61,6 @@ export const join = async (sock, chatId, msg, text) => {
     if (!link) {
       return sock.sendMessage(chatId, { text: "masukan link grup" }, { quoted: msg });
     }
-    if (!code) {
-      return sock.sendMessage(chatId, { text: "link tidak valid" }, { quoted: msg });
-    }
 
     await sock.groupAcceptInvite(link);
 
