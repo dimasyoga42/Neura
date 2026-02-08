@@ -14,18 +14,7 @@ export const setDesc = async (sock, chatId, msg, text) => {
   }
 }
 
-registerCommand({
-  name: "setdesk",
-  alias: ["sheetfill"],
-  category: "Menu Admin",
-  desc: "untuk ganti desc grub",
-  run: async (sock, chatId, msg, args, text) => {
-    if (isAdminvalid(sock, chatId, msg)) return;
-    if (isBan(sock, chatId, msg)) return;
-    setDesc(sock, chatId, msg, text);
-    sock.sendMessage(chatId, { text: "berhasil di perbarui" }, { quoted: msg });
-  }
-});
+
 
 export const getUndangan = () => {
   try {
@@ -39,3 +28,15 @@ export const getUndangan = () => {
 export const join = () => {
 
 }
+registerCommand({
+  name: "setdesk",
+  alias: ["setdesk"],
+  category: "Menu Admin",
+  desc: "untuk ganti desc grub",
+  run: async (sock, chatId, msg, args, text) => {
+    if (isAdminvalid(sock, chatId, msg)) return;
+    if (isBan(sock, chatId, msg)) return;
+    setDesc(sock, chatId, msg, text);
+    sock.sendMessage(chatId, { text: "berhasil di perbarui" }, { quoted: msg });
+  }
+});
