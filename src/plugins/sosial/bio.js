@@ -26,7 +26,6 @@ export const setPP = async (sock, chatId, msg) => {
   try {
     if (!chatId?.endsWith("@g.us")) return sock.sendMessage(chatId, { text: "cmd ini hanya bisa digunakan di grub" }, { quoted: msg })
     let imageMessage;
-
     const quoted =
       msg.message?.extendedTextMessage?.contextInfo?.quotedMessage;
 
@@ -46,7 +45,43 @@ export const setPP = async (sock, chatId, msg) => {
         { quoted: msg }
       );
     }
+    //ketiaka setpp dengan caption
+    if (msg.message.imageMessage?.caption == ".setpp") {
+      const buffer = await downloadMediaMessage(
+        {
+          key: msg.key,
+          message: { imageMessage },
+        },
+        "buffer",
+        {}
+      );
+      const userId = getUserId(msg);
+      const fileName = `${userId.split("@")[0]}_${Date.now()}.jpg`;
+      const filePath = path.join(profileDir, fileName);
 
+      fs.writeFileSync(filePath, buffer);
+
+      const data = getUserData(db);
+      let user = data.find((u) => u.userId === userId);
+
+      if (!user) {
+        user = { userId, bio: "", profilPath: filePath, idBuff: null };
+        data.push(user);
+      } else {
+        if (user.profilPath && fs.existsSync(user.profilPath)) {
+          fs.unlinkSync(user.profilPath);
+        }
+        user.profilPath = filePath;
+      }
+
+      saveUserData(db, data);
+
+      await sock.sendMessage(
+        chatId,
+        { text: "Profile picture berhasil diatur!" },
+        { quoted: msg }
+      );
+    }
     const buffer = await downloadMediaMessage(
       {
         key: msg.key,
@@ -55,6 +90,7 @@ export const setPP = async (sock, chatId, msg) => {
       "buffer",
       {}
     );
+
 
     const userId = getUserId(msg);
     const fileName = `${userId.split("@")[0]}_${Date.now()}.jpg`;
