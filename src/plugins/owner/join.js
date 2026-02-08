@@ -5,7 +5,7 @@ import { isBan } from "../fitur/ban.js";
 export const setDesc = async (sock, chatId, msg, text) => {
   try {
     if (isAdminvalid(sock, chatId, msg)) return;
-    const txt = text.replace(".setdescgc", "")
+    const txt = text.replace(".setdesk", "")
     if (!txt) return sock.sendMessage(chatId, { text: "mana teks nya" }, { quoted: msg });
     await sock.groupUpdateDescription(chatId, `${txt}`.trim())
     sock.sendMessage(chatId, { text: "deskripsi grub berhasil di ubah" }, { quoted: msg });
@@ -15,15 +15,17 @@ export const setDesc = async (sock, chatId, msg, text) => {
 }
 
 registerCommand({
-  name: "setdescgc",
-  alias: ["setdescgc"],
+  name: "setdesk",
+  alias: ["sheetfill"],
   category: "Menu Admin",
-  desc: "untuk merubah desc grub",
+  desc: "untuk ganti desc grub",
   run: async (sock, chatId, msg, args, text) => {
+    if (isAdminvalid(sock, chatId, msg)) return;
     if (isBan(sock, chatId, msg)) return;
-    setDesc(sock, chatId, msg, text)
+    setDesc(sock, chatId, msg, text);
+    sock.sendMessage(chatId, { text: "berhasil di perbarui" }, { quoted: msg });
   }
-})
+});
 
 export const getUndangan = () => {
   try {
