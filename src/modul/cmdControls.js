@@ -251,14 +251,10 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     name: "setpp",
     alias: ["setpp"],
     category: "Menu Profile",
-    desc: "mengatur foto profil",
+    desc: "mengatur foto profil /replay foto untuk menggunakan nya",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
-      if (msg.message.imageMessage?.caption === ".setpp") {
-        setPP(sock, chatId, msg);
-      } else {
-        setPP(sock, chatId, msg);
-      }
+      await setPP(sock, chatId, msg);
 
     }
   });

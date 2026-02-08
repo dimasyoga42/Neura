@@ -88,7 +88,6 @@ const start = async () => {
 
         // Mencari command di Map
         const command = commands.get(commandName);
-
         if (command) {
           try {
             // pastikan args & text aman
