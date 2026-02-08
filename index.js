@@ -2,7 +2,7 @@ import makeWASocket, {
   fetchLatestBaileysVersion,
   useMultiFileAuthState,
   DisconnectReason,
-} from "@whiskeysockets/baileys";
+} from "@ajammm/baileys";
 import qrcode from "qrcode-terminal";
 import { Admincontrols } from "./src/admin/controlAdmin.js";
 import dotenv from "dotenv";
@@ -15,8 +15,6 @@ import { messageHandler } from "./src/plugins/ai/message.js";
 import { subMenu } from "./src/modul/subMenu.js";
 import { jawab } from "./src/plugins/fun/caklontong.js";
 import { commands } from "./setting.js";
-import smsg from "./proto.js";
-import { decodeJid } from "./src/config/dcode.js";
 dotenv.config();
 const start = async () => {
   const { state, saveCreds } = await useMultiFileAuthState("./auth_save");
@@ -26,7 +24,6 @@ const start = async () => {
     auth: state,
     printQRInTerminal: false
   });
-  sock.decodeJid = decodeJid
   sock.ev.on("creds.update", saveCreds);
 
   sock.ev.on("connection.update", ({ connection, lastDisconnect, qr }) => {
@@ -64,7 +61,7 @@ const start = async () => {
     await outGC(sock, update)
   })
   sock.ev.on("messages.upsert", async ({ messages }) => {
-    const msg = smsg(sock, messages[0])
+    const msg = messages[0]
 
     try {
       const chatId = msg.key.remoteJid;
