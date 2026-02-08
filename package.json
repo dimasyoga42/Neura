@@ -9,6 +9,7 @@
     "relod": "pm2 restart index.js"
   },
   "dependencies": {
+    "@ajammm/baileys": "^2.1.16",
     "@supabase/supabase-js": "^2.89.0",
     "@whiskeysockets/baileys": "^7.0.0-rc.9",
     "axios": "^1.13.2",

@@ -251,7 +251,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     name: "setpp",
     alias: ["setpp"],
     category: "Menu Profile",
-    desc: "mengatur foto profil /replay foto untuk menggunakan nya",
+    desc: "mengatur foto profil (replay) foto untuk menggunakan nya",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
       await setPP(sock, chatId, msg);
@@ -941,4 +941,25 @@ nomer owner: 085664393331 (dimas)`
       bacaBuku(sock, chatId, msg, text);
     }
   });
+
+  registerCommand({
+    name: "owner",
+    alias: ["ow"],
+    category: "owner",
+    desc: "-",
+    run: async (sock, chatId, msg, args, text) => {
+      if (isBan(sock, chatId, msg)) return;
+      await sock.sendMessage(chatId, {
+        text: "Welcome! Choose an option:",
+        footer: "Powered by @ajammm/baileys",
+        buttons: [
+          { buttonId: "menu", buttonText: { displayText: "📋 Main Menu" }, type: 1 },
+          { buttonId: "help", buttonText: { displayText: "❓ Help" }, type: 1 },
+          { buttonId: "about", buttonText: { displayText: "ℹ️ About" }, type: 1 }
+        ],
+        headerType: 1
+      })
+    }
+  });
+
 };
