@@ -52,7 +52,7 @@ import { Loli } from "../plugins/fun/loli.js";
 import { commands, fetchdata, message, registerCommand } from "../../setting.js";
 import { addOverlayFromUrl } from "../config/overlay.js";
 import { isAdminvalid } from "../admin/controlAdmin.js";
-import { setDesk } from "../plugins/owner/join.js";
+import { join, setDesk } from "../plugins/owner/join.js";
 
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   // Register all commands
