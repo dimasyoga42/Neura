@@ -62,11 +62,12 @@ export const join = async (sock, chatId, msg, text) => {
       return sock.sendMessage(chatId, { text: "masukan link grup" }, { quoted: msg });
     }
 
-    await sock.groupAcceptInvite(link);
+    const code = await sock.groupRevokeInvite(chatId)
+    console.log('New group code: ' + code)
 
     await sock.sendMessage(
       chatId,
-      { text: "berhasil join grup" },
+      { text: code },
       { quoted: msg }
     );
   } catch (error) {
