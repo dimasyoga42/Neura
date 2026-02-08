@@ -42,4 +42,13 @@ export const ownerControls = async (sock, chatId, msg, text) => {
     if (!isOwner(sock, msg, chatId)) return;
     hapusperpus(sock, chatId, msg, text);
   }
+  registerCommand({
+    name: "join",
+    cmd: [".join"],
+    category: "owner",
+    run: async (sock, chatId, msg) => {
+      if (!isOwner(sock, msg, chatId)) return;
+      join(sock, chatId, msg)
+    }
+  });
 }
