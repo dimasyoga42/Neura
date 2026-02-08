@@ -2,7 +2,7 @@ import makeWASocket, {
   fetchLatestBaileysVersion,
   useMultiFileAuthState,
   DisconnectReason,
-} from "@ajammm/baileys";
+} from "@whiskeysockets/baileys";
 import qrcode from "qrcode-terminal";
 import { Admincontrols } from "./src/admin/controlAdmin.js";
 import dotenv from "dotenv";
