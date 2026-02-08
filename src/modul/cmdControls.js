@@ -51,6 +51,8 @@ import { itemStat } from "../plugins/toram/filter.js";
 import { Loli } from "../plugins/fun/loli.js";
 import { commands, fetchdata, message, registerCommand } from "../../setting.js";
 import { addOverlayFromUrl } from "../config/overlay.js";
+import { isAdminvalid } from "../admin/controlAdmin.js";
+import { setDesk } from "../plugins/owner/join.js";
 
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   // Register all commands
@@ -933,5 +935,16 @@ nomer owner: 085664393331 (dimas)`
       bacaBuku(sock, chatId, msg, text);
     }
   });
-
+  registerCommand({
+    name: "setdesk",
+    alias: ["setdesk"],
+    category: "Menu Admin",
+    desc: "untuk ganti desc grub",
+    run: async (sock, chatId, msg, args, text) => {
+      if (isAdminvalid(sock, chatId, msg)) return;
+      if (isBan(sock, chatId, msg)) return;
+      setDesk(sock, chatId, msg, text);
+      sock.sendMessage(chatId, { text: "berhasil di perbarui" }, { quoted: msg });
+    }
+  });
 };
