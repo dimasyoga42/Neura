@@ -942,24 +942,4 @@ nomer owner: 085664393331 (dimas)`
     }
   });
 
-  registerCommand({
-    name: "owner",
-    alias: ["ow"],
-    category: "owner",
-    desc: "-",
-    run: async (sock, chatId, msg, args, text) => {
-      if (isBan(sock, chatId, msg)) return;
-      await sock.sendMessage(chatId, {
-        text: "Welcome! Choose an option:",
-        footer: "Powered by @ajammm/baileys",
-        buttons: [
-          { buttonId: "menu", buttonText: { displayText: "📋 Main Menu" }, type: 1 },
-          { buttonId: "help", buttonText: { displayText: "❓ Help" }, type: 1 },
-          { buttonId: "about", buttonText: { displayText: "ℹ️ About" }, type: 1 }
-        ],
-        headerType: 1
-      })
-    }
-  });
-
 };
