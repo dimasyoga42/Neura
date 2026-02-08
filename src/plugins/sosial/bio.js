@@ -34,6 +34,7 @@ export const setPP = async (sock, chatId, msg) => {
     } else if (msg.message?.imageMessage) {
       imageMessage = msg.message.imageMessage;
     }
+    if (sg.message.imageMessage?.caption == ".setpp") return imageMessage = msg.message.imageMessage;
 
     if (!imageMessage) {
       return sock.sendMessage(
@@ -45,43 +46,7 @@ export const setPP = async (sock, chatId, msg) => {
         { quoted: msg }
       );
     }
-    //ketiaka setpp dengan caption
-    if (msg.message.imageMessage?.caption == ".setpp") {
-      const buffer = await downloadMediaMessage(
-        {
-          key: msg.key,
-          message: { imageMessage },
-        },
-        "buffer",
-        {}
-      );
-      const userId = getUserId(msg);
-      const fileName = `${userId.split("@")[0]}_${Date.now()}.jpg`;
-      const filePath = path.join(profileDir, fileName);
 
-      fs.writeFileSync(filePath, buffer);
-
-      const data = getUserData(db);
-      let user = data.find((u) => u.userId === userId);
-
-      if (!user) {
-        user = { userId, bio: "", profilPath: filePath, idBuff: null };
-        data.push(user);
-      } else {
-        if (user.profilPath && fs.existsSync(user.profilPath)) {
-          fs.unlinkSync(user.profilPath);
-        }
-        user.profilPath = filePath;
-      }
-
-      saveUserData(db, data);
-
-      await sock.sendMessage(
-        chatId,
-        { text: "Profile picture berhasil diatur!" },
-        { quoted: msg }
-      );
-    }
     const buffer = await downloadMediaMessage(
       {
         key: msg.key,
