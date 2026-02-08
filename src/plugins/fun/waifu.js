@@ -5,31 +5,41 @@ import { ColdownUser } from "../../admin/coldownChat.js";
 import { isBan } from "../fitur/ban.js";
 export const waifu = async (sock, chatId, msg) => {
   try {
+    // Melakukan request ke API waifu.im
+    const response = await axios.get("https://api.waifu.im/images?IncludedTags=waifu");
+    const data = response.data;
 
-    const data = await fetchdata("https://api.waifu.im/images?IncludedTags=waifu")
-    if (!data.items.url) {
+    // Validasi apakah properti 'items' ada dan memiliki elemen
+    if (!data.items || data.items.length === 0) {
       return sock.sendMessage(
         chatId,
-        { text: "gagal mengambil foto" },
+        { text: "Gagal mengambil foto: Data tidak ditemukan dalam repositori API." },
         { quoted: msg }
       );
     }
 
-    data.items.map((item) => {
+    // Melakukan iterasi pada array 'items'
+    data.items.forEach((item) => {
+      // Mengambil nama artis dengan pengecekan ketersediaan data (null safety)
+      const artistName = (item.artists && item.artists.length > 0)
+        ? item.artists[0].name
+        : "Anonim";
+
       sock.sendMessage(
         chatId,
         {
           image: { url: item.url },
-          caption: `ini adalah waifu mu\n> source: ${item.source} || artists: ${item.artists[0].name}`
+          caption: `Ini adalah waifu mu\n> Source: ${item.source}\n> Artist: ${artistName}`
         },
         { quoted: msg }
       );
-    })
+    });
 
   } catch (err) {
+    // Penanganan galat jika terjadi masalah pada koneksi atau server
     await sock.sendMessage(
       chatId,
-      { text: `error internal server\n${err.message}` },
+      { text: `Error Internal Server:\n${err.message}` },
       { quoted: msg }
     );
   }
