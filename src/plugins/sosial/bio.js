@@ -34,7 +34,7 @@ export const setPP = async (sock, chatId, msg) => {
     } else if (msg.message?.imageMessage) {
       imageMessage = msg.message.imageMessage;
     }
-    if (sg.message.imageMessage?.caption == ".setpp") return imageMessage = msg.message.imageMessage;
+    if (msg.message.imageMessage?.caption == ".setpp") return imageMessage = msg.message.imageMessage;
 
     if (!imageMessage) {
       return sock.sendMessage(
