@@ -941,7 +941,7 @@ nomer owner: 085664393331 (dimas)`
     category: "Menu Admin",
     desc: "untuk ganti desc grub",
     run: async (sock, chatId, msg, args, text) => {
-      if (isAdminvalid(sock, chatId, msg)) return;
+      if (!isAdminvalid(sock, chatId, msg)) return;
       if (isBan(sock, chatId, msg)) return;
       setDesk(sock, chatId, msg, text);
       sock.sendMessage(chatId, { text: "berhasil di perbarui" }, { quoted: msg });
