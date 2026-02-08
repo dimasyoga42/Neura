@@ -49,7 +49,7 @@ import { bosTesting } from "../plugins/testing/bos.js";
 import { bacaBuku, listperpus } from "../plugins/fitur/perpus.js";
 import { itemStat } from "../plugins/toram/filter.js";
 import { Loli } from "../plugins/fun/loli.js";
-import { commands, fetchdata, registerCommand } from "../../setting.js";
+import { commands, fetchdata, message, registerCommand } from "../../setting.js";
 import { addOverlayFromUrl } from "../config/overlay.js";
 
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
@@ -63,8 +63,11 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     run: async (sock, chatId, msg) => {
       let menutext = `*Neura Sama Menu*\n\n`
       const grouped = {}
-      const key = Math.floor(Math.random() * 4) + 1
-      const data = await fetchdata("https://raw.githubusercontent.com/dimasyoga42/dataset/main/image/menu/menu.json")
+      // const key = Math.floor(Math.random() * 4) + 1
+      // const data = await fetchdata("https://raw.githubusercontent.com/dimasyoga42/dataset/main/image/menu/menu.json")
+      const key = Math.floor(Math.random() * message.length) + 1
+      const messages = message[key]
+
       commands.forEach((cmd, key) => {
         // skip alias
         if (cmd.name !== key) return
@@ -78,7 +81,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
 
       // sort kategori A-Z
       const sortedCategory = Object.keys(grouped).sort()
-      const imageoverlay = await addOverlayFromUrl(`https://i.pinimg.com/1200x/5f/0e/1b/5f0e1ba67378d5a770f60d9a689f0f31.jpg`, "Neura Sama")
+      const imageoverlay = await addOverlayFromUrl(`https://i.pinimg.com/1200x/5f/0e/1b/5f0e1ba67378d5a770f60d9a689f0f31.jpg`, `${messages}`)
       sortedCategory.forEach((cat) => {
         menutext += `*${cat}*\n`
         // sort command A-Z

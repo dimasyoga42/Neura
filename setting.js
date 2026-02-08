@@ -29,3 +29,21 @@ export const registerCommand = (config) => {
   alias.forEach(a => commands.set(a, commandObj));
 };
 
+
+export const message = [
+  "waktu terus berjalan",
+  "ayo tidur bersamaku...",
+  "dunia ini kejam tapi kan ada aku",
+  "butuh pelukan?",
+  "dingin dingin ngopi",
+  "aku tau kamu bosan",
+  "kamu capek?",
+  "aku tau kamu jomblo",
+  "sini peluk",
+  "ayo bobo",
+  "hai ganteng",
+  "hai cantik",
+  "hai sayang",
+  "bakaa",
+  "Neura Sama"
+]
