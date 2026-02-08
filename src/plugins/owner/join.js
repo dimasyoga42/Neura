@@ -61,13 +61,11 @@ export const join = async (sock, chatId, msg, text) => {
     if (!link) {
       return sock.sendMessage(chatId, { text: "masukan link grup" }, { quoted: msg });
     }
-
-    const code = link.split("https://chat.whatsapp.com/")[1];
     if (!code) {
       return sock.sendMessage(chatId, { text: "link tidak valid" }, { quoted: msg });
     }
 
-    await sock.groupAcceptInvite(code);
+    await sock.groupAcceptInvite(link);
 
     await sock.sendMessage(
       chatId,
