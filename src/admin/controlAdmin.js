@@ -5,6 +5,22 @@ import { clearRaid, createRaid } from "../plugins/toram/raidControl.js";
 import { hidetag } from "./hidetag.js";
 import { SetWelcome } from "./wellcome.js";
 
+export const isAdminvalid = async (sock, chatId, msg) => {
+  const metadata = await sock.groupMetadata(chatId);
+  const admin = metadata.participants
+    .filter(p => p.admin)
+    .map(p => ({
+      jid: p.id,
+      pn: p.pn,
+      role: p.admin
+    }));
+  const botId = "179573169848377@lid"
+  console.log(botId)
+  const isAdmin = admin.some(a => a.jid === msg.key.participant)
+  const isBotadmin = admin.some(a => a.jid === botId)
+  if (!isAdmin || !isBotadmin) return sock.sendMessage(chatId, { text: "bot atau anda bukan admin" }, { quoted: msg })
+}
+
 export const Admincontrols = async (sock, chatId, msg, text) => {
   try {
     console.log(msg.key.participant)
