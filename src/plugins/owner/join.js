@@ -7,7 +7,7 @@ export const setDesk = async (sock, chatId, msg, text) => {
     if (isAdminvalid(sock, chatId, msg)) return;
     const txt = text.replace(".setdesk", "")
     if (!txt) return sock.sendMessage(chatId, { text: "mana teks nya" }, { quoted: msg });
-    await sock.groupUpdateDescription(chatId, `${txt}`.trim())
+    await sock.groupUpdateDescription(jid, txt)
     sock.sendMessage(chatId, { text: "deskripsi grub berhasil di ubah" }, { quoted: msg });
   } catch (error) {
     console.log(error.message)
