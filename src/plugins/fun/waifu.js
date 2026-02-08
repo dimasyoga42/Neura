@@ -29,7 +29,7 @@ export const waifu = async (sock, chatId, msg) => {
         chatId,
         {
           image: { url: item.url },
-          caption: `Ini adalah waifu mu\n> Source: ${item.source}\n> Artist: ${artistName}`
+          caption: `Ini adalah waifu mu\n\nSource: ${item.source}\n Artist: ${artistName}`
         },
         { quoted: msg }
       );
