@@ -1,4 +1,6 @@
+import { registerCommand } from "../../../setting.js";
 import { isAdminvalid } from "../../admin/controlAdmin.js"
+import { isBan } from "../fitur/ban.js";
 
 export const setDesc = async (sock, chatId, msg, text) => {
   try {
@@ -11,6 +13,17 @@ export const setDesc = async (sock, chatId, msg, text) => {
     console.log(error.message)
   }
 }
+
+registerCommand({
+  name: "setdescgc",
+  alias: ["setdescgc"],
+  category: "Menu Admin",
+  desc: "untuk merubah desc grub",
+  run: async (sock, chatId, msg, args, text) => {
+    if (isBan(sock, chatId, msg)) return;
+    setDesc(sock, chatId, msg, text)
+  }
+})
 
 export const getUndangan = () => {
   try {
