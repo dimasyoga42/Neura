@@ -25,16 +25,9 @@ const getUserId = (msg) => {
 export const setPP = async (sock, chatId, msg) => {
   try {
     if (!chatId?.endsWith("@g.us")) return sock.sendMessage(chatId, { text: "cmd ini hanya bisa digunakan di grub" }, { quoted: msg })
-    let imageMessage;
-    const quoted =
-      msg.message?.extendedTextMessage?.contextInfo?.quotedMessage;
+    const quoted = msg.message?.extendedTextMessage?.contextInfo?.quotedMessage;
+    const imageMessage = msg.message?.imageMessage || quoted?.imageMessage;
 
-    if (quoted?.imageMessage) {
-      imageMessage = quoted.imageMessage;
-    } else if (msg.message?.imageMessage) {
-      imageMessage = msg.message.imageMessage;
-    }
-    if (msg.message.imageMessage?.caption == ".setpp") return imageMessage = msg.message.imageMessage;
 
     if (!imageMessage) {
       return sock.sendMessage(
