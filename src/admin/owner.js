@@ -1,6 +1,5 @@
 import { ban, isOwner, unBan } from "../plugins/fitur/ban.js"
 import { editperpus, hapusperpus, setperpus } from "../plugins/fitur/perpus.js";
-import { join } from "../plugins/owner/join.js";
 import { setBos } from "../plugins/toram/bos.js";
 import { handleBroadcast } from "./bc.js";
 import { setNocoldown } from "./coldownChat.js";
@@ -43,14 +42,5 @@ export const ownerControls = async (sock, chatId, msg, text) => {
     if (!isOwner(sock, msg, chatId)) return;
     hapusperpus(sock, chatId, msg, text);
   }
-  registerCommand({
-    name: "join",
-    alias: ["join"],
-    category: "owner",
-    desc: "untuk masuk grub",
-    run: async (sock, chatId, msg) => {
-      if (!isOwner(sock, msg, chatId)) return;
-      join(sock, chatId, msg)
-    }
-  });
+
 }

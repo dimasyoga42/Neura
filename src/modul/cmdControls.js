@@ -1,7 +1,7 @@
 import { ColdownUser } from "../admin/coldownChat.js";
 import { hidetag } from "../admin/hidetag.js";
 import { guide, listLeveling, menuMessage, messagePembolong, mq, stat, upbagId } from "../config/variabel.js";
-import { isBan } from "../plugins/fitur/ban.js"
+import { isBan, isOwner } from "../plugins/fitur/ban.js"
 import { Banner } from "../plugins/fitur/benner.js";
 import { setMenu } from "../plugins/fitur/img.js";
 import { getMt } from "../plugins/fitur/mt.js";
@@ -945,6 +945,16 @@ nomer owner: 085664393331 (dimas)`
       if (isBan(sock, chatId, msg)) return;
       setDesk(sock, chatId, msg, text);
       sock.sendMessage(chatId, { text: "berhasil di perbarui" }, { quoted: msg });
+    }
+  });
+  registerCommand({
+    name: "join",
+    alias: ["join"],
+    category: "owner",
+    desc: "untuk masuk grub",
+    run: async (sock, chatId, msg) => {
+      if (!isOwner(sock, msg, chatId)) return;
+      join(sock, chatId, msg)
     }
   });
 };
