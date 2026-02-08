@@ -55,12 +55,8 @@ export const getUndangan = async (sock, chatId, msg) => {
 };
 
 // ======================= JOIN VIA LINK (OWNER) =======================
-export const join = async (sock, chatId, msg, text, isOwner) => {
+export const join = async (sock, chatId, msg, text) => {
   try {
-    if (!isOwner) {
-      return sock.sendMessage(chatId, { text: "khusus owner" }, { quoted: msg });
-    }
-
     const link = text.replace(".join", "").trim();
     if (!link) {
       return sock.sendMessage(chatId, { text: "masukan link grup" }, { quoted: msg });

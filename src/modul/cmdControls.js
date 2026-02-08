@@ -952,9 +952,9 @@ nomer owner: 085664393331 (dimas)`
     alias: ["join"],
     category: "owner",
     desc: "untuk masuk grub",
-    run: async (sock, chatId, msg) => {
+    run: async (sock, chatId, msg, args, text) => {
       if (!isOwner(sock, msg, chatId)) return;
-      join(sock, chatId, msg)
+      join(sock, chatId, msg, text)
     }
   });
 };
