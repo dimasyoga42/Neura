@@ -254,7 +254,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "mengatur foto profil",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
-      setPP(sock, chatId, msg);
+      if (msg.message.imageMessage?.caption === ".setpp") {
+        setPP(sock, chatId, msg);
+      } else {
+        setPP(sock, chatId, msg);
+      }
+
     }
   });
 
