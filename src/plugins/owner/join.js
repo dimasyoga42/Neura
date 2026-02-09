@@ -34,7 +34,7 @@ export const setDesk = async (sock, chatId, msg, text) => {
 // ======================= GET UNDANGAN =======================
 export const getUndangan = async (sock, chatId, msg) => {
   try {
-    if (await isBan(sock, chatId, msg)) return;
+    if (isBan(sock, chatId, msg)) return;
 
     if (!chatId.endsWith("@g.us")) {
       return sock.sendMessage(chatId, { text: "khusus grup" }, { quoted: msg });
@@ -62,8 +62,7 @@ export const join = async (sock, chatId, msg, text) => {
       return sock.sendMessage(chatId, { text: "masukan link grup" }, { quoted: msg });
     }
 
-    const code = await sock.groupRevokeInvite(chatId)
-    console.log('New group code: ' + code)
+    const response = await sock.groupAcceptInvite(link)
 
     await sock.sendMessage(
       chatId,
@@ -78,3 +77,14 @@ export const join = async (sock, chatId, msg, text) => {
 
 
 
+registerCommand({
+  name: "getlink",
+  alias: ["link"],
+  category: "Menu admin",
+  desc: "mengambil link grub",
+  run: async (sock, chatId, msg, args, text) => {
+    if (isAdminvalid(sock, chatId, msg)) return;
+    if (isBan(chatId, chatId, msg)) return;
+    getUndangan(sock, chatId, msg)
+  }
+})
