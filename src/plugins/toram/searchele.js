@@ -3,12 +3,12 @@ import { supabase } from "../../model/supabase.js";
 
 export const eleMonster = async (sock, chatId, msg, text) => {
   try {
-    const name = text.replace(".elebos", "").trim().toLowerCase();
+    const name = text.replace(".elemonster", "").trim().toLowerCase();
 
     if (!name) {
       return sock.sendMessage(
         chatId,
-        { text: "tolong masukan element setelah .elebos" },
+        { text: "tolong masukan element setelah .elemonster" },
         { quoted: msg }
       );
     }
