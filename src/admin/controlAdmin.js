@@ -104,9 +104,9 @@ export const Admincontrols = async (sock, chatId, msg, text) => {
       category: "Menu admin",
       desc: "mengambil link grub",
       run: async (sock, chatId, msg, args, text) => {
+        if (isBan(chatId, chatId, msg)) return;
         if (!isAdmin) return;
         if (!isBotadmin) return;
-        if (isBan(chatId, chatId, msg)) return;
         getUndangan(sock, chatId, msg)
       }
     })

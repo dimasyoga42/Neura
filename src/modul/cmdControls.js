@@ -53,14 +53,13 @@ import { commands, fetchdata, message, registerCommand } from "../../setting.js"
 import { addOverlayFromUrl } from "../config/overlay.js";
 
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
-  // Register all commands
-
   registerCommand({
     name: "help",
     alias: ["menu"],
     category: "menu info",
     desc: "memunculkan daftar menu",
     run: async (sock, chatId, msg) => {
+      if (isBan(sock, chatId, msg)) return;
       let menutext = `*Neura Sama Menu*\n\n`
       const grouped = {}
       // const key = Math.floor(Math.random() * 4) + 1
@@ -179,7 +178,6 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     category: "Toram Tools",
     desc: "mencari item toram",
     run: async (sock, chatId, msg, args, text) => {
-      if (isBan(sock, chatId, msg)) return;
       searchItem(sock, chatId, msg, text);
     }
   });
