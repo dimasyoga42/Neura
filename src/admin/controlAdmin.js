@@ -136,7 +136,7 @@ registerCommand({
   desc: "Untuk membubarkan party raid",
   run: async (sock, chatId, msg, args, text) => {
     if (isBan(sock, chatId, msg)) return;
-    if (adminValid(sock, chatId, msg)) return;
+    if (!adminValid(sock, chatId, msg)) return;
     clearRaid(sock, chatId, msg)
   }
 })
