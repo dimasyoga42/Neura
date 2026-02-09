@@ -356,8 +356,7 @@ export const getAllBuff = async (sock, chatId, msg, text) => {
       const { data, error } = await supabase
         .from("buff")
         .select("name, code")
-        .eq("name", targetName)
-        .single()
+        .ilike("name", `%${targetName}%`)
 
       if (error || !data) {
         return sock.sendMessage(
