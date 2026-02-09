@@ -193,6 +193,6 @@ registerCommand({
   run: async (sock, chatId, msg) => {
     if (await isBan(sock, chatId, msg)) return;
     if (!(await adminValid(sock, chatId, msg))) return;
-    setNews(sock, chatId, msg);
+    setNews(sock, chatId, msg, text);
   }
 });
