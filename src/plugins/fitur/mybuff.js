@@ -32,7 +32,7 @@ export const mybuff = async (sock, chatId, msg) => {
       .map((item, i) => `${item.stat}`)
       .join("\n\n");
 
-    let finalText = `Buff kamu\n\n${list}`;
+    let finalText = `Buff kamu\n\n${list}\n> gunakan .setmybuff`;
 
     if (finalText.length > 4000) {
       const chunks = finalText.match(/[\s\S]{1,3900}/g);
