@@ -103,7 +103,7 @@ export const Admincontrols = async (sock, chatId, msg, text) => {
       category: "Menu admin",
       desc: "mengambil link grub",
       run: async (sock, chatId, msg, args, text) => {
-        if (!isAdmin) return sock.sendMessage(chatId, { text: "admin only" }, { quoted: msg });
+        if (!isAdminvalid(sock, chatId, msg)) return;
         if (isBan(chatId, chatId, msg)) return;
         getUndangan(sock, chatId, msg)
       }
