@@ -78,9 +78,9 @@ registerCommand({
   run: async (sock, chatId, msg, args, text) => {
     if (await isBan(sock, chatId, msg)) return;
     if (!(await adminValid(sock, chatId, msg))) return;
-
-    const element = args[1];
-    const hadiah = args[2];
+    const arg = text.split(" ")
+    const element = arg[1];
+    const hadiah = arg[2];
 
     if (!element || !hadiah) {
       return sock.sendMessage(
