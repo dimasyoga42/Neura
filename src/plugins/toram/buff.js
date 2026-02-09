@@ -366,7 +366,8 @@ export const getAllBuff = async (sock, chatId, msg, text) => {
         )
       }
 
-      const msgtext = `*${data.name}*\n${data.code}\n`
+      const msgtext = data.map((item) =>
+        `${item.name}\n- ${item.code}`).join("\n")
 
       return await sock.sendMessage(
         chatId,
