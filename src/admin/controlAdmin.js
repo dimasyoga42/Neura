@@ -7,21 +7,7 @@ import { clearRaid, createRaid } from "../plugins/toram/raidControl.js";
 import { hidetag } from "./hidetag.js";
 import { SetWelcome } from "./wellcome.js";
 
-export const isAdminvalid = async (sock, chatId, msg) => {
-  const metadata = await sock.groupMetadata(chatId);
-  const admin = metadata.participants
-    .filter(p => p.admin)
-    .map(p => ({
-      jid: p.id,
-      pn: p.pn,
-      role: p.admin
-    }));
-  const botId = "179573169848377@lid"
-  console.log(botId)
-  const isAdmin = admin.some(a => a.jid === msg.key.participant)
-  const isBotadmin = admin.some(a => a.jid === botId)
-  if (!isAdmin && !isBotadmin) return;
-}
+
 
 export const Admincontrols = async (sock, chatId, msg, text) => {
   try {
@@ -93,21 +79,15 @@ export const Admincontrols = async (sock, chatId, msg, text) => {
 
       createRaid(sock, chatId, msg, text, element, hadiah);
     }
-    if (text.startsWith(".clear")) {
-      if (isBan(sock, chatId, msg)) return;
-      if (!isAdmin) return sock.sendMessage(chatId, { text: "admin only" }, { quoted: msg });
-      clearRaid(sock, chatId, msg, text);
-    }
-
-
-
 
   } catch (err) {
     console.log(err)
   }
 }
 
-export const adminValid = async (sock, chatId, msg, text) => {
+
+
+export const adminValid = async (sock, chatId, msg,) => {
   try {
     const metadata = await sock.groupMetadata(chatId);
     const admin = metadata.participants
@@ -139,9 +119,24 @@ export const botValid = async (sock, chatId, msg, text) => {
       }));
     const botId = "179573169848377@lid"
     const isBotadmin = admin.some(a => a.jid === botId)
-    if (!isBotadmin) return sock.sendMessage(chatId, { text: "bot tidak menjadi admin" }, { quoted: msg })
-    return
+    if (!isBotadmin) {
+      sock.sendMessage(chatId, { text: "bot tidak menjadi admin" }, { quoted: msg })
+      return true
+    }
+    return false
   } catch (err) {
-
+    sock.sendMessage(chatId, { text: "ada kesalahan dalam proses" }, { quoted: msg })
   }
 }
+
+registerCommand({
+  name: "clear",
+  alias: ["bubar"],
+  category: "Menu admin",
+  desc: "Untuk membubarkan party raid",
+  run: async (sock, chatId, msg, args, text) => {
+    if (isBan(sock, chatId, msg)) return;
+    if (adminValid(sock, chatId, msg)) return;
+    clearRaid(sock, chatId, msg)
+  }
+})
