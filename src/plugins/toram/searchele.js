@@ -3,6 +3,13 @@ import { supabase } from "../../model/supabase.js";
 
 export const eleMonster = async (sock, chatId, msg, text) => {
   try {
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const eleBos = async (sock, chatId, msg, text) => {
+  try {
     const arg = text.split(" ")
     const name = arg[1]
     if (!name) return sock.sendMessage(chatId, { text: "tolong masukan element setelah !elemonster" }, { quoted: msg });
@@ -12,14 +19,6 @@ export const eleMonster = async (sock, chatId, msg, text) => {
       return `${i + 1}. ${item.name}\n`
     })
     sock.sendMessage(chatId, { text: `Daftar Nama Bos Berdasarkan Element\n${msgTxt}`.trim() }, { quoted: msg })
-  } catch (error) {
-    console.log(error)
-  }
-}
-
-export const eleBos = async (sock, chatId, msg, text) => {
-  try {
-
   } catch (error) {
 
   }
