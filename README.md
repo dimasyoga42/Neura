@@ -1,8 +1,4 @@
-# Project
 
-## Changelog
-
-## update
 ## Recent Updates
 
 - fix: workflow (7ca854c) - 2026-02-10
