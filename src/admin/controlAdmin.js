@@ -7,97 +7,81 @@ import { clearRaid, createRaid } from "../plugins/toram/raidControl.js";
 import { hidetag } from "./hidetag.js";
 import { SetWelcome } from "./wellcome.js";
 
+const BOT_ID = "179573169848377@lid";
 
-
-export const Admincontrols = async (sock, chatId, msg, text) => {
+// ================= VALID ADMIN =================
+export const adminValid = async (sock, chatId, msg) => {
   try {
-    console.log(msg.key.participant)
-
-    const metadata = await sock.groupMetadata(chatId);
-    const admin = metadata.participants
-      .filter(p => p.admin)
-      .map(p => ({
-        jid: p.id,
-        pn: p.pn,
-        role: p.admin
-      }));
-    const botId = "179573169848377@lid"
-    console.log(botId)
-    const isAdmin = admin.some(a => a.jid === msg.key.participant)
-    const isBotadmin = admin.some(a => a.jid === botId)
-    //cmd
-
-
-  } catch (err) {
-    console.log(err)
-  }
-}
-
-
-
-export const adminValid = async (sock, chatId, msg,) => {
-  try {
-    const metadata = await sock.groupMetadata(chatId);
-    const admin = metadata.participants
-      .filter(p => p.admin)
-      .map(p => ({
-        jid: p.id,
-        pn: p.pn,
-        role: p.admin
-      }));
-    const isAdmin = admin.some(a => a.jid !== msg.key.participant)
-    if (isAdmin) {
-      sock.sendMessage(chatId, { text: "admin only" }, { quoted: msg })
-      return false
+    if (!chatId.endsWith("@g.us")) {
+      await sock.sendMessage(chatId, { text: "khusus grup" }, { quoted: msg });
+      return false;
     }
-    return true
+
+    const metadata = await sock.groupMetadata(chatId);
+    const admins = metadata.participants
+      .filter(p => p.admin)
+      .map(p => p.id);
+
+    const sender = msg.key.participant || msg.key.remoteJid;
+
+    if (!admins.includes(sender)) {
+      await sock.sendMessage(chatId, { text: "admin only" }, { quoted: msg });
+      return false;
+    }
+
+    return true;
   } catch (err) {
-    console.log(err)
+    console.log(err);
+    return false;
   }
-}
-export const botValid = async (sock, chatId, msg, text) => {
+};
+
+// ================= VALID BOT ADMIN =================
+export const botValid = async (sock, chatId, msg) => {
   try {
     const metadata = await sock.groupMetadata(chatId);
-    const admin = metadata.participants
+    const admins = metadata.participants
       .filter(p => p.admin)
-      .map(p => ({
-        jid: p.id,
-        pn: p.pn,
-        role: p.admin
-      }));
-    const botId = "179573169848377@lid"
-    const isBotadmin = admin.some(a => a.jid !== botId)
-    if (isBotadmin) {
-      sock.sendMessage(chatId, { text: "bot tidak menjadi admin" }, { quoted: msg })
-      return false
-    }
-    return true
-  } catch (err) {
-    sock.sendMessage(chatId, { text: "ada kesalahan dalam proses" }, { quoted: msg })
-  }
-}
+      .map(p => p.id);
 
+    if (!admins.includes(BOT_ID)) {
+      await sock.sendMessage(chatId, { text: "bot tidak menjadi admin" }, { quoted: msg });
+      return false;
+    }
+
+    return true;
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+};
+
+// ================= CLEAR RAID =================
 registerCommand({
   name: "clear",
   alias: ["bubar"],
   category: "Menu admin",
   desc: "Untuk membubarkan party raid",
-  run: async (sock, chatId, msg, args, text) => {
-    if (isBan(sock, chatId, msg)) return;
-    if (adminValid(sock, chatId, msg)) return;
-    clearRaid(sock, chatId, msg)
+  run: async (sock, chatId, msg) => {
+    if (await isBan(sock, chatId, msg)) return;
+    if (!(await adminValid(sock, chatId, msg))) return;
+    clearRaid(sock, chatId, msg);
   }
-})
+});
+
+// ================= CREATE RAID =================
 registerCommand({
   name: "createraid",
   alias: ["createraid"],
   category: "Menu admin",
   desc: "membuat party raid",
   run: async (sock, chatId, msg, args, text) => {
-    if (isBan(sock, chatId, msg)) return;
-    if (adminValid(sock, chatId, msg)) return;
+    if (await isBan(sock, chatId, msg)) return;
+    if (!(await adminValid(sock, chatId, msg))) return;
+
     const element = args[1];
     const hadiah = args[2];
+
     if (!element || !hadiah) {
       return sock.sendMessage(
         chatId,
@@ -108,88 +92,107 @@ registerCommand({
 
     createRaid(sock, chatId, msg, text, element, hadiah);
   }
-})
+});
 
+// ================= SET WELCOME =================
 registerCommand({
   name: "setwc",
   alias: ["setwc"],
   category: "Menu admin",
-  desc: "mengatur sambutan / wellcome grub",
+  desc: "mengatur sambutan grub",
   run: async (sock, chatId, msg, args, text) => {
-    if (isBan(sock, chatId, msg)) return;
-    if (adminValid(sock, chatId, msg)) return;
-    SetWelcome(sock, chatId, msg, text)
+    if (await isBan(sock, chatId, msg)) return;
+    if (!(await adminValid(sock, chatId, msg))) return;
+    SetWelcome(sock, chatId, msg, text);
   }
-})
+});
+
+// ================= SET RULES =================
 registerCommand({
-  name: "setwc",
+  name: "setrules",
   alias: ["setrules"],
   category: "Menu admin",
   desc: "mengatur rules",
   run: async (sock, chatId, msg, args, text) => {
-    if (isBan(sock, chatId, msg)) return;
-    if (adminValid(sock, chatId, msg)) return;
-    setrules(sock, chatId, msg, text)
+    if (await isBan(sock, chatId, msg)) return;
+    if (!(await adminValid(sock, chatId, msg))) return;
+    setrules(sock, chatId, msg, text);
   }
-})
+});
+
+// ================= CLOSE GROUP =================
 registerCommand({
   name: "close",
   alias: ["tutup"],
   category: "Menu admin",
   desc: "menutup grub",
-  run: async (sock, chatId, msg, args, text) => {
-    if (isBan(sock, chatId, msg)) return;
-    if (adminValid(sock, chatId, msg)) return;
-    if (botValid(sock, chatId, msg, text)) return;
-    await sock.groupSettingUpdate(chatId, 'announcement');
+  run: async (sock, chatId, msg) => {
+    if (await isBan(sock, chatId, msg)) return;
+    if (!(await adminValid(sock, chatId, msg))) return;
+    if (!(await botValid(sock, chatId, msg))) return;
+
+    await sock.groupSettingUpdate(chatId, "announcement");
   }
-})
+});
+
+// ================= OPEN GROUP =================
+registerCommand({
+  name: "open",
+  alias: ["buka"],
+  category: "Menu admin",
+  desc: "membuka grub",
+  run: async (sock, chatId, msg) => {
+    if (await isBan(sock, chatId, msg)) return;
+    if (!(await adminValid(sock, chatId, msg))) return;
+    if (!(await botValid(sock, chatId, msg))) return;
+
+    await sock.groupSettingUpdate(chatId, "not_announcement");
+  }
+});
+
+// ================= KICK =================
 registerCommand({
   name: "kick",
   alias: ["kick"],
   category: "Menu admin",
   desc: "kick member",
-  run: async (sock, chatId, msg, args, text) => {
-    if (isBan(sock, chatId, msg)) return;
-    if (adminValid(sock, chatId, msg)) return;
-    if (botValid(sock, chatId, msg, text)) return;
-    const mentions = msg.message.extendedTextMessage?.contextInfo?.mentionedJid || [];
-    if (!mentions.length) return sock.sendMessage(chatId, { text: "tag target yang akan di kick" }, { quoted: msg });
-    await sock.groupParticipantsUpdate(chatId, mentions, 'remove')
-  }
-})
+  run: async (sock, chatId, msg) => {
+    if (await isBan(sock, chatId, msg)) return;
+    if (!(await adminValid(sock, chatId, msg))) return;
+    if (!(await botValid(sock, chatId, msg))) return;
 
-registerCommand({
-  name: "open",
-  alias: ["buka"],
-  category: "Menu admin",
-  desc: "membuka  grub",
-  run: async (sock, chatId, msg, args, text) => {
-    if (isBan(sock, chatId, msg)) return;
-    if (adminValid(sock, chatId, msg)) return;
-    if (botValid(sock, chatId, msg, text))
-      await sock.groupSettingUpdate(chatId, 'not_announcement')
+    const mentions = msg.message?.extendedTextMessage?.contextInfo?.mentionedJid || [];
+
+    if (!mentions.length) {
+      return sock.sendMessage(chatId, { text: "tag target yang akan di kick" }, { quoted: msg });
+    }
+
+    await sock.groupParticipantsUpdate(chatId, mentions, "remove");
   }
-})
+});
+
+// ================= HIDETAG =================
 registerCommand({
   name: "hidetag",
   alias: ["hidetag"],
   category: "Menu admin",
   desc: "Tag all Member",
-  run: async (sock, chatId, msg, args, text) => {
-    if (isBan(sock, chatId, msg)) return;
-    if (adminValid(sock, chatId, msg)) return;
-    hidetag(sock, chatId, msg)
+  run: async (sock, chatId, msg) => {
+    if (await isBan(sock, chatId, msg)) return;
+    if (!(await adminValid(sock, chatId, msg))) return;
+    hidetag(sock, chatId, msg);
   }
-})
+});
+
+// ================= SET NEWS =================
 registerCommand({
   name: "setnews",
   alias: ["setnews"],
   category: "Menu admin",
   desc: "menambahkan news",
-  run: async (sock, chatId, msg, args, text) => {
-    if (isBan(sock, chatId, msg)) return;
-    if (adminValid(sock, chatId, msg)) return;
-    setNews(sock, chatId, msg)
+  run: async (sock, chatId, msg) => {
+    if (await isBan(sock, chatId, msg)) return;
+    if (!(await adminValid(sock, chatId, msg))) return;
+    setNews(sock, chatId, msg);
   }
-})
+});
