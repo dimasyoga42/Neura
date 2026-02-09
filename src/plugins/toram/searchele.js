@@ -1,6 +1,5 @@
-import { registerCommand } from "../../../setting.js"
+
 import { supabase } from "../../model/supabase.js";
-import { isBan } from "../fitur/ban.js";
 
 export const eleMonster = async (sock, chatId, msg, text) => {
   try {
@@ -27,13 +26,4 @@ export const eleBos = async (sock, chatId, msg, text) => {
 
 }
 
-registerCommand({
-  name: "elebos",
-  alias: ["element"],
-  category: "toram tools",
-  desc: "untuk mencari bos berdasarkan element",
-  run: async (sock, chatId, msg, args, text) => {
-    if (isBan(sock, chatId, msg)) return;
-    eleBos(sock, chatId, msg, text)
-  }
-})
+

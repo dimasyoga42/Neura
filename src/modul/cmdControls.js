@@ -51,6 +51,7 @@ import { itemStat } from "../plugins/toram/filter.js";
 import { Loli } from "../plugins/fun/loli.js";
 import { commands, fetchdata, message, registerCommand } from "../../setting.js";
 import { addOverlayFromUrl } from "../config/overlay.js";
+import { eleBos } from "../plugins/toram/searchele.js";
 
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
@@ -931,5 +932,14 @@ nomer owner: 085664393331 (dimas)`
       bacaBuku(sock, chatId, msg, text);
     }
   });
-
+  registerCommand({
+    name: "elebos",
+    alias: ["element"],
+    category: "toram tools",
+    desc: "untuk mencari bos berdasarkan element",
+    run: async (sock, chatId, msg, args, text) => {
+      if (isBan(sock, chatId, msg)) return;
+      eleBos(sock, chatId, msg, text)
+    }
+  })
 };
