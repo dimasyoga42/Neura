@@ -1,5 +1,6 @@
 import { registerCommand } from "../../setting.js";
 import { isBan } from "../plugins/fitur/ban.js";
+import { getUndangan } from "../plugins/owner/join.js";
 import { setNews } from "../plugins/sosial/news.js";
 import { setrules } from "../plugins/sosial/rules.js";
 import { clearRaid, createRaid } from "../plugins/toram/raidControl.js";
