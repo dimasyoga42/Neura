@@ -104,7 +104,7 @@ export const Admincontrols = async (sock, chatId, msg, text) => {
       category: "Menu admin",
       desc: "mengambil link grub",
       run: async (sock, chatId, msg, args, text) => {
-        if (!isAdminvalid(sock, chatId, msg)) return sock.sendMessage(chatId, { text: "harap cek apakah bot sudah jd admin / anda bukan admin" });
+        if (isAdminvalid(sock, chatId, msg)) return sock.sendMessage(chatId, { text: "harap cek apakah bot sudah jd admin / anda bukan admin" });
         if (isBan(chatId, chatId, msg)) return;
         getUndangan(sock, chatId, msg)
       }
