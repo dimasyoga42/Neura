@@ -4,7 +4,6 @@ import makeWASocket, {
   DisconnectReason,
 } from "@whiskeysockets/baileys";
 import qrcode from "qrcode-terminal";
-import { Admincontrols } from "./src/admin/controlAdmin.js";
 import dotenv from "dotenv";
 import { ownerControls } from "./src/admin/owner.js";
 import { cmdMenucontrol } from "./src/modul/cmdControls.js";
@@ -70,7 +69,6 @@ const start = async () => {
       messageHandler(sock, chatId, msg);
       checkMentionAfk(sock, chatId, msg)
       checkUnAfk(sock, chatId, msg);
-      Admincontrols(sock, chatId, msg, text);
       ownerControls(sock, chatId, msg, text);
       cmdMenucontrol(sock, chatId, msg, text);
       jawab(sock, chatId, msg)
