@@ -98,12 +98,6 @@ export const Admincontrols = async (sock, chatId, msg, text) => {
       if (!isAdmin) return sock.sendMessage(chatId, { text: "admin only" }, { quoted: msg });
       clearRaid(sock, chatId, msg, text);
     }
-    registerCommand({
-      name: "getlink",
-      alias: ["link"],
-      category: "Menu admin",
-      desc: "mengambil link grub",
-    })
 
 
 
