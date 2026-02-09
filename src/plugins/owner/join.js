@@ -83,7 +83,7 @@ registerCommand({
   category: "Menu admin",
   desc: "mengambil link grub",
   run: async (sock, chatId, msg, args, text) => {
-    if (isAdminvalid(sock, chatId, msg)) return;
+    if (!isAdminvalid(sock, chatId, msg)) return;
     if (isBan(chatId, chatId, msg)) return;
     getUndangan(sock, chatId, msg)
   }
