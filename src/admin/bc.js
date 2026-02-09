@@ -45,8 +45,8 @@ export const bcGroups = async (sock, payload) => {
             : fs.readFileSync(payload.image)
 
         message.caption = payload.text
-          ? `*Broadcast*\n\n${payload.text}`
-          : '*Broadcast*'
+          ? `*information*\n${payload.text}`
+          : '*information*'
       }
 
       // === TEXT ONLY ===
