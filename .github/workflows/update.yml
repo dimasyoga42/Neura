@@ -1,0 +1,52 @@
+name: Update Readme from Changelog
+
+on:
+  push:
+    paths:
+      - "CHANGELOG.md"
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Insert Changelog into README
+        run: |
+          if [ ! -f CHANGELOG.md ]; then
+            echo "CHANGELOG.md tidak ditemukan"
+            exit 0
+          fi
+
+          if [ ! -f README.md ]; then
+            echo "# Project" > README.md
+            echo "" >> README.md
+          fi
+
+          echo "## Changelog" > temp.md
+          echo "" >> temp.md
+          cat CHANGELOG.md >> temp.md
+
+          # Hapus bagian changelog lama di README jika ada
+          sed -i '/## Changelog/,$d' README.md
+
+          # Gabungkan README lama + changelog baru
+          cat temp.md >> README.md
+
+          rm temp.md
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+
+          git add README.md
+          git diff --cached --quiet || git commit -m "auto update README from CHANGELOG"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
