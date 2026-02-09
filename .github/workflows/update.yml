@@ -1,22 +1,31 @@
-name: Update Readme from Changelog
+name: Update Readme from README
 
 on:
   push:
     paths:
-      - "CHANGELOG.md"
+      - "README.md"
+      - ".github/workflows/update-readme.yml"
 
 jobs:
   update-readme:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repo (full history)
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Insert Changelog into README
+      - name: Generate Commit List
         run: |
-          if [ ! -f CHANGELOG.md ]; then
-            echo "CHANGELOG.md tidak ditemukan"
+          echo "## Recent Commits" > commits.md
+          echo "" >> commits.md
+          git log -10 --pretty=format:"- %s (%h)" >> commits.md
+
+      - name: Insert README + Commits into README
+        run: |
+          if [ ! -f README.md ]; then
+            echo "README.md tidak ditemukan"
             exit 0
           fi
 
@@ -25,17 +34,20 @@ jobs:
             echo "" >> README.md
           fi
 
-          echo "## Changelog" > temp.md
+          echo "## README" > temp.md
           echo "" >> temp.md
-          cat CHANGELOG.md >> temp.md
+          cat README.md >> temp.md
+          echo "" >> temp.md
+          cat commits.md >> temp.md
 
-          # Hapus bagian changelog lama di README jika ada
-          sed -i '/## Changelog/,$d' README.md
+          # Hapus bagian lama mulai dari README
+          sed -i '/## README/,$d' README.md
 
-          # Gabungkan README lama + changelog baru
+          # Gabungkan
           cat temp.md >> README.md
 
           rm temp.md
+          rm commits.md
 
       - name: Commit changes
         run: |
@@ -43,10 +55,9 @@ jobs:
           git config user.email "actions@github.com"
 
           git add README.md
-          git diff --cached --quiet || git commit -m "auto update README from CHANGELOG"
+          git diff --cached --quiet || git commit -m "auto update README from README + commits"
 
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-
