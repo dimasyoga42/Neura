@@ -177,7 +177,7 @@ registerCommand({
   alias: ["hidetag"],
   category: "Menu admin",
   desc: "Tag all Member",
-  run: async (sock, chatId, msg) => {
+  run: async (sock, chatId, msg, args, text) => {
     if (await isBan(sock, chatId, msg)) return;
     if (!(await adminValid(sock, chatId, msg))) return;
     hidetag(sock, chatId, msg, text);
@@ -190,7 +190,7 @@ registerCommand({
   alias: ["setnews"],
   category: "Menu admin",
   desc: "menambahkan news",
-  run: async (sock, chatId, msg) => {
+  run: async (sock, chatId, msg, args, text) => {
     if (await isBan(sock, chatId, msg)) return;
     if (!(await adminValid(sock, chatId, msg))) return;
     setNews(sock, chatId, msg, text);
