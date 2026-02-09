@@ -97,8 +97,8 @@ export const adminValid = async (sock, chatId, msg,) => {
         pn: p.pn,
         role: p.admin
       }));
-    const isAdmin = admin.some(a => a.jid === msg.key.participant)
-    if (!isAdmin) {
+    const isAdmin = admin.some(a => a.jid !== msg.key.participant)
+    if (isAdmin) {
       sock.sendMessage(chatId, { text: "admin only" }, { quoted: msg })
       return false
     }
@@ -119,7 +119,7 @@ export const botValid = async (sock, chatId, msg, text) => {
       }));
     const botId = "179573169848377@lid"
     const isBotadmin = admin.some(a => a.jid === botId)
-    if (!isBotadmin) {
+    if (isBotadmin) {
       sock.sendMessage(chatId, { text: "bot tidak menjadi admin" }, { quoted: msg })
       return false
     }
@@ -136,7 +136,7 @@ registerCommand({
   desc: "Untuk membubarkan party raid",
   run: async (sock, chatId, msg, args, text) => {
     if (isBan(sock, chatId, msg)) return;
-    if (!adminValid(sock, chatId, msg)) return;
+    if (adminValid(sock, chatId, msg)) return;
     clearRaid(sock, chatId, msg)
   }
 })
