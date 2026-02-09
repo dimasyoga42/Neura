@@ -1,58 +1,52 @@
-name: Update Readme from README
+name: Update Readme from Commits
 
 on:
-push:
-paths:
-- "README.md"
-- ".github/workflows/update-readme.yml"
+  push:
+    paths:
+      - "README.md"
+      - ".github/workflows/update.yml"
+
+permissions:
+  contents: write
 
 jobs:
-update-readme:
-runs-on: ubuntu-latest
+  update-readme:
+    runs-on: ubuntu-latest
 
-```
-steps:
-  - name: Checkout repo (full history)
-    uses: actions/checkout@v4
-    with:
-      fetch-depth: 0
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-  - name: Generate Commit List
-    run: |
-      echo "## update" > commits.md
-      echo "" >> commits.md
-      git log -10 --pretty=format:"- %s (%h)" >> commits.md
-      echo "" >> commits.md
+      - name: Generate and Inject Commit List
+        run: |
+          # Membuat daftar commit terbaru dalam format Markdown
+          echo "## Recent Updates" > commits.tmp
+          echo "" >> commits.tmp
+          git log -10 --pretty=format:"- %s (%h) - %ad" --date=short >> commits.tmp
+          echo -e "\n" >> commits.tmp
 
-  - name: Insert Commits into README (under ## update)
-    run: |
-      if [ ! -f README.md ]; then
-        echo "# Project" > README.md
-        echo "" >> README.md
-        echo "## Changelog" >> README.md
-        echo "" >> README.md
-        echo "## update" >> README.md
-        echo "" >> README.md
-      fi
+          # Inisialisasi README jika belum ada
+          if [ ! -f README.md ]; then
+            echo "# Project Title" > README.md
+            echo -e "\n## Recent Updates\n" >> README.md
+          fi
 
-      # Hapus isi lama setelah ## update
-      sed -i '/## update/,$d' README.md
+          # Menggunakan sed untuk menghapus konten setelah header target dan menyisipkan data baru
+          # Pendekatan ini lebih bersih untuk pembaruan berkelanjutan
+          sed -i '/## Recent Updates/,$d' README.md
+          cat commits.tmp >> README.md
+          rm commits.tmp
 
-      # Tambahkan kembali header update + commit terbaru
-      cat commits.md >> README.md
+      - name: Commit and Push Changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      rm commits.md
-
-  - name: Commit changes
-    run: |
-      git config user.name "github-actions"
-      git config user.email "actions@github.com"
-
-      git add README.md
-      git diff --cached --quiet || git commit -m "auto update README (recent commits)"
-
-  - name: Push changes
-    uses: ad-m/github-push-action@master
-    with:
-      github_token: ${{ secrets.GITHUB_TOKEN }}
-```
+          git add README.md
+          # Menggunakan pengecekan diff agar workflow tidak error jika tidak ada perubahan
+          if ! git diff --cached --quiet; then
+            git commit -m "docs: automated update of recent commits in README"
+            git push
+          fi
