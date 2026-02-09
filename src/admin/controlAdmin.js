@@ -1,3 +1,4 @@
+import { registerCommand } from "../../setting.js";
 import { isBan } from "../plugins/fitur/ban.js";
 import { setNews } from "../plugins/sosial/news.js";
 import { setrules } from "../plugins/sosial/rules.js";
@@ -96,6 +97,17 @@ export const Admincontrols = async (sock, chatId, msg, text) => {
       if (!isAdmin) return sock.sendMessage(chatId, { text: "admin only" }, { quoted: msg });
       clearRaid(sock, chatId, msg, text);
     }
+    registerCommand({
+      name: "getlink",
+      alias: ["link"],
+      category: "Menu admin",
+      desc: "mengambil link grub",
+      run: async (sock, chatId, msg, args, text) => {
+        if (!isAdmin) return sock.sendMessage(chatId, { text: "admin only" }, { quoted: msg });
+        if (isBan(chatId, chatId, msg)) return;
+        getUndangan(sock, chatId, msg)
+      }
+    })
 
 
 
