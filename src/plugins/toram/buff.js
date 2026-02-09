@@ -347,7 +347,7 @@ export const setBuff = async (sock, chatId, msg, text) => {
 export const getAllBuff = async (sock, chatId, msg, text) => {
   try {
     const args = text
-      ? text.split("|").map(item => item.trim())
+      ? text.split(" ").map(item => item.trim())
       : []
 
     const targetName = args[1]?.toLowerCase()
