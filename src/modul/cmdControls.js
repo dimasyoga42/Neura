@@ -82,13 +82,13 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
       const sortedCategory = Object.keys(grouped).sort()
       const imageoverlay = await addOverlayFromUrl(`https://i.pinimg.com/1200x/5f/0e/1b/5f0e1ba67378d5a770f60d9a689f0f31.jpg`, `${messages}`)
       sortedCategory.forEach((cat) => {
-        menutext += `*${cat}*\n`
+        menutext += `❏*${cat}*\n`
         // sort command A-Z
         grouped[cat]
           .sort((a, b) => a.name.localeCompare(b.name))
           .forEach((cmd) => {
             const alias = cmd.alias.length ? ` (${cmd.alias.join(", ")})` : ""
-            menutext += `- .${cmd.name}(${alias}) - ${cmd.desc}\n`
+            menutext += `│• .${cmd.name}${alias} - ${cmd.desc}\n`
           })
 
         menutext += `\n`
