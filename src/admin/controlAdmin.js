@@ -20,7 +20,7 @@ export const isAdminvalid = async (sock, chatId, msg) => {
   console.log(botId)
   const isAdmin = admin.some(a => a.jid === msg.key.participant)
   const isBotadmin = admin.some(a => a.jid === botId)
-  if (!isAdmin || !isBotadmin) return;
+  if (!isAdmin && !isBotadmin) return;
 }
 
 export const Admincontrols = async (sock, chatId, msg, text) => {
