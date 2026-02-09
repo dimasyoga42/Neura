@@ -1,6 +1,5 @@
 import { channel } from "diagnostics_channel";
 import { registerCommand } from "../../../setting.js";
-import { isAdminvalid } from "../../admin/controlAdmin.js";
 import { isBan } from "../fitur/ban.js";
 export const getUndangan = async (sock, chatId, msg) => {
   try {
