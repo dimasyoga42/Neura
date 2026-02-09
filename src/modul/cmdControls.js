@@ -52,6 +52,7 @@ import { Loli } from "../plugins/fun/loli.js";
 import { commands, fetchdata, message, registerCommand } from "../../setting.js";
 import { addOverlayFromUrl } from "../config/overlay.js";
 import { eleBos, eleMonster } from "../plugins/toram/searchele.js";
+import { mybuff, setMybuff } from "../plugins/fitur/mybuff.js";
 
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
@@ -952,4 +953,24 @@ nomer owner: 085664393331 (dimas)`
       eleMonster(sock, chatId, msg, text)
     }
   })
+  registerCommand({
+    name: "mybuff",
+    alias: ["mbuff"],
+    category: "toram tools",
+    desc: "untuk menampilkan buff yang di simpan",
+    run: async (sock, chatId, msg, args, text) => {
+      if (isBan(sock, chatId, msg)) return;
+      mybuff(sock, chatId, msg)
+    }
+  })
 };
+registerCommand({
+  name: "setmybuff",
+  alias: ["smybuff"],
+  category: "toram tools",
+  desc: "untuk menambahkan buff ke mybuff",
+  run: async (sock, chatId, msg, args, text) => {
+    if (isBan(sock, chatId, msg)) return;
+    setMybuff(sock, chatId, msg, text)
+  }
+})
