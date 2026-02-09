@@ -30,7 +30,7 @@ export const eleBos = async (sock, chatId, msg, text) => {
 registerCommand({
   name: "elebos",
   alias: ["element"],
-  category: "Menu Toram",
+  category: "toram tools",
   desc: "untuk mencari bos berdasarkan element",
   run: async (sock, chatId, msg, args, text) => {
     if (isBan(sock, chatId, msg)) return;
