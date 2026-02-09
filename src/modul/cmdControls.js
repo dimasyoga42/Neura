@@ -51,7 +51,7 @@ import { itemStat } from "../plugins/toram/filter.js";
 import { Loli } from "../plugins/fun/loli.js";
 import { commands, fetchdata, message, registerCommand } from "../../setting.js";
 import { addOverlayFromUrl } from "../config/overlay.js";
-import { eleBos } from "../plugins/toram/searchele.js";
+import { eleBos, eleMonster } from "../plugins/toram/searchele.js";
 
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
@@ -940,6 +940,16 @@ nomer owner: 085664393331 (dimas)`
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
       eleBos(sock, chatId, msg, text)
+    }
+  })
+  registerCommand({
+    name: "elemonster",
+    alias: ["elemon"],
+    category: "toram tools",
+    desc: "untuk mencari monster berdasarkan element",
+    run: async (sock, chatId, msg, args, text) => {
+      if (isBan(sock, chatId, msg)) return;
+      eleMonster(sock, chatId, msg, text)
     }
   })
 };
