@@ -1,63 +1,58 @@
 name: Update Readme from README
 
 on:
-  push:
-    paths:
-      - "README.md"
-      - ".github/workflows/update-readme.yml"
+push:
+paths:
+- "README.md"
+- ".github/workflows/update-readme.yml"
 
 jobs:
-  update-readme:
-    runs-on: ubuntu-latest
+update-readme:
+runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repo (full history)
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+```
+steps:
+  - name: Checkout repo (full history)
+    uses: actions/checkout@v4
+    with:
+      fetch-depth: 0
 
-      - name: Generate Commit List
-        run: |
-          echo "## Recent Commits" > commits.md
-          echo "" >> commits.md
-          git log -10 --pretty=format:"- %s (%h)" >> commits.md
+  - name: Generate Commit List
+    run: |
+      echo "## update" > commits.md
+      echo "" >> commits.md
+      git log -10 --pretty=format:"- %s (%h)" >> commits.md
+      echo "" >> commits.md
 
-      - name: Insert README + Commits into README
-        run: |
-          if [ ! -f README.md ]; then
-            echo "README.md tidak ditemukan"
-            exit 0
-          fi
+  - name: Insert Commits into README (under ## update)
+    run: |
+      if [ ! -f README.md ]; then
+        echo "# Project" > README.md
+        echo "" >> README.md
+        echo "## Changelog" >> README.md
+        echo "" >> README.md
+        echo "## update" >> README.md
+        echo "" >> README.md
+      fi
 
-          if [ ! -f README.md ]; then
-            echo "# Project" > README.md
-            echo "" >> README.md
-          fi
+      # Hapus isi lama setelah ## update
+      sed -i '/## update/,$d' README.md
 
-          echo "## README" > temp.md
-          echo "" >> temp.md
-          cat README.md >> temp.md
-          echo "" >> temp.md
-          cat commits.md >> temp.md
+      # Tambahkan kembali header update + commit terbaru
+      cat commits.md >> README.md
 
-          # Hapus bagian lama mulai dari README
-          sed -i '/## README/,$d' README.md
+      rm commits.md
 
-          # Gabungkan
-          cat temp.md >> README.md
+  - name: Commit changes
+    run: |
+      git config user.name "github-actions"
+      git config user.email "actions@github.com"
 
-          rm temp.md
-          rm commits.md
+      git add README.md
+      git diff --cached --quiet || git commit -m "auto update README (recent commits)"
 
-      - name: Commit changes
-        run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-
-          git add README.md
-          git diff --cached --quiet || git commit -m "auto update README from README + commits"
-
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+  - name: Push changes
+    uses: ad-m/github-push-action@master
+    with:
+      github_token: ${{ secrets.GITHUB_TOKEN }}
+```
