@@ -52,11 +52,10 @@ export const listMember = async (sock, chatId, msg) => {
       }, { quoted: msg });
     }
 
-    let message = "📋 *DAFTAR MEMBER*\n\n";
+    let message = "*DAFTAR MEMBER*";
 
     userdata.member.forEach((member, index) => {
-      message += `${index + 1}. IGN: ${member.ign}\n`;
-      message += `   Owner: @${member.owner.split('@')[0]}\n\n`;
+      message += `${index + 1}. IGN: ${member.ign} -  @${member.owner.split('@')[0]}\n`;
     });
 
     message += `Total: ${userdata.member.length} member`;
@@ -65,7 +64,7 @@ export const listMember = async (sock, chatId, msg) => {
     const mentions = userdata.member.map(m => m.owner);
 
     sock.sendMessage(chatId, {
-      text: message,
+      text: message.trim(),
       mentions: mentions
     }, { quoted: msg });
 
