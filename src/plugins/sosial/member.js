@@ -7,9 +7,7 @@ export const setMember = async (sock, chatId, msg, text) => {
     const ign = arg[1]
     const user = msg?.message?.extendedTextMessage?.contextInfo?.mentionedJid
     if (!user || user.length === 0) return sock.sendMessage(chatId, { text: "tag pemilik akun" }, { quoted: msg })
-    if (!ign) return sock.sendMessage(chatId, { quoted: msg });
-
-
+    if (!ign) return sock.sendMessage(chatId, { text: "mana ign nya\n.setmem @target ign" }, { quoted: msg });
 
 
     const data = getUserData(db);
