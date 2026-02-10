@@ -262,6 +262,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     }
   });
 
+  if (msg.message.imageMessage?.caption == ".setpp") {
+    if (isBan(sock, chatId, msg)) return;
+    await setPP(sock, chatId, msg);
+  }
+
+
   registerCommand({
     name: "profil",
     alias: ["profile"],
@@ -351,7 +357,10 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
       Smeme(sock, chatId, msg, text);
     }
   });
-
+  if (msg.message.imageMessage?.caption == ".stiker") {
+    if (isBan(sock, chatId, msg)) return;
+    await Smeme(sock, chatId, msg, text);
+  }
   registerCommand({
     name: "setbuff",
     alias: ["setbuff"],
