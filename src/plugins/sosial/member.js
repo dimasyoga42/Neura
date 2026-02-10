@@ -39,3 +39,39 @@ export const setMember = async (sock, chatId, msg, text) => {
     sock.sendMessage(chatId, { text: `Error: ${err.message}` }, { quoted: msg });
   }
 };
+
+
+export const listMember = async (sock, chatId, msg) => {
+  try {
+    const data = getUserData(db);
+    const userdata = data.find((item) => item.id === chatId);
+
+    if (!userdata || !userdata.member || userdata.member.length === 0) {
+      return sock.sendMessage(chatId, {
+        text: "Belum ada member yang terdaftar di grup ini"
+      }, { quoted: msg });
+    }
+
+    let message = "📋 *DAFTAR MEMBER*\n\n";
+
+    userdata.member.forEach((member, index) => {
+      message += `${index + 1}. IGN: ${member.ign}\n`;
+      message += `   Owner: @${member.owner.split('@')[0]}\n\n`;
+    });
+
+    message += `Total: ${userdata.member.length} member`;
+
+    // Extract semua owner untuk mentions
+    const mentions = userdata.member.map(m => m.owner);
+
+    sock.sendMessage(chatId, {
+      text: message,
+      mentions: mentions
+    }, { quoted: msg });
+
+  } catch (err) {
+    sock.sendMessage(chatId, {
+      text: `Error: ${err.message}`
+    }, { quoted: msg });
+  }
+};
