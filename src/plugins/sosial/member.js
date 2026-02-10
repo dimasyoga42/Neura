@@ -1,7 +1,34 @@
 import path from "path";
+import { getUserData, saveUserData } from "../../config/func.js";
+const db = path.resolve("db", "member.js");
 export const setMember = async (sock, chatId, msg, text) => {
   try {
-  } catch (err) {
+    const arg = text.split(" ")
+    const ign = arg[1]
+    const user = msg?.message?.extendedTextMessage?.contextInfo?.mentionedJid
+    if (!user || user.length === 0) return sock.sendMessage(chatId, { text: "tag pemilik akun" }, { quoted: msg })
+    if (!ign) return sock.sendMessage(chatId, { quoted: msg });
 
+
+
+
+    const data = getUserData(db);
+    let userdata = data.find((item) => item.id !== chatId)
+    if (userdata) {
+      userdata = {
+        id: chatId,
+        member: []
+      }
+      data.push(userdata)
+    }
+    const newuser = {
+      ign: ign,
+      owner: user
+    }
+    userdata.member.push(newuser)
+    saveUserData(db, data)
+    sock.sendMessage(chatId, { text: "member baru berhasil di masukan database" }, { quoted: msg })
+  } catch (err) {
+    sock.sendMessage(chatId, { text: err }, { quoted: msg })
   }
 }

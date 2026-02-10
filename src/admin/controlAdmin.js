@@ -1,6 +1,7 @@
 import { registerCommand } from "../../setting.js";
 import { isBan } from "../plugins/fitur/ban.js";
 import { getUndangan } from "../plugins/owner/join.js";
+import { setMember } from "../plugins/sosial/member.js";
 import { setNews } from "../plugins/sosial/news.js";
 import { setrules } from "../plugins/sosial/rules.js";
 import { clearRaid, createRaid } from "../plugins/toram/raidControl.js";
@@ -194,5 +195,17 @@ registerCommand({
     if (await isBan(sock, chatId, msg)) return;
     if (!(await adminValid(sock, chatId, msg))) return;
     setNews(sock, chatId, msg, text);
+  }
+});
+
+registerCommand({
+  name: "setmem",
+  alias: ["setmember"],
+  category: "Menu admin",
+  desc: "menambahkan member",
+  run: async (sock, chatId, msg, args, text) => {
+    if (await isBan(sock, chatId, msg)) return;
+    if (!(await adminValid(sock, chatId, msg))) return;
+    setMember(sock, chatId, msg, text);
   }
 });
