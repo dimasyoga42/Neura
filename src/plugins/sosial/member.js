@@ -52,7 +52,7 @@ export const listMember = async (sock, chatId, msg) => {
       }, { quoted: msg });
     }
 
-    let message = "*DAFTAR MEMBER*";
+    let message = "*DAFTAR MEMBER*\n";
 
     userdata.member.forEach((member, index) => {
       message += `${index + 1}. IGN: ${member.ign} -  @${member.owner.split('@')[0]}\n`;
