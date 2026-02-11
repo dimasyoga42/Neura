@@ -269,8 +269,11 @@ export const outGC = async (sock, update) => {
     const { id: chatId, participants, action } = update
     if (action !== "remove") return;
 
-    const user = participants
-    const message = `selamat tinggal ${user.split("@")[0]}`.trim()
+    for (const participant of participants) {
+      const jid = typeof participant === 'string' ? participant : participant.id
+      const message = `selamat tinggal ${jid.split("@")[0]}`.trim()
+    }
+
 
     sock.sendMessage(chatId, { text: message })
 
