@@ -267,25 +267,45 @@ export const HandleWelcome = async (sock, update) => {
 export const outGC = async (sock, update) => {
   try {
     const { id: chatId, participants, action } = update
-    if (action !== "remove") return;
+    if (action !== "remove") return
+
     const groupMetadata = await sock.groupMetadata(chatId)
-    const groupName = groupMetadata.subject
-    const memberCount = groupMetadata.participants.length
+    if (!groupMetadata) return
+
+    const groupName = groupMetadata.subject || "Group"
+    const memberCount = groupMetadata.participants?.length || 0
     const groupDesc = groupMetadata.desc?.toString() || "Tidak ada deskripsi"
+
     for (const participant of participants) {
-      const jid = typeof participant === 'string' ? participant : participant.id
+      const jid = typeof participant === "string" ? participant : participant.id
+      if (!jid) continue
+
       let username = await getDisplayName(sock, jid, chatId)
-      if (username === jid.split('@')[0]) {
-        const participantObj = groupMetadata.participants.find(p => p.id === jid)
-        if (participantObj && participantObj.notify) {
+
+      // fallback jika nama = nomor
+      if (username === jid.split("@")[0]) {
+        const participantObj = groupMetadata.participants?.find(p => p.id === jid)
+        if (participantObj?.notify) {
           username = participantObj.notify
         }
       }
-      const message = `selamat tinggal @${jid.split("@")[0]}`.trim()
-      sock.sendMessage(chatId, { text: message })
-    }
 
+      const number = jid.split("@")[0]
+
+      const message = `
+Selamat tinggal @${number}
+
+Nama: ${username}
+Group: ${groupName}
+Member sekarang: ${memberCount}
+`.trim()
+
+      await sock.sendMessage(chatId, {
+        text: message,
+        mentions: [jid]
+      })
+    }
   } catch (err) {
-    console.log(err.message)
+    console.log("outGC error:", err)
   }
 }
