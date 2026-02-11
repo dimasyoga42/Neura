@@ -185,7 +185,10 @@ export const HandleWelcome = async (sock, update) => {
 
     // Hanya proses saat ada member baru
     if (action !== 'add') return
-
+    const groupMetadata = await sock.groupMetadata(chatId)
+    const groupName = groupMetadata.subject
+    const memberCount = groupMetadata.participants.length
+    const groupDesc = groupMetadata.desc?.toString() || "Tidak ada deskripsi"
     // 1. Ambil Welcome Message dari Database
     const { data, error } = await supabase
       .from("wellcome")
@@ -195,7 +198,6 @@ export const HandleWelcome = async (sock, update) => {
 
     if (error || !data || !data.message) {
       console.log("[WELCOME] Tidak ada pesan welcome untuk grup ini")
-      const groupName = groupMetadata.subject
       const welcomedef = `
       Selamat datang di ${groupName}\n\n>guunakan .setwc untuk menambahkan wellcome message
       `.trim();
@@ -209,10 +211,7 @@ export const HandleWelcome = async (sock, update) => {
     const welcomeText = data.message
 
     // 2. Ambil Group Metadata
-    const groupMetadata = await sock.groupMetadata(chatId)
-    const groupName = groupMetadata.subject
-    const memberCount = groupMetadata.participants.length
-    const groupDesc = groupMetadata.desc?.toString() || "Tidak ada deskripsi"
+
 
     // 3. Loop untuk Setiap Member Baru
     for (const participant of participants) {
