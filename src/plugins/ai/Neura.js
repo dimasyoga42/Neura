@@ -1,5 +1,5 @@
 import axios from "axios"
-import { getUserData } from "../../config/func.js";
+import { getUserData, saveUserData } from "../../config/func.js";
 import path from "path"
 const db = path.resolve("db", "neura.json")
 export const NeuraBot = async (sock, chatId, msg, arg) => {
@@ -18,6 +18,7 @@ export const NeuraBot = async (sock, chatId, msg, arg) => {
       karina: [],
     };
     getData.push(dataNeuraa);
+    saveUserData(db, getData)
   }
   const contextData = JSON.stringify(dataNeuraa, null, 2);
   try {
