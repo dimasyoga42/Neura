@@ -199,7 +199,7 @@ export const HandleWelcome = async (sock, update) => {
     if (error || !data || !data.message) {
       console.log("[WELCOME] Tidak ada pesan welcome untuk grup ini")
       const welcomedef = `
-      Selamat datang di ${groupName}\n\n >gunakan .setwc untuk menambahkan wellcome message
+      Selamat datang di ${groupName}\n\n > gunakan .setwc untuk menambahkan wellcome message
       `.trim();
       await sock.sendMessage(chatId, {
         text: welcomedef,
