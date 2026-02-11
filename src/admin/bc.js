@@ -51,7 +51,7 @@ export const bcGroups = async (sock, payload) => {
 
       // === TEXT ONLY ===
       else if (payload.text) {
-        message.text = `*Broadcast*\n\n${payload.text}`
+        message.text = `\n\n${payload.text}`
       }
 
       await sock.sendMessage(jid, message)
