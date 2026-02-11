@@ -272,10 +272,8 @@ export const outGC = async (sock, update) => {
     for (const participant of participants) {
       const jid = typeof participant === 'string' ? participant : participant.id
       const message = `selamat tinggal ${jid.split("@")[0]}`.trim()
+      sock.sendMessage(chatId, { text: message })
     }
-
-
-    sock.sendMessage(chatId, { text: message })
 
   } catch (err) {
     console.log(err.message)
