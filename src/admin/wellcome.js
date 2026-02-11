@@ -268,11 +268,20 @@ export const outGC = async (sock, update) => {
   try {
     const { id: chatId, participants, action } = update
     if (action !== "remove") return;
-
+    const groupMetadata = await sock.groupMetadata(chatId)
+    const groupName = groupMetadata.subject
+    const memberCount = groupMetadata.participants.length
+    const groupDesc = groupMetadata.desc?.toString() || "Tidak ada deskripsi"
     for (const participant of participants) {
       const jid = typeof participant === 'string' ? participant : participant.id
       let username = await getDisplayName(sock, jid, chatId)
-      const message = `selamat tinggal ${username}`.trim()
+      if (username === jid.split('@')[0]) {
+        const participantObj = groupMetadata.participants.find(p => p.id === jid)
+        if (participantObj && participantObj.notify) {
+          username = participantObj.notify
+        }
+      }
+      const message = `selamat tinggal @${jid.split("@")[0]}`.trim()
       sock.sendMessage(chatId, { text: message })
     }
 
