@@ -198,12 +198,24 @@ export const HandleWelcome = async (sock, update) => {
 
     if (error || !data || !data.message) {
       console.log("[WELCOME] Tidak ada pesan welcome untuk grup ini")
-      const welcomedef = `
-      Selamat datang di ${groupName}\n\n> gunakan .setwc untuk menambahkan wellcome message
+      for (const participant of participants) {
+        const jid = typeof participant === 'string' ? participant : participant.id
+        let username = await getDisplayName(sock, jid, chatId)
+        if (username === jid.split('@')[0]) {
+          const participantObj = groupMetadata.participants.find(p => p.id === jid)
+          if (participantObj && participantObj.notify) {
+            username = participantObj.notify
+          }
+        }
+        const number = jid.split("@")[0]
+        const welcomedef = `
+      @${number} Selamat datang di ${groupName}\n\n> gunakan .setwc untuk menambahkan wellcome message
       `.trim();
-      await sock.sendMessage(chatId, {
-        text: welcomedef,
-      })
+        await sock.sendMessage(chatId, {
+          text: welcomedef,
+          mentions: [jid]
+        })
+      }
 
       return
     }
@@ -294,10 +306,6 @@ export const outGC = async (sock, update) => {
 
       const message = `
 Selamat tinggal @${number}
-
-Nama: ${username}
-Group: ${groupName}
-Member sekarang: ${memberCount}
 `.trim()
 
       await sock.sendMessage(chatId, {
