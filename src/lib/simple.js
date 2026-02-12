@@ -1,12 +1,6 @@
-import pkg from "@whiskeysockets/baileys"
 import fetch from "node-fetch"
 import fs from "fs"
-
-const {
-  proto,
-  generateWAMessageFromContent,
-  generateWAMessageContent
-} = pkg
+import { proto, generateWAMessageFromContent, generateWAMessageContent } from "@whiskeysockets/baileys"
 
 /**
  * ===============================
