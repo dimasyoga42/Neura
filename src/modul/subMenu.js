@@ -1,6 +1,5 @@
+import { sendIAMessage } from "../../proto.js"
 import { xsubMenu } from "../config/variabel.js"
-import { sendIAMessage } from '../../proto.js'
-
 export const subMenu = async (sock, chatId, msg, text) => {
   try {
     if (text.startsWith(".menuadmin")) {
