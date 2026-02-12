@@ -1,59 +1,87 @@
-
 import axios from "axios";
-const answer = new Map()
 
-export const Tekateki = async (sock, chatId, msg, text) => {
+
+const answer = new Map();
+
+export const Tekateki = async (sock, chatId, msg) => {
   try {
-    if (answer.has(chatId)) return sock.sendMessage(chatId, { text: "selesaikan permainan yang sedang berjalan" }, { quoted: msg })
-    const res = await axios.get("https://raw.githubusercontent.com/dimasyoga42/dataset_Neura/master/games/susunkata.json")
-    const getData = res.data
-    //generate soal
-    const key = Math.floor(Math.random() * getData.length) + 1
-    const soal = getData[key]
-    //save Jawaban
-    const timeout = setTimeout(async () => {
-      if (!answer.has(chatId)) return
-      answer.delete(chatId)
-      await sock.sendMessage(
-        chatId,
-        { text: `waktu habis\njawaban: ${soal.jawaban}` },
-        { quoted: sent }
-      )
-    }, 60000)
-    answer.set(chatId, { jawaban: soal.jawaban, timeout })
+
+    if (answer.has(chatId)) {
+      return sock.sendMessage(chatId, { text: "Selesaikan permainan yang sedang berjalan sebelum memulai yang baru." }, { quoted: msg });
+    }
+
+
+    const res = await axios.get("https://raw.githubusercontent.com/dimasyoga42/dataset_Neura/master/games/susunkata.json");
+    const getData = res.data;
+
+
+    const key = Math.floor(Math.random() * getData.length);
+    const soal = getData[key];
+
     const message = `
-    *${soal.soal}*
-    Category: ${soal.tipe}
-    Time: 60 sec
-    Note: Jawab dengan cara replay bubble chat ini.
-    `.trim()
-    //sock.sendMessage(chatId, {text: re})
-    console.log(answer)
+*SUSUN KATA*
+Soal: ${soal.soal}
+Kategori: ${soal.tipe}
+Waktu: 60 detik
+
+*Note:* Jawab dengan cara me-reply pesan ini.
+`.trim();
+
+
+    const sent = await sock.sendMessage(chatId, { text: message }, { quoted: msg });
+
+
+    const timeout = setTimeout(async () => {
+      if (answer.has(chatId)) {
+        const game = answer.get(chatId);
+
+        answer.delete(chatId);
+        await sock.sendMessage(
+          chatId,
+          { text: `Waktu habis!\nJawaban yang benar adalah: *${game.jawaban}*` },
+          { quoted: sent }
+        );
+      }
+    }, 60000);
+
+    // Menyimpan data permainan ke dalam Map
+    answer.set(chatId, {
+      jawaban: soal.jawaban.toUpperCase(),
+      timeout,
+      msgId: sent.key.id
+    });
+
   } catch (error) {
-    console.log(error.message)
+    console.error("Error pada fungsi Tekateki:", error.message);
+    sock.sendMessage(chatId, { text: "Terjadi kesalahan saat memproses permainan." }, { quoted: msg });
   }
-}
+};
 
 export const jawabTebakkata = async (sock, chatId, msg) => {
   try {
-    if (!answer.has(chatId)) return
+    if (!answer.has(chatId)) return;
 
-    const game = answer.get(chatId)
+    const game = answer.get(chatId);
 
-    const userAnswer = msg.message.extendedTextMessage.text.trim().toLowerCase()
-    if (!userAnswer) return
 
-    const correct = game.jawaban.toLowerCase()
+    const body = msg.message?.conversation ||
+      msg.message?.extendedTextMessage?.text ||
+      "";
 
-    if (userAnswer === correct || correct.includes(userAnswer)) {
-      clearTimeout(game.timeout)
-      answer.delete(chatId)
-      return sock.sendMessage(chatId, { text: "jawaban benar" }, { quoted: msg })
+    const userAnswer = body.trim().toUpperCase();
+    if (!userAnswer) return;
+
+    // Logika Validasi: Harus sama persis untuk menghindari kecurangan (substring matching)
+    if (userAnswer === game.jawaban) {
+      clearTimeout(game.timeout);
+      answer.delete(chatId);
+      return sock.sendMessage(chatId, { text: "🎉 Jawaban Anda benar!" }, { quoted: msg });
+    } else {
+
+      return sock.sendMessage(chatId, { text: "Jawaban salah, coba lagi!" }, { quoted: msg });
     }
-    return sock.sendMessage(chatId, { text: "jawaban salah" }, { quoted: msg })
 
   } catch (error) {
-    sock.sendMessage(chatId, { text: error.message }, { quoted: msg })
+    console.error("Error pada fungsi jawabTebakkata:", error.message);
   }
-}
-
+};
