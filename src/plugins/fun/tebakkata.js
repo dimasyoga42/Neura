@@ -64,12 +64,8 @@ export const jawabTebakkata = async (sock, chatId, msg) => {
     const game = answer.get(chatId);
 
 
-    const body = msg.message?.conversation ||
-      msg.message?.extendedTextMessage?.text ||
-      "";
-
-    const userAnswer = body.trim().toUpperCase();
-    if (!userAnswer) return;
+    const userAnswer = msg.message.extendedTextMessage.text.trim().toUpperCase()
+    if (!userAnswer) return
 
     // Logika Validasi: Harus sama persis untuk menghindari kecurangan (substring matching)
     if (userAnswer === game.jawaban) {
