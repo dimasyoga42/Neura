@@ -1,4 +1,4 @@
-import { API, registerCommand } from "../../../setting.js";
+import { API } from "../../../setting.js";
 import axios from "axios";
 import { isBan } from "../fitur/ban.js";
 
