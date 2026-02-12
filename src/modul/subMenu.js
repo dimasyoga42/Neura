@@ -18,26 +18,34 @@ export const subMenu = async (sock, chatId, msg, text) => {
       sock.sendMessage(chatId, { text: xsubMenu.menutools }, { quoted: msg })
     }
     if (text.startsWith(".btn")) {
-      console.log('✅ Button command detected!')  // ← TAMBAH INI DULU
+      console.log('✅ Button command detected! Target JID:', chatId)
 
       const buttons = [{
         name: "quick_reply",
-        buttonParamsJson: JSON.stringify({
+        buttonParamsJson: {
           display_text: "Menu",
           id: '.menu'
-        })
+        }
       }]
 
       try {
-        await sendIAMessage(sock, chatId, buttons, {
+        // Memastikan sock tersedia dan memiliki user.id
+        if (!sock?.user?.id) throw new Error('Socket connection is not ready or user.id is missing')
+
+        const result = await sendIAMessage(sock, chatId, buttons, {
           content: 'Halo! Pilih menu:',
-          footer: '© MyBot'
+          footer: '© MyBot',
+          header: 'Interactive System'
         })
-        console.log('✅ Button sent!')  // ← DAN INI
+
+        console.log('✅ Button sent successfully! Message ID:', result.key.id)
       } catch (error) {
-        console.error('❌ Error:', error)  // ← DAN INI
+        // Logging error yang lebih mendalam untuk troubleshooting
+        console.error('❌ Failed to send button. Technical Details:', error.message)
+        if (error.stack) console.debug(error.stack)
       }
     }
+
   } catch (err) {
     sock.sendMessage(chatId, { text: "terjadi kesalahan saat mengirim pesan" }, { quoted: msg })
   }
