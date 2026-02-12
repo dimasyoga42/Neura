@@ -1,166 +1,303 @@
-import {
-  proto,
-  generateWAMessage,
-  areJidsSameUser,
-  getContentType
-} from "@whiskeysockets/baileys"
+import { generateWAMessageFromContent, proto } from '@whiskeysockets/baileys'
 
-export default function smsg(conn, m) {
-  if (!m) return m
-  const M = proto.WebMessageInfo
+/**
+ * Send Interactive Button Message (Native Flow)
+ * @param {Object} sock - Baileys socket connection
+ * @param {String} jid - Chat ID (group or personal)
+ * @param {Array} buttons - Array of button objects
+ * @param {Object} options - Message options
+ * @param {Object} quoted - Quoted message (optional)
+ */
+export async function sendIAMessage(sock, jid, buttons, options = {}, quoted = null) {
+  const {
+    header = '',
+    content = '',
+    footer = '',
+    media = null,
+    v2 = false,
+    multiple = null
+  } = options
 
-  // ================= KEY =================
-  if (m.key) {
-    m.id = m.key.id
-    m.isBaileys = m.id?.startsWith("BAE5") && m.id.length === 16
-    m.chat = m.key.remoteJid
-    m.fromMe = m.key.fromMe
-    m.isGroup = m.chat?.endsWith("@g.us")
-
-    m.sender = conn.decodeJid(
-      m.fromMe
-        ? conn.user.id
-        : m.participant || m.key.participant || m.chat || ""
-    )
-
-    if (m.isGroup) m.participant = conn.decodeJid(m.key.participant) || ""
+  let messageContent = {
+    body: proto.Message.InteractiveMessage.Body.create({
+      text: content
+    }),
+    footer: proto.Message.InteractiveMessage.Footer.create({
+      text: footer
+    }),
+    nativeFlowMessage: proto.Message.InteractiveMessage.NativeFlowMessage.create({
+      buttons: buttons.map(btn => {
+        if (btn.name === 'single_select') {
+          return {
+            name: btn.name,
+            buttonParamsJson: btn.buttonParamsJson
+          }
+        }
+        return {
+          name: btn.name,
+          buttonParamsJson: btn.buttonParamsJson
+        }
+      })
+    })
   }
 
-  // ================= MESSAGE =================
-  if (m.message) {
-    m.mtype = getContentType(m.message)
+  // Add header if exists
+  if (header) {
+    messageContent.header = proto.Message.InteractiveMessage.Header.create({
+      title: header,
+      hasMediaAttachment: false
+    })
+  }
 
-    m.msg =
-      m.mtype === "viewOnceMessage"
-        ? m.message[m.mtype].message[
-        getContentType(m.message[m.mtype].message)
-        ]
-        : m.message[m.mtype]
+  // Add media if exists
+  if (media) {
+    const mediaType = media.includes('.mp4') || media.includes('video') ? 'video' : 'image'
+    const mediaBuffer = await getBuffer(media)
 
-    // ================= BODY =================
-    m.body =
-      m.message.conversation ||
-      m.msg?.caption ||
-      m.msg?.text ||
-      m.msg?.selectedId ||
-      m.msg?.selectedButtonId ||
-      m.msg?.singleSelectReply?.selectedRowId ||
-      ""
+    if (v2) {
+      messageContent.header = proto.Message.InteractiveMessage.Header.create({
+        hasMediaAttachment: true,
+        ...(mediaType === 'video' ? {
+          videoMessage: await prepareWAMessageMedia({ video: mediaBuffer }, { upload: sock.waUploadToServer }).then(m => m.videoMessage)
+        } : {
+          imageMessage: await prepareWAMessageMedia({ image: mediaBuffer }, { upload: sock.waUploadToServer }).then(m => m.imageMessage)
+        })
+      })
+    } else {
+      messageContent.header = proto.Message.InteractiveMessage.Header.create({
+        title: header,
+        hasMediaAttachment: true,
+        ...(mediaType === 'video' ? {
+          videoMessage: await prepareWAMessageMedia({ video: mediaBuffer }, { upload: sock.waUploadToServer }).then(m => m.videoMessage)
+        } : {
+          imageMessage: await prepareWAMessageMedia({ image: mediaBuffer }, { upload: sock.waUploadToServer }).then(m => m.imageMessage)
+        })
+      })
+    }
+  }
 
-    // ================= MENTION =================
-    m.mentionedJid = m.msg?.contextInfo?.mentionedJid || []
-
-    // ================= QUOTED =================
-    let quoted = m.msg?.contextInfo?.quotedMessage || null
-
-    if (quoted) {
-      let type = Object.keys(quoted)[0]
-      let q = quoted[type]
-
-      if (["productMessage"].includes(type)) {
-        type = Object.keys(q)[0]
-        q = q[type]
+  // Multiple list style
+  if (multiple) {
+    messageContent.contextInfo = {
+      mentionedJid: [],
+      externalAdReply: {
+        title: multiple.name || 'Bot',
+        body: multiple.code || '',
+        mediaType: 1,
+        renderLargerThumbnail: false
       }
+    }
+  }
 
-      if (typeof q === "string") q = { text: q }
+  const msg = generateWAMessageFromContent(jid, {
+    viewOnceMessage: {
+      message: {
+        messageContextInfo: {
+          deviceListMetadata: {},
+          deviceListMetadataVersion: 2
+        },
+        interactiveMessage: proto.Message.InteractiveMessage.create(messageContent)
+      }
+    }
+  }, { quoted })
 
-      m.quoted = q
-      m.quoted.mtype = type
-      m.quoted.id = m.msg.contextInfo.stanzaId
-      m.quoted.chat = m.msg.contextInfo.remoteJid || m.chat
+  await sock.relayMessage(jid, msg.message, {
+    messageId: msg.key.id
+  })
 
-      m.quoted.sender = conn.decodeJid(
-        m.msg.contextInfo.participant || ""
+  return msg
+}
+
+/**
+ * Send Carousel Message
+ * @param {Object} sock - Baileys socket connection
+ * @param {String} jid - Chat ID
+ * @param {Array} cards - Array of card objects
+ * @param {Object} options - Message options
+ * @param {Object} quoted - Quoted message (optional)
+ */
+export async function sendCarousel(sock, jid, cards, options = {}, quoted = null) {
+  const {
+    content = ''
+  } = options
+
+  const cardsMessage = await Promise.all(cards.map(async (card) => {
+    let cardHeader = {}
+
+    if (card.header && card.header.imageMessage) {
+      const mediaBuffer = await getBuffer(card.header.imageMessage)
+      const uploadedMedia = await prepareWAMessageMedia(
+        { image: mediaBuffer },
+        { upload: sock.waUploadToServer }
       )
 
-      m.quoted.fromMe =
-        m.quoted.sender === conn.decodeJid(conn.user.id)
-
-      m.quoted.text =
-        m.quoted.text ||
-        m.quoted.caption ||
-        m.quoted.conversation ||
-        ""
-
-      m.quoted.mentionedJid =
-        m.msg.contextInfo.mentionedJid || []
-
-      const vM = (m.quoted.fakeObj = M.fromObject({
-        key: {
-          remoteJid: m.quoted.chat,
-          fromMe: m.quoted.fromMe,
-          id: m.quoted.id
-        },
-        message: quoted,
-        ...(m.isGroup ? { participant: m.quoted.sender } : {})
-      }))
-
-      m.quoted.delete = () =>
-        conn.sendMessage(m.quoted.chat, { delete: vM.key })
-
-      m.quoted.copyNForward = (jid, force = false, options = {}) =>
-        conn.copyNForward(jid, vM, force, options)
-
-      m.quoted.download = () =>
-        conn.downloadMediaMessage(m.quoted)
-    }
-  }
-
-  // ================= MEDIA =================
-  if (m.msg?.url) {
-    m.download = () => conn.downloadMediaMessage(m.msg)
-  }
-
-  // ================= TEXT =================
-  m.text = String(
-    m.msg?.text ||
-    m.msg?.caption ||
-    m.message?.conversation ||
-    m.body ||
-    ""
-  )
-
-  // ================= REPLY =================
-  m.reply = (text, chatId = m.chat, options = {}) => {
-    return Buffer.isBuffer(text)
-      ? conn.sendMessage(chatId, { document: text }, { quoted: m, ...options })
-      : conn.sendMessage(chatId, { text: String(text) }, { quoted: m, ...options })
-  }
-
-  // ================= COPY =================
-  m.copy = () => smsg(conn, M.fromObject(M.toObject(m)))
-
-  // ================= FORWARD =================
-  m.copyNForward = (jid = m.chat, force = false, options = {}) =>
-    conn.copyNForward(jid, m, force, options)
-
-  // ================= APPEND TEXT =================
-  conn.appendTextMessage = async (text, chatUpdate) => {
-    let messages = await generateWAMessage(
-      m.chat,
-      { text: String(text), mentions: m.mentionedJid },
-      {
-        userJid: conn.user.id,
-        quoted: m.quoted?.fakeObj
+      cardHeader = {
+        title: card.header.title || '',
+        hasMediaAttachment: true,
+        imageMessage: uploadedMedia.imageMessage
       }
-    )
+    } else if (card.header && card.header.videoMessage) {
+      const mediaBuffer = await getBuffer(card.header.videoMessage)
+      const uploadedMedia = await prepareWAMessageMedia(
+        { video: mediaBuffer },
+        { upload: sock.waUploadToServer }
+      )
 
-    messages.key.fromMe = areJidsSameUser(
-      m.sender,
-      conn.user.id
-    )
-    messages.key.id = m.key.id
-    messages.pushName = m.pushName
-    if (m.isGroup) messages.participant = m.sender
-
-    const msg = {
-      ...chatUpdate,
-      messages: [proto.WebMessageInfo.fromObject(messages)],
-      type: "append"
+      cardHeader = {
+        title: card.header.title || '',
+        hasMediaAttachment: true,
+        videoMessage: uploadedMedia.videoMessage
+      }
     }
 
-    conn.ev.emit("messages.upsert", msg)
+    return {
+      header: proto.Message.InteractiveMessage.Header.create(cardHeader),
+      body: proto.Message.InteractiveMessage.Body.create({
+        text: card.body.text || ''
+      }),
+      nativeFlowMessage: proto.Message.InteractiveMessage.NativeFlowMessage.create({
+        buttons: card.nativeFlowMessage.buttons.map(btn => ({
+          name: btn.name,
+          buttonParamsJson: btn.buttonParamsJson
+        }))
+      })
+    }
+  }))
+
+  const msg = generateWAMessageFromContent(jid, {
+    viewOnceMessage: {
+      message: {
+        messageContextInfo: {
+          deviceListMetadata: {},
+          deviceListMetadataVersion: 2
+        },
+        interactiveMessage: proto.Message.InteractiveMessage.create({
+          body: proto.Message.InteractiveMessage.Body.create({
+            text: content
+          }),
+          carouselMessage: proto.Message.InteractiveMessage.CarouselMessage.create({
+            cards: cardsMessage
+          })
+        })
+      }
+    }
+  }, { quoted })
+
+  await sock.relayMessage(jid, msg.message, {
+    messageId: msg.key.id
+  })
+
+  return msg
+}
+
+/**
+ * Send Old Style Button (Template Message)
+ * @param {Object} sock - Baileys socket connection
+ * @param {String} jid - Chat ID
+ * @param {Array} buttons - Array of button objects with text and command
+ * @param {Object} options - Message options
+ * @param {Object} quoted - Quoted message (optional)
+ */
+export async function replyButton(sock, jid, buttons, options = {}, quoted = null) {
+  const {
+    text = '',
+    footer = '',
+    media = null,
+    document = null
+  } = options
+
+  // Convert old button format to new format
+  const convertedButtons = buttons.map((btn, index) => {
+    // If button already has native flow format
+    if (btn.name && btn.buttonParamsJson) {
+      return btn
+    }
+
+    // Convert old format to new format
+    if (btn.name === 'single_select') {
+      return {
+        name: 'single_select',
+        buttonParamsJson: JSON.stringify(btn.param || {})
+      }
+    }
+
+    return {
+      name: 'quick_reply',
+      buttonParamsJson: JSON.stringify({
+        display_text: btn.text || `Button ${index + 1}`,
+        id: btn.command || `.button${index + 1}`
+      })
+    }
+  })
+
+  return await sendIAMessage(sock, jid, convertedButtons, {
+    content: text,
+    footer: footer,
+    media: media,
+    v2: document ? true : false
+  }, quoted)
+}
+
+/**
+ * Send Poll Message
+ * @param {Object} sock - Baileys socket connection
+ * @param {String} jid - Chat ID
+ * @param {String} name - Poll question
+ * @param {Object} options - Poll options
+ */
+export async function sendPoll(sock, jid, name, options = {}) {
+  const {
+    options: pollOptions = [],
+    multiselect = false
+  } = options
+
+  const msg = {
+    pollCreationMessage: {
+      name: name,
+      options: pollOptions.map(opt => ({ optionName: opt })),
+      selectableOptionsCount: multiselect ? pollOptions.length : 1
+    }
   }
 
-  return m
+  return await sock.sendMessage(jid, msg)
+}
+
+/**
+ * Helper function to get buffer from URL or Buffer
+ * @param {String|Buffer} media - Media URL or Buffer
+ * @returns {Promise<Buffer>}
+ */
+async function getBuffer(media) {
+  if (Buffer.isBuffer(media)) {
+    return media
+  }
+
+  if (typeof media === 'string') {
+    // If URL
+    if (media.startsWith('http://') || media.startsWith('https://')) {
+      const response = await fetch(media)
+      return Buffer.from(await response.arrayBuffer())
+    }
+
+    // If base64
+    if (media.startsWith('data:')) {
+      return Buffer.from(media.split(',')[1], 'base64')
+    }
+
+    // If file path
+    const fs = await import('fs')
+    return fs.readFileSync(media)
+  }
+
+  throw new Error('Invalid media format')
+}
+
+// Import prepareWAMessageMedia from baileys
+import { prepareWAMessageMedia } from '@whiskeysockets/baileys'
+
+export default {
+  sendIAMessage,
+  sendCarousel,
+  replyButton,
+  sendPoll
 }
