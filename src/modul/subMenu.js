@@ -19,6 +19,8 @@ export const subMenu = async (sock, chatId, msg, text) => {
       sock.sendMessage(chatId, { text: xsubMenu.menutools }, { quoted: msg })
     }
     if (text.startsWith(".btn")) {
+      console.log('✅ Button command detected!')  // ← TAMBAH INI DULU
+
       const buttons = [{
         name: "quick_reply",
         buttonParamsJson: JSON.stringify({
@@ -27,10 +29,15 @@ export const subMenu = async (sock, chatId, msg, text) => {
         })
       }]
 
-      await sendIAMessage(sock, chatId, buttons, {
-        content: 'Halo! Pilih menu:',
-        footer: '© MyBot'
-      })
+      try {
+        await sendIAMessage(sock, chatId, buttons, {
+          content: 'Halo! Pilih menu:',
+          footer: '© MyBot'
+        })
+        console.log('✅ Button sent!')  // ← DAN INI
+      } catch (error) {
+        console.error('❌ Error:', error)  // ← DAN INI
+      }
     }
   } catch (err) {
     sock.sendMessage(chatId, { text: "terjadi kesalahan saat mengirim pesan" }, { quoted: msg })
