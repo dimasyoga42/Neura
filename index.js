@@ -15,6 +15,7 @@ import { subMenu } from "./src/modul/subMenu.js";
 import { jawab } from "./src/plugins/fun/caklontong.js";
 import { commands } from "./setting.js";
 import { prefix } from "./src/admin/prefix.js";
+//import { jawabTebakkata } from "./src/plugins/fun/tebakkata.js";
 dotenv.config();
 const start = async () => {
   const { state, saveCreds } = await useMultiFileAuthState("./auth_save");
@@ -74,6 +75,7 @@ const start = async () => {
       cmdMenucontrol(sock, chatId, msg, text);
       jawab(sock, chatId, msg)
       subMenu(sock, chatId, msg, text);
+      // jawabTebakkata(sock, chatId, msg)
 
       const body = msg.message.conversation || msg.message.extendedTextMessage?.text || "";
 

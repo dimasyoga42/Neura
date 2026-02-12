@@ -31,6 +31,7 @@ export const registerCommand = (config) => {
 };
 
 
+
 export const message = [
   "waktu terus berjalan",
   "ayo tidur bersamaku...",
