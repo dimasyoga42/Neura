@@ -7,35 +7,40 @@ import fetch from 'node-fetch'
 import fs from 'fs'
 
 /**
- * Utilitas untuk mendapatkan Buffer.
- * Ditambahkan penanganan error fetch yang lebih robust.
+ * ===============================
+ * GET BUFFER (SAFE FETCH)
+ * ===============================
  */
 async function getBuffer(media) {
   if (Buffer.isBuffer(media)) return media
+
   try {
     if (typeof media === 'string') {
       if (media.match(/^https?:\/\//)) {
-        const response = await fetch(media)
-        if (!response.ok) return null
-        return Buffer.from(await response.arrayBuffer())
+        const res = await fetch(media)
+        if (!res.ok) return null
+        return Buffer.from(await res.arrayBuffer())
       }
+
       if (media.startsWith('data:')) {
         return Buffer.from(media.split(',')[1], 'base64')
       }
+
       if (fs.existsSync(media)) {
         return fs.readFileSync(media)
       }
     }
   } catch (e) {
-    console.error("Error in getBuffer:", e)
-    return null
+    console.error("getBuffer error:", e)
   }
+
   return null
 }
 
 /**
- * Send Interactive Message (Native Flow Buttons)
- * Perbaikan pada: Stringify params secara otomatis & penanganan header title.
+ * ===============================
+ * SEND INTERACTIVE MESSAGE (BUTTON)
+ * ===============================
  */
 export async function sendIAMessage(sock, jid, buttons, options = {}, quoted = null) {
   const {
@@ -46,9 +51,11 @@ export async function sendIAMessage(sock, jid, buttons, options = {}, quoted = n
     isVideo = false
   } = options
 
-  // Transformasi tombol: memastikan buttonParamsJson selalu string JSON
+  if (!sock?.user?.id) throw new Error("Socket not ready")
+
+  // Format tombol -> pastikan JSON string
   const formattedButtons = buttons.map(btn => ({
-    name: btn.name,
+    name: btn.name || "quick_reply",
     buttonParamsJson: typeof btn.buttonParamsJson === 'object'
       ? JSON.stringify(btn.buttonParamsJson)
       : (btn.buttonParamsJson || "{}")
@@ -62,17 +69,28 @@ export async function sendIAMessage(sock, jid, buttons, options = {}, quoted = n
     })
   }
 
-  // Logika Media Header yang lebih bersih
+  /**
+   * ===============================
+   * HEADER MEDIA / TEXT
+   * ===============================
+   */
   if (media) {
     const buffer = await getBuffer(media)
+
     if (buffer) {
       const type = isVideo || (typeof media === 'string' && media.includes('.mp4')) ? 'video' : 'image'
-      const mediaData = await prepareWAMessageMedia({ [type]: buffer }, { upload: sock.waUploadToServer })
+
+      const mediaData = await prepareWAMessageMedia(
+        { [type]: buffer },
+        { upload: sock.waUploadToServer }
+      )
 
       messageContent.header = proto.Message.InteractiveMessage.Header.create({
         title: header,
         hasMediaAttachment: true,
-        ...(type === 'video' ? { videoMessage: mediaData.videoMessage } : { imageMessage: mediaData.imageMessage })
+        ...(type === 'video'
+          ? { videoMessage: mediaData.videoMessage }
+          : { imageMessage: mediaData.imageMessage })
       })
     }
   } else if (header) {
@@ -82,18 +100,21 @@ export async function sendIAMessage(sock, jid, buttons, options = {}, quoted = n
     })
   }
 
+  /**
+   * ===============================
+   * GENERATE MESSAGE (NO VIEWONCE)
+   * ===============================
+   */
   const msg = generateWAMessageFromContent(jid, {
-    viewOnceMessage: {
-      message: {
-        interactiveMessage: proto.Message.InteractiveMessage.create({
-          ...messageContent,
-          contextInfo: {
-            mentionedJid: options.mentions || [],
-            ...options.contextInfo
-          }
-        })
+    interactiveMessage: proto.Message.InteractiveMessage.create({
+      ...messageContent,
+      contextInfo: {
+        mentionedJid: options.mentions || [],
+        deviceListMetadata: {},
+        deviceListMetadataVersion: 2,
+        ...options.contextInfo
       }
-    }
+    })
   }, { quoted, userJid: sock.user.id })
 
   await sock.relayMessage(jid, msg.message, { messageId: msg.key.id })
@@ -101,80 +122,110 @@ export async function sendIAMessage(sock, jid, buttons, options = {}, quoted = n
 }
 
 /**
- * Send Carousel Message
- * Perbaikan: Menangani array cards secara paralel dengan Promise.all
+ * ===============================
+ * SEND CAROUSEL MESSAGE
+ * ===============================
  */
 export async function sendCarousel(sock, jid, cards, options = {}, quoted = null) {
   const { content = '' } = options
 
+  if (!sock?.user?.id) throw new Error("Socket not ready")
+
   const cardsMessage = await Promise.all(cards.map(async (card) => {
-    let cardHeader = {
+    let header = {
       title: card.header?.title || '',
       hasMediaAttachment: false
     }
 
     const mediaSource = card.header?.imageMessage || card.header?.videoMessage
+
     if (mediaSource) {
-      const isVideo = !!card.header.videoMessage
       const buffer = await getBuffer(mediaSource)
       if (buffer) {
-        const uploadedMedia = await prepareWAMessageMedia(
+        const isVideo = !!card.header.videoMessage
+
+        const uploaded = await prepareWAMessageMedia(
           { [isVideo ? 'video' : 'image']: buffer },
           { upload: sock.waUploadToServer }
         )
-        cardHeader.hasMediaAttachment = true
-        cardHeader[isVideo ? 'videoMessage' : 'imageMessage'] = uploadedMedia[isVideo ? 'videoMessage' : 'imageMessage']
+
+        header.hasMediaAttachment = true
+        header[isVideo ? 'videoMessage' : 'imageMessage'] =
+          uploaded[isVideo ? 'videoMessage' : 'imageMessage']
       }
     }
 
     return {
-      header: proto.Message.InteractiveMessage.Header.create(cardHeader),
-      body: proto.Message.InteractiveMessage.Body.create({ text: card.body?.text || '' }),
+      header: proto.Message.InteractiveMessage.Header.create(header),
+      body: proto.Message.InteractiveMessage.Body.create({
+        text: card.body?.text || ''
+      }),
+      footer: proto.Message.InteractiveMessage.Footer.create({
+        text: card.footer?.text || ''
+      }),
       nativeFlowMessage: proto.Message.InteractiveMessage.NativeFlowMessage.create({
         buttons: card.nativeFlowMessage.buttons.map(btn => ({
-          name: btn.name,
+          name: btn.name || "quick_reply",
           buttonParamsJson: typeof btn.buttonParamsJson === 'object'
             ? JSON.stringify(btn.buttonParamsJson)
             : (btn.buttonParamsJson || "{}")
         }))
-      }),
-      footer: proto.Message.InteractiveMessage.Footer.create({ text: card.footer?.text || '' })
+      })
     }
   }))
 
   const msg = generateWAMessageFromContent(jid, {
-    viewOnceMessage: {
-      message: {
-        interactiveMessage: proto.Message.InteractiveMessage.create({
-          body: proto.Message.InteractiveMessage.Body.create({ text: content }),
-          carouselMessage: proto.Message.InteractiveMessage.CarouselMessage.create({ cards: cardsMessage })
-        })
+    interactiveMessage: proto.Message.InteractiveMessage.create({
+      body: proto.Message.InteractiveMessage.Body.create({ text: content }),
+      carouselMessage: proto.Message.InteractiveMessage.CarouselMessage.create({
+        cards: cardsMessage
+      }),
+      contextInfo: {
+        deviceListMetadata: {},
+        deviceListMetadataVersion: 2
       }
-    }
+    })
   }, { quoted, userJid: sock.user.id })
 
   await sock.relayMessage(jid, msg.message, { messageId: msg.key.id })
   return msg
 }
 
+/**
+ * ===============================
+ * REPLY BUTTON (AUTO CONVERT)
+ * ===============================
+ */
+export async function replyButton(sock, jid, buttons, options = {}, quoted = null) {
+  const converted = buttons.map(btn => ({
+    name: btn.name || "quick_reply",
+    buttonParamsJson: btn.buttonParamsJson || {
+      display_text: btn.text,
+      id: btn.command
+    }
+  }))
+
+  return sendIAMessage(sock, jid, converted, options, quoted)
+}
+
+/**
+ * ===============================
+ * SEND POLL
+ * ===============================
+ */
+export async function sendPoll(sock, jid, name, options = {}) {
+  return sock.sendMessage(jid, {
+    poll: {
+      name,
+      values: options.options || [],
+      selectableCount: options.multiselect ? options.options.length : 1
+    }
+  })
+}
+
 export default {
   sendIAMessage,
   sendCarousel,
-  replyButton: async (sock, jid, buttons, options = {}, quoted = null) => {
-    // Fungsi ini membungkus sendIAMessage untuk kompatibilitas tombol lama
-    const converted = buttons.map(btn => ({
-      name: btn.name || 'quick_reply',
-      buttonParamsJson: btn.buttonParamsJson || { display_text: btn.text, id: btn.command }
-    }))
-    return sendIAMessage(sock, jid, converted, options, quoted)
-  },
-  sendPoll: async (sock, jid, name, options = {}) => {
-    return sock.sendMessage(jid, {
-      poll: {
-        name,
-        values: options.options || [],
-        selectableCount: options.multiselect ? options.options.length : 1
-      }
-    })
-  }
+  replyButton,
+  sendPoll
 }
