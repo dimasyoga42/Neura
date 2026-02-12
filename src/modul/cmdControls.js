@@ -97,7 +97,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
         menutext += `\n`
       })
 
-      await sock.sendMessage(chatId, { image: imageoverlay, caption: menutext })
+      await sock.sendMessage(chatId, { image: imageoverlay, caption: `${menutext}\nDeveloper By 𝚍𝚒𝚖𝚊𝚜𝚢𝚘𝚐𝚊42` })
     }
   })
 
