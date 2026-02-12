@@ -4,7 +4,7 @@ import * as cheerio from "cheerio";
 export const Banner = async (sock, msg, chatId) => {
   try {
     const BASE_URL = "https://id.toram.jp";
-    const LIST_URL = `${BASE_URL}/?type_code=all`;
+    const LIST_URL = `${BASE_URL}/?type_code=all#contentArea`;
 
     const fixUrl = (url) => {
       if (!url) return null;
@@ -23,7 +23,6 @@ export const Banner = async (sock, msg, chatId) => {
     const res = await fetch(LIST_URL, {
       headers: { "User-Agent": "Mozilla/5.0" }
     });
-    console.log(res)
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
     const html = await res.text();
