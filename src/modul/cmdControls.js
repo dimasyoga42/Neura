@@ -24,7 +24,7 @@ import fs from "fs";
 import { Remini } from "../plugins/vip/tools/remini.js";
 import { play, ytmp3 } from "../plugins/vip/downloader/play.js";
 import { pin } from "../plugins/vip/downloader/pinterst.js";
-import { Caklontong, Family100, tebakGambar } from "../plugins/fun/caklontong.js";
+import { Caklontong, Family100, tebakGambar, Tekateki } from "../plugins/fun/caklontong.js";
 import { autoGempa } from "../plugins/vip/tools/bmkg.js";
 import { listSkill, skill } from "../plugins/toram/skill.js";
 import { Spotifysearch } from "../plugins/vip/downloader/spotify.js";
@@ -54,8 +54,6 @@ import { addOverlayFromUrl } from "../config/overlay.js";
 import { eleBos, eleMonster } from "../plugins/toram/searchele.js";
 import { mybuff, setMybuff } from "../plugins/fitur/mybuff.js";
 import { listMember } from "../plugins/sosial/member.js";
-import { Tekateki } from "../plugins/fun/tebakkata.js";
-
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
     name: "help",

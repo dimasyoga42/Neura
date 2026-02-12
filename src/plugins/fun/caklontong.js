@@ -155,6 +155,85 @@ export const Family100 = async (sock, chatId, msg) => {
   }
 }
 
+export const Tekateki = async (sock, chatId, msg) => {
+  try {
+    if (answer.has(chatId)) {
+      return sock.sendMessage(
+        chatId,
+        { text: "Selesaikan permainan yang sedang berjalan sebelum memulai yang baru." },
+        { quoted: msg }
+      );
+    }
+
+    const res = await axios.get(
+      "https://raw.githubusercontent.com/dimasyoga42/dataset_Neura/master/games/susunkata.json",
+      { timeout: 15000 }
+    );
+
+    const data = res?.data;
+    if (!Array.isArray(data) || data.length === 0) {
+      return sock.sendMessage(
+        chatId,
+        { text: "Database soal kosong atau tidak valid." },
+        { quoted: msg }
+      );
+    }
+
+    const key = Math.floor(Math.random() * data.length);
+    const soal = data[key];
+
+    if (!soal?.soal || !soal?.jawaban) {
+      return sock.sendMessage(
+        chatId,
+        { text: "Soal tidak valid." },
+        { quoted: msg }
+      );
+    }
+
+    const message = `
+*SUSUN KATA*
+Soal: ${soal.soal}
+Kategori: ${soal.tipe || "-"}
+Waktu: 60 detik
+
+*Note:* Jawab dengan cara me-reply pesan ini.
+`.trim();
+
+    const sent = await sock.sendMessage(
+      chatId,
+      { text: message },
+      { quoted: msg }
+    );
+
+    const timeout = setTimeout(async () => {
+      if (!answer.has(chatId)) return;
+
+      const game = answer.get(chatId);
+      answer.delete(chatId);
+
+      await sock.sendMessage(
+        chatId,
+        { text: `Waktu habis!\nJawaban yang benar adalah: *${game.jawaban}*` },
+        { quoted: sent }
+      );
+    }, 60000);
+
+    answer.set(chatId, {
+      type: "tebakkata",
+      jawaban: soal.jawaban.toUpperCase().replace(/\s+/g, " ").trim(),
+      timeout,
+      msgId: sent.key.id
+    });
+  } catch (err) {
+    console.error("Error Tekateki:", err?.message);
+    sock.sendMessage(
+      chatId,
+      { text: "Terjadi kesalahan saat mengambil soal." },
+      { quoted: msg }
+    );
+  }
+};
+
 /* =========================
    JAWAB (REPLY ONLY)
 ========================= */
@@ -180,7 +259,15 @@ export const jawab = async (sock, chatId, msg) => {
       }
       return sock.sendMessage(chatId, { text: "jawaban salah" }, { quoted: msg })
     }
-
+    if (game.type === "tebakkata" || game.type === "tebakkata") {
+      const correct = game.jawaban
+      if (userAnswer === correct || correct.includes(userAnswer)) {
+        clearTimeout(game.timeout)
+        answer.delete(chatId)
+        return sock.sendMessage(chatId, { text: "jawaban benar" }, { quoted: msg })
+      }
+      return sock.sendMessage(chatId, { text: "jawaban salah" }, { quoted: msg })
+    }
     /* ===== FAMILY100 ===== */
     if (game.type === "family100") {
       const index = game.list.findIndex(v => v === userAnswer || v.includes(userAnswer))
