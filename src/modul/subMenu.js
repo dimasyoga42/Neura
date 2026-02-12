@@ -1,4 +1,4 @@
-import { replyButton } from "../../proto.js"
+import { sendIAMessage } from "../../proto.js"
 import { xsubMenu } from "../config/variabel.js"
 export const subMenu = async (sock, chatId, msg, text) => {
   try {
@@ -19,14 +19,18 @@ export const subMenu = async (sock, chatId, msg, text) => {
     }
     if (text.startsWith(".btn")) {
       console.log('✅ Button command detected! Target JID:', chatId)
-      await replyButton(sock, chatId, [
-        { text: "Menu", command: ".menu" },
-        { text: "Toram", command: ".menutoram" },
-        { text: "Fun", command: ".menufun" }
+      await sendIAMessage(sock, chatId, [
+        {
+          name: "quick_reply",
+          buttonParamsJson: {
+            display_text: "Menu",
+            id: ".menu"
+          }
+        }
       ], {
-        header: "Quick Menu",
-        content: "Pilih:",
-        footer: "© MyBot"
+        header: "NeuraBot",
+        content: "Pilih menu:",
+        footer: "© Neura"
       }, msg)
     }
 

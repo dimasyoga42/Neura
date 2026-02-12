@@ -39,7 +39,33 @@ async function getBuffer(media) {
 
 /**
  * ===============================
- * SEND INTERACTIVE MESSAGE (BUTTON)
+ * SEND FAKE THUMBNAIL (TUMB)
+ * ===============================
+ */
+export async function sendFThumb(sock, jid, title, desc, body, thumb, url, quoted = null, options = {}) {
+  const buffer = await getBuffer(thumb)
+
+  return sock.sendMessage(jid, {
+    text: body,
+    contextInfo: {
+      externalAdReply: {
+        title: title,
+        body: desc,
+        thumbnail: buffer,
+        mediaType: 1,
+        mediaUrl: url,
+        sourceUrl: url,
+        renderLargerThumbnail: true,
+        showAdAttribution: false
+      }
+    },
+    ...options
+  }, { quoted })
+}
+
+/**
+ * ===============================
+ * SEND INTERACTIVE MESSAGE (BUTTON / BTN)
  * ===============================
  */
 export async function sendIAMessage(sock, jid, buttons, options = {}, quoted = null) {
@@ -53,7 +79,6 @@ export async function sendIAMessage(sock, jid, buttons, options = {}, quoted = n
 
   if (!sock?.user?.id) throw new Error("Socket not ready")
 
-  // Format tombol -> pastikan JSON string
   const formattedButtons = buttons.map(btn => ({
     name: btn.name || "quick_reply",
     buttonParamsJson: typeof btn.buttonParamsJson === 'object'
@@ -70,9 +95,7 @@ export async function sendIAMessage(sock, jid, buttons, options = {}, quoted = n
   }
 
   /**
-   * ===============================
    * HEADER MEDIA / TEXT
-   * ===============================
    */
   if (media) {
     const buffer = await getBuffer(media)
@@ -100,11 +123,6 @@ export async function sendIAMessage(sock, jid, buttons, options = {}, quoted = n
     })
   }
 
-  /**
-   * ===============================
-   * GENERATE MESSAGE (NO VIEWONCE)
-   * ===============================
-   */
   const msg = generateWAMessageFromContent(jid, {
     interactiveMessage: proto.Message.InteractiveMessage.create({
       ...messageContent,
@@ -113,76 +131,6 @@ export async function sendIAMessage(sock, jid, buttons, options = {}, quoted = n
         deviceListMetadata: {},
         deviceListMetadataVersion: 2,
         ...options.contextInfo
-      }
-    })
-  }, { quoted, userJid: sock.user.id })
-
-  await sock.relayMessage(jid, msg.message, { messageId: msg.key.id })
-  return msg
-}
-
-/**
- * ===============================
- * SEND CAROUSEL MESSAGE
- * ===============================
- */
-export async function sendCarousel(sock, jid, cards, options = {}, quoted = null) {
-  const { content = '' } = options
-
-  if (!sock?.user?.id) throw new Error("Socket not ready")
-
-  const cardsMessage = await Promise.all(cards.map(async (card) => {
-    let header = {
-      title: card.header?.title || '',
-      hasMediaAttachment: false
-    }
-
-    const mediaSource = card.header?.imageMessage || card.header?.videoMessage
-
-    if (mediaSource) {
-      const buffer = await getBuffer(mediaSource)
-      if (buffer) {
-        const isVideo = !!card.header.videoMessage
-
-        const uploaded = await prepareWAMessageMedia(
-          { [isVideo ? 'video' : 'image']: buffer },
-          { upload: sock.waUploadToServer }
-        )
-
-        header.hasMediaAttachment = true
-        header[isVideo ? 'videoMessage' : 'imageMessage'] =
-          uploaded[isVideo ? 'videoMessage' : 'imageMessage']
-      }
-    }
-
-    return {
-      header: proto.Message.InteractiveMessage.Header.create(header),
-      body: proto.Message.InteractiveMessage.Body.create({
-        text: card.body?.text || ''
-      }),
-      footer: proto.Message.InteractiveMessage.Footer.create({
-        text: card.footer?.text || ''
-      }),
-      nativeFlowMessage: proto.Message.InteractiveMessage.NativeFlowMessage.create({
-        buttons: card.nativeFlowMessage.buttons.map(btn => ({
-          name: btn.name || "quick_reply",
-          buttonParamsJson: typeof btn.buttonParamsJson === 'object'
-            ? JSON.stringify(btn.buttonParamsJson)
-            : (btn.buttonParamsJson || "{}")
-        }))
-      })
-    }
-  }))
-
-  const msg = generateWAMessageFromContent(jid, {
-    interactiveMessage: proto.Message.InteractiveMessage.create({
-      body: proto.Message.InteractiveMessage.Body.create({ text: content }),
-      carouselMessage: proto.Message.InteractiveMessage.CarouselMessage.create({
-        cards: cardsMessage
-      }),
-      contextInfo: {
-        deviceListMetadata: {},
-        deviceListMetadataVersion: 2
       }
     })
   }, { quoted, userJid: sock.user.id })
@@ -225,7 +173,7 @@ export async function sendPoll(sock, jid, name, options = {}) {
 
 export default {
   sendIAMessage,
-  sendCarousel,
   replyButton,
-  sendPoll
+  sendPoll,
+  sendFThumb
 }
