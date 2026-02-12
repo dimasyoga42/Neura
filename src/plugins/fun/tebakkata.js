@@ -59,13 +59,3 @@ export const jawabTebakkata = async (sock, chatId, msg) => {
   }
 }
 
-registerCommand({
-  name: "tebakkata",
-  alias: ["mainkata"],
-  category: "Menu fun",
-  desc: "permainan tebak kata",
-  run: async (sock, chatId, msg, args, text) => {
-    if (isBan(sock, chatId, msg)) return
-    Tekateki(sock, chatId, msg, text)
-  }
-})

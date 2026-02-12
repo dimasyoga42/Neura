@@ -54,6 +54,7 @@ import { addOverlayFromUrl } from "../config/overlay.js";
 import { eleBos, eleMonster } from "../plugins/toram/searchele.js";
 import { mybuff, setMybuff } from "../plugins/fitur/mybuff.js";
 import { listMember } from "../plugins/sosial/member.js";
+import { Tekateki } from "../plugins/fun/tebakkata.js";
 
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
@@ -992,5 +993,16 @@ registerCommand({
   run: async (sock, chatId, msg, args, text) => {
     if (isBan(sock, chatId, msg)) return;
     listMember(sock, chatId, msg)
+  }
+
+})
+registerCommand({
+  name: "tebakkata",
+  alias: ["mainkata"],
+  category: "Menu fun",
+  desc: "permainan tebak kata",
+  run: async (sock, chatId, msg, args, text) => {
+    if (isBan(sock, chatId, msg)) return
+    Tekateki(sock, chatId, msg, text)
   }
 })
