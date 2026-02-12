@@ -124,7 +124,6 @@ export const searchXtall = async (sock, chatId, msg, text) => {
     const messageData = `
 
 ${data.map((xtall, i) => `
-━━━━━━━━━━━━━━━━━━━━
 *${xtall.name} - ${xtall.type}*
 ${parseStat(xtall.stat)}
 Upgrade : ${xtall.upgrade}
@@ -233,13 +232,11 @@ export const searchRegist = async (sock, chatId, msg, text) => {
 
     const messageData = `
 ${data.map((rg, i) => `
-━━━━━━━━━━━━━━━━━━━━
 *${rg.name}*
 ${rg.effect}
 - Max Level ${rg.max_lv}
 - Level stodee  ${rg.levels_studied}
-━━━━━━━━━━━━━━━━━━━━
-`)}
+`).join("━━━━━━━━━━━━━━━━━━━━\n")}
 `.trim();
 
     sock.sendMessage(
@@ -326,11 +323,9 @@ export const searchAbility = async (sock, chatId, msg, text) => {
 
     const messageData = `
 ${data.map((ab, i) => `
-━━━━━━━━━━━━━━━━━━━━
 *${ab.name} - (tier ${ab.tier})*
 ${ab.stat_effect}
-━━━━━━━━━━━━━━━━━━━━
-`)}
+`).join("━━━━━━━━━━━━━━━━━━━━\n")}
 `.trim();
 
     sock.sendMessage(
@@ -388,7 +383,6 @@ export const searchItem = async (sock, chatId, msg, text) => {
 
     const messageData = `
 ${data.map((item, i) => `
-━━━━━━━━━━━━━━━━━━━━
 *${item.nama} - (${item.jenis})*
 ${formatStatList(item.stat)}
 Drop  :
