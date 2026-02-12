@@ -1,13 +1,12 @@
-import { API } from "../../../setting.js";
-import axios from "axios";
-import { isBan } from "../fitur/ban.js";
 
+import axios from "axios";
+import { Api } from "../../../setting.js";
 const answer = new Map()
 
 export const Tekateki = async (sock, chatId, msg, text) => {
   try {
     if (answer.has(chatId)) return sock.sendMessage(chatId, { text: "selesaikan permainan yang sedang berjalan" }, { quoted: msg })
-    const res = await axios(API.tebakkata)
+    const res = await axios(Api.tebakkata)
     const getData = res.data
     //generate soal
     const key = Math.floor(Math.random() * getData.length) + 1
