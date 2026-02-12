@@ -122,14 +122,11 @@ export const searchXtall = async (sock, chatId, msg, text) => {
     }
 
     const messageData = `
-*SEARCH XTALL (${data.length})*
-> source: https://coryn.club/
+━━━━━━━━━━━━━━━━━━━━
 ${data.map((xtall, i) => `
-${xtall.name}
-Type    : ${xtall.type}
+${xtall.name} - ${xtall.type}
 Upgrade : ${xtall.upgrade}
-Stat    :
-- ${parseStat(xtall.stat)}
+${parseStat(xtall.stat)}
 Rute: ${xtall.route}
 `).join("━━━━━━━━━━━━━━━━━━━━\n")}
 `.trim();
@@ -233,13 +230,13 @@ export const searchRegist = async (sock, chatId, msg, text) => {
     }
 
     const messageData = `
-*SEARCH REGIST*\n> source: https://coryn.club/
 ${data.map((rg, i) => `
+━━━━━━━━━━━━━━━━━━━━
 ${rg.name}
-Effect         : ${rg.effect}
-Max Level      : ${rg.max_lv}
-Levels Studied : ${rg.levels_studied}
-`).join("\n")}
+${rg.effect}
+Max Level ${rg.max_lv}
+Level stodee  ${rg.levels_studied}
+`).join("━━━━━━━━━━━━━━━━━━━━\n")}
 `.trim();
 
     sock.sendMessage(
@@ -325,12 +322,11 @@ export const searchAbility = async (sock, chatId, msg, text) => {
     }
 
     const messageData = `
-*SEARCH ABILITY*
 ${data.map((ab, i) => `
-${ab.name}
-Tier        : ${ab.tier}
-Stat Effect : ${ab.stat_effect}
-`).join("\n")}
+━━━━━━━━━━━━━━━━━━━━
+  ${ab.name} - (tier ${ab.tier})
+${ab.stat_effect}
+`).join("━━━━━━━━━━━━━━━━━━━━\n")}
 `.trim();
 
     sock.sendMessage(
@@ -387,16 +383,13 @@ export const searchItem = async (sock, chatId, msg, text) => {
     }
 
     const messageData = `
-*SEARCH ITEM*
-> By Neura Bot
-> source: https://coryn.club/
 ${data.map((item, i) => `
-  ${item.nama}
-Jenis : ${item.jenis}
-Stat  :
+━━━━━━━━━━━━━━━━━━━━
+${item.nama} - (${item.jenis})
 ${formatStatList(item.stat)}
-Drop  : ${item.drop}
-`).join("\n")}
+Drop  :
+${item.drop}
+`).join("━━━━━━━━━━━━━━━━━━━━\n")}
 `.trim();
 
     sock.sendMessage(

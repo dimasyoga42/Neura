@@ -14,6 +14,7 @@ import { messageHandler } from "./src/plugins/ai/message.js";
 import { subMenu } from "./src/modul/subMenu.js";
 import { jawab } from "./src/plugins/fun/caklontong.js";
 import { commands } from "./setting.js";
+import { prefix } from "./src/admin/prefix.js";
 dotenv.config();
 const start = async () => {
   const { state, saveCreds } = await useMultiFileAuthState("./auth_save");
@@ -75,6 +76,7 @@ const start = async () => {
       subMenu(sock, chatId, msg, text);
 
       const body = msg.message.conversation || msg.message.extendedTextMessage?.text || "";
+
       const prefix = ".";
 
       if (body.startsWith(prefix)) {
