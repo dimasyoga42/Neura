@@ -130,8 +130,7 @@ ${parseStat(xtall.stat)}
 Upgrade : ${xtall.upgrade}
 Rute:
 ${xtall.route}
-━━━━━━━━━━━━━━━━━━━━\n
-`)}
+`).join("━━━━━━━━━━━━━━━━━━━━\n")}
 `.trim();
 
     await sock.sendMessage(
