@@ -27,7 +27,7 @@ export const subMenu = async (sock, chatId, msg, text) => {
         })
       }]
 
-      await sendIAMessage(sock, jid, buttons, {
+      await sendIAMessage(sock, chatId, buttons, {
         content: 'Halo! Pilih menu:',
         footer: '© MyBot'
       })
