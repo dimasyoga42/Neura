@@ -1,70 +1,143 @@
 import pkg from "@whiskeysockets/baileys"
-const { proto, generateWAMessageFromContent, generateWAMessageContent } = pkg
+import fetch from "node-fetch"
+import fs from "fs"
+
+const {
+  proto,
+  generateWAMessageFromContent,
+  generateWAMessageContent
+} = pkg
 
 /**
- * Fungsi untuk mengirim pesan interaktif dengan media
+ * ===============================
+ * GET BUFFER (URL / PATH / BASE64)
+ * ===============================
  */
-export const sendInteractiveMessage = async (sock, jid, options = {}, quoted = {}) => {
-  // Helper untuk generate konten media (image/video)
-  const generateMedia = async (type, url) => {
-    const generated = await generateWAMessageContent({
-      [type]: { url }
-    }, {
-      upload: sock.waUploadToServer
-    })
-    return generated[`${type}Message`]
-  }
+async function getBuffer(input) {
+  if (!input) return null
 
-  // Persiapan Header (Media atau Teks)
-  let header;
-  if (options.image) {
-    header = proto.Message.InteractiveMessage.Header.create({
-      title: options.title || "",
-      hasMediaAttachment: true,
-      imageMessage: await generateMedia("image", options.image)
-    })
-  } else if (options.video) {
-    header = proto.Message.InteractiveMessage.Header.create({
-      title: options.title || "",
-      hasMediaAttachment: true,
-      videoMessage: await generateMedia("video", options.video)
-    })
-  } else {
-    header = proto.Message.InteractiveMessage.Header.create({
-      title: options.title || "",
-      hasMediaAttachment: false
-    })
-  }
+  try {
+    if (Buffer.isBuffer(input)) return input
 
-  // Konstruksi Pesan
-  const interactiveMessage = proto.Message.InteractiveMessage.create({
-    body: proto.Message.InteractiveMessage.Body.create({
-      text: options.body || ""
-    }),
-    footer: proto.Message.InteractiveMessage.Footer.create({
-      text: options.footer || ""
-    }),
-    header: header,
-    nativeFlowMessage: proto.Message.InteractiveMessage.NativeFlowMessage.create({
-      buttons: options.buttons || []
-    })
-  })
+    if (typeof input === "string") {
+      // URL
+      if (/^https?:\/\//.test(input)) {
+        const res = await fetch(input)
+        if (!res.ok) return null
+        return Buffer.from(await res.arrayBuffer())
+      }
 
-  const message = generateWAMessageFromContent(jid, {
-    viewOnceMessage: {
-      message: {
-        messageContextInfo: {
-          deviceListMetadata: {},
-          deviceListMetadataVersion: 2
-        },
-        interactiveMessage: interactiveMessage
+      // Base64
+      if (input.startsWith("data:")) {
+        return Buffer.from(input.split(",")[1], "base64")
+      }
+
+      // File lokal
+      if (fs.existsSync(input)) {
+        return fs.readFileSync(input)
       }
     }
-  }, { quoted, userJid: sock.user.id })
+  } catch (e) {
+    console.log("getBuffer error:", e)
+  }
 
-  await sock.relayMessage(jid, message.message, {
-    messageId: message.key.id
+  return null
+}
+
+/**
+ * ===============================
+ * GENERATE MEDIA (IMAGE / VIDEO)
+ * ===============================
+ */
+async function generateMedia(sock, type, media) {
+  const buffer = await getBuffer(media)
+  if (!buffer) return null
+
+  const generated = await generateWAMessageContent(
+    { [type]: buffer },
+    { upload: sock.waUploadToServer }
+  )
+
+  return generated[`${type}Message`]
+}
+
+/**
+ * ===============================
+ * SEND INTERACTIVE MESSAGE
+ * ===============================
+ */
+export async function sendInteractiveMessage(sock, jid, data, quoted = null) {
+  if (!sock?.user?.id) throw new Error("Socket belum siap")
+
+  const {
+    title = "",
+    body = "",
+    footer = "",
+    image = null,
+    video = null,
+    buttons = []
+  } = data
+
+  // ================= MEDIA =================
+  let imageMessage = null
+  let videoMessage = null
+
+  if (image) {
+    imageMessage = await generateMedia(sock, "image", image)
+  }
+
+  if (video) {
+    videoMessage = await generateMedia(sock, "video", video)
+  }
+
+  // ================= BUTTON FORMAT =================
+  const formattedButtons = buttons.map(btn => ({
+    name: btn.name || "quick_reply",
+    buttonParamsJson:
+      typeof btn.buttonParamsJson === "string"
+        ? btn.buttonParamsJson
+        : JSON.stringify(btn.buttonParamsJson || {})
+  }))
+
+  // ================= MESSAGE BUILD =================
+  const msg = generateWAMessageFromContent(
+    jid,
+    {
+      viewOnceMessage: {
+        message: {
+          messageContextInfo: {
+            deviceListMetadata: {},
+            deviceListMetadataVersion: 2
+          },
+          interactiveMessage: proto.Message.InteractiveMessage.create({
+            body: proto.Message.InteractiveMessage.Body.create({ text: body }),
+            footer: proto.Message.InteractiveMessage.Footer.create({ text: footer }),
+
+            header: proto.Message.InteractiveMessage.Header.create({
+              title: title,
+              hasMediaAttachment: !!(imageMessage || videoMessage),
+              ...(imageMessage ? { imageMessage } : {}),
+              ...(videoMessage ? { videoMessage } : {})
+            }),
+
+            nativeFlowMessage:
+              proto.Message.InteractiveMessage.NativeFlowMessage.create({
+                buttons: formattedButtons
+              })
+          })
+        }
+      }
+    },
+    { quoted, userJid: sock.user.id }
+  )
+
+  await sock.relayMessage(jid, msg.message, {
+    messageId: msg.key.id
   })
 
-  return message
+  return msg
+}
+
+export default {
+  sendInteractiveMessage
 }

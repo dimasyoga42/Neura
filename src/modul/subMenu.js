@@ -20,29 +20,20 @@ export const subMenu = async (sock, chatId, msg, text) => {
     }
     if (text === ".btn") {
       // Contoh pemanggilan di handler Anda
-      const buttons = [
-        {
-          name: "quick_reply",
-          buttonParamsJson: JSON.stringify({
-            display_text: "Menu Utama",
-            id: ".menu"
-          })
-        },
-        {
-          name: "cta_url",
-          buttonParamsJson: JSON.stringify({
-            display_text: "Buka YouTube",
-            url: "https://youtube.com/@fannmods"
-          })
-        }
-      ]
-
       await sendInteractiveMessage(sock, chatId, {
         title: "Halo Pengguna!",
         body: "Selamat datang di Neura Bot, silakan pilih menu:",
         footer: "© 2026 Neura Ecosystem",
-        image: "https://telegra.ph/file/example.jpg", // atau path lokal
-        buttons: buttons
+        image: "https://picsum.photos/500",
+        buttons: [
+          {
+            name: "quick_reply",
+            buttonParamsJson: JSON.stringify({
+              display_text: "Menu Utama",
+              id: ".menu"
+            })
+          }
+        ]
       }, msg)
     }
 
