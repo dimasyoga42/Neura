@@ -29,7 +29,7 @@ export const subMenu = async (sock, chatId, msg, text) => {
           {
             name: "quick_reply",
             buttonParamsJson: JSON.stringify({
-              display_text: "Menu Utama",
+              display_text: "Menu",
               id: ".menu"
             })
           }

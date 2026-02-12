@@ -1,6 +1,6 @@
 import fetch from "node-fetch"
 import fs from "fs"
-import { proto, generateWAMessageFromContent, generateWAMessageContent } from "@whiskeysockets/baileys"
+import { proto, generateWAMessageFromContent, prepareWAMessageMedia } from "@whiskeysockets/baileys"
 
 /**
  * ===============================
@@ -14,19 +14,16 @@ async function getBuffer(input) {
     if (Buffer.isBuffer(input)) return input
 
     if (typeof input === "string") {
-      // URL
       if (/^https?:\/\//.test(input)) {
         const res = await fetch(input)
         if (!res.ok) return null
         return Buffer.from(await res.arrayBuffer())
       }
 
-      // Base64
       if (input.startsWith("data:")) {
         return Buffer.from(input.split(",")[1], "base64")
       }
 
-      // File lokal
       if (fs.existsSync(input)) {
         return fs.readFileSync(input)
       }
@@ -36,23 +33,6 @@ async function getBuffer(input) {
   }
 
   return null
-}
-
-/**
- * ===============================
- * GENERATE MEDIA (IMAGE / VIDEO)
- * ===============================
- */
-async function generateMedia(sock, type, media) {
-  const buffer = await getBuffer(media)
-  if (!buffer) return null
-
-  const generated = await generateWAMessageContent(
-    { [type]: buffer },
-    { upload: sock.waUploadToServer }
-  )
-
-  return generated[`${type}Message`]
 }
 
 /**
@@ -68,23 +48,28 @@ export async function sendInteractiveMessage(sock, jid, data, quoted = null) {
     body = "",
     footer = "",
     image = null,
-    video = null,
     buttons = []
   } = data
 
-  // ================= MEDIA =================
+  /**
+   * ================= MEDIA =================
+   */
   let imageMessage = null
-  let videoMessage = null
 
   if (image) {
-    imageMessage = await generateMedia(sock, "image", image)
+    const buffer = await getBuffer(image)
+    if (buffer) {
+      const media = await prepareWAMessageMedia(
+        { image: buffer },
+        { upload: sock.waUploadToServer }
+      )
+      imageMessage = media.imageMessage
+    }
   }
 
-  if (video) {
-    videoMessage = await generateMedia(sock, "video", video)
-  }
-
-  // ================= BUTTON FORMAT =================
+  /**
+   * ================= BUTTON FORMAT =================
+   */
   const formattedButtons = buttons.map(btn => ({
     name: btn.name || "quick_reply",
     buttonParamsJson:
@@ -93,25 +78,27 @@ export async function sendInteractiveMessage(sock, jid, data, quoted = null) {
         : JSON.stringify(btn.buttonParamsJson || {})
   }))
 
-  // ================= MESSAGE BUILD =================
+  /**
+   * ================= MESSAGE BUILD =================
+   */
   const msg = generateWAMessageFromContent(
     jid,
     {
       viewOnceMessage: {
         message: {
-          messageContextInfo: {
-            deviceListMetadata: {},
-            deviceListMetadataVersion: 2
-          },
           interactiveMessage: proto.Message.InteractiveMessage.create({
-            body: proto.Message.InteractiveMessage.Body.create({ text: body }),
-            footer: proto.Message.InteractiveMessage.Footer.create({ text: footer }),
+            body: proto.Message.InteractiveMessage.Body.create({
+              text: body || "‎"
+            }),
+
+            footer: proto.Message.InteractiveMessage.Footer.create({
+              text: footer || "‎"
+            }),
 
             header: proto.Message.InteractiveMessage.Header.create({
-              title: title,
-              hasMediaAttachment: !!(imageMessage || videoMessage),
-              ...(imageMessage ? { imageMessage } : {}),
-              ...(videoMessage ? { videoMessage } : {})
+              title: title || "‎",
+              hasMediaAttachment: !!imageMessage,
+              ...(imageMessage ? { imageMessage } : {})
             }),
 
             nativeFlowMessage:
