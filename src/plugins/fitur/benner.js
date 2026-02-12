@@ -4,7 +4,7 @@ import * as cheerio from "cheerio";
 export const Banner = async (sock, msg, chatId) => {
   try {
     const BASE_URL = "https://id.toram.jp";
-    const LIST_URL = `${BASE_URL}/?type_code=all#contentArea`;
+    const LIST_URL = `${BASE_URL}/?type_code=all`;
 
     const fixUrl = (url) => {
       if (!url) return null;
