@@ -40,6 +40,54 @@ export const setMember = async (sock, chatId, msg, text) => {
   }
 };
 
+export const delMem = async (sock, chatId, msg, text) => {
+  try {
+    const arg = text.split(" ");
+    const targetIgn = arg[1];
+    const mentionedUser = msg?.message?.extendedTextMessage?.contextInfo?.mentionedJid?.[0];
+
+    // Validasi input: Pengguna harus memberikan IGN atau melakukan tag/mention
+    if (!targetIgn && !mentionedUser) {
+      return sock.sendMessage(chatId, {
+        text: "Mohon berikan identitas member yang ingin dihapus.\nFormat: .delmem @target atau .delmem <IGN>"
+      }, { quoted: msg });
+    }
+
+    const data = getUserData(db);
+    const groupData = data.find((item) => item.id === chatId);
+
+    // Validasi keberadaan database grup
+    if (!groupData || !groupData.member || groupData.member.length === 0) {
+      return sock.sendMessage(chatId, { text: "Database member di grup ini masih kosong." }, { quoted: msg });
+    }
+
+
+    const memberIndex = groupData.member.findIndex((m) =>
+      (targetIgn && m.ign.toLowerCase() === targetIgn.toLowerCase()) ||
+      (mentionedUser && m.owner === mentionedUser)
+    );
+
+    if (memberIndex === -1) {
+      return sock.sendMessage(chatId, { text: "Member tidak ditemukan dalam database grup ini." }, { quoted: msg });
+    }
+
+
+    const deletedMember = groupData.member.splice(memberIndex, 1)[0];
+
+    saveUserData(db, data);
+
+    const successMessage = `Member berhasil dihapus:\nIGN: ${deletedMember.ign}\nOwner: @${deletedMember.owner.split('@')[0]}`;
+
+    sock.sendMessage(chatId, {
+      text: successMessage,
+      mentions: [deletedMember.owner]
+    }, { quoted: msg });
+
+  } catch (err) {
+    sock.sendMessage(chatId, { text: `Error: ${err.message}` }, { quoted: msg });
+  }
+};
+
 
 export const listMember = async (sock, chatId, msg) => {
   try {

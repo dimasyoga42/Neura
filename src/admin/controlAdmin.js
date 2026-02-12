@@ -1,7 +1,7 @@
 import { registerCommand } from "../../setting.js";
 import { isBan } from "../plugins/fitur/ban.js";
 import { getUndangan } from "../plugins/owner/join.js";
-import { setMember } from "../plugins/sosial/member.js";
+import { delMem, setMember } from "../plugins/sosial/member.js";
 import { setNews } from "../plugins/sosial/news.js";
 import { setrules } from "../plugins/sosial/rules.js";
 import { clearRaid, createRaid } from "../plugins/toram/raidControl.js";
@@ -207,5 +207,16 @@ registerCommand({
     if (await isBan(sock, chatId, msg)) return;
     if (!(await adminValid(sock, chatId, msg))) return;
     setMember(sock, chatId, msg, text);
+  }
+});
+registerCommand({
+  name: "delmem",
+  alias: ["delmem"],
+  category: "Menu admin",
+  desc: "menghapus member",
+  run: async (sock, chatId, msg, args, text) => {
+    if (await isBan(sock, chatId, msg)) return;
+    if (!(await adminValid(sock, chatId, msg))) return;
+    delMem(sock, chatId, msg, text);
   }
 });
