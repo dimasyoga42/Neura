@@ -23,6 +23,7 @@ export const Banner = async (sock, msg, chatId) => {
     const res = await fetch(LIST_URL, {
       headers: { "User-Agent": "Mozilla/5.0" }
     });
+    console.log(res)
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
     const html = await res.text();
