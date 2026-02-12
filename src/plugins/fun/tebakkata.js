@@ -1,12 +1,11 @@
 
 import axios from "axios";
-import { Api } from "../../../setting.js";
 const answer = new Map()
 
 export const Tekateki = async (sock, chatId, msg, text) => {
   try {
     if (answer.has(chatId)) return sock.sendMessage(chatId, { text: "selesaikan permainan yang sedang berjalan" }, { quoted: msg })
-    const res = await axios(Api.tebakkata)
+    const res = await axios("https://raw.githubusercontent.com/dimasyoga42/dataset_Neura/master/games/susunkata.json")
     const getData = res.data
     //generate soal
     const key = Math.floor(Math.random() * getData.length) + 1
