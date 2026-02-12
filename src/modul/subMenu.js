@@ -48,5 +48,6 @@ export const subMenu = async (sock, chatId, msg, text) => {
 
   } catch (err) {
     sock.sendMessage(chatId, { text: "terjadi kesalahan saat mengirim pesan" }, { quoted: msg })
+    console.log(err)
   }
 }
