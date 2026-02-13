@@ -629,16 +629,20 @@ cara penggunaan nya:
 
 export const messagePembolong = `
 *extract*: 4 - 5M
-
 *OHS*
 0-1: 10-20M
 1-2: 150-160M
+
+*BWG*
+0-1: 17-50M
+0-2: 80-120M
 
 *KNUCK*
 0-1: 20-30M
 1-2: 70-90M
 
 *STAFF*
+0-1: 15-25M
 1-2: 100-150M
 
 *MD*
@@ -646,14 +650,18 @@ export const messagePembolong = `
 1-2 40-60M
 
 *KTN*
+0-1: 9-18M
 
-*2H*
 
 *HB*
 0-1 15-20M
-
+1-2: 90M
+Spirit Needle 8M
+legendary needle 550M
 leg ornament: 700M
-leg silk: 1B++
+leg silk: 950-1B++
+
+data bulan januari 2026
 `.trim();
 
 export const listLeveling = `
