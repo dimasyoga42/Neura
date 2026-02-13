@@ -30,7 +30,12 @@ export const registerCommand = (config) => {
   alias.forEach(a => commands.set(a, commandObj));
 };
 
-
+export const Resapi = {
+  neuradev: "https://dev-neura.vercel.app/api",
+  waifu: "https://api.waifu.pics",
+  menu: "https://raw.githubusercontent.com/dimasyoga42/dataset/main/image/menu/menu.json",
+  toramjp: "https://id.toram.jp"
+}
 
 export const message = [
   "waktu terus berjalan",
@@ -50,3 +55,4 @@ export const message = [
   "Neura Sama",
   "jangan lupa donasi"
 ]
+

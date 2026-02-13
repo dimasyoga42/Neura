@@ -1,9 +1,9 @@
 import fetch from "node-fetch";
 import * as cheerio from "cheerio";
-
+import { Resapi } from "../../../setting.js";
 export const Banner = async (sock, msg, chatId) => {
   try {
-    const BASE_URL = "https://id.toram.jp";
+    const BASE_URL = Resapi.toramjp;
     const LIST_URL = `${BASE_URL}/?type_code=all#contentArea`;
 
     const fixUrl = (url) => {
