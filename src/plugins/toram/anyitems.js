@@ -125,7 +125,8 @@ export const searchXtall = async (sock, chatId, msg, text) => {
 
 ${data.map((xtall, i) => `
 *${xtall.name} - ${xtall.type}*
-${xtall.stat.split(";")}
+
+${xtall.stat.split(";").map(s => `- ${s.trim()}`).join("\n")}
 Upgrade : ${xtall.upgrade}
 Rute:
 ${xtall.route}
