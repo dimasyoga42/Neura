@@ -54,6 +54,7 @@ import { addOverlayFromUrl } from "../config/overlay.js";
 import { eleBos, eleMonster } from "../plugins/toram/searchele.js";
 import { mybuff, setMybuff } from "../plugins/fitur/mybuff.js";
 import { listMember } from "../plugins/sosial/member.js";
+import { raidBos } from "../plugins/toram/raidbos.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
     name: "help",
@@ -1002,5 +1003,15 @@ registerCommand({
   run: async (sock, chatId, msg, args, text) => {
     if (isBan(sock, chatId, msg)) return
     Tekateki(sock, chatId, msg, text)
+  }
+})
+registerCommand({
+  name: "rb",
+  alias: ["rb"],
+  category: "Toram tools",
+  desc: "mencari informasi raid boss",
+  run: async (sock, chatId, msg, args, text) => {
+    if (isBan(sock, chatId, msg)) return
+    raidBos(sock, chatId, msg, text)
   }
 })

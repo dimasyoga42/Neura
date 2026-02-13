@@ -2,10 +2,6 @@ import fetch from "node-fetch"
 import fs from "fs"
 import path from "path"
 import { fileURLToPath } from "url"
-global.Name = "Neura Sama"
-global.prefix = "."
-global.version = "1,34,2"
-global.dev = "dimasyoga"
 
 export const fetchdata = async (url) => {
   try {
