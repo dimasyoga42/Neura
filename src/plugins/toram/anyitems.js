@@ -100,7 +100,7 @@ export const searchXtall = async (sock, chatId, msg, text) => {
     }
 
     const { data, error } = await supabase
-      .from("xtall")
+      .from("xtal")
       .select("name, type, upgrade, stat, route")
       .ilike("name", `%${nama}%`); // ❌ hapus limit(1)
 
