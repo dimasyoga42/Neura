@@ -47,5 +47,6 @@ export const message = [
   "hai cantik",
   "hai sayang",
   "bakaa",
-  "Neura Sama"
+  "Neura Sama",
+  "jangan lupa donasi"
 ]
