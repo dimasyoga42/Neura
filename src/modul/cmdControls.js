@@ -55,6 +55,7 @@ import { eleBos, eleMonster } from "../plugins/toram/searchele.js";
 import { mybuff, setMybuff } from "../plugins/fitur/mybuff.js";
 import { listMember } from "../plugins/sosial/member.js";
 import { raidBos } from "../plugins/toram/raidbos.js";
+import { kerang } from "../plugins/fun/kerang.js";
 //import { EfekCommand } from "../plugins/vip/tools/audioeffect.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
@@ -1017,3 +1018,13 @@ registerCommand({
   }
 })
 
+registerCommand({
+  name: "kerang",
+  alias: ["kerangajaib"],
+  category: "Menu fun",
+  desc: "Menjawab pertanyaan dengan jawaban acak ala kerang ajaib",
+  run: async (sock, chatId, msg, args, text) => {
+    if (isBan(sock, chatId, msg)) return;
+    kerang(sock, chatId, msg, text);
+  }
+})
