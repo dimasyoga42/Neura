@@ -55,7 +55,7 @@ import { eleBos, eleMonster } from "../plugins/toram/searchele.js";
 import { mybuff, setMybuff } from "../plugins/fitur/mybuff.js";
 import { listMember } from "../plugins/sosial/member.js";
 import { raidBos } from "../plugins/toram/raidbos.js";
-import { AudioEffect } from "../plugins/vip/tools/audioeffect.js";
+import { EfekCommand } from "../plugins/vip/tools/audioeffect.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
     name: "help",
@@ -1024,7 +1024,6 @@ registerCommand({
   run: async (sock, chatId, msg, args, text) => {
     if (isBan(sock, chatId, msg)) return
     const cmd = text.split(" ")[0].substring(1)
-    if (!cmd) return sock.sendMessage(chatId, { text: "Masukkan nama efek audio\n audio yang tersedia: bass, blown, deep, earrape, fast, fat, nightcore, reverse, robot, slow, tupai|squirrel|chipmunk, smooth" }, { quoted: msg })
-    AudioEffect(sock, msg, cmd)
+    EfekCommand(sock, chatId, msg, text)
   }
 })
