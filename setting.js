@@ -2,6 +2,7 @@ import fetch from "node-fetch"
 import fs from "fs"
 import path from "path"
 import { fileURLToPath } from "url"
+import { error } from "console"
 
 export const fetchdata = async (url) => {
   try {
@@ -31,6 +32,14 @@ export const Resapi = {
   waifu: "https://api.waifu.pics",
   menu: "https://raw.githubusercontent.com/dimasyoga42/dataset/main/image/menu/menu.json",
   toramjp: "https://id.toram.jp"
+}
+
+export const messageEn = {
+  errors: "An error occurred while processing your request. Please try again later.",
+  noCommand: "Command not found. Please check the available commands and try again.",
+  missingArgs: "Missing arguments. Please check the command usage and try again.",
+  invalidArgs: "Invalid arguments. Please check the command usage and try again.",
+  success: "Command executed successfully!",
 }
 
 export const message = [
