@@ -1,3 +1,4 @@
+import { messageEn } from "../../../setting.js";
 
 const kerangAnswer = [
   "Ya",
