@@ -7,7 +7,7 @@ import { downloadMediaMessage } from "@whiskeysockets/baileys";
 const execPromise = promisify(exec);
 const TMP_DIR = path.resolve("tmp");
 
-if (!fsSync.existsSync(TMP_DIR)) {
+if (!fs.existsSync(TMP_DIR)) {
   fsSync.mkdirSync(TMP_DIR, { recursive: true });
 }
 
