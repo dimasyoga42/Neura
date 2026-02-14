@@ -1,5 +1,4 @@
 import fs from "fs/promises"; // Menggunakan versi promise untuk efisiensi
-import fs Sync from "fs";
 import path from "path";
 import { exec } from "child_process";
 import { promisify } from "util";
