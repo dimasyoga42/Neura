@@ -650,8 +650,12 @@ export const messagePembolong = `
 1-2 40-60M
 
 *KTN*
-0-1: 9-18M
+0-1: 9-20M
+1-2: 110-120M
 
+*THS*
+0-1: 15-25M
+1-2: 110- 140m
 
 *HB*
 0-1 15-20M
