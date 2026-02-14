@@ -75,8 +75,8 @@ export const AudioEffect = async (sock, m, command) => {
   } finally {
     // Blok finally memastikan file sementara dihapus terlepas dari sukses atau gagalnya proses
     try {
-      if (fsSync.existsSync(inputFile)) await fs.unlink(inputFile);
-      if (fsSync.existsSync(outputFile)) await fs.unlink(outputFile);
+      if (fs.existsSync(inputFile)) await fs.unlink(inputFile);
+      if (fs.existsSync(outputFile)) await fs.unlink(outputFile);
     } catch (cleanupError) {
       console.error("Cleanup Error:", cleanupError);
     }
