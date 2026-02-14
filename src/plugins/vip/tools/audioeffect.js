@@ -1,77 +1,85 @@
-import fs from "fs"
-import path from "path"
-import { exec } from "child_process"
-import { downloadMediaMessage } from "@whiskeysockets/baileys"
+import fs from "fs/promises"; // Menggunakan versi promise untuk efisiensi
+import fs Sync from "fs";
+import path from "path";
+import { exec } from "child_process";
+import { promisify } from "util";
+import { downloadMediaMessage } from "@whiskeysockets/baileys";
 
-const TMP_DIR = path.resolve("tmp")
+const execPromise = promisify(exec);
+const TMP_DIR = path.resolve("tmp");
 
-if (!fs.existsSync(TMP_DIR)) {
-  fs.mkdirSync(TMP_DIR, { recursive: true })
+if (!fsSync.existsSync(TMP_DIR)) {
+  fsSync.mkdirSync(TMP_DIR, { recursive: true });
 }
 
 export const AudioEffect = async (sock, m, command) => {
+  let inputFile = "";
+  let outputFile = "";
+
   try {
-    let q = m.quoted ? m.quoted : m
-    let mime = (q.msg || q).mimetype || q.mediaType || ""
+    const q = m.quoted ? m.quoted : m;
+    const mime = (q.msg || q).mimetype || q.mediaType || "";
 
     if (!/audio/.test(mime)) {
-      return sock.sendMessage(m.chat, { text: "Reply audio dulu" }, { quoted: m })
+      return sock.sendMessage(m.chat, { text: "Silakan reply pesan audio terlebih dahulu." }, { quoted: m });
     }
 
-    let filter =
-      /bass/.test(command) ? '-af "equalizer=f=94:width_type=o:width=2:g=30"' :
-        /blown/.test(command) ? '-af "acrusher=.1:1:64:0:log"' :
-          /deep/.test(command) ? '-af "atempo=1,asetrate=44500*2/3"' :
-            /earrape/.test(command) ? '-af "volume=12"' :
-              /fast/.test(command) ? '-filter:a "atempo=1.63,asetrate=44100"' :
-                /fat/.test(command) ? '-filter:a "atempo=1.6,asetrate=22100"' :
-                  /nightcore/.test(command) ? '-filter:a "atempo=1.06,asetrate=44100*1.25"' :
-                    /reverse/.test(command) ? '-filter_complex "areverse"' :
-                      /robot/.test(command) ? '-filter_complex "afftfilt=real=\'hypot(re,im)*sin(0)\':imag=\'hypot(re,im)*cos(0)\':win_size=512:overlap=0.75"' :
-                        /slow/.test(command) ? '-filter:a "atempo=0.7,asetrate=44100"' :
-                          /tupai|squirrel|chipmunk/.test(command) ? '-filter:a "atempo=0.5,asetrate=65100"' :
-                            /smooth/.test(command) ? '-af "aresample=48000,asetrate=48000*1.02"' :
-                              '-af "anull"'
+    // Pemetaan filter FFmpeg yang lebih terstruktur
+    const effects = {
+      bass: '-af "equalizer=f=94:width_type=o:width=2:g=30"',
+      blown: '-af "acrusher=.1:1:64:0:log"',
+      deep: '-af "atempo=1,asetrate=44500*2/3"',
+      earrape: '-af "volume=12"',
+      fast: '-filter:a "atempo=1.63,asetrate=44100"',
+      fat: '-filter:a "atempo=1.6,asetrate=22100"',
+      nightcore: '-filter:a "atempo=1.06,asetrate=44100*1.25"',
+      reverse: '-filter_complex "areverse"',
+      robot: '-filter_complex "afftfilt=real=\'hypot(re,im)*sin(0)\':imag=\'hypot(re,im)*cos(0)\':win_size=512:overlap=0.75"',
+      slow: '-filter:a "atempo=0.7,asetrate=44100"',
+      tupai: '-filter:a "atempo=0.5,asetrate=65100"',
+      squirrel: '-filter:a "atempo=0.5,asetrate=65100"',
+      chipmunk: '-filter:a "atempo=0.5,asetrate=65100"',
+      smooth: '-af "aresample=48000,asetrate=48000*1.02"'
+    };
 
-    let inputFile = path.join(TMP_DIR, randomName(".mp3"))
-    let outputFile = path.join(TMP_DIR, randomName(".mp3"))
+    // Mencari filter berdasarkan command menggunakan regex
+    const effectKey = Object.keys(effects).find(key => new RegExp(key).test(command.toLowerCase()));
+    const filter = effects[effectKey] || '-af "anull"';
 
-    let buffer = await downloadMediaMessage(q, "buffer", {}, { logger: sock.logger })
-    fs.writeFileSync(inputFile, buffer)
+    // Penamaan file yang lebih unik dengan timestamp untuk menghindari tabrakan data
+    const filename = `${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+    inputFile = path.join(TMP_DIR, `${filename}_in.mp3`);
+    outputFile = path.join(TMP_DIR, `${filename}_out.mp3`);
 
-    exec(`ffmpeg -y -i "${inputFile}" ${filter} "${outputFile}"`, async (err, stdout, stderr) => {
-      try {
-        if (fs.existsSync(inputFile)) fs.unlinkSync(inputFile)
+    // Download dan simpan buffer
+    const buffer = await downloadMediaMessage(q, "buffer", {}, { logger: sock.logger });
+    await fs.writeFile(inputFile, buffer);
 
-        if (err) {
-          console.error(stderr)
-          return sock.sendMessage(m.chat, { text: "FFmpeg gagal memproses audio" }, { quoted: m })
-        }
+    // Eksekusi FFmpeg dengan Promise
+    await execPromise(`ffmpeg -y -i "${inputFile}" ${filter} "${outputFile}"`);
 
-        let audioBuffer = fs.readFileSync(outputFile)
+    const audioBuffer = await fs.readFile(outputFile);
 
-        await sock.sendMessage(
-          m.chat,
-          {
-            audio: audioBuffer,
-            mimetype: "audio/mpeg",
-            ptt: false
-          },
-          { quoted: m }
-        )
+    await sock.sendMessage(
+      m.chat,
+      {
+        audio: audioBuffer,
+        mimetype: "audio/mp4", // OGG/MP4 lebih kompatibel untuk fitur PTT/Audio di WA
+        ptt: false
+      },
+      { quoted: m }
+    );
 
-        if (fs.existsSync(outputFile)) fs.unlinkSync(outputFile)
-      } catch (e) {
-        console.error(e)
-        await sock.sendMessage(m.chat, { text: "Terjadi error saat kirim audio" }, { quoted: m })
-      }
-    })
   } catch (e) {
-    console.error(e)
-    await sock.sendMessage(m.chat, { text: "Error memproses audio" }, { quoted: m })
+    console.error("AudioEffect Error:", e);
+    await sock.sendMessage(m.chat, { text: `Gagal memproses audio: ${e.message}` }, { quoted: m });
+  } finally {
+    // Blok finally memastikan file sementara dihapus terlepas dari sukses atau gagalnya proses
+    try {
+      if (fsSync.existsSync(inputFile)) await fs.unlink(inputFile);
+      if (fsSync.existsSync(outputFile)) await fs.unlink(outputFile);
+    } catch (cleanupError) {
+      console.error("Cleanup Error:", cleanupError);
+    }
   }
-}
-
-function randomName(ext) {
-  return `${Math.floor(Math.random() * 100000)}${ext}`
-}
+};
