@@ -1,4 +1,5 @@
-import fs from "fs/promises"; // Menggunakan versi promise untuk efisiensi
+import fs from "fs";
+import fsp from "fs/promises"; // Menggunakan versi promise untuk efisiensi
 import path from "path";
 import { exec } from "child_process";
 import { promisify } from "util";
@@ -8,7 +9,7 @@ const execPromise = promisify(exec);
 const TMP_DIR = path.resolve("tmp");
 
 if (!fs.existsSync(TMP_DIR)) {
-  fsSync.mkdirSync(TMP_DIR, { recursive: true });
+  fs.mkdirSync(TMP_DIR, { recursive: true });
 }
 
 export const AudioEffect = async (sock, m, command) => {
@@ -52,12 +53,12 @@ export const AudioEffect = async (sock, m, command) => {
 
     // Download dan simpan buffer
     const buffer = await downloadMediaMessage(q, "buffer", {}, { logger: sock.logger });
-    await fs.writeFile(inputFile, buffer);
+    await fsp.writeFile(inputFile, buffer);
 
     // Eksekusi FFmpeg dengan Promise
     await execPromise(`ffmpeg -y -i "${inputFile}" ${filter} "${outputFile}"`);
 
-    const audioBuffer = await fs.readFile(outputFile);
+    const audioBuffer = await fsp.readFile(outputFile);
 
     await sock.sendMessage(
       m.chat,
@@ -75,8 +76,8 @@ export const AudioEffect = async (sock, m, command) => {
   } finally {
     // Blok finally memastikan file sementara dihapus terlepas dari sukses atau gagalnya proses
     try {
-      if (fs.existsSync(inputFile)) await fs.unlink(inputFile);
-      if (fs.existsSync(outputFile)) await fs.unlink(outputFile);
+      if (fs.existsSync(inputFile)) await fsp.unlink(inputFile);
+      if (fs.existsSync(outputFile)) await fsp.unlink(outputFile);
     } catch (cleanupError) {
       console.error("Cleanup Error:", cleanupError);
     }
