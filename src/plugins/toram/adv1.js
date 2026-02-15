@@ -140,23 +140,29 @@ const parseChapterInput = (chapterInput) => {
 };
 
 // Fungsi utama untuk hitung XP Main Quest (tanpa spam)
-export const spamAdv = async (
-  sock,
-  chatId,
-  msg,
-  text,
-) => {
+export const spamAdv = async (sock, chatId, msg, text) => {
   let browser = null;
 
   try {
-    const arg = text.split(" ")
-    const lv_char = arg[1];
-    const exp_char = arg[2];
-    const lv_target = arg[3];
-    const fromQuest = arg[4]
-    const untilQuest = arg[5]
-    if (!lv_char || !lv_target) return await sock.sendMessage(chatId, { text: "Format salah. Gunakan .spamadv 277 0 315 bab14-15" }, { quoted: msg })
-    // Validasi input
+    const arg = text.split(" ");
+    let lv_char = arg[1];
+    let exp_char = arg[2];
+    let lv_target = arg[3];
+    const fromQuest = arg[4];
+    const untilQuest = arg[5];
+
+    // Validasi input awal
+    if (!lv_char || !lv_target) {
+      return await sock.sendMessage(
+        chatId,
+        {
+          text: "❌ *Format salah!*\n\n📝 *Penggunaan:*\n.spamadv <level> <exp%> <target> [bab]\n\n📌 *Contoh:*\n• .spamadv 277 0 315 bab14-15\n• .spamadv 200 50 250 bab5\n• .spamadv 150 0 200 all",
+        },
+        { quoted: msg }
+      );
+    }
+
+    // Validasi dan konversi input
     lv_char = parseInt(lv_char);
     exp_char = parseInt(exp_char) || 0;
     lv_target = parseInt(lv_target);
@@ -169,6 +175,10 @@ export const spamAdv = async (
       throw new Error("Level harus antara 1-300");
     }
 
+    if (exp_char < 0 || exp_char > 100) {
+      throw new Error("Experience percentage harus antara 0-100");
+    }
+
     if (lv_char >= lv_target) {
       throw new Error("Level target harus lebih tinggi dari level sekarang");
     }
@@ -178,10 +188,25 @@ export const spamAdv = async (
 
     if (fromQuest && untilQuest) {
       // Custom quest range dari user
+      const from = parseInt(fromQuest);
+      const until = parseInt(untilQuest);
+
+      if (isNaN(from) || isNaN(until)) {
+        throw new Error("Quest ID harus berupa angka");
+      }
+
+      if (from < 1 || from > 136 || until < 1 || until > 136) {
+        throw new Error("Quest ID harus antara 1-136");
+      }
+
+      if (from > until) {
+        throw new Error("Quest awal harus lebih kecil dari quest akhir");
+      }
+
       questRange = {
-        from: parseInt(fromQuest),
-        until: parseInt(untilQuest),
-        name: `Quest ${fromQuest} - ${untilQuest}`,
+        from: from,
+        until: until,
+        name: `Quest ${from} - ${until}`,
       };
     } else if (fromQuest && !untilQuest) {
       // Kalau cuma from, bisa jadi chapter input atau quest ID
@@ -250,10 +275,11 @@ export const spamAdv = async (
       return {
         xpRequired: xpRequired?.textContent || "N/A",
         xpGained: mqXp?.textContent.replace("XP: ", "") || "N/A",
-        finalLevel: mqEval?.textContent.replace(
-          "After doing Main Quest's above range you'll reach ",
-          ""
-        ) || "N/A",
+        finalLevel:
+          mqEval?.textContent.replace(
+            "After doing Main Quest's above range you'll reach ",
+            ""
+          ) || "N/A",
       };
     });
 
@@ -261,18 +287,18 @@ export const spamAdv = async (
 
     // Format response message
     const responseMessage = `
- *Main Quest Calculator - ${questRange.name}*
+📊 *Main Quest Calculator - ${questRange.name}*
 
-*Info Level:*
+📈 *Info Level:*
 • Current: Level ${lv_char} (${exp_char}%)
 • Target: Level ${lv_target}
 • XP Required: ${results.xpRequired}
 
- *${questRange.name} Results:*
+🎯 *${questRange.name} Results:*
 • Quest Range: ${questRange.from} - ${questRange.until}
 • XP Gained: ${results.xpGained}
 • Final Level: ${results.finalLevel}
-		`.trim();
+`.trim();
 
     // Send results
     if (sock && chatId) {
@@ -330,6 +356,14 @@ export const spamMainQuest = async (
       throw new Error("Level harus berupa angka");
     }
 
+    if (lv_char < 1 || lv_char > 300 || lv_target < 1 || lv_target > 300) {
+      throw new Error("Level harus antara 1-300");
+    }
+
+    if (exp_char < 0 || exp_char > 100) {
+      throw new Error("Experience percentage harus antara 0-100");
+    }
+
     if (lv_char >= lv_target) {
       throw new Error("Level target harus lebih tinggi dari level sekarang");
     }
@@ -338,10 +372,25 @@ export const spamMainQuest = async (
     let questRange;
 
     if (fromQuest && untilQuest) {
+      const from = parseInt(fromQuest);
+      const until = parseInt(untilQuest);
+
+      if (isNaN(from) || isNaN(until)) {
+        throw new Error("Quest ID harus berupa angka");
+      }
+
+      if (from < 1 || from > 136 || until < 1 || until > 136) {
+        throw new Error("Quest ID harus antara 1-136");
+      }
+
+      if (from > until) {
+        throw new Error("Quest awal harus lebih kecil dari quest akhir");
+      }
+
       questRange = {
-        from: parseInt(fromQuest),
-        until: parseInt(untilQuest),
-        name: `Quest ${fromQuest} - ${untilQuest}`,
+        from: from,
+        until: until,
+        name: `Quest ${from} - ${until}`,
       };
     } else if (fromQuest && !untilQuest) {
       questRange = parseChapterInput(fromQuest);
@@ -412,18 +461,18 @@ export const spamMainQuest = async (
     console.log("[SpamMQ] Extracted", spamResults.length, "runs");
 
     // Format spam results
-    let message = ` *Main Quest Spam - ${questRange.name}*\n\n`;
-    message += ` *Info:*\n`;
+    let message = `📚 *Main Quest Spam - ${questRange.name}*\n\n`;
+    message += `📈 *Info:*\n`;
     message += `• Current: Level ${lv_char} (${exp_char}%)\n`;
     message += `• Target: Level ${lv_target}\n`;
     message += `• Quest Range: ${questRange.from} - ${questRange.until}\n\n`;
-    message += ` *Spam Results:*\n`;
+    message += `🎯 *Spam Results:*\n`;
 
     if (spamResults.length === 0) {
-      message += `Tidak ada hasil spam (mungkin sudah mencapai target level)`;
+      message += `✅ Tidak ada hasil spam (mungkin sudah mencapai target level)`;
     } else {
       // Tampilkan maksimal 15 runs
-      spamResults.slice(0, 15).forEach((run, index) => {
+      spamResults.slice(0, 15).forEach((run) => {
         message += `Run ${run.run}: ${run.level}\n`;
       });
 
@@ -446,7 +495,7 @@ export const spamMainQuest = async (
   } catch (error) {
     console.error("[SpamMQ] Error:", error);
 
-    const errorMsg = ` *Gagal menghitung Main Quest Spam*\n\n${error.message}`;
+    const errorMsg = `❌ *Gagal menghitung Main Quest Spam*\n\n${error.message}`;
 
     if (sock && chatId) {
       await sock.sendMessage(chatId, { text: errorMsg }, { quoted: msg });
@@ -464,33 +513,33 @@ export const spamMainQuest = async (
 // Helper function untuk show usage examples
 export const showUsageExamples = async (sock, chatId, msg) => {
   const message = `
- *Toram Main Quest Calculator*
+📖 *Toram Main Quest Calculator*
 
- *Contoh Penggunaan (Bab):*
+📝 *Contoh Penggunaan (Bab):*
 • \`.mqcalc 200 50 250 bab5\`
 • \`.mqcalc 200 50 250 bab1-10\`
 • \`.mqcalc 200 50 250 semua\`
 
- *Contoh Penggunaan (Quest ID):*
+🔢 *Contoh Penggunaan (Quest ID):*
 • \`.mqcalc 200 50 250 1 45\`
 • \`.mqcalc 200 50 250 77 86\`
 
- *Spam Mode (Adventurer's Diaries):*
+📚 *Spam Mode (Adventurer's Diaries):*
 • \`.mqspam 200 50 300 bab11-15\`
 • \`.mqspam 200 50 300 100 136\`
 
- *Available Bab:*
+📊 *Available Bab:*
 • BAB 1 (1-9), BAB 2 (11-18), BAB 3 (20-27)
 • BAB 4 (29-36), BAB 5 (38-45), BAB 6 (47-55)
 • BAB 7 (57-64), BAB 8 (66-75), BAB 9 (77-86)
 • BAB 10 (88-95), BAB 11 (97-105), BAB 12 (107-115)
 • BAB 13 (117-124), BAB 14 (126-132), BAB 15 (134-136)
 
- *Format Input Fleksibel:*
+🎯 *Format Input Fleksibel:*
 • "bab5", "ch5", "5" → Bab 5
 • "bab1-5", "1-5" → Bab 1 sampai 5
 • "semua", "all" → Semua bab (1-136)
-	`.trim();
+`.trim();
 
   if (sock && chatId) {
     await sock.sendMessage(chatId, { text: message }, { quoted: msg });
