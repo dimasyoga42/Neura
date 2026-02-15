@@ -83,28 +83,65 @@ export const spamAdv = async (sock, chatId, msg) => {
   let browser;
 
   try {
-    const args = msg.text.trim().split(/\s+/).slice(1);
+    /* =========================
+       AMBIL TEXT AMAN (ANTI ERROR)
+    ========================= */
 
-    const lv = parseInt(args[0], 10);
-    const exp = parseInt(args[1], 10);
-    const target = parseInt(args[2], 10);
-    const chapter = args[3];
+    const rawText =
+      msg?.text ||
+      msg?.message?.conversation ||
+      msg?.message?.extendedTextMessage?.text ||
+      msg?.message?.imageMessage?.caption ||
+      msg?.message?.videoMessage?.caption ||
+      "";
 
-    if (isNaN(lv) || isNaN(exp) || isNaN(target)) {
+    if (!rawText) {
+      return await sock.sendMessage(
+        chatId,
+        { text: "❌ Tidak ada input" },
+        { quoted: msg }
+      );
+    }
+
+    const args = rawText.trim().split(/\s+/).slice(1);
+
+    if (args.length < 3) {
       return await sock.sendMessage(
         chatId,
         {
           text:
-            "Format salah\n\n" +
+            "*Format salah*\n\n" +
+            ".spamadv <startLv> <exp%> <targetLv> <chapter>\n\n" +
             "Contoh:\n" +
-            ".mqspam 150 0 280 all\n" +
-            ".mqspam 150 50 250 bab7",
+            ".spamadv 150 0 280 all\n" +
+            ".spamadv 170 50 250 bab9",
         },
         { quoted: msg }
       );
     }
 
+    /* =========================
+       PARSE INPUT AMAN
+    ========================= */
+
+    const lv = Number(args[0] ?? 0);
+    const exp = Number(args[1] ?? 0);
+    const target = Number(args[2] ?? 0);
+    const chapter = (args[3] || "all").toString();
+
+    if (isNaN(lv) || isNaN(exp) || isNaN(target)) {
+      return await sock.sendMessage(
+        chatId,
+        { text: "❌ Level / EXP / Target harus angka" },
+        { quoted: msg }
+      );
+    }
+
     const range = parseChapterInput(chapter);
+
+    /* =========================
+       LAUNCH BROWSER
+    ========================= */
 
     browser = await puppeteer.launch({
       headless: true,
@@ -123,7 +160,6 @@ export const spamAdv = async (sock, chatId, msg) => {
 
       rows.forEach((row) => {
         const cols = row.querySelectorAll("div");
-
         if (cols.length >= 3) {
           data.push({
             no: cols[0].textContent.trim(),
@@ -138,10 +174,6 @@ export const spamAdv = async (sock, chatId, msg) => {
 
     await browser.close();
 
-    /* =========================
-       FORMAT OUTPUT
-    ========================= */
-
     if (!runs.length) {
       return await sock.sendMessage(
         chatId,
@@ -150,20 +182,18 @@ export const spamAdv = async (sock, chatId, msg) => {
       );
     }
 
-    const MAX_LEN = 3500;
+    /* =========================
+       FORMAT OUTPUT (ANTI LIMIT WA)
+    ========================= */
 
-    let buffer =
-      `*MAIN QUEST SPAM*\n\n` +
-      `Start Level : ${lv} (${exp}%)\n` +
-      `Target Lv   : ${target}\n` +
-      `Chapter     : ${range.name}\n` +
-      `Range MQ    : ${range.from} → ${range.until}\n\n`;
+    const MAX_LEN = 3500;
+    let buffer = `*Main Quest Spam Result*\n\n`;
+    buffer += `Start Lv : ${lv} (${exp}%)\n`;
+    buffer += `Target   : Lv ${target}\n`;
+    buffer += `Range    : ${range.from}-${range.until}\n\n`;
 
     for (const r of runs) {
-      const line =
-        `Run ${r.no}\n` +
-        `Chapter : ${r.chapter}\n` +
-        `Result  : Lv ${r.level}\n\n`;
+      const line = `Run ${r.no}\n${r.chapter}\n→ Lv ${r.level}\n\n`;
 
       if ((buffer + line).length > MAX_LEN) {
         await sock.sendMessage(chatId, { text: buffer }, { quoted: msg });
@@ -174,7 +204,6 @@ export const spamAdv = async (sock, chatId, msg) => {
     }
 
     buffer += `📊 Total Run : ${runs.length}`;
-
     await sock.sendMessage(chatId, { text: buffer }, { quoted: msg });
 
     return runs;
@@ -183,11 +212,7 @@ export const spamAdv = async (sock, chatId, msg) => {
 
     await sock.sendMessage(
       chatId,
-      {
-        text:
-          "❌ ERROR MQ SPAM\n\n" +
-          err.message,
-      },
+      { text: "❌ Error MQ Spam:\n" + err.message },
       { quoted: msg }
     );
   }
