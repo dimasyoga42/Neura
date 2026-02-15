@@ -32,7 +32,7 @@ const parseChapterInput = (input) => {
 };
 
 /* =========================
-   CORE SCRAPER
+   OPEN CALCULATOR
 ========================= */
 
 async function openCalculator(browser, lv, exp, target, range) {
@@ -45,7 +45,6 @@ async function openCalculator(browser, lv, exp, target, range) {
 
   await page.waitForSelector("#level");
 
-  // Clear input
   await page.$eval("#level", (el) => (el.value = ""));
   await page.$eval("#level-percentage", (el) => (el.value = ""));
   await page.$eval("#target-level", (el) => (el.value = ""));
@@ -60,14 +59,12 @@ async function openCalculator(browser, lv, exp, target, range) {
   await page.select("#mq-from", String(range.from));
   await page.select("#mq-until", String(range.until));
 
-  // Enable Skip Venena
   const skipVenena = await page.$("#skip-venena");
   if (skipVenena) {
     const checked = await page.evaluate((el) => el.checked, skipVenena);
     if (!checked) await skipVenena.click();
   }
 
-  // Enable Spam Diary
   const spamMQ = await page.$("#multiple-mq");
   if (spamMQ) {
     const checked = await page.evaluate((el) => el.checked, spamMQ);
@@ -82,20 +79,33 @@ async function openCalculator(browser, lv, exp, target, range) {
    MAIN FUNCTION
 ========================= */
 
-export const spamAdv = async (
-  sock,
-  chatId,
-  msg,
-) => {
+export const spamAdv = async (sock, chatId, msg) => {
   let browser;
 
   try {
     const args = msg.text.trim().split(/\s+/).slice(1);
+
     const lv = parseInt(args[0], 10);
     const exp = parseInt(args[1], 10);
     const target = parseInt(args[2], 10);
-    const chapter = args[3]
+    const chapter = args[3];
+
+    if (isNaN(lv) || isNaN(exp) || isNaN(target)) {
+      return await sock.sendMessage(
+        chatId,
+        {
+          text:
+            "Format salah\n\n" +
+            "Contoh:\n" +
+            ".mqspam 150 0 280 all\n" +
+            ".mqspam 150 50 250 bab7",
+        },
+        { quoted: msg }
+      );
+    }
+
     const range = parseChapterInput(chapter);
+
     browser = await puppeteer.launch({
       headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
@@ -113,6 +123,7 @@ export const spamAdv = async (
 
       rows.forEach((row) => {
         const cols = row.querySelectorAll("div");
+
         if (cols.length >= 3) {
           data.push({
             no: cols[0].textContent.trim(),
@@ -140,13 +151,19 @@ export const spamAdv = async (
     }
 
     const MAX_LEN = 3500;
-    let buffer = `*Main Quest Spam Result*\n\n`;
-    buffer += `Start Lv : ${lv} (${exp}%)\n`;
-    buffer += `Target   : Lv ${target}\n`;
-    buffer += `Range    : ${range.from}-${range.until}\n\n`;
+
+    let buffer =
+      `*MAIN QUEST SPAM*\n\n` +
+      `Start Level : ${lv} (${exp}%)\n` +
+      `Target Lv   : ${target}\n` +
+      `Chapter     : ${range.name}\n` +
+      `Range MQ    : ${range.from} → ${range.until}\n\n`;
 
     for (const r of runs) {
-      const line = `Run ${r.no}\n${r.chapter}\n→ Lv ${r.level}\n\n`;
+      const line =
+        `Run ${r.no}\n` +
+        `Chapter : ${r.chapter}\n` +
+        `Result  : Lv ${r.level}\n\n`;
 
       if ((buffer + line).length > MAX_LEN) {
         await sock.sendMessage(chatId, { text: buffer }, { quoted: msg });
@@ -157,6 +174,7 @@ export const spamAdv = async (
     }
 
     buffer += `📊 Total Run : ${runs.length}`;
+
     await sock.sendMessage(chatId, { text: buffer }, { quoted: msg });
 
     return runs;
@@ -165,7 +183,11 @@ export const spamAdv = async (
 
     await sock.sendMessage(
       chatId,
-      { text: "❌ Error MQ Spam:\n" + err.message },
+      {
+        text:
+          "❌ ERROR MQ SPAM\n\n" +
+          err.message,
+      },
       { quoted: msg }
     );
   }
