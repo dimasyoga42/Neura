@@ -716,16 +716,16 @@ nomer owner: 085664393331 (dimas)`
     }
   });
 
-  registerCommand({
-    name: "spamadv",
-    alias: ["spamadv"],
-    category: "Toram Tools",
-    desc: "kalkulasi spam adv toram",
-    run: async (sock, chatId, msg, args, text) => {
-      if (isBan(sock, chatId, msg)) return;
-      spamAdv(sock, chatId, msg, text);
-    }
-  });
+  // registerCommand({
+  //   name: "spamadv",
+  //   alias: ["spamadv"],
+  //   category: "Toram Tools",
+  //   desc: "kalkulasi spam adv toram",
+  //   run: async (sock, chatId, msg, args, text) => {
+  //     if (isBan(sock, chatId, msg)) return;
+  //     spamAdv(sock, chatId, msg, text);
+  //   }
+  // });
 
   registerCommand({
     name: "hd",
