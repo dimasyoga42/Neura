@@ -1,9 +1,28 @@
-import axios from "axios"
-import fs from "fs"
 import path from "path"
 import { getUserData, saveUserData } from "../../config/func.js";
-
+import Groq from "groq-sdk";
 const db = path.resolve("db", "neura.json")
+const res = new Groq({ apiKey: process.env.GROQ_API_KEY })
+const getGroqMessage = async (cotext, sys) => {
+  try {
+    return res.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content: sys
+        },
+        {
+          role: "user",
+          content: cotext
+        }
+      ],
+      model: "llama-3.3-70b-versatile"
+    })
+  } catch (error) {
+    throw error
+  }
+}
+
 
 export const NeuraBot = async (sock, chatId, msg, arg) => {
   let answer = ""
@@ -39,12 +58,8 @@ LARANGAN YANG WAJIB DI PATUHI
 - jangan banyak menjawab terlalu panjang ada kalanya kamu bisa menjawab secara singkat
 - cek percakapn grub di sini ${contextData}
 `.trim();
-
-    const res = await axios.get(
-      `https://api.deline.web.id/ai/openai?text=${encodeURIComponent(arg)}&prompt=${encodeURIComponent(system)}`
-    );
-
-    answer = res.data?.result || "..."
+    const ai = await getGroqMessage(arg, system)
+    const answer = ai.choices[0].message.content || "Neura sedang tidak mood berbicara sekarang..."
 
     await sock.sendMessage(chatId, { text: answer }, { quoted: msg })
 

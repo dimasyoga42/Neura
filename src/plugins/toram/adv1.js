@@ -250,10 +250,6 @@ const formatRunOutput = (runs, lv, exp, target, range) => {
   return messages;
 };
 
-/* =========================
-   MAIN FUNCTION
-========================= */
-
 export const spamAdv = async (sock, chatId, msg) => {
   let browser;
 
