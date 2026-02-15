@@ -27,39 +27,17 @@ const QUEST_MAPPING = {
 
 const parseChapterInput = (input) => {
   if (!input) return QUEST_MAPPING.all;
-
   input = input.toLowerCase().trim();
-
-  if (QUEST_MAPPING[input]) return QUEST_MAPPING[input];
-
-  const range = input.match(/(\d+)-(\d+)/);
-  if (range) {
-    const s = parseInt(range[1]);
-    const e = parseInt(range[2]);
-    if (QUEST_MAPPING[`bab${s}`] && QUEST_MAPPING[`bab${e}`]) {
-      return {
-        from: QUEST_MAPPING[`bab${s}`].from,
-        until: QUEST_MAPPING[`bab${e}`].until,
-        name: `Bab ${s}-${e}`,
-      };
-    }
-  }
-
-  const single = input.match(/\d+/);
-  if (single && QUEST_MAPPING[`bab${single[0]}`]) {
-    return QUEST_MAPPING[`bab${single[0]}`];
-  }
-
-  return QUEST_MAPPING.all;
+  return QUEST_MAPPING[input] || QUEST_MAPPING.all;
 };
 
 /* =========================
-   CORE CALCULATOR
+   CORE SCRAPER
 ========================= */
 
-async function openToramCalc(browser, lv, exp, target, range, spamMode = false) {
+async function openCalculator(browser, lv, exp, target, range) {
   const page = await browser.newPage();
-  await page.setDefaultTimeout(45000);
+  await page.setDefaultTimeout(60000);
 
   await page.goto("https://toramtools.github.io/xp.html", {
     waitUntil: "networkidle2",
@@ -67,7 +45,7 @@ async function openToramCalc(browser, lv, exp, target, range, spamMode = false) 
 
   await page.waitForSelector("#level");
 
-  // Clear dulu biar gak numpuk
+  // Clear input
   await page.$eval("#level", (el) => (el.value = ""));
   await page.$eval("#level-percentage", (el) => (el.value = ""));
   await page.$eval("#target-level", (el) => (el.value = ""));
@@ -77,163 +55,120 @@ async function openToramCalc(browser, lv, exp, target, range, spamMode = false) 
   await page.type("#target-level", String(target));
 
   await page.click("#mq-ui");
-  await wait(600);
+  await wait(700);
 
   await page.select("#mq-from", String(range.from));
   await page.select("#mq-until", String(range.until));
 
-  if (spamMode) {
-    await page.click("#multiple-mq");
-    await wait(2000);
-  } else {
-    await wait(1200);
+  // Enable Skip Venena
+  const skipVenena = await page.$("#skip-venena");
+  if (skipVenena) {
+    const checked = await page.evaluate((el) => el.checked, skipVenena);
+    if (!checked) await skipVenena.click();
   }
 
+  // Enable Spam Diary
+  const spamMQ = await page.$("#multiple-mq");
+  if (spamMQ) {
+    const checked = await page.evaluate((el) => el.checked, spamMQ);
+    if (!checked) await spamMQ.click();
+  }
+
+  await wait(2500);
   return page;
 }
 
 /* =========================
-   NORMAL MQ CALC
+   MAIN FUNCTION
 ========================= */
 
-export const spamAdv = async (sock, chatId, msg, text) => {
-  let browser;
-
-  try {
-    const args = text.split(" ").filter(Boolean);
-
-    const lv = parseInt(args[1]);
-    const exp = parseInt(args[2] || 0);
-    const target = parseInt(args[3]);
-    const chapter = args[4];
-
-    if (!lv || !target) {
-      return sock.sendMessage(chatId, {
-        text: "Format:\n.spamadv <lv> <exp%> <target> [bab]\n\nContoh:\n.spamadv 200 0 250 bab5",
-      });
-    }
-
-    const range = parseChapterInput(chapter);
-
-    browser = await puppeteer.launch({
-      headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    });
-
-    const page = await openToramCalc(browser, lv, exp, target, range);
-
-    const result = await page.evaluate(() => {
-      const get = (s) => document.querySelector(s)?.textContent?.trim() || "N/A";
-
-      return {
-        xpRequired: get("#xp-required"),
-        xpGained: get("#mq-xp").replace("XP: ", ""),
-        finalLevel: get("#mq-eval").replace(
-          "After doing Main Quest's above range you'll reach ",
-          ""
-        ),
-      };
-    });
-
-    await browser.close();
-
-    const msgOut = `📊 MQ Calculator - ${range.name}
-
-Current : Lv ${lv} (${exp}%)
-Target  : Lv ${target}
-
-XP Need : ${result.xpRequired}
-XP Gain : ${result.xpGained}
-Final   : ${result.finalLevel}
-
-Range   : ${range.from} - ${range.until}`;
-
-    await sock.sendMessage(chatId, { text: msgOut }, { quoted: msg });
-
-    return result;
-  } catch (e) {
-    if (browser) await browser.close();
-    await sock.sendMessage(chatId, {
-      text: "Error MQ Calc:\n" + e.message,
-    });
-  }
-};
-
-/* =========================
-   SPAM MQ (ADVENTURER DIARY)
-========================= */
-
-export const spamMainQuest = async (
+export const spamAdv = async (
   sock,
   chatId,
   msg,
-  lv,
-  exp,
-  target,
-  chapter
 ) => {
   let browser;
 
   try {
+    const args = msg.text.trim().split(/\s+/).slice(1);
+    const lv = parseInt(args[0], 10);
+    const exp = parseInt(args[1], 10);
+    const target = parseInt(args[2], 10);
+    const chapter = args[3]
     const range = parseChapterInput(chapter);
-
     browser = await puppeteer.launch({
       headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
-    const page = await openToramCalc(browser, lv, exp, target, range, true);
+    const page = await openCalculator(browser, lv, exp, target, range);
+
+    /* =========================
+       EXTRACT RUN LIST
+    ========================= */
 
     const runs = await page.evaluate(() => {
       const rows = document.querySelectorAll("#mq-table-row");
-      const out = [];
+      const data = [];
 
-      rows.forEach((r) => {
-        const t = r.innerText.trim().split("\n");
-        if (t.length >= 3) {
-          out.push({
-            run: t[0],
-            chapter: t[1],
-            level: t[2],
+      rows.forEach((row) => {
+        const cols = row.querySelectorAll("div");
+        if (cols.length >= 3) {
+          data.push({
+            no: cols[0].textContent.trim(),
+            chapter: cols[1].textContent.trim(),
+            level: cols[2].textContent.trim(),
           });
         }
       });
 
-      return out;
+      return data;
     });
 
     await browser.close();
 
-    let text = `📚 MQ Spam - ${range.name}
-
-Start : Lv ${lv} (${exp}%)
-Target: Lv ${target}
-Range : ${range.from}-${range.until}
-
-`;
+    /* =========================
+       FORMAT OUTPUT
+    ========================= */
 
     if (!runs.length) {
-      text += "Tidak perlu spam, sudah cukup.";
-    } else {
-      runs.slice(0, 15).forEach((r) => {
-        text += `Run ${r.run} → ${r.level}\n`;
-      });
-
-      if (runs.length > 15)
-        text += `\n+${runs.length - 15} run lainnya`;
-
-      text += `\n\nTotal Run: ${runs.length}`;
+      return await sock.sendMessage(
+        chatId,
+        { text: "❌ Tidak ada hasil run (cek level / range)" },
+        { quoted: msg }
+      );
     }
 
-    await sock.sendMessage(chatId, { text }, { quoted: msg });
+    const MAX_LEN = 3500;
+    let buffer = `*Main Quest Spam Result*\n\n`;
+    buffer += `Start Lv : ${lv} (${exp}%)\n`;
+    buffer += `Target   : Lv ${target}\n`;
+    buffer += `Range    : ${range.from}-${range.until}\n\n`;
+
+    for (const r of runs) {
+      const line = `Run ${r.no}\n${r.chapter}\n→ Lv ${r.level}\n\n`;
+
+      if ((buffer + line).length > MAX_LEN) {
+        await sock.sendMessage(chatId, { text: buffer }, { quoted: msg });
+        buffer = "";
+      }
+
+      buffer += line;
+    }
+
+    buffer += `📊 Total Run : ${runs.length}`;
+    await sock.sendMessage(chatId, { text: buffer }, { quoted: msg });
 
     return runs;
-  } catch (e) {
+  } catch (err) {
     if (browser) await browser.close();
-    await sock.sendMessage(chatId, {
-      text: "Error MQ Spam:\n" + e.message,
-    });
+
+    await sock.sendMessage(
+      chatId,
+      { text: "❌ Error MQ Spam:\n" + err.message },
+      { quoted: msg }
+    );
   }
 };
 
-export default { spamAdv, spamMainQuest };
+export default { spamAdv };
