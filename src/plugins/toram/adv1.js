@@ -149,11 +149,12 @@ export const spamAdv = async (
   let browser = null;
 
   try {
-    const lv_char = text.split(" ")[1];
-    const exp_char = text.split(" ")[2];
-    const lv_target = text.split(" ")[3];
-    const fromQuest = text.split(" ")[4]
-    const untilQuest = text.split(" ")[5]
+    const arg = text.split(" ")
+    const lv_char = arg[1];
+    const exp_char = arg[2];
+    const lv_target = arg[3];
+    const fromQuest = arg[4]
+    const untilQuest = arg[5]
     if (!lv_char || !lv_target) return await sock.sendMessage(chatId, { text: "Format salah. Gunakan .spamadv 277 0 315 bab14-15" }, { quoted: msg })
     // Validasi input
     lv_char = parseInt(lv_char);

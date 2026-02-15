@@ -32,7 +32,7 @@ import { bosboost } from "../plugins/toram/boost.js";
 import { buff, getAllBuff, setBuff } from "../plugins/toram/buff.js";
 import { searchMonster } from "../plugins/toram/monster.js";
 import { pet } from "../plugins/toram/pet.js";
-import { spmadv } from "../plugins/toram/adv.js";
+//import { spmadv } from "../plugins/toram/adv.js";
 import { formatResultMessage, parseCommand, tanaka, validateStatConfig } from "../plugins/toram/tanaka.js"
 import { hd } from "../plugins/vip/tools/hd.js";
 import { liveStream } from "../plugins/toram/live.js";
