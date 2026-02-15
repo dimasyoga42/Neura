@@ -3,6 +3,7 @@ import fs from "fs"
 import path from "path"
 import { fileURLToPath } from "url"
 import { error } from "console"
+import { ability } from "./src/plugins/toram/anyitems"
 
 export const fetchdata = async (url) => {
   try {
@@ -40,6 +41,14 @@ export const messageEn = {
   missingArgs: "Missing arguments. Please check the command usage and try again.",
   invalidArgs: "Invalid arguments. Please check the command usage and try again.",
   success: "Command executed successfully!",
+  null: "No data found for your request.",
+  notfound: "The requested resource was not found.",
+  xtalnotfound: "Xtal not found. Please check the available xtals and try again.",
+  regisnotfound: "Regis not found. Please check the available regis and try again.",
+  abilitynotfound: "Ability not found. Please check the available abilities and try again.",
+  itemnotfound: "Item not found. Please check the available items and try again.",
+  bosnotfound: "Boss not found. Please check the available bosses and try again.",
+  monsternotfound: "Monster not found. Please check the available monsters and try again.",
 }
 
 export const message = [
@@ -60,4 +69,8 @@ export const message = [
   "Neura Sama",
   "jangan lupa donasi"
 ]
+
+
+
+
 

@@ -56,6 +56,7 @@ import { mybuff, setMybuff } from "../plugins/fitur/mybuff.js";
 import { listMember } from "../plugins/sosial/member.js";
 import { raidBos } from "../plugins/toram/raidbos.js";
 import { kerang } from "../plugins/fun/kerang.js";
+import { spamAdv } from "../plugins/toram/adv1.js";
 //import { EfekCommand } from "../plugins/vip/tools/audioeffect.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
@@ -722,7 +723,7 @@ nomer owner: 085664393331 (dimas)`
     desc: "kalkulasi spam adv toram",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
-      spmadv(sock, chatId, msg, text);
+      spamAdv(sock, chatId, msg, text);
     }
   });
 
