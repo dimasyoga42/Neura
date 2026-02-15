@@ -150,7 +150,7 @@ export const spamAdv = async (
 
   try {
     const lv_char = text.split(" ")[1];
-    const exp_char = text.split(" ")[2] || "0";
+    const exp_char = text.split(" ")[2];
     const lv_target = text.split(" ")[3];
     const fromQuest = text.split(" ")[4]
     const untilQuest = text.split(" ")[5]
