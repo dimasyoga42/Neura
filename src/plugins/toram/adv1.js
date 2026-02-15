@@ -1,5 +1,8 @@
 import puppeteer from "puppeteer";
 
+// Helper function untuk wait/delay (mengganti page.waitForTimeout yang deprecated)
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 // Mapping bab ke quest ID
 const QUEST_MAPPING = {
   // Bab 1
@@ -171,8 +174,8 @@ export const spamAdv = async (sock, chatId, msg, text) => {
       throw new Error("Level harus berupa angka");
     }
 
-    if (lv_char < 1 || lv_char > 300 || lv_target < 1 || lv_target > 300) {
-      throw new Error("Level harus antara 1-300");
+    if (lv_char < 1 || lv_char > 315 || lv_target < 1 || lv_target > 315) {
+      throw new Error("Level harus antara 1-315");
     }
 
     if (exp_char < 0 || exp_char > 100) {
@@ -255,7 +258,7 @@ export const spamAdv = async (sock, chatId, msg, text) => {
 
     // Click Main Quest UI to ensure it's active
     await page.click("#mq-ui");
-    await page.waitForTimeout(500);
+    await wait(500); // Mengganti page.waitForTimeout
 
     // Set quest range
     await page.select("#mq-from", questRange.from.toString());
@@ -264,7 +267,7 @@ export const spamAdv = async (sock, chatId, msg, text) => {
     console.log("[SpamAdv] Quest range set");
 
     // Wait for calculations to update
-    await page.waitForTimeout(2000);
+    await wait(2000); // Mengganti page.waitForTimeout
 
     // Extract Main Quest results
     const results = await page.evaluate(() => {
@@ -356,8 +359,8 @@ export const spamMainQuest = async (
       throw new Error("Level harus berupa angka");
     }
 
-    if (lv_char < 1 || lv_char > 300 || lv_target < 1 || lv_target > 300) {
-      throw new Error("Level harus antara 1-300");
+    if (lv_char < 1 || lv_char > 315 || lv_target < 1 || lv_target > 315) {
+      throw new Error("Level harus antara 1-315");
     }
 
     if (exp_char < 0 || exp_char > 100) {
@@ -427,7 +430,7 @@ export const spamMainQuest = async (
 
     // Click Main Quest UI
     await page.click("#mq-ui");
-    await page.waitForTimeout(500);
+    await wait(500); // Mengganti page.waitForTimeout
 
     // Set quest range
     await page.select("#mq-from", questRange.from.toString());
@@ -437,7 +440,7 @@ export const spamMainQuest = async (
 
     // Enable spam mode (Adventurer's Diaries)
     await page.click("#multiple-mq");
-    await page.waitForTimeout(3000);
+    await wait(3000); // Mengganti page.waitForTimeout
 
     // Extract spam results table
     const spamResults = await page.evaluate(() => {
@@ -510,42 +513,6 @@ export const spamMainQuest = async (
   }
 };
 
-// Helper function untuk show usage examples
-export const showUsageExamples = async (sock, chatId, msg) => {
-  const message = `
-📖 *Toram Main Quest Calculator*
 
-📝 *Contoh Penggunaan (Bab):*
-• \`.mqcalc 200 50 250 bab5\`
-• \`.mqcalc 200 50 250 bab1-10\`
-• \`.mqcalc 200 50 250 semua\`
 
-🔢 *Contoh Penggunaan (Quest ID):*
-• \`.mqcalc 200 50 250 1 45\`
-• \`.mqcalc 200 50 250 77 86\`
-
-📚 *Spam Mode (Adventurer's Diaries):*
-• \`.mqspam 200 50 300 bab11-15\`
-• \`.mqspam 200 50 300 100 136\`
-
-📊 *Available Bab:*
-• BAB 1 (1-9), BAB 2 (11-18), BAB 3 (20-27)
-• BAB 4 (29-36), BAB 5 (38-45), BAB 6 (47-55)
-• BAB 7 (57-64), BAB 8 (66-75), BAB 9 (77-86)
-• BAB 10 (88-95), BAB 11 (97-105), BAB 12 (107-115)
-• BAB 13 (117-124), BAB 14 (126-132), BAB 15 (134-136)
-
-🎯 *Format Input Fleksibel:*
-• "bab5", "ch5", "5" → Bab 5
-• "bab1-5", "1-5" → Bab 1 sampai 5
-• "semua", "all" → Semua bab (1-136)
-`.trim();
-
-  if (sock && chatId) {
-    await sock.sendMessage(chatId, { text: message }, { quoted: msg });
-  }
-
-  return message;
-};
-
-export default { spamAdv, spamMainQuest, showUsageExamples };
+export default { spamAdv, spamMainQuest };
