@@ -230,11 +230,11 @@ const formatRunOutput = (runs, lv, exp, target, range) => {
   buffer += `*Input:*\n`;
   buffer += `• Start Level: ${lv} (${exp}%)\n`;
   buffer += `• Target Level: ${target}\n`;
-  buffer += `• Quest Range: ${range.from}-${range.until} (${range.name})\n\n`;
-  buffer += `*Results:*\n\n`;
+  buffer += `• Quest Range: ${range.from}-${range.until} (${range.name})\n`;
+  buffer += `*Results:*\n`;
 
   for (const r of runs) {
-    const line = `*Run ${r.no}*\n${r.chapter}\n→ Level ${r.level}\n\n`;
+    const line = `*Run ${r.no}*\n${r.chapter}\n→ Level ${r.level}\n`;
 
     if ((buffer + line).length > MAX_MESSAGE_LENGTH) {
       messages.push(buffer);
@@ -244,7 +244,7 @@ const formatRunOutput = (runs, lv, exp, target, range) => {
     buffer += line;
   }
 
-  buffer += `\n✅ *Total Runs: ${runs.length}*`;
+  buffer += `\n*Total Runs: ${runs.length}*`;
   messages.push(buffer);
 
   return messages;
