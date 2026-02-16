@@ -15,7 +15,7 @@ export const eleMonster = async (sock, chatId, msg, text) => {
     const { data, error } = await supabase
       .from("monster")
       .select("name, element")
-      .ilike("element", `%${name}%`).limit(100);
+      .ilike("element", `%${name}%`)
 
     if (error) {
       console.log(error);
