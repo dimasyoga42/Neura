@@ -1,3 +1,4 @@
+
 import path from "path"
 import { getUserData, saveUserData } from "../../config/func.js";
 import Groq from "groq-sdk";
@@ -56,7 +57,7 @@ LARANGAN YANG WAJIB DI PATUHI
 - Menjawab tidak perlu memperkenalkan diri secara terus menerus
 - lebih banyak ekspresi dan mood guunakan gaya bahasa yang lebih santai
 - jangan banyak menjawab terlalu panjang ada kalanya kamu bisa menjawab secara singkat
-- cek percakapn grub di sini ${contextData}
+- cek percakapn grub di sini ${contextData}, answer adalah jawaban mu jadi kamu boleh melihatnya jika di tanya soal informasi dari fitur meu chat yang muncul dari kamu
 `.trim();
     const ai = await getGroqMessage(arg, system)
     const answer = ai.choices[0].message.content || "Neura sedang tidak mood berbicara sekarang..."
