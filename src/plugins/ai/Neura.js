@@ -17,7 +17,7 @@ const getGroqMessage = async (cotext, sys) => {
           content: cotext
         }
       ],
-      model: "qwen/qwen3-32b",
+      model: "openai/gpt-oss-120b",
     })
   } catch (error) {
     throw error
