@@ -61,23 +61,20 @@ LARANGAN YANG WAJIB DI PATUHI
 `.trim();
     const ai = await getGroqMessage(arg, system)
     const answer = ai.choices[0].message.content || "Neura sedang tidak mood berbicara sekarang..."
+    dataNeuraa.karina.push({
+      sender: msg.pushName || "Tidak diketahui",
+      message: arg,
+      answer: answer,
+      allmessage: msg.key.fromMe,
+      time: new Date().toISOString(),
+    });
 
+    // Simpan kembali database
+    saveUserData(db, getData)
     await sock.sendMessage(chatId, { text: answer }, { quoted: msg })
 
   } catch (err) {
     console.log(`[Neura error]: ${err.message}`)
     return
   }
-
-  // Simpan riwayat chat
-  dataNeuraa.karina.push({
-    sender: msg.pushName || "Tidak diketahui",
-    message: arg,
-    answer: answer,
-    allmessage: msg,
-    time: new Date().toISOString(),
-  });
-
-  // Simpan kembali database
-  saveUserData(db, getData)
 }
