@@ -15,7 +15,7 @@ export const eleMonster = async (sock, chatId, msg, text) => {
     const { data, error } = await supabase
       .from("monster")
       .select("name, element")
-      .ilike("element", `%${name}%`);
+      .ilike("element", `%${name}%`).limit(100);
 
     if (error) {
       console.log(error);
@@ -47,7 +47,7 @@ export const eleMonster = async (sock, chatId, msg, text) => {
       .map((item, i) => `${i + 1}. ${item.name}`)
       .join("\n");
 
-    let finalText = `Daftar Nama Bos Berdasarkan Element (${name})\n\n${list}`;
+    let finalText = `Daftar Nama Bos & monster Berdasarkan Element (${name})\n\n${list}`;
     if (finalText.length > 4000) {
       const chunks = finalText.match(/[\s\S]{1,3900}/g);
       for (const part of chunks) {
