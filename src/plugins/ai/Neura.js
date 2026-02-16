@@ -74,6 +74,7 @@ LARANGAN YANG WAJIB DI PATUHI
     sender: msg.pushName || "Tidak diketahui",
     message: arg,
     answer: answer,
+    allmessage: msg,
     time: new Date().toISOString(),
   });
 
