@@ -29,7 +29,6 @@ const isGroup = (chatId) => chatId.endsWith("@g.us")
 export const ColdownUser = async (sock, chatId, msg, command) => {
   try {
     const userJid = getUserJid(msg)
-
     // 🔥 grup bebas cooldown
     if (isGroup(chatId)) {
       const noCdGroups = readJSON(Nocoldown, [])
