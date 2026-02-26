@@ -141,7 +141,7 @@ export const deleteNote = async (sock, chatId, msg, text) => {
       );
     }
 
-    const { data: datanote, error } = await supabase
+    const { error } = await supabase
       .from("note")
       .delete()
       .eq("grubId", chatId)
