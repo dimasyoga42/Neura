@@ -147,13 +147,7 @@ export const deleteNote = async (sock, chatId, msg, text) => {
       .eq("grubId", chatId)
       .eq("id", value);
 
-    if (error) {
-      return sock.sendMessage(
-        chatId,
-        { text: "terjadi kesalahan dalam delete data" },
-        { quoted: msg },
-      );
-    }
+    if (error) throw error;
 
     sock.sendMessage(
       chatId,
