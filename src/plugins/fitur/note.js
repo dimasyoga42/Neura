@@ -141,7 +141,7 @@ export const deleteNote = async (sock, chatId, msg, text) => {
       );
     }
 
-    const { data, error } = await supabase
+    const { data: datanote, error } = await supabase
       .from("note")
       .delete()
       .eq("grubId", chatId)
@@ -155,7 +155,7 @@ export const deleteNote = async (sock, chatId, msg, text) => {
       );
     }
 
-    if (!data || data.length === 0) {
+    if (!datanote) {
       return sock.sendMessage(
         chatId,
         { text: "id yang anda berikan tidak ada di database" },
