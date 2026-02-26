@@ -155,14 +155,6 @@ export const deleteNote = async (sock, chatId, msg, text) => {
       );
     }
 
-    if (!datanote) {
-      return sock.sendMessage(
-        chatId,
-        { text: "id yang anda berikan tidak ada di database" },
-        { quoted: msg },
-      );
-    }
-
     sock.sendMessage(
       chatId,
       { text: `note dengan id ${value} berhasil dihapus` },
