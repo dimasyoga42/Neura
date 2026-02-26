@@ -13,38 +13,33 @@ export const setNote = async (sock, chatId, msg, text) => {
       return sock.sendMessage(
         chatId,
         {
-          text: "mohon masukan judul note dan isi setelah !setnote\ncontoh:\n!setnote ,Judul Note, ini isi note"
+          text: "mohon masukan judul note dan isi setelah !setnote\ncontoh:\n!setnote ,Judul Note, ini isi note",
         },
-        { quoted: msg }
+        { quoted: msg },
       );
     }
 
     const { error } = await supabase.from("note").insert({
       grubId: chatId,
       note_name: noteName,
-      isi: notemessage
+      isi: notemessage,
     });
 
     if (error) {
       return sock.sendMessage(
         chatId,
         { text: "terjadi kesalahan saat menyimpan note ke database" },
-        { quoted: msg }
+        { quoted: msg },
       );
     }
 
     sock.sendMessage(
       chatId,
       { text: "note berhasil di simpan" },
-      { quoted: msg }
+      { quoted: msg },
     );
-
   } catch (error) {
-    sock.sendMessage(
-      chatId,
-      { text: String(error) },
-      { quoted: msg }
-    );
+    sock.sendMessage(chatId, { text: String(error) }, { quoted: msg });
   }
 };
 
@@ -56,13 +51,13 @@ export const note = async (sock, chatId, msg, text) => {
       return sock.sendMessage(
         chatId,
         { text: "mana judul catatan yang di cari" },
-        { quoted: msg }
+        { quoted: msg },
       );
     }
 
     const { data, error } = await supabase
       .from("note")
-      .select("note_name, isi")
+      .select("id, note_name, isi")
       .eq("grubId", chatId)
       .ilike("note_name", `%${noteName}%`)
       .limit(1);
@@ -71,7 +66,7 @@ export const note = async (sock, chatId, msg, text) => {
       return sock.sendMessage(
         chatId,
         { text: "gagal mengambil data note" },
-        { quoted: msg }
+        { quoted: msg },
       );
     }
 
@@ -79,7 +74,7 @@ export const note = async (sock, chatId, msg, text) => {
       return sock.sendMessage(
         chatId,
         { text: "note tidak ditemukan" },
-        { quoted: msg }
+        { quoted: msg },
       );
     }
 
@@ -92,25 +87,16 @@ Judul Catatan: *${note.note_name}*
 ${note.isi}
 `.trim();
 
-    sock.sendMessage(
-      chatId,
-      { text: cxMessage },
-      { quoted: msg }
-    );
-
+    sock.sendMessage(chatId, { text: cxMessage }, { quoted: msg });
   } catch (error) {
-    sock.sendMessage(
-      chatId,
-      { text: String(error) },
-      { quoted: msg }
-    );
+    sock.sendMessage(chatId, { text: String(error) }, { quoted: msg });
   }
 };
 export const notelist = async (sock, chatId, msg) => {
   try {
     const { data, error } = await supabase
       .from("note")
-      .select("note_name")
+      .select("id, note_name")
       .eq("grubId", chatId)
       .order("id", { ascending: true });
 
@@ -118,7 +104,7 @@ export const notelist = async (sock, chatId, msg) => {
       return sock.sendMessage(
         chatId,
         { text: "gagal mengambil daftar note" },
-        { quoted: msg }
+        { quoted: msg },
       );
     }
 
@@ -126,27 +112,67 @@ export const notelist = async (sock, chatId, msg) => {
       return sock.sendMessage(
         chatId,
         { text: "belum ada note yang tersimpan di grup ini" },
-        { quoted: msg }
+        { quoted: msg },
       );
     }
 
     let list = "*Daftar Judul Note:*\n";
 
     data.forEach((item, index) => {
-      list += `${index + 1}. ${item.note_name}\n`;
+      list += `${index + 1}. ${item.note_name} (${item.id})\n`;
     });
 
-    sock.sendMessage(
-      chatId,
-      { text: list.trim() },
-      { quoted: msg }
-    );
-
+    sock.sendMessage(chatId, { text: list.trim() }, { quoted: msg });
   } catch (error) {
+    sock.sendMessage(chatId, { text: String(error) }, { quoted: msg });
+  }
+};
+
+export const deleteNote = async (sock, chatId, msg, text) => {
+  try {
+    const args = text.split(" ");
+    const value = args[1];
+
+    if (!value) {
+      return sock.sendMessage(
+        chatId,
+        { text: "masukkan id yang ingin dihapus" },
+        { quoted: msg },
+      );
+    }
+
+    const { data, error } = await supabase
+      .from("note")
+      .delete()
+      .eq("grubId", chatId)
+      .eq("id", value);
+
+    if (error) {
+      return sock.sendMessage(
+        chatId,
+        { text: "terjadi kesalahan dalam delete data" },
+        { quoted: msg },
+      );
+    }
+
+    if (!data || data.length === 0) {
+      return sock.sendMessage(
+        chatId,
+        { text: "id yang anda berikan tidak ada di database" },
+        { quoted: msg },
+      );
+    }
+
     sock.sendMessage(
       chatId,
-      { text: String(error) },
-      { quoted: msg }
+      { text: `note dengan id ${value} berhasil dihapus` },
+      { quoted: msg },
+    );
+  } catch (err) {
+    sock.sendMessage(
+      chatId,
+      { text: "terjadi kesalahan saat menjalankan command" },
+      { quoted: msg },
     );
   }
 };
