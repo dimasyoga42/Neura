@@ -141,13 +141,28 @@ export const deleteNote = async (sock, chatId, msg, text) => {
       );
     }
 
-    const { error } = await supabase
+    const { error, count } = await supabase
       .from("note")
       .delete()
       .eq("grubId", chatId)
-      .eq("id", value);
+      .eq("id", value)
+      .select("*", { count: "exact", head: true }); // untuk cek apakah ada yang terhapus
 
-    if (error) throw error;
+    if (error) {
+      return sock.sendMessage(
+        chatId,
+        { text: `gagal menghapus note: ${error.message}` },
+        { quoted: msg },
+      );
+    }
+
+    if (count === 0) {
+      return sock.sendMessage(
+        chatId,
+        { text: `note dengan id ${value} tidak ditemukan` },
+        { quoted: msg },
+      );
+    }
 
     sock.sendMessage(
       chatId,
