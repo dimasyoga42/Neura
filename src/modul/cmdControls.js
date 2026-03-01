@@ -102,6 +102,7 @@ import { raidBos } from "../plugins/toram/raidbos.js";
 import { kerang } from "../plugins/fun/kerang.js";
 import { spamAdv } from "../plugins/toram/adv1.js";
 import { takjilRandom } from "../plugins/fun/takjil.js";
+import { codeLive } from "../plugins/fitur/codeLive.js";
 //import { EfekCommand } from "../plugins/vip/tools/audioeffect.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
@@ -1099,5 +1100,15 @@ registerCommand({
   run: async (sock, chatId, msg, args, text) => {
     if (isBan(sock, chatId, msg)) return;
     takjilRandom(sock, chatId, msg);
+  },
+});
+registerCommand({
+  name: "code",
+  alias: ["clive"],
+  category: "Toram Info",
+  desc: "code live",
+  run: async (sock, chatId, msg, args, text) => {
+    if (isBan(sock, chatId, msg)) return;
+    codeLive(sock, chatId, msg);
   },
 });
