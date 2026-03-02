@@ -116,14 +116,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "memunculkan daftar menu",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
-      let menutext = `*Neura Sama Menu*\n\n`;
-      menutext += `
-      *Rules Bot*
-      - dilarang keras membuat stiker 18+
-      - tidak diperbolehkan manipulasi ai untuk hal negatif
-      - cermati daftar menu sebelum menggunakan command agar bot dapat merespon dengan baik
-      - gunakan command sewajarnya tunggu beberapa saat jika respon belum muncul maka ulangi kembali\n\n
-      `.trim();
+      let menutext = `*Neura Sama Menu*\n`;
       const grouped = {};
       // const key = Math.floor(Math.random() * 4) + 1
       const data = await fetchdata(
@@ -151,6 +144,15 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
         `${messages}`,
       );
       sortedCategory.forEach((cat) => {
+        menutext += `
+        *Rules Bot*
+        - dilarang keras membuat stiker 18+
+        - tidak diperbolehkan manipulasi ai untuk hal negatif
+        - cermati daftar menu sebelum menggunakan command agar bot dapat merespon dengan baik
+        - gunakan command sewajarnya tunggu beberapa saat jika respon belum muncul maka ulangi kembali
+        `
+          .trim()
+          .join("\n\n");
         menutext += `┌❏ *${cat}*\n`;
         // sort command A-Z
         grouped[cat]
