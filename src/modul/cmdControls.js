@@ -104,6 +104,7 @@ import { spamAdv } from "../plugins/toram/adv1.js";
 import { takjilRandom } from "../plugins/fun/takjil.js";
 import { codeLive } from "../plugins/fitur/codeLive.js";
 import { instagramdownloder } from "../plugins/vip/downloader/instagram.js";
+import { spotifyDownloader } from "../plugins/vip/downloader/spotifydl.js";
 //import { EfekCommand } from "../plugins/vip/tools/audioeffect.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
@@ -1130,6 +1131,6 @@ registerCommand({
   desc: "downloder spotify via link",
   run: async (sock, chatId, msg, args, text) => {
     if (isBan(sock, chatId, msg)) return;
-    instagramdownloder(sock, chatId, msg, text);
+    spotifyDownloader(sock, chatId, msg, text);
   },
 });
