@@ -14,7 +14,7 @@ const codeLive = (sock, chatId, msg) => {
       );
     }
 
-    let resultText;
+    let resultText = "Informasi:\n\n";
     data.forEach((item, index) => {
       resultText += `${item.name}\n${item.isi}`;
     });
