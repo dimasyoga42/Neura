@@ -144,13 +144,6 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
         `${messages}`,
       );
       sortedCategory.forEach((cat) => {
-        menutext += `
-        *Rules Bot*
-        - dilarang keras membuat stiker 18+
-        - tidak diperbolehkan manipulasi ai untuk hal negatif
-        - cermati daftar menu sebelum menggunakan command agar bot dapat merespon dengan baik
-        - gunakan command sewajarnya tunggu beberapa saat jika respon belum muncul maka ulangi kembali
-        `.trim();
         menutext += `┌❏ *${cat}*\n`;
         // sort command A-Z
         grouped[cat]
