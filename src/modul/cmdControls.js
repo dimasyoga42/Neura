@@ -118,11 +118,11 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
       if (isBan(sock, chatId, msg)) return;
       let menutext = `*Neura Sama Menu*\n
       \n*Rules Bot:*\n
-      1. Jangan spam command.\n
-      2. Jangan gunakan bot untuk hal negatif.\n
-      3. Laporkan bug atau masalah dengan command .report.\n
-      4. Hormati pengguna lain.\n
-      5. Gunakan bot sesuai dengan panduan yang diberikan.\n
+      Jangan spam command.\n
+      Jangan gunakan bot untuk hal negatif.\n
+      Laporkan bug atau masalah dengan command .report.\n
+      Hormati pengguna lain.\n
+      Gunakan bot sesuai dengan panduan yang diberikan.\n
       `;
       const grouped = {};
       // const key = Math.floor(Math.random() * 4) + 1
