@@ -122,7 +122,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
       - tidak diperbolehkan manipulasi ai untuk hal negatif
       - cermati daftar menu sebelum menggunakan command agar bot dapat merespon dengan baik
       - gunakan command sewajarnya tunggu beberapa saat jika respon belum muncul maka ulangi kembali\n
-      `;
+      `.trim();
       const grouped = {};
       // const key = Math.floor(Math.random() * 4) + 1
       const data = await fetchdata(
