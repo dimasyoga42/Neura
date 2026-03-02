@@ -103,6 +103,7 @@ import { kerang } from "../plugins/fun/kerang.js";
 import { spamAdv } from "../plugins/toram/adv1.js";
 import { takjilRandom } from "../plugins/fun/takjil.js";
 import { codeLive } from "../plugins/fitur/codeLive.js";
+import { instagramdownloder } from "../plugins/vip/downloader/instagram.js";
 //import { EfekCommand } from "../plugins/vip/tools/audioeffect.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
@@ -1110,5 +1111,15 @@ registerCommand({
   run: async (sock, chatId, msg, args, text) => {
     if (isBan(sock, chatId, msg)) return;
     codeLive(sock, chatId, msg);
+  },
+});
+registerCommand({
+  name: "ig",
+  alias: ["igdl"],
+  category: "Downloader",
+  desc: "code live",
+  run: async (sock, chatId, msg, args, text) => {
+    if (isBan(sock, chatId, msg)) return;
+    instagramdownloder(sock, chatId, msg, text);
   },
 });
