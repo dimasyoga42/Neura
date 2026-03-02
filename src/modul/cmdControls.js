@@ -144,7 +144,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
         `${messages}`,
       );
       sortedCategory.forEach((cat) => {
-        menutext += `❏ *${cat}*\n`;
+        menutext += `┌❏ *${cat}*\n`;
         // sort command A-Z
         grouped[cat]
           .sort((a, b) => a.name.localeCompare(b.name))
@@ -153,7 +153,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
             menutext += `│• .${cmd.name}\n`;
           });
 
-        menutext += `└────\n`;
+        menutext += `└────\n\n`;
       });
 
       await sock.sendMessage(chatId, {
