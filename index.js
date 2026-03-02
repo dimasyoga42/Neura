@@ -16,7 +16,7 @@ import { jawab } from "./src/plugins/fun/caklontong.js";
 import { commands } from "./setting.js";
 import { prefix } from "./src/admin/prefix.js";
 //import { loadCommand } from "./src/service/core/commandhendler.js";
-import { handleMessage } from "./src/service/core/hendlercmd.js";
+//import { handleMessage } from "./src/service/core/hendlercmd.js";
 //import { jawabTebakkata } from "./src/plugins/fun/tebakkata.js";
 dotenv.config();
 const start = async () => {
@@ -81,7 +81,7 @@ const start = async () => {
       jawab(sock, chatId, msg);
       subMenu(sock, chatId, msg, text);
       // jawabTebakkata(sock, chatId, msg)
-      await handleMessage(sock, chatId, msg);
+      //await handleMessage(sock, chatId, msg);
 
       const body =
         msg.message.conversation || msg.message.extendedTextMessage?.text || "";
