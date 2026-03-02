@@ -40,9 +40,9 @@ const cuaca = async (sock, chatId, msg, text) => {
       timeout: 15000,
     });
 
-    const now = weather?.data?.[0]?.cuaca?.[0]?.[0];
+    const cuacaData = weather?.data?.[0]?.cuaca;
 
-    if (!now) {
+    if (!cuacaData) {
       return sock.sendMessage(
         chatId,
         { text: "data cuaca tidak tersedia" },
@@ -50,15 +50,26 @@ const cuaca = async (sock, chatId, msg, text) => {
       );
     }
 
-    const resultText = `${wilayah}
-${now.weather_desc}
-suhu ${now.t}°C
-kelembapan ${now.hu}%
-angin ${now.wd} ${now.ws} km/jam
-jarak pandang ${now.vs_text}
-${now.local_datetime}`;
+    let resultText = `${wilayah}\n\n`;
 
-    await sock.sendMessage(chatId, { text: resultText }, { quoted: msg });
+    for (const group of cuacaData) {
+      for (const item of group) {
+        resultText += `${item.local_datetime}
+${item.weather_desc}
+suhu ${item.t}°C
+kelembapan ${item.hu}%
+angin ${item.wd} ${item.ws} km/jam
+jarak pandang ${item.vs_text}
+
+`;
+      }
+    }
+
+    await sock.sendMessage(
+      chatId,
+      { text: resultText.trim() },
+      { quoted: msg },
+    );
   } catch (err) {
     return sock.sendMessage(
       chatId,
