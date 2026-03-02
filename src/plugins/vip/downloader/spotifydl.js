@@ -8,7 +8,7 @@ const spotifyDownloader = async (sock, chatId, msg, text) => {
     if (!link) {
       return sock.sendMessage(
         chatId,
-        { text: "masukan link setelah .spotifydl" },
+        { text: "masukan link setelah .sptifydl" },
         { quoted: msg },
       );
     }
