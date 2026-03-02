@@ -153,7 +153,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
             menutext += `│• .${cmd.name}\n`;
           });
 
-        menutext += `\n`;
+        menutext += `└────\n`;
       });
 
       await sock.sendMessage(chatId, {
