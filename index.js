@@ -15,6 +15,8 @@ import { subMenu } from "./src/modul/subMenu.js";
 import { jawab } from "./src/plugins/fun/caklontong.js";
 import { commands } from "./setting.js";
 import { prefix } from "./src/admin/prefix.js";
+//import { loadCommand } from "./src/service/core/commandhendler.js";
+import { handleMessage } from "./src/service/core/hendlercmd.js";
 //import { jawabTebakkata } from "./src/plugins/fun/tebakkata.js";
 dotenv.config();
 const start = async () => {
@@ -23,7 +25,7 @@ const start = async () => {
   const sock = makeWASocket({
     version,
     auth: state,
-    printQRInTerminal: false
+    printQRInTerminal: false,
   });
   sock.ev.on("creds.update", saveCreds);
 
@@ -45,7 +47,9 @@ const start = async () => {
           console.log("Reconnect dalam 5 detik...");
           setTimeout(start, 5000);
         } else {
-          console.log(" Logout permanen. Hapus folder auth_save untuk login ulang.");
+          console.log(
+            " Logout permanen. Hapus folder auth_save untuk login ulang.",
+          );
         }
       }
 
@@ -57,27 +61,30 @@ const start = async () => {
       setTimeout(start, 5000);
     }
   });
-  sock.ev.on('group-participants.update', async (update) => {
-    await HandleWelcome(sock, update)
-    await outGC(sock, update)
-  })
+  sock.ev.on("group-participants.update", async (update) => {
+    await HandleWelcome(sock, update);
+    await outGC(sock, update);
+  });
   sock.ev.on("messages.upsert", async ({ messages }) => {
-    const msg = messages[0]
+    const msg = messages[0];
 
     try {
       const chatId = msg.key.remoteJid;
-      const text = msg.message.conversation || msg.message.extendedTextMessage?.text || "";
+      const text =
+        msg.message.conversation || msg.message.extendedTextMessage?.text || "";
       //if (!chatId?.endsWith("@g.us")) return;
       messageHandler(sock, chatId, msg);
-      checkMentionAfk(sock, chatId, msg)
+      checkMentionAfk(sock, chatId, msg);
       checkUnAfk(sock, chatId, msg);
       ownerControls(sock, chatId, msg, text);
       cmdMenucontrol(sock, chatId, msg, text);
-      jawab(sock, chatId, msg)
+      jawab(sock, chatId, msg);
       subMenu(sock, chatId, msg, text);
       // jawabTebakkata(sock, chatId, msg)
+      await handleMessage(sock, chatId, msg);
 
-      const body = msg.message.conversation || msg.message.extendedTextMessage?.text || "";
+      const body =
+        msg.message.conversation || msg.message.extendedTextMessage?.text || "";
 
       const prefix = ".";
 
@@ -91,32 +98,22 @@ const start = async () => {
           try {
             // pastikan args & text aman
             const safeArgs = Array.isArray(args) ? args : [];
-            const safeText = typeof text === "string"
-              ? text
-              : safeArgs.join(" "); // fallback dari args
+            const safeText =
+              typeof text === "string" ? text : safeArgs.join(" "); // fallback dari args
 
-            await command.run(
-              sock,
-              msg.key.remoteJid,
-              msg,
-              safeArgs,
-              safeText
-            );
-
+            await command.run(sock, msg.key.remoteJid, msg, safeArgs, safeText);
           } catch (error) {
             console.error(`Error eksekusi [${commandName}]:`, error);
             await sock.sendMessage(msg.key.remoteJid, {
-              text: "Gagal menjalankan perintah."
+              text: "Gagal menjalankan perintah.",
             });
           }
         }
-
       }
-
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
-  })
+  });
 };
 
 start();
