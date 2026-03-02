@@ -1,12 +1,11 @@
-import { supabase } from "../../model/supabase.js"
-
+import { supabase } from "../../model/supabase.js";
 
 const parseDrops = (drops) => {
   if (!drops) return "-";
 
   return drops
     .split(",")
-    .map(d => d.trim())
+    .map((d) => d.trim())
     .filter(Boolean)
     .join("\n- ");
 };
@@ -19,7 +18,7 @@ export const searchMonster = async (sock, chatId, msg, text) => {
       return sock.sendMessage(
         chatId,
         { text: "Format salah\n> gunakan .monster name" },
-        { quoted: msg }
+        { quoted: msg },
       );
     }
 
@@ -33,7 +32,7 @@ export const searchMonster = async (sock, chatId, msg, text) => {
       return sock.sendMessage(
         chatId,
         { text: "Internal server error" },
-        { quoted: msg }
+        { quoted: msg },
       );
     }
 
@@ -41,14 +40,15 @@ export const searchMonster = async (sock, chatId, msg, text) => {
       return sock.sendMessage(
         chatId,
         { text: "monster tidak ditemukan" },
-        { quoted: msg }
+        { quoted: msg },
       );
     }
 
-
     const messageData = `
 *SEARCH MONSTER (${data.length})*
-${data.map((m, i) => `
+${data
+  .map(
+    (m, i) => `
 ${m.name}
 Level  : ${m.level}
 MaxHP  : ${m.hp}
@@ -56,22 +56,18 @@ Element: ${m.element}
 Map    : ${m.map}
 Drops  :
 - ${parseDrops(m.drops)}
-`).join("")}
+`,
+  )
+  .join("")}
 `.trim();
 
-    await sock.sendMessage(
-      chatId,
-      { text: messageData },
-      { quoted: msg }
-    );
-
+    await sock.sendMessage(chatId, { text: messageData }, { quoted: msg });
   } catch (err) {
     console.log(err);
     await sock.sendMessage(
       chatId,
       { text: "Terjadi kesalahan" },
-      { quoted: msg }
+      { quoted: msg },
     );
   }
 };
-
