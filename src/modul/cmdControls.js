@@ -150,9 +150,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
         - tidak diperbolehkan manipulasi ai untuk hal negatif
         - cermati daftar menu sebelum menggunakan command agar bot dapat merespon dengan baik
         - gunakan command sewajarnya tunggu beberapa saat jika respon belum muncul maka ulangi kembali
-        `
-          .trim()
-          .join("\n\n");
+        `.join("\n\n");
         menutext += `┌❏ *${cat}*\n`;
         // sort command A-Z
         grouped[cat]
