@@ -1123,3 +1123,13 @@ registerCommand({
     instagramdownloder(sock, chatId, msg, text);
   },
 });
+registerCommand({
+  name: "sptifydl",
+  alias: ["spdl"],
+  category: "Downloader",
+  desc: "downloder spotify via link",
+  run: async (sock, chatId, msg, args, text) => {
+    if (isBan(sock, chatId, msg)) return;
+    instagramdownloder(sock, chatId, msg, text);
+  },
+});
