@@ -116,7 +116,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "memunculkan daftar menu",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
-      let menutext = `*Neura Sama Menu*\nRules bot:\n- jangan spam command\n- jangan membuat stiker jamok\n- dilarang maanipulasi AI\n`;
+      let menutext = `*Neura Sama Menu*\nRules bot:\n- jangan spam command\n- jangan membuat stiker jamok\n- dilarang manipulasi AI\n- jika bot tidak merespon ulangi kembali command\n\n`;
       const grouped = {};
       // const key = Math.floor(Math.random() * 4) + 1
       const data = await fetchdata(
