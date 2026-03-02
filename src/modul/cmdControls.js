@@ -105,6 +105,7 @@ import { takjilRandom } from "../plugins/fun/takjil.js";
 import { codeLive } from "../plugins/fitur/codeLive.js";
 import { instagramdownloder } from "../plugins/vip/downloader/instagram.js";
 import { spotifyDownloader } from "../plugins/vip/downloader/spotifydl.js";
+import tiktokDownloader from "../plugins/vip/downloader/tt.js";
 //import { EfekCommand } from "../plugins/vip/tools/audioeffect.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
@@ -1132,5 +1133,16 @@ registerCommand({
   run: async (sock, chatId, msg, args, text) => {
     if (isBan(sock, chatId, msg)) return;
     spotifyDownloader(sock, chatId, msg, text);
+  },
+});
+
+registerCommand({
+  name: "tt",
+  alias: ["ttdl"],
+  category: "Downloader",
+  desc: "downloder tiktok via link",
+  run: async (sock, chatId, msg, args, text) => {
+    if (isBan(sock, chatId, msg)) return;
+    tiktokDownloader(sock, chatId, msg, text);
   },
 });
