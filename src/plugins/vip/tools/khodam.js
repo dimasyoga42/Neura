@@ -44,13 +44,13 @@ const getKhodamLokal = (nama) => {
     }
   }
 
-  let hash = 0;
-  for (let i = 0; i < nama.length; i++) {
-    hash = (hash << 5) - hash + nama.charCodeAt(i);
-    hash |= 0;
-  }
-  const index = Math.abs(hash) % dataset.length;
-  return dataset[index];
+  // let hash = 0;
+  // for (let i = 0; i < nama.length; i++) {
+  //   hash = (hash << 5) - hash + nama.charCodeAt(i);
+  //   hash |= 0;
+  // }
+  // const index = Math.abs(hash) % dataset.length;
+  return dataset;
 };
 
 export const khodam = async (sock, chatId, msg, text) => {

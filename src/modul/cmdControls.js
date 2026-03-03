@@ -821,16 +821,16 @@ nomer owner: 085664393331 (dimas)`,
     },
   });
 
-  registerCommand({
-    name: "khodam",
-    alias: ["khodam"],
-    category: "Menu Fun",
-    desc: "ghaca khodam",
-    run: async (sock, chatId, msg, args, text) => {
-      if (isBan(sock, chatId, msg)) return;
-      khodam(sock, chatId, msg, text);
-    },
-  });
+  // registerCommand({
+  //   name: "khodam",
+  //   alias: ["khodam"],
+  //   category: "Menu Fun",
+  //   desc: "ghaca khodam",
+  //   run: async (sock, chatId, msg, args, text) => {
+  //     if (isBan(sock, chatId, msg)) return;
+  //     khodam(sock, chatId, msg, text);
+  //   },
+  // });
 
   registerCommand({
     name: "shdb",
