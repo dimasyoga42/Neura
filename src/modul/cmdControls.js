@@ -570,16 +570,16 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     },
   });
 
-  registerCommand({
-    name: "remini",
-    alias: ["enhance"],
-    category: "Menu Tools",
-    desc: "meningkatkan kualitas gambar",
-    run: async (sock, chatId, msg) => {
-      if (isBan(sock, chatId, msg)) return;
-      Remini(sock, chatId, msg);
-    },
-  });
+  // registerCommand({
+  //   name: "remini",
+  //   alias: ["enhance"],
+  //   category: "Menu Tools",
+  //   desc: "meningkatkan kualitas gambar",
+  //   run: async (sock, chatId, msg) => {
+  //     if (isBan(sock, chatId, msg)) return;
+  //     Remini(sock, chatId, msg);
+  //   },
+  // });
 
   registerCommand({
     name: "upbag",
@@ -898,16 +898,16 @@ nomer owner: 085664393331 (dimas)`,
     },
   });
 
-  registerCommand({
-    name: "artinama",
-    alias: ["artinama"],
-    category: "Menu Fun",
-    desc: "melihat arti nama",
-    run: async (sock, chatId, msg, args, text) => {
-      if (isBan(sock, chatId, msg)) return;
-      artiNama(sock, chatId, msg, text);
-    },
-  });
+  // registerCommand({
+  //   name: "artinama",
+  //   alias: ["artinama"],
+  //   category: "Menu Fun",
+  //   desc: "melihat arti nama",
+  //   run: async (sock, chatId, msg, args, text) => {
+  //     if (isBan(sock, chatId, msg)) return;
+  //     artiNama(sock, chatId, msg, text);
+  //   },
+  // });
 
   registerCommand({
     name: "note",
