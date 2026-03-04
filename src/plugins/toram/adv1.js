@@ -54,8 +54,7 @@ export const spamAdv = async (sock, chatId, msg, text) => {
       Array.isArray(result.progress) && result.progress.length > 0
         ? result.progress
             .map((v) => {
-              return `Run ${v.run}
-Level: ${v.level} (${v.percent}%)`;
+              return `${v.run}. ${v.level} (${v.percent}%)`;
             })
             .join("\n")
         : "-";
