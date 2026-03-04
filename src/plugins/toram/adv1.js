@@ -8,7 +8,7 @@ export const spamAdv = async (sock, chatId, msg, text) => {
     const max = arg[3];
     const from = arg[4];
 
-    if (!arg) {
+    if (!lv || !exp || !max || !from) {
       return await sock.sendMessage(
         chatId,
         {
