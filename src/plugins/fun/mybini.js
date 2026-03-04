@@ -4,11 +4,8 @@ export const myBini = async (sock, chatId, msg) => {
   try {
     const { data } = await axios.get(
       "https://neuraapi.vercel.app/api/etc/waifu",
-      {
-        timeout: 15000,
-      },
     );
-
+    console.log(data);
     if (!data || !data.result || data.result.status !== 200) {
       return await sock.sendMessage(
         chatId,
