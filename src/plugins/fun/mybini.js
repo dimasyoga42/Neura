@@ -24,11 +24,7 @@ export const myBini = async (sock, chatId, msg) => {
       },
       { quoted: msg },
     );
-  } catch {
-    await sock.sendMessage(
-      chatId,
-      { text: "Server error, coba lagi nanti" },
-      { quoted: msg },
-    );
+  } catch (err) {
+    await sock.sendMessage(chatId, { text: err }, { quoted: msg });
   }
 };
