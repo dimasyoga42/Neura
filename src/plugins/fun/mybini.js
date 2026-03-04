@@ -15,6 +15,7 @@ export const myBini = async (sock, chatId, msg) => {
     }
 
     const result = data.result;
+    console.log(result);
 
     const messagetxt = `Bini Kamu Adalah ${result.message}
 Source: ${result.source} - (${result.art})
