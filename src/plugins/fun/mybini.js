@@ -25,6 +25,6 @@ export const myBini = async (sock, chatId, msg) => {
       { quoted: msg },
     );
   } catch (err) {
-    await sock.sendMessage(chatId, { text: err }, { quoted: msg });
+    await sock.sendMessage(chatId, { text: err.message }, { quoted: msg });
   }
 };
