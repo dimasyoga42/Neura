@@ -2,7 +2,6 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL: "https://api.deline.web.id",
-  timeout: 15000,
   headers: {
     Accept: "application/json",
   },
