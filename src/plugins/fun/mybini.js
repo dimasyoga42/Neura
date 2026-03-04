@@ -19,7 +19,7 @@ export const myBini = async (sock, chatId, msg) => {
     await sock.sendMessage(
       chatId,
       {
-        image: Url,
+        image: { url: Url },
         caption: `Bini Kamu: ${message}\nSource: ${source} (${art})\nJumlah: ${jumlah}`,
       },
       { quoted: msg },
