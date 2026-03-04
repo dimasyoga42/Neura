@@ -53,8 +53,7 @@ export const spamAdv = async (sock, chatId, msg, text) => {
         ? result.path.map((v, i) => `${i + 1}. ${v}`).join("\n")
         : "-";
 
-    const responseText = `*TORAM SPAM ADV RESULT*
-
+    const responseText = `*Toram MQ Calculator*
 Last MQ: ${result.lastmq}
 Target Level: ${result.targetLevel}
 Diaries Needed: ${result.diariesNeeded}
