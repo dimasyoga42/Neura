@@ -1,4 +1,3 @@
-import { writeRandomPadMax16 } from "@ajammm/baileys";
 import axios from "axios";
 
 export const spamAdv = async (sock, chatId, msg, text) => {
