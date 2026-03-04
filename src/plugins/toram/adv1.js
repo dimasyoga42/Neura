@@ -55,11 +55,9 @@ export const spamAdv = async (sock, chatId, msg, text) => {
         ? result.progress
             .map((v) => {
               return `Run ${v.run}
-Level: ${v.level} (${v.percent}%)
-Current EXP: ${v.currentExp.toLocaleString()}
-EXP To Next Level: ${v.expToNextLevel.toLocaleString()}`;
+Level: ${v.level} (${v.percent}%)`;
             })
-            .join("\n\n")
+            .join("\n")
         : "-";
 
     const responseText = `*SPAM ADV CALCULATOR*
