@@ -16,14 +16,13 @@ export const myBini = async (sock, chatId, msg) => {
 
     const { message, source, art, jumlah, Url } = data.result;
 
-    const imgBuffer = await axios.get(Url, { responseType: "arraybuffer" });
-    const buffer = Buffer.from(imgBuffer.data);
+    const buffer = Buffer.from(Url);
 
     await sock.sendMessage(
       chatId,
       {
         image: buffer,
-        caption: `Bini Kamu: ${message}\nSource: ${source} (${art})\nJumlah: ${jumlah}`,
+        caption: `Bini Kamu ${message}\nSource: ${source} (${art})\nJumlah: ${jumlah}`,
       },
       { quoted: msg },
     );
