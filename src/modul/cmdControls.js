@@ -107,6 +107,7 @@ import { instagramdownloder } from "../plugins/vip/downloader/instagram.js";
 import { spotifyDownloader } from "../plugins/vip/downloader/spotifydl.js";
 import tiktokDownloader from "../plugins/vip/downloader/tt.js";
 import cuaca from "../plugins/fitur/cuaca.js";
+import { myBini } from "../plugins/fun/mybini.js";
 //import { EfekCommand } from "../plugins/vip/tools/audioeffect.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
@@ -719,6 +720,17 @@ nomer owner: 085664393331 (dimas)`,
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
       husbu(sock, chatId, msg);
+    },
+  });
+
+  registerCommand({
+    name: "wife",
+    alias: ["wife"],
+    category: "Menu Fun",
+    desc: "mendapatkan gambar Istri random",
+    run: async (sock, chatId, msg) => {
+      if (isBan(sock, chatId, msg)) return;
+      myBini(sock, chatId, msg);
     },
   });
 
