@@ -1,13 +1,12 @@
-import { supabase } from "../../model/supabase.js"
+import { supabase } from "../../model/supabase.js";
 const formatStatList = (stat) => {
   if (!stat || stat === "None") return "- None";
 
   return stat
     .split("|")
-    .map(s => `${s.trim()}`)
+    .map((s) => `${s.trim()}`)
     .join("\n");
 };
-
 
 const parseStat = (stat) => {
   if (!stat) return "-";
@@ -25,67 +24,62 @@ const parseStat = (stat) => {
   return result.length ? result.join("\n- ") : "-";
 };
 
-
 export const setxtall = async (sock, chatId, msg, text) => {
   try {
-    const arg = text.split('-').map(v => v.trim())
+    const arg = text.split("-").map((v) => v.trim());
 
-    const name = arg[1]
-    const upgrade = arg[2]
-    const type = arg[3]
-    const stat = arg[4]
-    const rute = arg[5]
+    const name = arg[1];
+    const upgrade = arg[2];
+    const type = arg[3];
+    const stat = arg[4];
+    const rute = arg[5];
 
     // Validasi input
     if (!name || !upgrade || !type || !stat || !rute) {
       return sock.sendMessage(
         chatId,
         {
-          text: `Format salah!\nGunakan:\n.setxtall-nama-upgrade-type-stat-rute`
+          text: `Format salah!\nGunakan:\n.setxtall-nama-upgrade-type-stat-rute`,
         },
-        { quoted: msg }
-      )
+        { quoted: msg },
+      );
     }
 
-    const { error } = await supabase
-      .from('xtall')
-      .insert({
-        name: name,
-        upgrade: upgrade,
-        type: type,
-        stat: stat,
-        rute: rute
-      })
+    const { error } = await supabase.from("xtall").insert({
+      name: name,
+      upgrade: upgrade,
+      type: type,
+      stat: stat,
+      rute: rute,
+    });
 
     if (error) {
       return sock.sendMessage(
         chatId,
         {
-          text: `Gagal menambahkan xtall:\n${error.message}`
+          text: `Gagal menambahkan xtall:\n${error.message}`,
         },
-        { quoted: msg }
-      )
+        { quoted: msg },
+      );
     }
 
     sock.sendMessage(
       chatId,
       {
-        text: `${name} berhasil ditambahkan`
+        text: `${name} berhasil ditambahkan`,
       },
-      { quoted: msg }
-    )
-
+      { quoted: msg },
+    );
   } catch (err) {
     sock.sendMessage(
       chatId,
       {
-        text: `Terjadi error:\n${err.message}`
+        text: `Terjadi error:\n${err.message}`,
       },
-      { quoted: msg }
-    )
+      { quoted: msg },
+    );
   }
-}
-
+};
 
 export const searchXtall = async (sock, chatId, msg, text) => {
   try {
@@ -95,73 +89,77 @@ export const searchXtall = async (sock, chatId, msg, text) => {
       return sock.sendMessage(
         chatId,
         { text: "Format salah\n> gunakan .xtall <name>" },
-        { quoted: msg }
+        { quoted: msg },
       );
     }
 
-    const { data, error } = await supabase
-      .from("xtal")
-      .select("name, type, upgrade, stat, route")
-      .ilike("name", `%${nama}%`); // ❌ hapus limit(1)
+    const { data } = await axios.get(
+      "https://raw.githubusercontent.com/dimasyoga42/dataset/refs/heads/main/xtal_data.json",
+    );
 
-    if (error) {
-      console.log(error);
+    if (!Array.isArray(data)) {
       return sock.sendMessage(
         chatId,
-        { text: "Internal server error" },
-        { quoted: msg }
+        { text: "Data xtall tidak valid" },
+        { quoted: msg },
       );
     }
 
-    if (!data || data.length === 0) {
+    const result = data.filter((x) =>
+      x.name.toLowerCase().includes(nama.toLowerCase()),
+    );
+
+    if (result.length === 0) {
       return sock.sendMessage(
         chatId,
         { text: "Xtall tidak ditemukan" },
-        { quoted: msg }
+        { quoted: msg },
       );
     }
 
-    const messageData = `
+    const messageData = result
+      .map((xtall) => {
+        const statsText = Object.entries(xtall.stats || {})
+          .map(([key, val]) => `${key} : ${val}`)
+          .join("\n");
 
-${data.map((xtall, i) => `
-*${xtall.name} - ${xtall.type}*
+        return `*${xtall.name} - ${xtall.type}*
 
-${xtall.stat}
+${statsText}
 
-Upgrade : ${xtall.upgrade || ""}
-Rute:
-${xtall.route}
-`).join("━━━━━━━━━━━━━━━━━━━━\n")}
-`.trim();
+Upgrade Route :
+${xtall.upgrade_route || "-"}
+
+${xtall.max_upgrade_route || "-"}
+`;
+      })
+      .join("━━━━━━━━━━━━━━━━━━━━\n");
 
     await sock.sendMessage(
       chatId,
-      { text: messageData },
-      { quoted: msg }
+      { text: messageData.trim() },
+      { quoted: msg },
     );
-
   } catch (err) {
     console.log(err);
     await sock.sendMessage(
       chatId,
       { text: "Terjadi kesalahan" },
-      { quoted: msg }
+      { quoted: msg },
     );
   }
 };
 
 export const Xtall = async (sock, chatId, msg) => {
   try {
-    const { data, error } = await supabase
-      .from("xtall")
-      .select("name");
+    const { data, error } = await supabase.from("xtall").select("name");
 
     if (error) {
       console.log(error);
       return sock.sendMessage(
         chatId,
         { text: "Internal server error" },
-        { quoted: msg }
+        { quoted: msg },
       );
     }
 
@@ -169,34 +167,25 @@ export const Xtall = async (sock, chatId, msg) => {
       return sock.sendMessage(
         chatId,
         { text: "Data xtall masih kosong" },
-        { quoted: msg }
+        { quoted: msg },
       );
     }
 
     const messageData = `
 *LIST XTALL (${data.length})*
-${data
-        .map((xtall, i) => `${i + 1}. ${xtall.name}`)
-        .join("\n")}
+${data.map((xtall, i) => `${i + 1}. ${xtall.name}`).join("\n")}
 `.trim();
 
-    await sock.sendMessage(
-      chatId,
-      { text: messageData },
-      { quoted: msg }
-    );
-
+    await sock.sendMessage(chatId, { text: messageData }, { quoted: msg });
   } catch (err) {
     console.log(err);
     await sock.sendMessage(
       chatId,
       { text: "Terjadi kesalahan" },
-      { quoted: msg }
+      { quoted: msg },
     );
   }
 };
-
-
 
 export const searchRegist = async (sock, chatId, msg, text) => {
   try {
@@ -206,7 +195,7 @@ export const searchRegist = async (sock, chatId, msg, text) => {
       return sock.sendMessage(
         chatId,
         { text: "Format salah\n> gunakan .regist <nama regist>" },
-        { quoted: msg }
+        { quoted: msg },
       );
     }
 
@@ -220,7 +209,7 @@ export const searchRegist = async (sock, chatId, msg, text) => {
       return sock.sendMessage(
         chatId,
         { text: "Internal server error" },
-        { quoted: msg }
+        { quoted: msg },
       );
     }
 
@@ -228,50 +217,52 @@ export const searchRegist = async (sock, chatId, msg, text) => {
       return sock.sendMessage(
         chatId,
         { text: "Regist tidak ditemukan" },
-        { quoted: msg }
+        { quoted: msg },
       );
     }
 
     const messageData = `
-${data.map((rg, i) => `
+${data
+  .map(
+    (rg, i) => `
 *${rg.name}*
 ${rg.effect}
 - Max Level ${rg.max_lv}
 - Level stodee  ${rg.levels_studied}
-`).join("━━━━━━━━━━━━━━━━━━━━\n")}
+`,
+  )
+  .join("━━━━━━━━━━━━━━━━━━━━\n")}
 `.trim();
 
-    sock.sendMessage(
-      chatId,
-      { text: messageData },
-      { quoted: msg }
-    );
-
+    sock.sendMessage(chatId, { text: messageData }, { quoted: msg });
   } catch (err) {
     console.log(err);
-    sock.sendMessage(
-      chatId,
-      { text: "Terjadi kesalahan" },
-      { quoted: msg }
-    );
+    sock.sendMessage(chatId, { text: "Terjadi kesalahan" }, { quoted: msg });
   }
 };
-
 
 export const ability = async (sock, chatId, msg) => {
   try {
     const { data, error } = await supabase
       .from("ability")
       .select("name")
-      .order('name', { ascending: true });
+      .order("name", { ascending: true });
 
     if (error) {
       console.error("Supabase Error:", error); // Log ke console server untuk debugging
-      return sock.sendMessage(chatId, { text: "Gagal mengambil data dari database." }, { quoted: msg });
+      return sock.sendMessage(
+        chatId,
+        { text: "Gagal mengambil data dari database." },
+        { quoted: msg },
+      );
     }
 
     if (!data || data.length === 0) {
-      return sock.sendMessage(chatId, { text: "Belum ada data ability yang tersimpan." }, { quoted: msg });
+      return sock.sendMessage(
+        chatId,
+        { text: "Belum ada data ability yang tersimpan." },
+        { quoted: msg },
+      );
     }
 
     const formattedList = data
@@ -282,13 +273,16 @@ export const ability = async (sock, chatId, msg) => {
 
     // Mengirim pesan
     await sock.sendMessage(chatId, { text: txt }, { quoted: msg });
-
   } catch (err) {
     console.error("System Error:", err);
     // Pesan error ke user sebaiknya generik, detail error cukup di console server
-    await sock.sendMessage(chatId, { text: "Terjadi kesalahan pada sistem bot." }, { quoted: msg });
+    await sock.sendMessage(
+      chatId,
+      { text: "Terjadi kesalahan pada sistem bot." },
+      { quoted: msg },
+    );
   }
-}
+};
 export const searchAbility = async (sock, chatId, msg, text) => {
   try {
     const nama = text.replace(".ability", "").trim();
@@ -297,7 +291,7 @@ export const searchAbility = async (sock, chatId, msg, text) => {
       return sock.sendMessage(
         chatId,
         { text: "Format salah\n> gunakan .ability <nama ability>" },
-        { quoted: msg }
+        { quoted: msg },
       );
     }
 
@@ -311,7 +305,7 @@ export const searchAbility = async (sock, chatId, msg, text) => {
       return sock.sendMessage(
         chatId,
         { text: "Internal server error" },
-        { quoted: msg }
+        { quoted: msg },
       );
     }
 
@@ -319,35 +313,27 @@ export const searchAbility = async (sock, chatId, msg, text) => {
       return sock.sendMessage(
         chatId,
         { text: "Ability tidak ditemukan" },
-        { quoted: msg }
+        { quoted: msg },
       );
     }
 
     const messageData = `
-${data.map((ab, i) => `
+${data
+  .map(
+    (ab, i) => `
 *${ab.name} - (tier ${ab.tier})*
 ${ab.stat_effect}
-`).join("━━━━━━━━━━━━━━━━━━━━\n")}
+`,
+  )
+  .join("━━━━━━━━━━━━━━━━━━━━\n")}
 `.trim();
 
-    sock.sendMessage(
-      chatId,
-      { text: messageData },
-      { quoted: msg }
-    );
-
+    sock.sendMessage(chatId, { text: messageData }, { quoted: msg });
   } catch (err) {
     console.log(err);
-    sock.sendMessage(
-      chatId,
-      { text: "Terjadi kesalahan" },
-      { quoted: msg }
-    );
+    sock.sendMessage(chatId, { text: "Terjadi kesalahan" }, { quoted: msg });
   }
 };
-
-
-
 
 export const searchItem = async (sock, chatId, msg, text) => {
   try {
@@ -357,7 +343,7 @@ export const searchItem = async (sock, chatId, msg, text) => {
       return sock.sendMessage(
         chatId,
         { text: "Format salah\n> gunakan .item <nama item>" },
-        { quoted: msg }
+        { quoted: msg },
       );
     }
 
@@ -371,43 +357,39 @@ export const searchItem = async (sock, chatId, msg, text) => {
       return sock.sendMessage(
         chatId,
         { text: "Internal server error" },
-        { quoted: msg }
+        { quoted: msg },
       );
     }
 
     if (!data || data.length === 0) {
       return sock.sendMessage(
         chatId,
-        { text: "Item tidak ditemukan\ntips jika item yang dicari tidak ada gunakan nama versi bahasa inggrisnya" },
-        { quoted: msg }
+        {
+          text: "Item tidak ditemukan\ntips jika item yang dicari tidak ada gunakan nama versi bahasa inggrisnya",
+        },
+        { quoted: msg },
       );
     }
 
     const messageData = `
-${data.map((item, i) => `
+${data
+  .map(
+    (item, i) => `
 *${item.nama} - (${item.jenis})*
 ${formatStatList(item.stat)}
 Drop  :
 ${item.drop}
-`).join("━━━━━━━━━━━━━━━━━━━━\n")}
+`,
+  )
+  .join("━━━━━━━━━━━━━━━━━━━━\n")}
 `.trim();
 
-    sock.sendMessage(
-      chatId,
-      { text: messageData.trim() },
-      { quoted: msg }
-    );
-
+    sock.sendMessage(chatId, { text: messageData.trim() }, { quoted: msg });
   } catch (err) {
     console.log(err);
-    sock.sendMessage(
-      chatId,
-      { text: "Terjadi kesalahan" },
-      { quoted: msg }
-    );
+    sock.sendMessage(chatId, { text: "Terjadi kesalahan" }, { quoted: msg });
   }
 };
-
 
 export const searchApp = async (sock, chatId, msg, text) => {
   try {
@@ -417,7 +399,7 @@ export const searchApp = async (sock, chatId, msg, text) => {
       return sock.sendMessage(
         chatId,
         { text: "Gunakan: .appview <nama>" },
-        { quoted: msg }
+        { quoted: msg },
       );
     }
 
@@ -432,7 +414,7 @@ export const searchApp = async (sock, chatId, msg, text) => {
       return sock.sendMessage(
         chatId,
         { text: "Terjadi kesalahan saat mencari data" },
-        { quoted: msg }
+        { quoted: msg },
       );
     }
 
@@ -440,7 +422,7 @@ export const searchApp = async (sock, chatId, msg, text) => {
       return sock.sendMessage(
         chatId,
         { text: "App tidak ditemukan" },
-        { quoted: msg }
+        { quoted: msg },
       );
     }
 
@@ -455,18 +437,12 @@ Nama App : ${app.name}
       chatId,
       {
         image: { url: app.image_url },
-        caption: messageData
+        caption: messageData,
       },
-      { quoted: msg }
+      { quoted: msg },
     );
-
   } catch (err) {
     console.log(err);
-    sock.sendMessage(
-      chatId,
-      { text: "Error internal" },
-      { quoted: msg }
-    );
+    sock.sendMessage(chatId, { text: "Error internal" }, { quoted: msg });
   }
 };
-
