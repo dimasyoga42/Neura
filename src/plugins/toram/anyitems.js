@@ -1,4 +1,5 @@
 import { supabase } from "../../model/supabase.js";
+import axios from "axios";
 const formatStatList = (stat) => {
   if (!stat || stat === "None") return "- None";
 
