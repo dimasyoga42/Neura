@@ -121,7 +121,16 @@ export const searchXtall = async (sock, chatId, msg, text) => {
     const messageData = result
       .map((xtall) => {
         const statsText = Object.entries(xtall.stats || {})
-          .map(([key, val]) => `${key} : ${val}`)
+          .map(([key, val]) => {
+            const cleanKey = key.replace(/\s+/g, " ").trim();
+
+            const cleanVal = String(val)
+              .replace(/\n+/g, " ")
+              .replace(/\s{2,}/g, " ")
+              .trim();
+
+            return `${cleanKey} : ${cleanVal}`;
+          })
           .join("\n");
 
         return `*${xtall.name} - ${xtall.type}*
@@ -131,6 +140,7 @@ ${statsText}
 Upgrade Route :
 ${xtall.upgrade_route || "-"}
 
+Max Upgrade Route :
 ${xtall.max_upgrade_route || "-"}
 `;
       })
