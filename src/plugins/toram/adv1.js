@@ -1,4 +1,4 @@
-import axios from "axios";
+import fetch from "node-fetch";
 
 export const spamAdv = async (sock, chatId, msg, text) => {
   try {
@@ -18,18 +18,23 @@ export const spamAdv = async (sock, chatId, msg, text) => {
       );
     }
 
-    const response = await axios.get(
+    // Eksekusi permintaan HTTP
+    const response = await fetch(
       `https://neuraapi.vercel.app/api/toram/spamadv?lv=${lv}&exp=${exp}&lvmx=${max}&from=${from}`,
     );
 
-    // Berdasarkan JSON Anda, data berada di response.data.data
-    const result = response.data?.data;
-    console.log(result);
+    // Node-fetch memerlukan tahap parsing JSON secara eksplisit
+    const jsonResponse = await response.json();
+
+    // Berdasarkan struktur JSON Anda: { "status": 200, "success": true, "data": { ... } }
+    const result = jsonResponse.data;
 
     if (!result) {
       return await sock.sendMessage(
         chatId,
-        { text: "Gagal mendapatkan data: Format respons API tidak sesuai." },
+        {
+          text: "Gagal mendapatkan data: Respons API tidak mengandung data yang valid.",
+        },
         { quoted: msg },
       );
     }
@@ -61,10 +66,10 @@ ${progressText}`;
 
     await sock.sendMessage(chatId, { text: responseText }, { quoted: msg });
   } catch (err) {
-    const errorMessage = err.response?.data?.message || err.message;
+    // Penanganan kesalahan pada node-fetch sedikit berbeda karena tidak memiliki err.response otomatis seperti Axios
     await sock.sendMessage(
       chatId,
-      { text: `Terjadi kesalahan sistem: ${errorMessage}` },
+      { text: `Terjadi kesalahan sistem: ${err.message}` },
       { quoted: msg },
     );
   }
