@@ -19,7 +19,7 @@ export const spamAdv = async (sock, chatId, msg, text) => {
       );
     }
 
-    const { data } = await axios.get(
+    const data = await axios.get(
       `https://neuraapi.vercel.app/api/toram/spamadv?lv=${lv}&exp=${exp}&lvmx=${max}&from=${from}`,
     );
 
