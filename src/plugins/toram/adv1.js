@@ -19,13 +19,7 @@ export const spamAdv = async (sock, chatId, msg, text) => {
     }
 
     const { data } = await axios.get(
-      `https://neuraapi.vercel.app/api/toram/spamadv/q=level=${lv}&exp=${exp}&max=${max}&from=${from}`,
-      {
-        params: {
-          q: arg,
-        },
-        timeout: 15000,
-      },
+      `https://neuraapi.vercel.app/api/toram/spamadv?lv=${lv}&exp=${exp}&lvmx=${max}&from=${from}`,
     );
 
     if (!data || data.status !== 200 || !data.success) {
@@ -38,7 +32,7 @@ export const spamAdv = async (sock, chatId, msg, text) => {
       );
     }
 
-    const result = data.data;
+    const result = data.data.result;
 
     if (!result) {
       return await sock.sendMessage(
@@ -51,8 +45,8 @@ export const spamAdv = async (sock, chatId, msg, text) => {
     }
 
     const progressText =
-      Array.isArray(result.progress) && result.progress.length > 0
-        ? result.progress
+      Array.isArray(result.data.progress) && result.data.progress.length > 0
+        ? result.data.progress
             .map((v) => {
               return `${v.run}. ${v.level} (${v.percent}%)`;
             })
@@ -61,12 +55,12 @@ export const spamAdv = async (sock, chatId, msg, text) => {
 
     const responseText = `*SPAM ADV CALCULATOR*
 
-Start Level: ${result.startLevel} (${result.startPercent}%)
-Target Level: ${result.targetLevel}
-Runs Needed: ${result.runs}
+Start Level: ${result.data.startLevel} (${result.data.startPercent}%)
+Target Level: ${result.data.targetLevel}
+Runs Needed: ${result.data.runs}
 
-Final Level: ${result.finalLevel} (${result.finalPercent}%)
-Final EXP: ${result.finalExp.toLocaleString()}
+Final Level: ${result.data.finalLevel} (${result.data.finalPercent}%)
+Final EXP: ${result.data.finalExp.toLocaleString()}
 
 Progress Detail:
 ${progressText}`;
