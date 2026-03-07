@@ -31,11 +31,11 @@ export const spamAdv = async (sock, chatId, msg, text) => {
       );
     }
 
-    const result = data.data;
+    const result = data.data.result;
 
     const progressText =
-      Array.isArray(result.progress) && result.progress.length > 0
-        ? result.progress
+      Array.isArray(result.data.progress) && result.data.progress.length > 0
+        ? result.data.progress
             .map(
               (v) =>
                 `${v.run}. Lv ${v.level} (${v.percent}%) — EXP: ${v.currentExp.toLocaleString()}`,
