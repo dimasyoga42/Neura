@@ -21,7 +21,7 @@ export const spamAdv = async (sock, chatId, msg, text) => {
     const { data } = await axios.get(
       `https://neuraapi.vercel.app/api/toram/spamadv?lv=${lv}&exp=${exp}&lvmx=${max}&from=${from}`,
     );
-    console.log(data);
+    console.log(data.data);
     if (!data || data.status !== 200 || !data.success) {
       return await sock.sendMessage(
         chatId,
