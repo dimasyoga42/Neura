@@ -4,10 +4,10 @@ export const spamAdv = async (sock, chatId, msg, text) => {
   try {
     const arg = text.trim().split(/\s+/);
 
-    const lv = arg[0];
-    const exp = arg[1];
-    const max = arg[2];
-    const from = arg[3];
+    const lv = arg[1];
+    const exp = arg[2];
+    const max = arg[3];
+    const from = arg[4];
 
     if (!lv || !exp || !max || !from) {
       return await sock.sendMessage(
