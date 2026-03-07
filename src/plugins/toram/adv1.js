@@ -31,6 +31,7 @@ export const spamAdv = async (sock, chatId, msg, text) => {
     }
 
     const result = data.data; // ✅ langsung data.data, bukan data.data.result
+    console.log(data);
 
     if (!result) {
       return await sock.sendMessage(
