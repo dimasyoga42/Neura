@@ -39,7 +39,7 @@ export const spamAdv = async (sock, chatId, msg, text) => {
     const jsonResponse = await response.json();
 
     // Normalisasi: support array maupun object {data: ...}
-    const result = jsonResponse.data.result[0];
+    const result = jsonResponse.data.result;
     console.log(result);
 
     if (!result) {
