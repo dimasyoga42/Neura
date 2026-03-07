@@ -4,10 +4,10 @@ export const spamAdv = async (sock, chatId, msg, text) => {
   try {
     const arg = text.trim().split(/\s+/);
 
-    const lv = arg[1];
-    const exp = arg[2];
-    const max = arg[3];
-    const from = arg[4];
+    const lv = arg[0];
+    const exp = arg[1];
+    const max = arg[2];
+    const from = arg[3];
 
     if (!lv || !exp || !max || !from) {
       return await sock.sendMessage(
@@ -23,7 +23,7 @@ export const spamAdv = async (sock, chatId, msg, text) => {
       `https://neuraapi.vercel.app/api/toram/spamadv?lv=${lv}&exp=${exp}&lvmx=${max}&from=${from}`,
     );
 
-    if (!data || !data.result || data.result.status !== 200) {
+    if (!data || data.status !== 200 || !data.success) {
       return await sock.sendMessage(
         chatId,
         { text: "terjadi kesalahan saat mengambil data" },
@@ -31,15 +31,7 @@ export const spamAdv = async (sock, chatId, msg, text) => {
       );
     }
 
-    const result = data.result.data;
-
-    if (!result) {
-      return await sock.sendMessage(
-        chatId,
-        { text: "data tidak ditemukan" },
-        { quoted: msg },
-      );
-    }
+    const result = data.data;
 
     const progressText =
       Array.isArray(result.progress) && result.progress.length > 0
