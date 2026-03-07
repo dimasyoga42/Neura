@@ -27,7 +27,8 @@ export const spamAdv = async (sock, chatId, msg, text) => {
     const jsonResponse = await response.json();
 
     // Berdasarkan struktur JSON Anda: { "status": 200, "success": true, "data": { ... } }
-    const result = jsonResponse.data;
+    const result = jsonResponse.result.data;
+    console.log(result);
 
     if (!result) {
       return await sock.sendMessage(
