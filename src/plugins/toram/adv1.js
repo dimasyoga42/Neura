@@ -2,11 +2,12 @@ import axios from "axios";
 
 export const spamAdv = async (sock, chatId, msg, text) => {
   try {
-    const arg = text.split(" ");
-    const lv = arg[1];
-    const exp = arg[2];
-    const max = arg[3];
-    const from = arg[4];
+    const arg = text.trim().split(/\s+/);
+
+    const lv = arg[0];
+    const exp = arg[1];
+    const max = arg[2];
+    const from = arg[3];
 
     if (!lv || !exp || !max || !from) {
       return await sock.sendMessage(
@@ -18,11 +19,11 @@ export const spamAdv = async (sock, chatId, msg, text) => {
       );
     }
 
-    const data = await axios.get(
+    const { data } = await axios.get(
       `https://neuraapi.vercel.app/api/toram/spamadv?lv=${lv}&exp=${exp}&lvmx=${max}&from=${from}`,
     );
-    console.log(data.data.result);
-    if (!data.data.result || data.data.result.status !== 200) {
+
+    if (!data || !data.result || data.result.status !== 200) {
       return await sock.sendMessage(
         chatId,
         { text: "terjadi kesalahan saat mengambil data" },
@@ -30,7 +31,7 @@ export const spamAdv = async (sock, chatId, msg, text) => {
       );
     }
 
-    const result = data.data.result; // ✅ langsung data.data, bukan data.data.result
+    const result = data.result.data;
 
     if (!result) {
       return await sock.sendMessage(
@@ -41,8 +42,8 @@ export const spamAdv = async (sock, chatId, msg, text) => {
     }
 
     const progressText =
-      Array.isArray(result.data.progress) && result.data.progress.length > 0
-        ? result.data.progress
+      Array.isArray(result.progress) && result.progress.length > 0
+        ? result.progress
             .map(
               (v) =>
                 `${v.run}. Lv ${v.level} (${v.percent}%) — EXP: ${v.currentExp.toLocaleString()}`,
@@ -52,13 +53,13 @@ export const spamAdv = async (sock, chatId, msg, text) => {
 
     const responseText = `*SPAM ADV CALCULATOR*
 ━━━━━━━━━━━━━━━━━━
-Start Level : ${result.data.startLevel} (${result.data.startPercent}%)
-Target Level: ${result.data.targetLevel}
+Start Level : ${result.startLevel} (${result.startPercent}%)
+Target Level: ${result.targetLevel}
 ━━━━━━━━━━━━━━━━━━
-Runs Needed : ${result.data.runs}x
-Final Level : ${result.data.finalLevel} (${result.data.finalPercent}%)
-Final EXP   : ${result.data.finalExp}
-Reached     : ${result.data.reachedTarget ? "✅ Ya" : "❌ Belum"}
+Runs Needed : ${result.runs}x
+Final Level : ${result.finalLevel} (${result.finalPercent}%)
+Final EXP   : ${result.finalExp.toLocaleString()}
+Reached     : ${result.reachedTarget ? "✅ Ya" : "❌ Belum"}
 ━━━━━━━━━━━━━━━━━━
 *Progress Detail:*
 ${progressText}`;
