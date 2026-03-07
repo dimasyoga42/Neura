@@ -15,10 +15,11 @@ export const spamAdv = async (sock, chatId, msg, text) => {
       );
     }
 
+    // Validasi agar input harus berupa angka
     if ([lv, exp, max, from].some((v) => isNaN(Number(v)))) {
       return await sock.sendMessage(
         chatId,
-        { text: "Semua parameter harus berupa angka." },
+        { text: "⚠️ Semua parameter harus berupa angka." },
         { quoted: msg },
       );
     }
@@ -30,20 +31,25 @@ export const spamAdv = async (sock, chatId, msg, text) => {
     if (!response.ok) {
       return await sock.sendMessage(
         chatId,
-        { text: `API error: ${response.status} ${response.statusText}` },
+        { text: `❌ API error: ${response.status} ${response.statusText}` },
         { quoted: msg },
       );
     }
 
     const jsonResponse = await response.json();
 
-    // Struktur: { status, success, data: { ... } }
-    const result = jsonResponse.result;
-    console.log(result);
-    if (!result || !jsonResponse?.success) {
+    /**
+     * Penyesuaian Hierarki Data Baru:
+     * Objek utama -> result -> data (Array) -> indeks [0]
+     */
+    const result = jsonResponse.result?.data?.[0];
+
+    if (!result) {
       return await sock.sendMessage(
         chatId,
-        { text: "Gagal mendapatkan data dari API." },
+        {
+          text: "⚠️ Gagal mendapatkan data: Format respons API tidak dikenali atau data kosong.",
+        },
         { quoted: msg },
       );
     }
@@ -56,7 +62,7 @@ export const spamAdv = async (sock, chatId, msg, text) => {
                 `Run ${v.run}: Lv ${v.level} (${v.percent}%) — EXP: ${v.currentExp?.toLocaleString("id-ID")}`,
             )
             .join("\n")
-        : "Tidak ada detail progres.";
+        : "Detail progres tidak tersedia.";
 
     const responseText = `*SPAM ADV CALCULATOR*
 ━━━━━━━━━━━━━━━━━━
@@ -68,10 +74,12 @@ export const spamAdv = async (sock, chatId, msg, text) => {
 - Runs Needed  : ${result.runs}x
 - Final Level  : ${result.finalLevel} (${result.finalPercent}%)
 - Final EXP    : ${result.finalExp?.toLocaleString("id-ID")}
-- Reached      : ${result.reachedTarget ? "Berhasil mencapai target!" : "Belum mencapai target"}
+- Reached      : ${result.reachedTarget ? "✅ Berhasil" : "❌ Belum"}
 ━━━━━━━━━━━━━━━━━━
 *Progress Detail:*
-${progressText}`;
+${progressText}
+
+*Source:* ${jsonResponse.result.source || "Neura API"}`;
 
     await sock.sendMessage(chatId, { text: responseText }, { quoted: msg });
   } catch (err) {
