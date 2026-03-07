@@ -18,24 +18,26 @@ export const spamAdv = async (sock, chatId, msg, text) => {
       );
     }
 
-    // Eksekusi permintaan HTTP
     const response = await fetch(
       `https://neuraapi.vercel.app/api/toram/spamadv?lv=${lv}&exp=${exp}&lvmx=${max}&from=${from}`,
     );
 
-    // Node-fetch memerlukan tahap parsing JSON secara eksplisit
     const jsonResponse = await response.json();
 
-    // Berdasarkan struktur JSON Anda: { "status": 200, "success": true, "data": { ... } }
-    const result = jsonResponse.result.data;
-    console.log(result);
+    /**
+     * Penyesuaian Akses Data:
+     * Jika log menunjukkan [ { ... } ], maka data adalah array.
+     * Kita menggunakan jsonResponse.data[0] atau jsonResponse[0]
+     * tergantung pada pembungkus utama dari API tersebut.
+     */
+    const result = Array.isArray(jsonResponse)
+      ? jsonResponse[0]
+      : jsonResponse.data;
 
     if (!result) {
       return await sock.sendMessage(
         chatId,
-        {
-          text: "Gagal mendapatkan data: Respons API tidak mengandung data yang valid.",
-        },
+        { text: "Gagal mendapatkan data: Struktur respons tidak dikenali." },
         { quoted: msg },
       );
     }
@@ -45,7 +47,7 @@ export const spamAdv = async (sock, chatId, msg, text) => {
         ? result.progress
             .map(
               (v) =>
-                `Run ${v.run}: Lv ${v.level} (${v.percent}%) — EXP: ${v.currentExp.toLocaleString()}`,
+                `Run ${v.run}: Lv ${v.level} (${v.percent}%) — EXP: ${v.currentExp?.toLocaleString()}`,
             )
             .join("\n")
         : "Tidak ada detail progres.";
@@ -59,7 +61,7 @@ export const spamAdv = async (sock, chatId, msg, text) => {
 *Calculation Result:*
 • Runs Needed : ${result.runs}x
 • Final Level : ${result.finalLevel} (${result.finalPercent}%)
-• Final EXP   : ${result.finalExp?.toLocaleString()}
+• Final EXP   : ${result.finalExp?.toLocaleString() || "0"}
 • Reached     : ${result.reachedTarget ? "✅ Berhasil" : "❌ Belum Mencapai Target"}
 ━━━━━━━━━━━━━━━━━━
 *Progress Detail:*
@@ -67,7 +69,6 @@ ${progressText}`;
 
     await sock.sendMessage(chatId, { text: responseText }, { quoted: msg });
   } catch (err) {
-    // Penanganan kesalahan pada node-fetch sedikit berbeda karena tidak memiliki err.response otomatis seperti Axios
     await sock.sendMessage(
       chatId,
       { text: `Terjadi kesalahan sistem: ${err.message}` },
