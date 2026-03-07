@@ -39,11 +39,8 @@ export const spamAdv = async (sock, chatId, msg, text) => {
     const jsonResponse = await response.json();
 
     // Normalisasi: support array maupun object {data: ...}
-    const result = Array.isArray(jsonResponse)
-      ? jsonResponse[0]
-      : Array.isArray(jsonResponse?.data)
-        ? jsonResponse.data[0]
-        : (jsonResponse?.data ?? null);
+    const result = jsonResponse.data.result[0];
+    console.log(result);
 
     if (!result) {
       return await sock.sendMessage(
@@ -63,7 +60,7 @@ export const spamAdv = async (sock, chatId, msg, text) => {
             .join("\n")
         : "Tidak ada detail progres.";
 
-    const responseText = `*🗡️ SPAM ADV CALCULATOR*
+    const responseText = `*SPAM ADV CALCULATOR*
 ━━━━━━━━━━━━━━━━━━
 *📊 Initial State:*
 - Start Level  : ${result.startLevel} (${result.startPercent}%)
