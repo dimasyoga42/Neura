@@ -22,7 +22,7 @@ export const spamAdv = async (sock, chatId, msg, text) => {
       `https://neuraapi.vercel.app/api/toram/spamadv?lv=${lv}&exp=${exp}&lvmx=${max}&from=${from}`,
     );
     console.log(data.data.result);
-    if (!data || data.status !== 200 || !data.success) {
+    if (!data.data.result || data.data.result.status !== 200) {
       return await sock.sendMessage(
         chatId,
         { text: "terjadi kesalahan saat mengambil data" },
@@ -30,7 +30,7 @@ export const spamAdv = async (sock, chatId, msg, text) => {
       );
     }
 
-    const result = data.data; // ✅ langsung data.data, bukan data.data.result
+    const result = data.data.result; // ✅ langsung data.data, bukan data.data.result
 
     if (!result) {
       return await sock.sendMessage(
@@ -41,8 +41,8 @@ export const spamAdv = async (sock, chatId, msg, text) => {
     }
 
     const progressText =
-      Array.isArray(result.progress) && result.progress.length > 0
-        ? result.progress
+      Array.isArray(result.data.progress) && result.data.progress.length > 0
+        ? result.data.progress
             .map(
               (v) =>
                 `${v.run}. Lv ${v.level} (${v.percent}%) — EXP: ${v.currentExp.toLocaleString()}`,
@@ -52,13 +52,13 @@ export const spamAdv = async (sock, chatId, msg, text) => {
 
     const responseText = `*SPAM ADV CALCULATOR*
 ━━━━━━━━━━━━━━━━━━
-Start Level : ${result.startLevel} (${result.startPercent}%)
-Target Level: ${result.targetLevel}
+Start Level : ${result.data.startLevel} (${result.data.startPercent}%)
+Target Level: ${result.data.targetLevel}
 ━━━━━━━━━━━━━━━━━━
-Runs Needed : ${result.runs}x
-Final Level : ${result.finalLevel} (${result.finalPercent}%)
-Final EXP   : ${result.finalExp.toLocaleString()}
-Reached     : ${result.reachedTarget ? "✅ Ya" : "❌ Belum"}
+Runs Needed : ${result.data.runs}x
+Final Level : ${result.data.finalLevel} (${result.data.finalPercent}%)
+Final EXP   : ${result.data.finalExp.toLocaleString()}
+Reached     : ${result.data.reachedTarget ? "✅ Ya" : "❌ Belum"}
 ━━━━━━━━━━━━━━━━━━
 *Progress Detail:*
 ${progressText}`;
