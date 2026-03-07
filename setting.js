@@ -34,6 +34,7 @@ export const Resapi = {
   toramjp: "https://id.toram.jp",
   takjil:
     "https://raw.githubusercontent.com/dimasyoga42/Neura/refs/heads/main/dataset.json",
+  neura: "https://neuraapi.vercel.app/api",
 };
 
 export const messageEn = {

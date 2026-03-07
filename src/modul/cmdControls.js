@@ -108,6 +108,7 @@ import { spotifyDownloader } from "../plugins/vip/downloader/spotifydl.js";
 import tiktokDownloader from "../plugins/vip/downloader/tt.js";
 import cuaca from "../plugins/fitur/cuaca.js";
 import { myBini } from "../plugins/fun/mybini.js";
+import { newkhodam } from "../plugins/fun/khodam.js";
 //import { EfekCommand } from "../plugins/vip/tools/audioeffect.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
@@ -833,16 +834,16 @@ nomer owner: 085664393331 (dimas)`,
     },
   });
 
-  // registerCommand({
-  //   name: "khodam",
-  //   alias: ["khodam"],
-  //   category: "Menu Fun",
-  //   desc: "ghaca khodam",
-  //   run: async (sock, chatId, msg, args, text) => {
-  //     if (isBan(sock, chatId, msg)) return;
-  //     khodam(sock, chatId, msg, text);
-  //   },
-  // });
+  registerCommand({
+    name: "khodam",
+    alias: ["khodam"],
+    category: "Menu Fun",
+    desc: "ghaca khodam",
+    run: async (sock, chatId, msg, args, text) => {
+      if (isBan(sock, chatId, msg)) return;
+      newkhodam(sock, chatId, msg);
+    },
+  });
 
   registerCommand({
     name: "shdb",
