@@ -58,7 +58,7 @@ Target Level: ${result.targetLevel}
 ━━━━━━━━━━━━━━━━━━
 Runs Needed : ${result.runs}x
 Final Level : ${result.finalLevel} (${result.finalPercent}%)
-Final EXP   : ${result.finalExp.toLocaleString()}
+Final EXP   : ${result.finalExp}
 Reached     : ${result.reachedTarget ? "✅ Ya" : "❌ Belum"}
 ━━━━━━━━━━━━━━━━━━
 *Progress Detail:*
