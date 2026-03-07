@@ -24,6 +24,7 @@ export const spamAdv = async (sock, chatId, msg, text) => {
 
     // Berdasarkan JSON Anda, data berada di response.data.data
     const result = response.data?.data;
+    console.log(result);
 
     if (!result) {
       return await sock.sendMessage(
