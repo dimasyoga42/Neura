@@ -9,17 +9,16 @@ export const spamAdv = async (sock, chatId, msg, text) => {
       return await sock.sendMessage(
         chatId,
         {
-          text: "❌ *Format salah!*\n\nGunakan: `.spamadv <lv> <exp> <target_lv> <bab>`\n*Contoh:* `.spamadv 177 0 315 11`",
+          text: "*Format salah!*\n\nGunakan: `.spamadv <lv> <exp> <target_lv> <bab>`\n*Contoh:* `.spamadv 177 0 315 11`",
         },
         { quoted: msg },
       );
     }
 
-    // Validasi input harus angka
     if ([lv, exp, max, from].some((v) => isNaN(Number(v)))) {
       return await sock.sendMessage(
         chatId,
-        { text: "❌ Semua parameter harus berupa angka." },
+        { text: "Semua parameter harus berupa angka." },
         { quoted: msg },
       );
     }
@@ -31,21 +30,20 @@ export const spamAdv = async (sock, chatId, msg, text) => {
     if (!response.ok) {
       return await sock.sendMessage(
         chatId,
-        { text: `❌ API error: ${response.status} ${response.statusText}` },
+        { text: `API error: ${response.status} ${response.statusText}` },
         { quoted: msg },
       );
     }
 
     const jsonResponse = await response.json();
 
-    // Normalisasi: support array maupun object {data: ...}
-    const result = jsonResponse.data.result;
-    console.log(result);
+    // Struktur: { status, success, data: { ... } }
+    const result = jsonResponse?.data ?? null;
 
-    if (!result) {
+    if (!result || !jsonResponse?.success) {
       return await sock.sendMessage(
         chatId,
-        { text: "❌ Gagal mendapatkan data: Struktur respons tidak dikenali." },
+        { text: "Gagal mendapatkan data dari API." },
         { quoted: msg },
       );
     }
@@ -55,24 +53,24 @@ export const spamAdv = async (sock, chatId, msg, text) => {
         ? result.progress
             .map(
               (v) =>
-                `Run ${v.run}: Lv ${v.level} (${v.percent}%) — EXP: ${v.currentExp?.toLocaleString() ?? "0"}`,
+                `Run ${v.run}: Lv ${v.level} (${v.percent}%) — EXP: ${v.currentExp?.toLocaleString("id-ID")}`,
             )
             .join("\n")
         : "Tidak ada detail progres.";
 
     const responseText = `*SPAM ADV CALCULATOR*
 ━━━━━━━━━━━━━━━━━━
-*📊 Initial State:*
+*Initial State:*
 - Start Level  : ${result.startLevel} (${result.startPercent}%)
 - Target Level : ${result.targetLevel}
 
-*📈 Calculation Result:*
+*Calculation Result:*
 - Runs Needed  : ${result.runs}x
 - Final Level  : ${result.finalLevel} (${result.finalPercent}%)
-- Final EXP    : ${result.finalExp?.toLocaleString() ?? "0"}
-- Reached      : ${result.reachedTarget ? "✅ Berhasil mencapai target!" : "❌ Belum mencapai target"}
+- Final EXP    : ${result.finalExp?.toLocaleString("id-ID")}
+- Reached      : ${result.reachedTarget ? "Berhasil mencapai target!" : "Belum mencapai target"}
 ━━━━━━━━━━━━━━━━━━
-*📋 Progress Detail:*
+*Progress Detail:*
 ${progressText}`;
 
     await sock.sendMessage(chatId, { text: responseText }, { quoted: msg });
