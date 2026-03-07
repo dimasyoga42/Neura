@@ -3,7 +3,6 @@ import axios from "axios";
 export const spamAdv = async (sock, chatId, msg, text) => {
   try {
     const arg = text.trim().split(/\s+/);
-
     const lv = arg[1];
     const exp = arg[2];
     const max = arg[3];
@@ -13,54 +12,58 @@ export const spamAdv = async (sock, chatId, msg, text) => {
       return await sock.sendMessage(
         chatId,
         {
-          text: "masukan lv exp dan bab setelah .spamadv\nContoh: .spamadv 177 0 315 11",
+          text: "Format salah. Masukan lv, exp, target level, dan bab setelah .spamadv\nContoh: .spamadv 177 0 315 11",
         },
         { quoted: msg },
       );
     }
 
-    const data = await axios.get(
+    const response = await axios.get(
       `https://neuraapi.vercel.app/api/toram/spamadv?lv=${lv}&exp=${exp}&lvmx=${max}&from=${from}`,
     );
 
-    if (!data) {
+    // Berdasarkan JSON Anda, data berada di response.data.data
+    const result = response.data?.data;
+
+    if (!result) {
       return await sock.sendMessage(
         chatId,
-        { text: "terjadi kesalahan saat mengambil data" },
+        { text: "Gagal mendapatkan data: Format respons API tidak sesuai." },
         { quoted: msg },
       );
     }
 
-    const result = data.data.result;
-
     const progressText =
-      Array.isArray(result.data.progress) && result.data.progress.length > 0
-        ? result.data.progress
+      Array.isArray(result.progress) && result.progress.length > 0
+        ? result.progress
             .map(
               (v) =>
-                `${v.run}. Lv ${v.level} (${v.percent}%) — EXP: ${v.currentExp.toLocaleString()}`,
+                `Run ${v.run}: Lv ${v.level} (${v.percent}%) — EXP: ${v.currentExp.toLocaleString()}`,
             )
             .join("\n")
-        : "-";
+        : "Tidak ada detail progres.";
 
     const responseText = `*SPAM ADV CALCULATOR*
 ━━━━━━━━━━━━━━━━━━
-Start Level : ${result.startLevel} (${result.startPercent}%)
-Target Level: ${result.targetLevel}
-━━━━━━━━━━━━━━━━━━
-Runs Needed : ${result.runs}x
-Final Level : ${result.finalLevel} (${result.finalPercent}%)
-Final EXP   : ${result.finalExp}
-Reached     : ${result.reachedTarget ? "✅ Ya" : "❌ Belum"}
+*Initial State:*
+• Start Level : ${result.startLevel} (${result.startPercent}%)
+• Target Level: ${result.targetLevel}
+
+*Calculation Result:*
+• Runs Needed : ${result.runs}x
+• Final Level : ${result.finalLevel} (${result.finalPercent}%)
+• Final EXP   : ${result.finalExp?.toLocaleString()}
+• Reached     : ${result.reachedTarget ? "✅ Berhasil" : "❌ Belum Mencapai Target"}
 ━━━━━━━━━━━━━━━━━━
 *Progress Detail:*
 ${progressText}`;
 
     await sock.sendMessage(chatId, { text: responseText }, { quoted: msg });
   } catch (err) {
+    const errorMessage = err.response?.data?.message || err.message;
     await sock.sendMessage(
       chatId,
-      { text: `server error: ${err.message}` },
+      { text: `Terjadi kesalahan sistem: ${errorMessage}` },
       { quoted: msg },
     );
   }
