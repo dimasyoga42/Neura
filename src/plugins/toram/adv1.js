@@ -23,7 +23,7 @@ export const spamAdv = async (sock, chatId, msg, text) => {
       `https://neuraapi.vercel.app/api/toram/spamadv?lv=${lv}&exp=${exp}&lvmx=${max}&from=${from}`,
     );
 
-    if (!data || data.status !== 200 || !data.success) {
+    if (!data) {
       return await sock.sendMessage(
         chatId,
         { text: "terjadi kesalahan saat mengambil data" },
