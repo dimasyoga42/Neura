@@ -96,6 +96,7 @@ export const HandleWelcome = async (sock, update) => {
     const memberCount = groupMetadata.participants.length;
     const groupDesc = groupMetadata.desc?.toString() || "Tidak ada deskripsi";
 
+    // 1. Ambil Welcome Message dari Database
     const { data, error } = await supabase
       .from("wellcome")
       .from("wellcome")
@@ -103,10 +104,12 @@ export const HandleWelcome = async (sock, update) => {
       .eq("id_grub", chatId)
       .maybeSingle();
 
+    // Loop untuk Setiap Member Baru
     for (const participant of participants) {
       const jid =
         typeof participant === "string" ? participant : participant.id;
 
+      // === DAPATKAN NAMA PENGGUNA ===
       let username = await getDisplayName(sock, jid, chatId);
       const phoneNumber = jid.split("@")[0];
 
@@ -118,6 +121,12 @@ export const HandleWelcome = async (sock, update) => {
         ppUrl = "https://telegra.ph/file/24fa902ead26340f3df2c.png";
       }
 
+      // 4. Generate Welcome Image via API
+      // DISESUAIKAN:
+      // phone = Nomor HP (kiri bawah)
+      // name = Nama User (kanan bawah)
+      // group = Nama Grup (tengah)
+      // image = Foto Profil
       const apiUrl = `https://neuraapi.vercel.app/api/etc/wellcome?phone=${phoneNumber}&name=${encodeURIComponent(username)}&group=${encodeURIComponent(groupName)}&image=${ppUrl}`;
 
       const response = await axios.get(apiUrl, { responseType: "arraybuffer" });
@@ -143,5 +152,49 @@ export const HandleWelcome = async (sock, update) => {
     }
   } catch (err) {
     console.error("[WELCOME ERROR]", err);
+  }
+};
+export const outGC = async (sock, update) => {
+  try {
+    const { id: chatId, participants, action } = update;
+    if (action !== "remove") return;
+
+    const groupMetadata = await sock.groupMetadata(chatId);
+    if (!groupMetadata) return;
+
+    const groupName = groupMetadata.subject || "Group";
+    const memberCount = groupMetadata.participants?.length || 0;
+    const groupDesc = groupMetadata.desc?.toString() || "Tidak ada deskripsi";
+
+    for (const participant of participants) {
+      const jid =
+        typeof participant === "string" ? participant : participant.id;
+      if (!jid) continue;
+
+      let username = await getDisplayName(sock, jid, chatId);
+
+      // fallback jika nama = nomor
+      if (username === jid.split("@")[0]) {
+        const participantObj = groupMetadata.participants?.find(
+          (p) => p.id === jid,
+        );
+        if (participantObj?.notify) {
+          username = participantObj.notify;
+        }
+      }
+
+      const number = jid.split("@")[0];
+
+      const message = `
+Selamat tinggal @${number}
+`.trim();
+
+      await sock.sendMessage(chatId, {
+        text: message,
+        mentions: [jid],
+      });
+    }
+  } catch (err) {
+    console.log("outGC error:", err);
   }
 };
