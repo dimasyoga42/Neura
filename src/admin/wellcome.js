@@ -117,9 +117,7 @@ export const HandleWelcome = async (sock, update) => {
         ppUrl = "https://telegra.ph/file/24fa902ead26340f3df2c.png";
       }
 
-      const apiUrl = `https://neuraapi.vercel.app/api/etc/wellcome?phone=@${encodeURIComponent(
-        phoneNumber,
-      )}&name=${encodeURIComponent(groupName)}&image=${encodeURIComponent(ppUrl)}`;
+      const apiUrl = `https://neuraapi.vercel.app/api/etc/wellcome?phone=semoga betah di grub ${groupName}&name=${encodeURIComponent(groupName)}&image=${encodeURIComponent(ppUrl)}`;
 
       console.log(username, groupName, ppUrl);
 
