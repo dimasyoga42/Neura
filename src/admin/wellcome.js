@@ -127,6 +127,7 @@ export const HandleWelcome = async (sock, update) => {
       // group = Nama Grup (tengah)
       // image = Foto Profil
       const apiUrl = `https://neuraapi.vercel.app/api/etc/wellcome?phone=${encodeURIComponent(username)}&name=${groupName}&image=${ppUrl}`;
+      console.log(username, groupName, ppUrl);
 
       const response = await axios.get(apiUrl, { responseType: "arraybuffer" });
       const imageBuffer = Buffer.from(response.data, "binary");
