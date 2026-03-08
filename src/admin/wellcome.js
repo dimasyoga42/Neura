@@ -1,7 +1,7 @@
 import { supabase } from "../model/supabase.js";
-import { createCanvas, loadImage } from "canvas";
 import axios from "axios";
-// Fungsi SetWelcome (Tidak berubah)
+
+// ================= SET WELCOME =================
 export const SetWelcome = async (sock, chatId, msg, text) => {
   try {
     const arg = text.replace(".setwc", "").trim();
@@ -10,7 +10,7 @@ export const SetWelcome = async (sock, chatId, msg, text) => {
       return sock.sendMessage(
         chatId,
         {
-          text: `Format salah!\n\nCara penggunaan:\n.setwc Teks Welcome Kamu\ntag yang tersedia:\n@user : untuk tag member yang join\n@group : untuk mengambil nama grub\n@count : untuk menampilkan jumlah member\n@desc : untuk menampilkan deskripsi grub`,
+          text: `Format salah!\n\nCara penggunaan:\n.setwc Teks Welcome Kamu\n\ntag yang tersedia:\n@user : untuk tag member yang join\n@group : untuk mengambil nama grub\n@count : untuk menampilkan jumlah member\n@desc : untuk menampilkan deskripsi grub`,
         },
         { quoted: msg },
       );
@@ -40,9 +40,10 @@ export const SetWelcome = async (sock, chatId, msg, text) => {
   }
 };
 
+// ================= GET DISPLAY NAME =================
 const getDisplayName = async (sock, jid, groupId) => {
   try {
-    let displayName = jid.split("@")[0]; // Default: nomor HP
+    let displayName = jid.split("@")[0];
 
     try {
       const groupMetadata = await sock.groupMetadata(groupId);
@@ -84,8 +85,8 @@ const getDisplayName = async (sock, jid, groupId) => {
     return jid.split("@")[0];
   }
 };
-// ============= HANDLER WELCOME =============
-// ============= HANDLER WELCOME =============
+
+// ================= HANDLE WELCOME =================
 export const HandleWelcome = async (sock, update) => {
   try {
     const { id: chatId, participants, action } = update;
@@ -96,23 +97,19 @@ export const HandleWelcome = async (sock, update) => {
     const memberCount = groupMetadata.participants.length;
     const groupDesc = groupMetadata.desc?.toString() || "Tidak ada deskripsi";
 
-    // 1. Ambil Welcome Message dari Database
     const { data, error } = await supabase
       .from("wellcome")
       .select("message")
       .eq("id_grub", chatId)
       .maybeSingle();
 
-    // Loop untuk Setiap Member Baru
     for (const participant of participants) {
       const jid =
         typeof participant === "string" ? participant : participant.id;
 
-      // === DAPATKAN NAMA PENGGUNA ===
       let username = await getDisplayName(sock, jid, chatId);
       const phoneNumber = jid.split("@")[0];
 
-      // === DAPATKAN FOTO PROFIL ===
       let ppUrl;
       try {
         ppUrl = await sock.profilePictureUrl(jid, "image");
@@ -120,20 +117,28 @@ export const HandleWelcome = async (sock, update) => {
         ppUrl = "https://telegra.ph/file/24fa902ead26340f3df2c.png";
       }
 
-      // 4. Generate Welcome Image via API
-      // DISESUAIKAN:
-      // phone = Nomor HP (kiri bawah)
-      // name = Nama User (kanan bawah)
-      // group = Nama Grup (tengah)
-      // image = Foto Profil
-      const apiUrl = `https://neuraapi.vercel.app/api/etc/wellcome?phone=${encodeURIComponent(username)}&name=${groupName}&image=${ppUrl}`;
+      const apiUrl = `https://neuraapi.vercel.app/api/etc/wellcome?phone=${encodeURIComponent(
+        username,
+      )}&name=${encodeURIComponent(groupName)}&image=${encodeURIComponent(ppUrl)}`;
+
       console.log(username, groupName, ppUrl);
 
-      const response = await axios.get(apiUrl, { responseType: "arraybuffer" });
-      const imageBuffer = Buffer.from(response.data, "base64");
+      let imageBuffer;
 
-      // 5. Format Caption
+      try {
+        const response = await axios.get(apiUrl, {
+          responseType: "arraybuffer",
+          timeout: 15000,
+        });
+
+        imageBuffer = Buffer.from(response.data);
+      } catch (err) {
+        console.log("API Image Error:", err.message);
+        imageBuffer = null;
+      }
+
       const rawText = data?.message || "@user Selamat datang di @group";
+
       const caption = rawText
         .replace(/@user/g, `@${phoneNumber}`)
         .replace(/@nama/g, username)
@@ -141,12 +146,18 @@ export const HandleWelcome = async (sock, update) => {
         .replace(/@desc/g, groupDesc)
         .replace(/@count/g, memberCount.toString());
 
-      // 6. Kirim Welcome Message
-      await sock.sendMessage(chatId, {
-        image: imageBuffer,
-        caption: caption,
-        mentions: [jid],
-      });
+      if (imageBuffer) {
+        await sock.sendMessage(chatId, {
+          image: imageBuffer,
+          caption: caption,
+          mentions: [jid],
+        });
+      } else {
+        await sock.sendMessage(chatId, {
+          text: caption,
+          mentions: [jid],
+        });
+      }
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
@@ -154,6 +165,8 @@ export const HandleWelcome = async (sock, update) => {
     console.error("[WELCOME ERROR]", err);
   }
 };
+
+// ================= HANDLE LEAVE =================
 export const outGC = async (sock, update) => {
   try {
     const { id: chatId, participants, action } = update;
@@ -173,7 +186,6 @@ export const outGC = async (sock, update) => {
 
       let username = await getDisplayName(sock, jid, chatId);
 
-      // fallback jika nama = nomor
       if (username === jid.split("@")[0]) {
         const participantObj = groupMetadata.participants?.find(
           (p) => p.id === jid,
