@@ -99,7 +99,6 @@ export const HandleWelcome = async (sock, update) => {
     // 1. Ambil Welcome Message dari Database
     const { data, error } = await supabase
       .from("wellcome")
-      .from("wellcome")
       .select("message")
       .eq("id_grub", chatId)
       .maybeSingle();
