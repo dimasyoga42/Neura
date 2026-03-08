@@ -130,7 +130,7 @@ export const HandleWelcome = async (sock, update) => {
       console.log(username, groupName, ppUrl);
 
       const response = await axios.get(apiUrl, { responseType: "arraybuffer" });
-      const imageBuffer = Buffer.from(response.data, "binary");
+      const imageBuffer = Buffer.from(response.data, "base64");
 
       // 5. Format Caption
       const rawText = data?.message || "@user Selamat datang di @group";
