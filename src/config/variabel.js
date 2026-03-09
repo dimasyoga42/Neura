@@ -1,4 +1,3 @@
-
 export const guide = {
   padu: `
 *Leveling Padu*
@@ -9,8 +8,7 @@ export const guide = {
 - 106-135 = revita VI
 - 136-150 = revita VII
   `.trim(),
-
-}
+};
 
 export const xsubMenu = {
   menuadmin: `
@@ -78,8 +76,8 @@ export const xsubMenu = {
 - .setbuff <code>
 - .afk <any text>
 - .gempa
-  `.trim()
-}
+  `.trim(),
+};
 
 export const mq = `
 BAHAN MQ
@@ -106,7 +104,7 @@ BAHAN MQ
 - Kayu Menabra (Menabra Wood) x10
 - Pupuk Keruh (Stagnant Fertilizer) x10
 
-`.trim()
+`.trim();
 
 export const menuMessage = `
 *Neura Bot*\n> gunakan bot dengan bijak, dukung bot agar bisa hidup lebih lama dengan donet seiklasnya
@@ -519,7 +517,6 @@ DTE NEUTRAL
 - 1032727 Lv 5
 ━━━━━━━━━━━━━━━━━━━━`.trim();
 
-
 export const stat = `
 cara penggunaan nya:
 .filarm lv280, pot160, dtedark%=Max, cd%=10, cd=20, acc%=Min, Matk%=Min, acc=Min
@@ -615,35 +612,24 @@ cara penggunaan nya:
 
 `.trim();
 
-
-
-
-
-
-
-
-
-
-
-
-
 export const messagePembolong = `
-*extract*: 4 - 5M
+*extract*: 3 - 4.5M
+
 *OHS*
-0-1: 10-20M
-1-2: 150-160M
+0-1: 16-30M
+1-2: 60-70M
 
 *BWG*
-0-1: 17-50M
-0-2: 80-120M
+0-1: 9,2-20M
+0-2: 70-100M
 
 *KNUCK*
-0-1: 20-30M
-1-2: 70-90M
+0-1: 7-10M
+1-2: 44-70M
 
 *STAFF*
-0-1: 15-25M
-1-2: 100-150M
+0-1: 15-20M
+1-2: 100-180M
 
 *MD*
 0-1 10-15M
@@ -659,11 +645,11 @@ export const messagePembolong = `
 
 *HB*
 0-1 15-20M
-1-2: 90M
-Spirit Needle 8M
+1-2: 50-55M
+Spirit Needle 6-8M
 legendary needle 550M
-leg ornament: 700M
-leg silk: 950-1B++
+leg ornament: 570-600M
+leg silk: 900-1B
 
 data bulan januari 2026
 `.trim();
@@ -691,9 +677,7 @@ export const listLeveling = `
 272-287 *Trickster Dragon Mimyugon (Ultimate)* -> Operation Zone: Cockpit Area
 285-303 *Mulgoon (Nightmare)* -> Menabra Plains (opsional -> Ash Dragon Rudis (Ultimate))
 303-305 *Red Ash Dragon Rudis (Ultimate)* -> Espuma Dome: Entrance
-`.trim()
-
-
+`.trim();
 
 export const upbagId = `
 *Bag Toram Online*
@@ -911,11 +895,9 @@ Spina 300.000
 - 30x Kulit Pelik (Mata Jahat - Padang Morga:A1)
 
 
-`.trim()
+`.trim();
 
-export const hdb_Bos = {
-
-}
+export const hdb_Bos = {};
 
 export const petGuide = {
   skillPet: `
@@ -1029,6 +1011,5 @@ maka max Level dari fusion kedua pet tersebut adalah 63
   `.trim(),
   stat: `
 
-  `.trim()
-}
-
+  `.trim(),
+};
