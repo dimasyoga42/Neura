@@ -1,79 +1,65 @@
-import axios from "axios";
+import fetch from "node-fetch";
 
 export const filwep = async (sock, chatId, msg, text) => {
   try {
-    const args = text.replace(/^\.filwep\s*/i, "").trim();
+    const args = text.replace(".filwep", "").trim();
 
     if (!args) {
       return sock.sendMessage(
         chatId,
         {
-          text: `*Format salah!*\n\nContoh:\n*.filwep atk%=max,cr=max,def%=min,lv300,pot120,bs300*`,
+          text: `Format salah!
+
+Contoh:
+.filwep elefire=max,dteearth%=max,atk%=max,cd=20,def%=min,hpreg%=min,hpreg=min,lv290,pot=121,bs265`,
         },
         { quoted: msg },
       );
     }
 
     const url = `https://neurapi.mochinime.cyou/api/toram/filwep?text=${encodeURIComponent(args)}`;
-    console.log(url);
-    const { data } = await axios.get(url, { timeout: 15000 });
 
-    if (!data) {
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (!data || data.status === false) {
       return sock.sendMessage(
         chatId,
-        { text: "Formula tidak ditemukan atau input tidak valid." },
+        {
+          text: "Data tidak ditemukan.",
+        },
         { quoted: msg },
       );
     }
 
-    const steps = data.steps.join("\n");
+    let result = `*Toram Fill Weapon*\n\n`;
 
-    const positiveStats =
-      data.inputConfig.positiveStats.length > 0
-        ? data.inputConfig.positiveStats
-            .map((v) => `• ${v.name} (${v.level})`)
-            .join("\n")
-        : "-";
+    if (data.ok) {
+      result += `Success Rate: ${data.successRate}\n`;
+      result += `Starting Pot: ${data.startingPot}\n\n`;
+    }
 
-    const negativeStats =
-      data.inputConfig.negativeStats.length > 0
-        ? data.inputConfig.negativeStats
-            .map((v) => `• ${v.name} (${v.level})`)
-            .join("\n")
-        : "-";
+    if (Array.isArray(data.steps)) {
+      result += `*Steps:*\n`;
+      data.steps.forEach((step, i) => {
+        result += `${i + 1}. ${step}\n`;
+      });
+    }
 
-    const material = Object.entries(data.materialDetails)
-      .filter(([k]) => k !== "reduction")
-      .map(([k, v]) => `${k.toUpperCase().padEnd(8)}: ${v}`)
-      .join("\n");
-
-    const result = `
- *Success Rate* : ${data.successRate}
- *Starting Pot* : ${data.startingPot}
-*Positive Stats*
-${positiveStats}
-*Negative Stats*
-${negativeStats}
-*Steps (${data.totalSteps})*
-${steps}
-*Material Cost*
-${material}
-Reduction         : ${data.materialDetails.reduction}
-Highest Step Cost : ${data.highestStepCost}
-*Character Config*
-Character Lv : ${data.inputConfig.characterLevel}
-BS Lv        : ${data.inputConfig.professionLevel}
-Start Pot    : ${data.inputConfig.startingPotential}
-Process Time : ${data.duration} ms
-`.trim();
-
-    await sock.sendMessage(chatId, { text: result }, { quoted: msg });
+    await sock.sendMessage(
+      chatId,
+      {
+        text: result,
+      },
+      { quoted: msg },
+    );
   } catch (err) {
-    const isTimeout =
-      err.code === "ECONNABORTED" || err.message?.includes("timeout");
-    const errMsg = isTimeout
-      ? " Request timeout. Coba lagi beberapa saat."
-      : " Terjadi error saat mengambil data stat.";
-    await sock.sendMessage(chatId, { text: errMsg }, { quoted: msg });
+    await sock.sendMessage(
+      chatId,
+      {
+        text: "Terjadi error saat mengambil data.",
+      },
+      { quoted: msg },
+    );
   }
 };
