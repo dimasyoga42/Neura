@@ -20,6 +20,7 @@ Contoh:
     const url = `https://neurapi.mochinime.cyou/api/toram/filwep?text=${encodeURIComponent(args)}`;
 
     const { data } = await axios.get(url, { timeout: 15000 });
+    console.log({ data });
 
     if (!data?.ok || !data?.hasValidResult) {
       return sock.sendMessage(
