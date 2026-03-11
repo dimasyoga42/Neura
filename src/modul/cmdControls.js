@@ -109,6 +109,7 @@ import tiktokDownloader from "../plugins/vip/downloader/tt.js";
 import cuaca from "../plugins/fitur/cuaca.js";
 import { myBini } from "../plugins/fun/mybini.js";
 import { newkhodam } from "../plugins/fun/khodam.js";
+import { cekVip } from "../config/vip.js";
 //import { EfekCommand } from "../plugins/vip/tools/audioeffect.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
@@ -203,6 +204,17 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
       viewRaid(sock, chatId, msg);
+    },
+  });
+
+  registerCommand({
+    name: "cekvip",
+    alias: ["vip"],
+    category: "VIP MENU",
+    desc: "melihat daftar raid yang tersedia",
+    run: async (sock, chatId, msg) => {
+      if (isBan(sock, chatId, msg)) return;
+      cekVip(sock, chatId, msg);
     },
   });
 
