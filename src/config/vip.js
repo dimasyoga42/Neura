@@ -71,7 +71,7 @@ export const cekVip = async (sock, chatId, msg) => {
 
       return sock.sendMessage(
         chatId,
-        { text: "❌ VIP grup ini sudah expired." },
+        { text: "VIP grup ini sudah expired." },
         { quoted: msg },
       );
     }
@@ -84,7 +84,7 @@ export const cekVip = async (sock, chatId, msg) => {
     sock.sendMessage(
       chatId,
       {
-        text: `✅ Grup ini VIP\n\n📅 Expired: ${expFormat}`,
+        text: `Grup ini VIP\nExpired: ${expFormat}`,
       },
       { quoted: msg },
     );
