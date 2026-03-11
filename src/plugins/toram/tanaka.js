@@ -2,16 +2,13 @@ import axios from "axios";
 
 export const filarm = async (sock, chatId, msg, text) => {
   try {
-    const args = text.replace(".filarm", "").trim();
+    const args = text.replace(/^\.filarm\s*/i, "").trim();
 
     if (!args) {
       return sock.sendMessage(
         chatId,
         {
-          text: `Format salah!
-
-Contoh:
-.filarm atk%=max,cr=max,def%=min,lv300,pot120,bs300`,
+          text: `❌ *Format salah!*\n\nContoh:\n*.filarm atk%=max,cr=max,def%=min,lv300,pot120,bs300*`,
         },
         { quoted: msg },
       );
@@ -19,39 +16,44 @@ Contoh:
 
     const url = `https://neurapi.mochinime.cyou/api/toram/filarm?text=${encodeURIComponent(args)}`;
 
-    const { data } = await axios.get(url);
+    const { data } = await axios.get(url, { timeout: 15000 });
 
     if (!data?.ok || !data?.hasValidResult) {
       return sock.sendMessage(
         chatId,
-        { text: "Formula tidak ditemukan." },
+        { text: "❌ Formula tidak ditemukan atau input tidak valid." },
         { quoted: msg },
       );
     }
 
-    const steps = data.steps.map((s, i) => `${i + 1}. ${s}`).join("\n");
+    // Steps — API sudah sertakan nomor, jadi langsung join saja
+    const steps = data.steps.join("\n");
 
-    const positiveStats = data.inputConfig.positiveStats
-      .map((v) => `${v.name} (${v.level})`)
-      .join("\n");
-
-    const negativeStats =
-      data.inputConfig.negativeStats.length > 0
-        ? data.inputConfig.negativeStats
-            .map((v) => `${v.name} (${v.level})`)
+    // Positive stats
+    const positiveStats =
+      data.inputConfig.positiveStats.length > 0
+        ? data.inputConfig.positiveStats
+            .map((v) => `• ${v.name} (${v.level})`)
             .join("\n")
         : "-";
 
+    // Negative stats
+    const negativeStats =
+      data.inputConfig.negativeStats.length > 0
+        ? data.inputConfig.negativeStats
+            .map((v) => `• ${v.name} (${v.level})`)
+            .join("\n")
+        : "-";
+
+    // Material cost (exclude 'reduction' key)
     const material = Object.entries(data.materialDetails)
       .filter(([k]) => k !== "reduction")
-      .map(([k, v]) => `${k.toUpperCase()} : ${v}`)
+      .map(([k, v]) => `${k.toUpperCase().padEnd(8)}: ${v}`)
       .join("\n");
 
     const result = `
-*TORAM STAT FORMULA*
-
-*Success Rate:* ${data.successRate}
-*Starting Potential:* ${data.startingPot}
+ *Success Rate* : ${data.successRate}
+ *Starting Pot* : ${data.startingPot}
 
 *Positive Stats*
 ${positiveStats}
@@ -64,9 +66,7 @@ ${steps}
 
 *Material Cost*
 ${material}
-
-Reduction : ${data.materialDetails.reduction}
-
+Reduction         : ${data.materialDetails.reduction}
 Highest Step Cost : ${data.highestStepCost}
 
 *Character Config*
@@ -79,10 +79,12 @@ Process Time : ${data.duration} ms
 
     await sock.sendMessage(chatId, { text: result }, { quoted: msg });
   } catch (err) {
-    await sock.sendMessage(
-      chatId,
-      { text: "Terjadi error saat mengambil data stat." },
-      { quoted: msg },
-    );
+    const isTimeout =
+      err.code === "ECONNABORTED" || err.message?.includes("timeout");
+    const errMsg = isTimeout
+      ? " Request timeout. Coba lagi beberapa saat."
+      : " Terjadi error saat mengambil data stat.";
+
+    await sock.sendMessage(chatId, { text: errMsg }, { quoted: msg });
   }
 };
