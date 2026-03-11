@@ -67,12 +67,7 @@ import { buff, getAllBuff, setBuff } from "../plugins/toram/buff.js";
 import { searchMonster } from "../plugins/toram/monster.js";
 import { pet } from "../plugins/toram/pet.js";
 //import { spmadv } from "../plugins/toram/adv.js";
-import {
-  formatResultMessage,
-  parseCommand,
-  tanaka,
-  validateStatConfig,
-} from "../plugins/toram/tanaka.js";
+import { filarm } from "../plugins/toram/tanaka.js";
 import { hd } from "../plugins/vip/tools/hd.js";
 import { liveStream } from "../plugins/toram/live.js";
 import { farm } from "../plugins/toram/farm.js";
@@ -519,56 +514,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "filstat armor dengan tanaka",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
-      try {
-        const argsList = text.split(" ").slice(1);
-        if (argsList.length === 0) {
-          return sock.sendMessage(
-            chatId,
-            { text: "Gunakan `.sheetfill` untuk melihat cara penggunaan" },
-            { quoted: msg },
-          );
-        }
-
-        const statConfig = parseCommand(argsList);
-        const validation = validateStatConfig(statConfig);
-
-        if (!validation.valid) {
-          return sock.sendMessage(
-            chatId,
-            {
-              text: `Konfigurasi tidak valid:\n${validation.errors.join("\n")}`,
-            },
-            { quoted: msg },
-          );
-        }
-
-        await sock.sendMessage(
-          chatId,
-          { text: `Memproses kalkulasi...` },
-          { quoted: msg },
-        );
-
-        const result = await tanaka(statConfig, {
-          headless: true,
-          maxWaitTime: 90000,
-          checkInterval: 1000,
-          enableRetry: true,
-        });
-
-        const replyMessage = formatResultMessage(result);
-        await sock.sendMessage(chatId, { text: replyMessage }, { quoted: msg });
-      } catch (error) {
-        console.error("Error .filarm:", error);
-        let errorMsg = `Terjadi kesalahan:\n${error.message}`;
-
-        if (error.message.includes("timeout")) {
-          errorMsg += `\n\n💡 Tips: Coba lagi dalam beberapa saat`;
-        } else if (error.message.includes("CAPTCHA")) {
-          errorMsg += `\n\n💡 Server memerlukan verifikasi, coba lagi nanti`;
-        }
-
-        await sock.sendMessage(chatId, { text: errorMsg }, { quoted: msg });
-      }
+      filarm(sock, chatId, msg, text);
     },
   });
 
