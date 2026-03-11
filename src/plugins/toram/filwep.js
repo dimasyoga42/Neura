@@ -43,27 +43,49 @@ export const filwep = async (sock, chatId, msg, text) => {
 
     const material = Object.entries(data.materialDetails ?? {})
       .filter(([k]) => k !== "reduction")
-      .map(([k, v]) => `${k.toUpperCase()} : ${v}`)
+      .map(
+        ([k, v]) =>
+          `• ${k.charAt(0).toUpperCase() + k.slice(1).padEnd(6)} : ${v}`,
+      )
       .join("\n");
+
+    const compassion = data.inputConfig?.compassion
+      ? Object.entries(data.inputConfig.compassion)
+          .map(
+            ([k, v]) =>
+              `• ${k.charAt(0).toUpperCase() + k.slice(1).padEnd(9)} : ${v}`,
+          )
+          .join("\n")
+      : "-";
 
     const result = `*Toram Statting Result*
 \`\`\`
 Success Rate : ${data.successRate ?? "-"}
 Start Pot    : ${data.startingPot ?? "-"}
-Positive Stats
+
+[ Positive Stats ]
 ${positiveStats}
-Negative Stats
+
+[ Negative Stats ]
 ${negativeStats}
-Steps (${data.totalSteps ?? 0})
+
+[ Steps (${data.totalSteps ?? 0}) ]
 ${steps}
-Material Cost
+
+[ Material Cost ]
 ${material}
-Reduction : ${data.materialDetails?.reduction ?? "-"}
-Max Cost  : ${data.highestStepCost ?? "-"}
-Character
-Lv Char : ${data.inputConfig?.characterLevel ?? "-"}
-Lv BS   : ${data.inputConfig?.professionLevel ?? "-"}
-Pot     : ${data.inputConfig?.startingPotential ?? "-"}
+- Reduction   : ${data.materialDetails?.reduction ?? "-"}
+- Max Cost    : ${data.highestStepCost ?? "-"}
+
+[ Character ]
+- Lv Char     : ${data.inputConfig?.characterLevel ?? "-"}
+- Lv BS       : ${data.inputConfig?.professionLevel ?? "-"}
+- Pot         : ${data.inputConfig?.startingPotential ?? "-"}
+- Recipe Pot  : ${data.inputConfig?.recipePotential ?? "-"}
+
+[ Compassion ]
+${compassion}
+
 Process : ${data.duration ?? "-"} ms
 \`\`\``;
 
