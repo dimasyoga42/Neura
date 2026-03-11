@@ -306,7 +306,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
 
   registerCommand({
     name: "lv",
-    alias: ["lv"],
+    alias: ["lv", "lvl", "level"],
     category: "Toram Tools",
     desc: "memberikan rekomendasi spot leveling",
     run: async (sock, chatId, msg, args, text) => {
