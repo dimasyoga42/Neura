@@ -14,7 +14,7 @@ export const filwep = async (sock, chatId, msg, text) => {
       );
     }
 
-    const url = `https://neurapi.mochinime.cyou/api/toram/filarm?text=${encodeURIComponent(args)}`;
+    const url = `https://neurapi.mochinime.cyou/api/toram/filwep?text=${encodeURIComponent(args)}`;
 
     const { data } = await axios.get(url, { timeout: 15000 });
 
