@@ -146,8 +146,7 @@ export const HandleWelcome = async (sock, update) => {
 
       if (imageBuffer) {
         await sock.sendMessage(chatId, {
-          image: imageBuffer,
-          caption: caption,
+          text: caption,
           mentions: [jid],
         });
       } else {
