@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const filwep = async (sock, chatId, msg, text) => {
   try {
-    const args = text.replace(/^\.filwep\s*/i, "").trim();
+    const args = text.replace(".filwep", "").trim();
 
     if (!args || !args.includes("=")) {
       return sock.sendMessage(
