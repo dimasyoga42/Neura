@@ -115,3 +115,26 @@ export const isVipGroup = async (chatId) => {
 
   return true;
 };
+export const cekIdGrub = async (sock, chatId, msg) => {
+  try {
+    if (!chatId.endsWith("@g.us")) {
+      return sock.sendMessage(
+        chatId,
+        { text: "Command ini hanya bisa dipakai di grup." },
+        { quoted: msg },
+      );
+    }
+
+    const metadata = await sock.groupMetadata(chatId);
+
+    const text = `INFO GRUP
+Nama Grup : ${metadata.subject}
+ID Grup   : ${chatId}
+Member    : ${metadata.participants.length}
+`.trim();
+
+    sock.sendMessage(chatId, { text }, { quoted: msg });
+  } catch (err) {
+    sock.sendMessage(chatId, { text: err.message }, { quoted: msg });
+  }
+};
