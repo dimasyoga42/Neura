@@ -119,7 +119,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "memunculkan daftar menu",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
-      let menutext = `*Neura Sama Menu*\nRules bot:\n- jangan spam command\n- jangan membuat stiker jamok\n- dilarang manipulasi AI\n- jika bot tidak merespon ulangi kembali command\n\n`;
+      let menutext = `*Neura Sama Menu*\nRules bot:\n- jangan spam command\n- jangan membuat stiker jamok/18+\n- dilarang manipulasi AI\n- jika bot tidak merespon ulangi kembali command\n- gunakan .report utuk memberi tahu bug\n\nNote: Pada tanggal 20 april Neura akan beralih ke Prem perbulan 3k. akan di adakan trial 12 hari\n\n`;
       const grouped = {};
       // const key = Math.floor(Math.random() * 4) + 1
       const data = await fetchdata(
