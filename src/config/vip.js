@@ -58,7 +58,7 @@ export const cekVip = async (sock, chatId, msg) => {
     if (error || !data) {
       return sock.sendMessage(
         chatId,
-        { text: "❌ Grup ini bukan VIP." },
+        { text: "Grup ini bukan VIP." },
         { quoted: msg },
       );
     }
