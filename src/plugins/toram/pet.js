@@ -2,12 +2,25 @@ import { supabase } from "../../model/supabase.js";
 
 export const pet = async (sock, chatId, msg) => {
   try {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("perpus")
       .select("*")
-      .ilike("judulPerpus", "guide")
+      .ilike("judulPerpus", "%guide%")
       .limit(1);
-    sock.sendMessage(chatId, { text: `${data.isiBuku}` }, { quoted: msg });
+
+    if (error) throw error;
+    if (!data || data.length === 0) {
+      return sock.sendMessage(
+        chatId,
+        { text: "Data tidak ditemukan." },
+        { quoted: msg },
+      );
+    }
+
+    const item = data[0];
+    const text = item.isiPerpus ?? JSON.stringify(item, null, 2);
+
+    sock.sendMessage(chatId, { text }, { quoted: msg });
   } catch (err) {
     console.error("[pet] Error:", err);
   }
