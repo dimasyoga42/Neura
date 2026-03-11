@@ -27,13 +27,13 @@ export const filwep = async (sock, chatId, msg, text) => {
 
     const data = typeof raw.data === "string" ? JSON.parse(raw.data) : raw.data;
 
-    if (!data?.hasValidResult) {
-      return sock.sendMessage(
-        chatId,
-        { text: "Formula tidak ditemukan atau input tidak valid." },
-        { quoted: msg },
-      );
-    }
+    // if (!data.hasValidResult) {
+    //   return sock.sendMessage(
+    //     chatId,
+    //     { text: "Formula tidak ditemukan atau input tidak valid." },
+    //     { quoted: msg },
+    //   );
+    // }
 
     const sanitize = (str) =>
       str.replace(/（/g, "(").replace(/）/g, ")").replace(/：/g, ":");
