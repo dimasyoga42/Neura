@@ -14,12 +14,14 @@ const Bossdef = async (sock, chatId, msg, text) => {
         { quoted: msg },
       );
     }
-    const { dye } = await axios.get(
+
+    // BUG FIX #1: axios.get mengembalikan { data }, bukan { dye }
+    // BUG FIX #2: field di JSON adalah "boss", bukan "bos"
+    const { data: dyeList } = await axios.get(
       "https://raw.githubusercontent.com/dimasyoga42/dataset/refs/heads/main/dye_data.json",
     );
-
-    const result = dye.filter((x) =>
-      x.bos.toLowerCase().includes(name.toLowerCase()),
+    const dyeResult = dyeList.filter((x) =>
+      x.boss.toLowerCase().includes(name.toLowerCase()),
     );
 
     const { data, error } = await supabase
@@ -36,7 +38,6 @@ const Bossdef = async (sock, chatId, msg, text) => {
         { quoted: msg },
       );
     }
-
     if (!data || data.length === 0) {
       return sock.sendMessage(
         chatId,
@@ -47,18 +48,26 @@ const Bossdef = async (sock, chatId, msg, text) => {
 
     const boss = data[0];
 
+    // BUG FIX #3: dyeResult adalah array, bukan object
+    // Tampilkan semua dye yang cocok (bisa lebih dari 1)
+    const dyeInfo =
+      dyeResult.length > 0
+        ? dyeResult.map((d) => `${d.dye} (${d.hex ?? "?"})`).join(", ")
+        : "Tidak diketahui";
+
     const msgtxt = `
 *Boss Information By Neura Sama*
 Search: ${name}
 
 General Information:
 Name: ${boss.name}
-Element:
-${boss.element}
+Element: ${boss.element}
 Spawn: ${boss.spawn}
-dye: ${result.dye || ""}
+Dye: ${dyeInfo}
 
-${toCodeBlock(boss.stat)}\n> source: Phantom library
+${toCodeBlock(boss.stat)}
+
+> source: Phantom library
     `.trim();
 
     await sock.sendMessage(
