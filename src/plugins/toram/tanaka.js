@@ -1,20 +1,21 @@
 import axios from "axios";
 
-export const filwep = async (sock, chatId, msg, text) => {
+export const filarm = async (sock, chatId, msg, text) => {
   try {
-    const args = text.replace(/^\.filwep\s*/i, "").trim();
+    const args = text.replace(/^\.filarm\s*/i, "").trim();
 
     if (!args) {
       return sock.sendMessage(
         chatId,
         {
-          text: `*Format salah!*\n\nContoh:\n*.filwep atk%=max,cr=max,def%=min,lv300,pot120,bs300*`,
+          text: `*Format salah!*\n\nContoh:\n*.filarm atk%=max,cr=max,def%=min,lv300,pot120,bs300*`,
         },
         { quoted: msg },
       );
     }
 
-    const url = `https://neurapi.mochinime.cyou/api/toram/filwep?text=${encodeURIComponent(args)}`;
+    const url = `https://neurapi.mochinime.cyou/api/toram/filarm?text=${encodeURIComponent(args)}`;
+
     const { data } = await axios.get(url, { timeout: 15000 });
 
     if (!data?.ok || !data?.hasValidResult) {
@@ -25,8 +26,10 @@ export const filwep = async (sock, chatId, msg, text) => {
       );
     }
 
+    // Steps — API sudah sertakan nomor, jadi langsung join saja
     const steps = data.steps.join("\n");
 
+    // Positive stats
     const positiveStats =
       data.inputConfig.positiveStats.length > 0
         ? data.inputConfig.positiveStats
@@ -34,6 +37,7 @@ export const filwep = async (sock, chatId, msg, text) => {
             .join("\n")
         : "-";
 
+    // Negative stats
     const negativeStats =
       data.inputConfig.negativeStats.length > 0
         ? data.inputConfig.negativeStats
@@ -41,6 +45,7 @@ export const filwep = async (sock, chatId, msg, text) => {
             .join("\n")
         : "-";
 
+    // Material cost (exclude 'reduction' key)
     const material = Object.entries(data.materialDetails)
       .filter(([k]) => k !== "reduction")
       .map(([k, v]) => `${k.toUpperCase().padEnd(8)}: ${v}`)
@@ -49,20 +54,26 @@ export const filwep = async (sock, chatId, msg, text) => {
     const result = `
  *Success Rate* : ${data.successRate}
  *Starting Pot* : ${data.startingPot}
+
 *Positive Stats*
 ${positiveStats}
+
 *Negative Stats*
 ${negativeStats}
+
 *Steps (${data.totalSteps})*
 ${steps}
+
 *Material Cost*
 ${material}
 Reduction         : ${data.materialDetails.reduction}
 Highest Step Cost : ${data.highestStepCost}
+
 *Character Config*
 Character Lv : ${data.inputConfig.characterLevel}
 BS Lv        : ${data.inputConfig.professionLevel}
 Start Pot    : ${data.inputConfig.startingPotential}
+
 Process Time : ${data.duration} ms
 `.trim();
 
@@ -73,6 +84,7 @@ Process Time : ${data.duration} ms
     const errMsg = isTimeout
       ? " Request timeout. Coba lagi beberapa saat."
       : " Terjadi error saat mengambil data stat.";
+
     await sock.sendMessage(chatId, { text: errMsg }, { quoted: msg });
   }
 };
