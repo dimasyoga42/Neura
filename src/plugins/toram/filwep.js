@@ -17,7 +17,7 @@ export const filwep = async (sock, chatId, msg, text) => {
     const url = `https://neurapi.mochinime.cyou/api/toram/filwep?text=${encodeURIComponent(args)}`;
     const { data } = await axios.get(url, { timeout: 15000 });
 
-    if (!data?.ok || !data?.hasValidResult) {
+    if (!data) {
       return sock.sendMessage(
         chatId,
         { text: "Formula tidak ditemukan atau input tidak valid." },
