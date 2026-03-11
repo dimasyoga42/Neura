@@ -105,6 +105,7 @@ import cuaca from "../plugins/fitur/cuaca.js";
 import { myBini } from "../plugins/fun/mybini.js";
 import { newkhodam } from "../plugins/fun/khodam.js";
 import { cekIdGrub, cekVip } from "../config/vip.js";
+import { filwep } from "../plugins/toram/filwep.js";
 //import { EfekCommand } from "../plugins/vip/tools/audioeffect.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
@@ -515,6 +516,17 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
       filarm(sock, chatId, msg, text);
+    },
+  });
+
+  registerCommand({
+    name: "filwep",
+    alias: ["filwep"],
+    category: "Toram Tools",
+    desc: "filstat armor dengan tanaka",
+    run: async (sock, chatId, msg, args, text) => {
+      if (isBan(sock, chatId, msg)) return;
+      filwep(sock, chatId, msg, text);
     },
   });
 

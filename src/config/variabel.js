@@ -518,85 +518,59 @@ DTE NEUTRAL
 ━━━━━━━━━━━━━━━━━━━━`.trim();
 
 export const stat = `
-cara penggunaan nya:
-*Daftar Status / Stat*
+*DAFTAR STAT*
 
-• critdmg / cd → Critical Damage
-• critdmg% / cd% → Critical Damage %
+Offensive
+critdmg / cd = Critical Damage
+critdmg% / cd% = Critical Damage %
+critrate / cr = Critical Rate
+critrate% / cr% = Critical Rate %
+atk = ATK
+atk% = ATK %
+matk = MATK
+matk% = MATK %
+stab / stab% = Stability %
+penfis / penfis% = Penetrasi Fisik %
+penmag / penmag% = Magic Pierce %
 
-• critrate / cr → Critical Rate
-• critrate% / cr% → Critical Rate %
+Speed
+aspd = Kecepatan Serangan
+aspd% = Kecepatan Serangan %
+cspd = Kecepatan Merapal
+cspd% = Kecepatan Merapal %
 
-• atk → ATK
-• atk% → ATK %
+Main Stat
+str / str% = STR
+int / int% = INT
+vit / vit% = VIT
+agi / agi% = AGI
+dex / dex% = DEX
 
-• matk → MATK
-• matk% → MATK %
+Resource
+hp / hp% = MaxHP
+mp = MaxMP
+hpreg / hpreg% = Natural HP Regen
+mpreg / mpreg% = Natural MP Regen
 
-• def → DEF
-• def% → DEF %
+Defense
+def / def% = DEF
+mdef / mdef% = MDEF
+kebalfis / kebalfis% = Kekebalan Fisik %
+kebalmag / kebalmag% = Kekebalan Sihir %
 
-• mdef → MDEF
-• mdef% → MDEF %
+Utility
+acc / accuracy = Accuracy
+acc% / accuracy% = Accuracy %
+dodge / dodge% = Dodge
+aggro / aggro% = Aggro %
 
-• acc / accuracy → Accuracy
-• acc% / accuracy% → Accuracy %
-
-• hp → MaxHP
-• hp% → MaxHP %
-
-• mp → MaxMP
-• mp% → MaxMP %
-
-• str → STR
-• str% → STR %
-
-• int → INT
-• int% → INT %
-
-• vit → VIT
-• vit% → VIT %
-
-• agi → AGI
-• agi% → AGI %
-
-• dex → DEX
-• dex% → DEX %
-
-• aspd → Kecepatan Serangan
-• aspd% → Kecepatan Serangan %
-
-• cspd → Kecepatan Merapal
-• cspd% → Kecepatan Merapal %
-
-• dodge → Dodge
-• dodge% → Dodge %
-
-• hpreg → Natural HP Regen
-• hpreg% → Natural HP Regen %
-
-• mpreg → Natural MP Regen
-• mpreg% → Natural MP Regen %
-
-• stab / stab% → Stability %
-
-• penfis / penfis% → Penetrasi Fisik %
-• penmag / penmag% → Magic Pierce %
-
-• kebalfis / kebalfis% → Kekebalan Fisik %
-• kebalmag / kebalmag% → Kekebalan Sihir %
-
-• aggro / aggro% → Aggro %
-
-*Damage to Element*
-
-• dteearth / dteearth% → % luka ke Bumi
-• dtefire / dtefire% → % luka ke Api
-• dtewind / dtewind% → % luka ke Angin
-• dtewater / dtewater% → % luka ke Air
-• dtelight / dtelight% → % luka ke Cahaya
-• dtedark / dtedark% → % luka ke Gelap
-
+Damage to Element
+dtefire / dtefire% = % luka ke Api
+dtewater / dtewater% = % luka ke Air
+dtewind / dtewind% = % luka ke Angin
+dteearth / dteearth% = % luka ke Bumi
+dtelight / dtelight% = % luka ke Cahaya
+dtedark / dtedark% = % luka ke Gelap
 `.trim();
 
 export const messagePembolong = `
