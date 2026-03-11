@@ -8,7 +8,10 @@ export const filwep = async (sock, chatId, msg, text) => {
       return sock.sendMessage(
         chatId,
         {
-          text: `*Format salah!*\n\nContoh:\n*.filwep atk%=max,cr=max,def%=min,lv300,pot120,bs300*`,
+          text: `*Format salah!*
+
+Contoh:
+.filwep atk%=max,cr=max,def%=min,lv300,pot120,bs300`,
         },
         { quoted: msg },
       );
@@ -26,10 +29,8 @@ export const filwep = async (sock, chatId, msg, text) => {
       );
     }
 
-    // Steps — API sudah sertakan nomor, jadi langsung join saja
-    const steps = data.steps.join("\n");
+    const steps = data.steps.map((v) => `• ${v}`).join("\n");
 
-    // Positive stats
     const positiveStats =
       data.inputConfig.positiveStats.length > 0
         ? data.inputConfig.positiveStats
@@ -37,7 +38,6 @@ export const filwep = async (sock, chatId, msg, text) => {
             .join("\n")
         : "-";
 
-    // Negative stats
     const negativeStats =
       data.inputConfig.negativeStats.length > 0
         ? data.inputConfig.negativeStats
@@ -45,45 +45,48 @@ export const filwep = async (sock, chatId, msg, text) => {
             .join("\n")
         : "-";
 
-    // Material cost (exclude 'reduction' key)
     const material = Object.entries(data.materialDetails)
       .filter(([k]) => k !== "reduction")
-      .map(([k, v]) => `${k.toUpperCase().padEnd(8)}: ${v}`)
+      .map(([k, v]) => `${k.toUpperCase()} : ${v}`)
       .join("\n");
 
-    const result = `
- *Success Rate* : ${data.successRate}
- *Starting Pot* : ${data.startingPot}
+    const result = `*Toram Statting Result*
 
-*Positive Stats*
+\`\`\`
+Success Rate : ${data.successRate}
+Start Pot    : ${data.startingPot}
+
+Positive Stats
 ${positiveStats}
 
-*Negative Stats*
+Negative Stats
 ${negativeStats}
 
-*Steps (${data.totalSteps})*
+Steps (${data.totalSteps})
 ${steps}
 
-*Material Cost*
+Material Cost
 ${material}
-Reduction         : ${data.materialDetails.reduction}
-Highest Step Cost : ${data.highestStepCost}
 
-*Character Config*
-Character Lv : ${data.inputConfig.characterLevel}
-BS Lv        : ${data.inputConfig.professionLevel}
-Start Pot    : ${data.inputConfig.startingPotential}
+Reduction : ${data.materialDetails.reduction}
+Max Cost  : ${data.highestStepCost}
 
-Process Time : ${data.duration} ms
-`.trim();
+Character
+Lv Char : ${data.inputConfig.characterLevel}
+Lv BS   : ${data.inputConfig.professionLevel}
+Pot     : ${data.inputConfig.startingPotential}
+
+Process : ${data.duration} ms
+\`\`\``;
 
     await sock.sendMessage(chatId, { text: result }, { quoted: msg });
   } catch (err) {
     const isTimeout =
       err.code === "ECONNABORTED" || err.message?.includes("timeout");
+
     const errMsg = isTimeout
-      ? " Request timeout. Coba lagi beberapa saat."
-      : " Terjadi error saat mengambil data stat.";
+      ? "Request timeout. Coba lagi beberapa saat."
+      : "Terjadi error saat mengambil data stat.";
 
     await sock.sendMessage(chatId, { text: errMsg }, { quoted: msg });
   }
