@@ -511,7 +511,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
     name: "filarm",
     alias: ["filarm"],
-    category: "Toram Tools",
+    category: "Toram Simulator",
     desc: "filstat armor dengan tanaka",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
@@ -522,7 +522,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
     name: "filwep",
     alias: ["filwep"],
-    category: "Toram Tools",
+    category: "Toram Simulator",
     desc: "filstat armor dengan tanaka",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
