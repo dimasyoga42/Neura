@@ -18,7 +18,7 @@ export const pet = async (sock, chatId, msg) => {
     }
 
     const item = data[0];
-    const text = item.isiPerpus ?? JSON.stringify(item, null, 2);
+    const text = item.isiBuku;
 
     sock.sendMessage(chatId, { text }, { quoted: msg });
   } catch (err) {
