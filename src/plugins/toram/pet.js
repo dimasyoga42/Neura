@@ -16,7 +16,7 @@ KLASIFIKASI SIFAT (PERSONALITY)
 11. Kalem        → Max HP +30%
 12. Penakut      → Range Attack Only, MP Regen
 13. Lembut       → Can't Attack (Pasif), MP Regen
-14. Nekat        → Agresif di Area Sempit`,
+14. Nekat        → Agresif di Area Sempit`.trim(),
 
       baseStat: `
 POTENSI STAT DASAR (BASE STAT CAP)
@@ -30,7 +30,7 @@ Format: [Tipe] STR | INT | VIT | AGI | DEX
  7. Penghindar   →  40 |  40 |  40 | 120 |  80
  8. Akurat       →  40 |  40 |  40 |  60 | 120
  9. Tahan Fisik  →  60 |  30 | 110 |  50 |  50
-10. Tahan Sihir  →  30 |  70 |  80 |  50 |  70`,
+10. Tahan Sihir  →  30 |  70 |  80 |  50 |  70`.trim(),
 
       trainMatrix: `
 MATRIKS EFISIENSI PELATIHAN
@@ -48,7 +48,7 @@ Nekat     →  14 |  7 | 11 | 14 | 11
 Proaktif  →  14 | 14 | 11 | 11 |  7
 Heroik    →  11 | 11 | 11 | 14 |  9
 Licik     →   6 | 14 |  6 | 21 | 14
-Lembut    →   6 | 21 | 14 |  7 | 21`,
+Lembut    →   6 | 21 | 14 |  7 | 21`.trim(),
 
       buildRecommend: `
 REKOMENDASI BUILD & MOB
@@ -72,7 +72,7 @@ REKOMENDASI BUILD & MOB
   - Tipe Buff  → Tahan Fisik/Genius | Full VIT | Skill Arrow Up ↑
   - Tipe Heal  → MD/Staff | Lembut/Penakut/Genius | VIT & INT
   ℹ Arrow Up: Meningkatkan efek buff
-  ℹ Double Hit: 2x hit per serangan (AMPR x2)`,
+  ℹ Double Hit: 2x hit per serangan (AMPR x2)`.trim(),
 
       skillExp: `
 SISTEM EXP & LEVELING SKIL
@@ -86,7 +86,7 @@ Kebutuhan Kill (x2 tiap level naik):
 ★ Tips: Gacha skill di awal (target Lv5) → hemat waktu
 ★ Start Lv5 → butuh 9.300 kill total untuk Lv10
 ★ Lokasi: Kanal Bawah Tanah Sofya (Blue Jelly)
-          atau Gunung Nisel (Shell Mask)`,
+          atau Gunung Nisel (Shell Mask)`.trim(),
 
       petLeveling: `
 SISTEM LEVEL KARAKTER PET
@@ -102,7 +102,7 @@ Lokasi Leveling:
   Lv  72–95  → Masked Warrior (Ultimate)
   Lv  95–102 → Cerberus (Nightmare)
   Lv 102–160 → Cerberus (Ultimate)
-  Lv 160–Cap → Venena (Ultimate)`,
+  Lv 160–Cap → Venena (Ultimate)`.trim(),
 
       fusion: `
 SISTEM FUSION (PADU PET)
@@ -117,7 +117,7 @@ Power Baru   = Power A + Power B
 Biaya Spina  = ((Lv A × Lv B) / 10) × (Fusion A + Fusion B)
                Contoh: Lv100×Lv10 / 10 × (10+100) = 11.000 Spina
 
-Potensi Bonus = (Potensi A + Potensi B) / 10 (bulatkan bawah)`,
+Potensi Bonus = (Potensi A + Potensi B) / 10 (bulatkan bawah)`.trim(),
 
       food: `
 MANAJEMEN MAKANAN (FOOD)
@@ -129,7 +129,7 @@ Jenis Makanan:
   High Grade Food   → 3000s | Aff 40% | Sta 100 | Rare Bonus 10–50%
   Top Quality Food  → 1–2 Orb | Aff 100% | Sta 100 | Bonus 50%
 
-Jenis Buff: Exp (10/30/50%) | Sukses Latih (10/30/50%) | Sifat (10/30%)`,
+Jenis Buff: Exp (10/30/50%) | Sukses Latih (10/30/50%) | Sifat (10/30%)`.trim(),
 
       penalty: `
 SISTEM PENALTI
@@ -140,7 +140,7 @@ Penalti Party (AMPR, ASPD, CSPD, DMG, MP Charge):
 Penalti Selisih Level (EXP):
   Beda  0–19 → 100%  |  Beda 39 → 70%
   Beda    29 →  90%  |  Beda 49 → 40%
-  Beda   57+ →  10%`,
+  Beda   57+ →  10%`.trim(),
 
       taming: `
 TEKNIK TAMING (MENANGKAP PET)
@@ -152,15 +152,15 @@ Strategi:
   1. Level karakter ≥ level mob
   2. Kurangi HP mob sampai kritis (< 20% disarankan)
   3. Semakin rendah HP → bar penangkapan makin cepat
-  4. Jangan bunuh mob saat proses taming berjalan`,
+  4. Jangan bunuh mob saat proses taming berjalan`.trim(),
 
       source: `
  REFERENSI & SUMBER DATA
   Basis Data : Toram Online Forum ID
-  Sumber     : https://toram-id.com/forum/all-about-pet-on-tor-4f8ea981`,
+  Sumber     : https://toram-id.com/forum/all-about-pet-on-tor-4f8ea981`.trim(),
     };
 
-    const msgs = Object.values(sections).join("\n").trim();
+    const msgs = Object.values(sections).join("\n\n").trim();
 
     sock.sendMessage(chatId, { text: msgs }, { quoted: msg });
   } catch (err) {
