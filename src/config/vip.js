@@ -50,7 +50,7 @@ export const cekVip = async (sock, chatId, msg) => {
     }
 
     const { data, error } = await supabase
-      .from("vip")
+      .from("vip-member")
       .select("*")
       .eq("idGrub", chatId)
       .single();
@@ -95,7 +95,7 @@ export const cekVip = async (sock, chatId, msg) => {
 
 export const isVipGroup = async (chatId) => {
   const { data, error } = await supabase
-    .from("vip")
+    .from("vip-member")
     .select("exp")
     .eq("idGrub", chatId)
     .single();
