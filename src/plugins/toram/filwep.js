@@ -23,6 +23,7 @@ Contoh:
 
     const res = await fetch(url);
     const data = await res.json();
+    console.log(data);
 
     if (!data.ok || !data.hasValidResult) {
       return sock.sendMessage(
