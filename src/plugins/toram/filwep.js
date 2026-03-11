@@ -17,48 +17,53 @@ Contoh:
       );
     }
 
-    const url = `https://neurapi.mochinime.cyou/api/toram/filwep?text=${encodeURIComponent(args)}`;
+    const url = `https://neurapi.mochinime.cyou/api/toram/filwep?text=${encodeURIComponent(
+      args,
+    )}`;
 
     const res = await fetch(url);
     const data = await res.json();
 
-    if (!data || data.status === false) {
+    if (!data.ok || !data.hasValidResult) {
       return sock.sendMessage(
         chatId,
-        {
-          text: "Data tidak ditemukan.",
-        },
+        { text: "❌ Formula tidak ditemukan." },
         { quoted: msg },
       );
     }
 
-    let result = `*Toram Fill Weapon*\n\n`;
+    let message = `*TORAM FILL WEAPON*\n\n`;
 
-    if (data.ok) {
-      result += `Success Rate: ${data.successRate}\n`;
-      result += `Starting Pot: ${data.startingPot}\n\n`;
-    }
+    message += `*Success Rate:* ${data.successRate}\n`;
+    message += `*Starting Pot:* ${data.startingPot}\n`;
+    message += `*Total Steps:* ${data.totalSteps}\n\n`;
 
-    if (Array.isArray(data.steps)) {
-      result += `*Steps:*\n`;
-      data.steps.forEach((step, i) => {
-        result += `${i + 1}. ${step}\n`;
-      });
-    }
+    message += `*Steps:*\n`;
+    data.steps.forEach((step) => {
+      message += `${step}\n`;
+    });
 
+    message += `\n*Material Cost*\n`;
+    message += `${data.materialCost}\n`;
+
+    message += `\n*Detail Material*\n`;
+    message += `Metal: ${data.materialDetails.metal}\n`;
+    message += `Beast: ${data.materialDetails.beast}\n`;
+    message += `Mana: ${data.materialDetails.mana}\n`;
+    message += `Reduction: ${data.materialDetails.reduction}\n`;
+
+    message += `\n*Highest Step Cost:* ${data.highestStepCost}\n`;
+
+    message += `\n*Character Info*\n`;
+    message += `Level: ${data.inputConfig.characterLevel}\n`;
+    message += `Profession: ${data.inputConfig.professionLevel}\n`;
+    message += `Recipe Pot: ${data.inputConfig.recipePotential}\n`;
+
+    await sock.sendMessage(chatId, { text: message }, { quoted: msg });
+  } catch (error) {
     await sock.sendMessage(
       chatId,
-      {
-        text: result,
-      },
-      { quoted: msg },
-    );
-  } catch (err) {
-    await sock.sendMessage(
-      chatId,
-      {
-        text: "Terjadi error saat mengambil data.",
-      },
+      { text: "❌ Terjadi error saat mengambil data." },
       { quoted: msg },
     );
   }
