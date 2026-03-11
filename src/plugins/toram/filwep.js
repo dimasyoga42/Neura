@@ -1,71 +1,78 @@
-import fetch from "node-fetch";
+import axios from "axios";
 
 export const filwep = async (sock, chatId, msg, text) => {
   try {
-    const args = text.replace(".filwep", "");
+    const args = text.replace(/^\.filwep\s*/i, "").trim();
 
     if (!args) {
       return sock.sendMessage(
         chatId,
         {
-          text: `Format salah!
-
-Contoh:
-.filwep elefire=max,dteearth%=max,atk%=max,cd=20,def%=min,hpreg%=min,hpreg=min,lv290,pot=121,bs265`,
+          text: `*Format salah!*\n\nContoh:\n*.filwep atk%=max,cr=max,def%=min,lv300,pot120,bs300*`,
         },
         { quoted: msg },
       );
     }
 
-    const url = `https://neurapi.mochinime.cyou/api/toram/filwep?text=${encodeURIComponent(
-      args,
-    )}`;
+    const url = `https://neurapi.mochinime.cyou/api/toram/filwep?text=${encodeURIComponent(args)}`;
+    const { data } = await axios.get(url, { timeout: 15000 });
 
-    const res = await fetch(url);
-    const data = await res.json();
-    console.log(data);
-
-    if (!data.ok || !data.hasValidResult) {
+    if (!data?.ok || !data?.hasValidResult) {
       return sock.sendMessage(
         chatId,
-        { text: "❌ Formula tidak ditemukan." },
+        { text: "Formula tidak ditemukan atau input tidak valid." },
         { quoted: msg },
       );
     }
 
-    let message = `*TORAM FILL WEAPON*\n\n`;
+    const steps = data.steps.join("\n");
 
-    message += `*Success Rate:* ${data.successRate}\n`;
-    message += `*Starting Pot:* ${data.startingPot}\n`;
-    message += `*Total Steps:* ${data.totalSteps}\n\n`;
+    const positiveStats =
+      data.inputConfig.positiveStats.length > 0
+        ? data.inputConfig.positiveStats
+            .map((v) => `• ${v.name} (${v.level})`)
+            .join("\n")
+        : "-";
 
-    message += `*Steps:*\n`;
-    data.steps.forEach((step) => {
-      message += `${step}\n`;
-    });
+    const negativeStats =
+      data.inputConfig.negativeStats.length > 0
+        ? data.inputConfig.negativeStats
+            .map((v) => `• ${v.name} (${v.level})`)
+            .join("\n")
+        : "-";
 
-    message += `\n*Material Cost*\n`;
-    message += `${data.materialCost}\n`;
+    const material = Object.entries(data.materialDetails)
+      .filter(([k]) => k !== "reduction")
+      .map(([k, v]) => `${k.toUpperCase().padEnd(8)}: ${v}`)
+      .join("\n");
 
-    message += `\n*Detail Material*\n`;
-    message += `Metal: ${data.materialDetails.metal}\n`;
-    message += `Beast: ${data.materialDetails.beast}\n`;
-    message += `Mana: ${data.materialDetails.mana}\n`;
-    message += `Reduction: ${data.materialDetails.reduction}\n`;
+    const result = `
+ *Success Rate* : ${data.successRate}
+ *Starting Pot* : ${data.startingPot}
+*Positive Stats*
+${positiveStats}
+*Negative Stats*
+${negativeStats}
+*Steps (${data.totalSteps})*
+${steps}
+*Material Cost*
+${material}
+Reduction         : ${data.materialDetails.reduction}
+Highest Step Cost : ${data.highestStepCost}
+*Character Config*
+Character Lv : ${data.inputConfig.characterLevel}
+BS Lv        : ${data.inputConfig.professionLevel}
+Start Pot    : ${data.inputConfig.startingPotential}
+Process Time : ${data.duration} ms
+`.trim();
 
-    message += `\n*Highest Step Cost:* ${data.highestStepCost}\n`;
-
-    message += `\n*Character Info*\n`;
-    message += `Level: ${data.inputConfig.characterLevel}\n`;
-    message += `Profession: ${data.inputConfig.professionLevel}\n`;
-    message += `Recipe Pot: ${data.inputConfig.recipePotential}\n`;
-
-    await sock.sendMessage(chatId, { text: message }, { quoted: msg });
-  } catch (error) {
-    await sock.sendMessage(
-      chatId,
-      { text: "❌ Terjadi error saat mengambil data." },
-      { quoted: msg },
-    );
+    await sock.sendMessage(chatId, { text: result }, { quoted: msg });
+  } catch (err) {
+    const isTimeout =
+      err.code === "ECONNABORTED" || err.message?.includes("timeout");
+    const errMsg = isTimeout
+      ? " Request timeout. Coba lagi beberapa saat."
+      : " Terjadi error saat mengambil data stat.";
+    await sock.sendMessage(chatId, { text: errMsg }, { quoted: msg });
   }
 };
