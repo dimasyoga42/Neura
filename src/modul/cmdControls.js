@@ -158,7 +158,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
       });
 
       await sock.sendMessage(chatId, {
-        image: imageoverlay,
+        image: dataImage,
         caption: `${menutext}\nBy 𝚍𝚒𝚖𝚊𝚜𝚢𝚘𝚐𝚊42`.trim(),
       });
     },
