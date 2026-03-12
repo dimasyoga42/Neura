@@ -85,7 +85,7 @@ const start = async () => {
       //await handleMessage(sock, chatId, msg);
       setInterval(() => {
         autoDeleteVip();
-      }, 600000);
+      }, 6000000);
 
       const body =
         msg.message.conversation || msg.message.extendedTextMessage?.text || "";
