@@ -120,7 +120,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
       const grouped = {};
       // const key = Math.floor(Math.random() * 4) + 1
       const res = await fetchdata("https://api.waifu.im/images");
-      const dataImage = res.images[0].url;
+      const dataImage = res.items[0].url;
 
       commands.forEach((cmd, key) => {
         // skip alias
