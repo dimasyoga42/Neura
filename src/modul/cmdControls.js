@@ -106,7 +106,7 @@ import { myBini } from "../plugins/fun/mybini.js";
 import { newkhodam } from "../plugins/fun/khodam.js";
 import { cekIdGrub, cekVip } from "../config/vip.js";
 import { filwep } from "../plugins/toram/filwep.js";
-import { sendButton, sendFancyText } from "../lib/message.js";
+import { sendButton, sendFancyText, sendList } from "../lib/message.js";
 //import { EfekCommand } from "../plugins/vip/tools/audioeffect.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
@@ -173,6 +173,47 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
       getAllBuff(sock, chatId, msg, text);
+      await sendList(
+        sock,
+        msg,
+        "Silahkan pilih menu",
+        "Neura Bot",
+        "Menu Utama",
+        "Klik disini",
+        [
+          {
+            title: "General",
+            rows: [
+              {
+                title: "Ping Bot",
+                description: "Cek apakah bot aktif",
+                rowId: "ping",
+              },
+              {
+                title: "Owner",
+                description: "Info owner bot",
+                rowId: "owner",
+              },
+            ],
+          },
+          {
+            title: "Anime",
+            rows: [
+              {
+                title: "Random Waifu",
+                description: "Kirim gambar waifu",
+                rowId: "waifu",
+              },
+              {
+                title: "Random Neko",
+                description: "Kirim gambar neko",
+                rowId: "neko",
+              },
+            ],
+          },
+        ],
+        msg,
+      );
     },
   });
 
