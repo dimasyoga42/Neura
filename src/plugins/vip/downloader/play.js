@@ -1,6 +1,7 @@
 export const play = async (sock, chatId, msg, text) => {
   try {
     // Validasi input parameter teks untuk memastikan query pencarian tersedia
+    const msc = text.replace(".play", "").trim();
     if (!text) {
       return sock.sendMessage(
         chatId,
@@ -13,7 +14,7 @@ export const play = async (sock, chatId, msg, text) => {
 
     // Melakukan request ke API pencarian YouTube
     const searchResponse = await fetch(
-      `https://api.siputzx.my.id/api/s/youtube?query=${encodeURIComponent(text)}`,
+      `https://api.siputzx.my.id/api/s/youtube?query=${encodeURIComponent(msc)}`,
     );
     const searchResult = await searchResponse.json();
 
