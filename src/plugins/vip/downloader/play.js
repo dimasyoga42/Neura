@@ -1,66 +1,48 @@
-import axios from "axios";
-
-const api = axios.create({
-  baseURL: "https://api.deline.web.id",
-  headers: {
-    Accept: "application/json",
-  },
-});
-
 export const play = async (sock, chatId, msg, text) => {
   try {
-    const query = text.replace(".play", "").trim();
-
-    if (!query) {
-      return await sock.sendMessage(
+    if (!text) {
+      return sock.sendMessage(
         chatId,
-        { text: "Mana judul lagunya?" },
+        {
+          text: "Masukkan judul lagu\n\nContoh: .play dia",
+        },
         { quoted: msg },
       );
     }
 
-    await sock.sendMessage(
-      chatId,
-      { text: `Mencari lagu: *${query}*` },
-      { quoted: msg },
+    const search = await fetch(
+      `https://api.siputzx.my.id/api/s/youtube?query=${encodeURIComponent(text)}`,
     );
+    const res = await search.json();
 
-    const res = await api.get(
-      `/downloader/ytplay?q=${encodeURIComponent(query)}`,
-    );
-
-    if (!res?.data?.status || !res?.data?.result) {
-      return await sock.sendMessage(
+    if (!res.success) {
+      return sock.sendMessage(
         chatId,
-        { text: "Maaf, lagu tidak ditemukan." },
+        {
+          text: "Search gagal",
+        },
         { quoted: msg },
       );
     }
 
-    const data = res.data.result;
+    const video = res.data[0].data[0];
 
-    if (!data.dlink) {
-      return await sock.sendMessage(
-        chatId,
-        { text: "Link download tidak tersedia." },
-        { quoted: msg },
-      );
-    }
+    const title = video.meta.title;
+    const duration = video.meta.duration;
+    const thumb = video.thumb;
 
-    const caption = `
-*Informasi Lagu*
-Judul: ${data.title}
-URL: ${data.url}
-Kualitas: ${data.pick?.quality}
-Ukuran: ${data.pick?.size}
-Format: ${data.pick?.ext}
-    `.trim();
+    const mp3path = video.stream.mp3["320"].streams[0];
+    const mp3 = `https://api.siputzx.my.id${mp3path}`;
 
     await sock.sendMessage(
       chatId,
       {
-        image: { url: data.thumbnail },
-        caption,
+        image: { url: thumb },
+        caption: `🎵 *${title}*
+
+Duration : ${duration}
+Quality : 320kbps
+Mengirim audio...`,
       },
       { quoted: msg },
     );
@@ -68,62 +50,20 @@ Format: ${data.pick?.ext}
     await sock.sendMessage(
       chatId,
       {
-        audio: { url: data.dlink },
+        audio: { url: mp3 },
         mimetype: "audio/mpeg",
-        fileName: `${data.title}.mp3`,
+        ptt: false,
       },
       { quoted: msg },
     );
   } catch (err) {
-    console.error("Error di play command:", err?.response?.data || err.message);
-
+    console.log(err);
     await sock.sendMessage(
       chatId,
       {
-        text: `❌ Terjadi kesalahan: ${
-          err?.response?.data?.message ||
-          err.message ||
-          "Tidak dapat memutar lagu"
-        }`,
+        text: "Terjadi error saat mengambil lagu",
       },
       { quoted: msg },
     );
   }
-};
-
-export const ytmp3 = async (sock, chatId, msg, text) => {
-  try {
-    const urlDat = text.replace(".ytmp3", "");
-    if (!urlDat)
-      return sock.sendMessage(
-        chatId,
-        { text: "mana link youtubenya" },
-        { quoted: msg },
-      );
-    const res = await axios.get(
-      `https://api.deline.web.id/downloader/ytmp3?url=${encodeURIComponent(urlDat)}`,
-    );
-    const data = res.data.result;
-    if (!data)
-      return sock.sendMessage(
-        chatId,
-        { text: "gagal memproses" },
-        { quoted: msg },
-      );
-    const messagePlay = `
-    *music downloaded*
-    name: ${data.youtube.title}
-    url: ${data.youtube.url}
-    `.trim();
-    sock.sendMessage(
-      chatId,
-      { image: { url: `${data.youtube.thumbnail}` }, caption: messagePlay },
-      { quoted: msg },
-    );
-    sock.sendMessage(
-      chatId,
-      { audio: { url: `${data.dlink}` }, mimetype: "audio/mp4" },
-      { quoted: msg },
-    );
-  } catch (err) {}
 };

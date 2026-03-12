@@ -590,16 +590,16 @@ nomer owner: 085664393331 (dimas)`,
     },
   });
 
-  // registerCommand({
-  //   name: "play",
-  //   alias: ["play"],
-  //   category: "Menu Downloader",
-  //   desc: "memutar lagu dari youtube",
-  //   run: async (sock, chatId, msg, args, text) => {
-  //     if (isBan(sock, chatId, msg)) return;
-  //     play(sock, chatId, msg, text);
-  //   },
-  // });
+  registerCommand({
+    name: "play",
+    alias: ["play"],
+    category: "Menu Downloader",
+    desc: "memutar lagu dari youtube",
+    run: async (sock, chatId, msg, args, text) => {
+      if (isBan(sock, chatId, msg)) return;
+      play(sock, chatId, msg, text);
+    },
+  });
 
   registerCommand({
     name: "ytmp3",
