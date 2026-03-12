@@ -175,7 +175,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
       getAllBuff(sock, chatId, msg, text);
       await sendList(
         sock,
-        msg,
+        chatId,
         "Silahkan pilih menu",
         "Neura Bot",
         "Menu Utama",
