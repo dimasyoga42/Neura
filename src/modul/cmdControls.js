@@ -152,13 +152,13 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
         menutext += `└────\n\n`;
       });
 
-      await sendFancyText(sock, chatId {
+      await sendFancyText(sock, chatId, {
         title: "Neura Bot",
         body: "assisten toram anda",
         text: `${menuMessage} By Neura Inc`,
         thumbnail: dataImage,
-        quoted: msg
-      })
+        quoted: msg,
+      });
     },
   });
 
