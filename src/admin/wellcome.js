@@ -117,7 +117,7 @@ export const HandleWelcome = async (sock, update) => {
         ppUrl = "https://telegra.ph/file/24fa902ead26340f3df2c.png";
       }
 
-      const apiUrl = `https://api.siputzx.my.id/api/canvas/welcomev2?username=${phoneNumber}&guildName=${groupName}&memberCount=${memberCount}&avatar=${ppUrl}&background=https%3A%2F%2Fi.ibb.co%2F4YBNyvP%2Fmountain-sunset.jpg&quality=90`;
+      const apiUrl = `https://api.siputzx.my.id/api/canvas/welcomev2?username=semoga betah ya&guildName=${groupName}&memberCount=${memberCount}&avatar=${ppUrl}&background=https%3A%2F%2Fi.ibb.co%2F4YBNyvP%2Fmountain-sunset.jpg&quality=90`;
 
       console.log(username, groupName, ppUrl);
 
