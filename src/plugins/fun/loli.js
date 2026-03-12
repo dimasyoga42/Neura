@@ -1,4 +1,4 @@
-import { sendImage } from "../../lib/message";
+import { sendImage } from "../../lib/message.js";
 
 export const Loli = async (sock, chatId, msg, text) => {
   try {
