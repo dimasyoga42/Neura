@@ -173,47 +173,6 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
       getAllBuff(sock, chatId, msg, text);
-      await sendList(
-        sock,
-        chatId,
-        "Silahkan pilih menu",
-        "Neura Bot",
-        "Menu Utama",
-        "Klik disini",
-        [
-          {
-            title: "General",
-            rows: [
-              {
-                title: "Ping Bot",
-                description: "Cek apakah bot aktif",
-                rowId: "ping",
-              },
-              {
-                title: "Owner",
-                description: "Info owner bot",
-                rowId: "owner",
-              },
-            ],
-          },
-          {
-            title: "Anime",
-            rows: [
-              {
-                title: "Random Waifu",
-                description: "Kirim gambar waifu",
-                rowId: "waifu",
-              },
-              {
-                title: "Random Neko",
-                description: "Kirim gambar neko",
-                rowId: "neko",
-              },
-            ],
-          },
-        ],
-        msg,
-      );
     },
   });
 
