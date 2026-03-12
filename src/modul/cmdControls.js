@@ -165,7 +165,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
     name: "Buff",
     alias: ["buff"],
-    category: "Toram Tools",
+    category: "Toram Search",
     desc: "melihat daftar buff yang tersedia",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
@@ -238,7 +238,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
     name: "appview",
     alias: ["appview"],
-    category: "Toram Tools",
+    category: "Toram Search",
     desc: "mencari appearance item",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
@@ -249,7 +249,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
     name: "xtall",
     alias: ["xtall"],
-    category: "Toram Tools",
+    category: "Toram Search",
     desc: "mencari crystal",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
@@ -260,7 +260,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
     name: "item",
     alias: ["item"],
-    category: "Toram Tools",
+    category: "Toram Search",
     desc: "mencari item toram",
     run: async (sock, chatId, msg, args, text) => {
       searchItem(sock, chatId, msg, text);
@@ -270,7 +270,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
     name: "regist",
     alias: ["regist"],
-    category: "Toram Tools",
+    category: "Toram Search",
     desc: "mencari registlet",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
@@ -281,7 +281,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
     name: "ability",
     alias: ["ability"],
-    category: "Toram Tools",
+    category: "Toram Search",
     desc: "mencari ability detail",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
@@ -292,7 +292,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
     name: "news",
     alias: ["news"],
-    category: "Toram Info",
+    category: "Menu Info",
     desc: "melihat berita terbaru toram",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
@@ -303,7 +303,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
     name: "lv",
     alias: ["lv", "lvl", "level"],
-    category: "Toram Tools",
+    category: "Toram Search",
     desc: "memberikan rekomendasi spot leveling",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
@@ -314,7 +314,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
     name: "bos",
     alias: ["bos"],
-    category: "Toram Info",
+    category: "Toram Search",
     desc: "melihat informasi boss",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
@@ -478,7 +478,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
     name: "report",
     alias: ["report"],
-    category: "Menu Info",
+    category: "Bot Menu",
     desc: "melaporkan bug atau masalah",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
@@ -577,7 +577,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
     name: "donet",
     alias: ["donate", "donasi"],
-    category: "Menu Info",
+    category: "Bot Info",
     desc: "informasi donasi untuk bot",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
@@ -663,7 +663,7 @@ nomer owner: 085664393331 (dimas)`,
   registerCommand({
     name: "skill",
     alias: ["skill"],
-    category: "Toram Tools",
+    category: "Toram Info",
     desc: "mencari informasi skill",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
@@ -729,7 +729,7 @@ nomer owner: 085664393331 (dimas)`,
   registerCommand({
     name: "toramboost",
     alias: ["boost"],
-    category: "Toram Tools",
+    category: "Toram Info",
     desc: "informasi boss boost",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
@@ -751,7 +751,7 @@ nomer owner: 085664393331 (dimas)`,
   registerCommand({
     name: "monster",
     alias: ["monster"],
-    category: "Toram Tools",
+    category: "Toram Search",
     desc: "mencari informasi monster",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
@@ -762,7 +762,7 @@ nomer owner: 085664393331 (dimas)`,
   registerCommand({
     name: "pet",
     alias: ["pet"],
-    category: "Toram Tools",
+    category: "Toram Info",
     desc: "mencari informasi pet",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
@@ -773,7 +773,7 @@ nomer owner: 085664393331 (dimas)`,
   registerCommand({
     name: "spamadv",
     alias: ["spamadv"],
-    category: "Toram Tools",
+    category: "Toram Simulator",
     desc: "kalkulasi spam adv toram",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
@@ -806,7 +806,7 @@ nomer owner: 085664393331 (dimas)`,
   registerCommand({
     name: "listfarm",
     alias: ["farm"],
-    category: "Toram Info",
+    category: "Toram Search",
     desc: "melihat daftar spot farming",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
@@ -828,7 +828,7 @@ nomer owner: 085664393331 (dimas)`,
   registerCommand({
     name: "shdb",
     alias: ["shdb"],
-    category: "Toram Tools",
+    category: "Toram Search",
     desc: "untuk mencari detail bos hdb / event",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
@@ -959,7 +959,7 @@ nomer owner: 085664393331 (dimas)`,
   registerCommand({
     name: "statitem",
     alias: ["statitem"],
-    category: "Toram Tools",
+    category: "Toram Search",
     desc: "mencari item berdasarkan stat",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
@@ -1003,7 +1003,7 @@ nomer owner: 085664393331 (dimas)`,
   registerCommand({
     name: "baca",
     alias: ["baca"],
-    category: "Toram Info",
+    category: "Toram Search",
     desc: "memunculkan detail Guide",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
@@ -1074,7 +1074,7 @@ registerCommand({
 registerCommand({
   name: "raidbos",
   alias: ["rb"],
-  category: "Toram tools",
+  category: "Toram Search",
   desc: "mencari informasi raid boss",
   run: async (sock, chatId, msg, args, text) => {
     if (isBan(sock, chatId, msg)) return;
