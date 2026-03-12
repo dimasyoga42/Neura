@@ -3,7 +3,6 @@ import fetch from "node-fetch";
 export const play = async (sock, chatId, msg, text) => {
   try {
     const query = text.replace(".play", "").trim();
-
     if (!query) {
       return await sock.sendMessage(
         chatId,
@@ -12,7 +11,7 @@ export const play = async (sock, chatId, msg, text) => {
       );
     }
 
-    // Cari video di YouTube
+    // Cari video
     const res = await fetch(
       `https://api.siputzx.my.id/api/s/youtube?query=${encodeURIComponent(query)}`,
     );
@@ -27,27 +26,59 @@ export const play = async (sock, chatId, msg, text) => {
     }
 
     const video = json.data[0];
+    let audioUrl;
 
-    // Download audio dari API
-    const dl = await fetch(
-      `https://api.deline.web.id/downloader/ytmp3?url=${encodeURIComponent(video.url)}`,
-    );
-    const dlJson = await dl.json();
+    // Downloader utama
+    try {
+      const dl = await fetch(
+        `https://api.deline.web.id/downloader/ytmp3?url=${encodeURIComponent(video.url)}`,
+      );
+      const dlJson = await dl.json();
+      if (dlJson.status && dlJson.result?.dlink) {
+        audioUrl = dlJson.result.dlink;
+      }
+    } catch (err) {
+      console.error("Downloader utama gagal:", err.message);
+    }
 
-    if (!dlJson.status || !dlJson.result || !dlJson.result.dlink) {
+    // Fallback: langsung ambil stream YouTube (itag 140 = m4a 128kbps)
+    if (!audioUrl) {
+      try {
+        const ytRes = await fetch(
+          `https://api.siputzx.my.id/api/s/ytstream?url=${encodeURIComponent(video.url)}`,
+        );
+        const ytJson = await ytRes.json();
+        if (
+          ytJson.success &&
+          ytJson.data?.[0]?.stream?.mp3?.["320"]?.streams?.[0]
+        ) {
+          audioUrl = ytJson.data[0].stream.mp3["320"].streams[0];
+        } else if (
+          ytJson.success &&
+          ytJson.data?.[0]?.stream?.mp3?.["192"]?.streams?.[0]
+        ) {
+          audioUrl = ytJson.data[0].stream.mp3["192"].streams[0];
+        } else if (
+          ytJson.success &&
+          ytJson.data?.[0]?.stream?.mp3?.["128"]?.streams?.[0]
+        ) {
+          audioUrl = ytJson.data[0].stream.mp3["128"].streams[0];
+        }
+      } catch (err) {
+        console.error("Fallback stream gagal:", err.message);
+      }
+    }
+
+    if (!audioUrl) {
       return await sock.sendMessage(
         chatId,
-        { text: "Downloader gagal." },
+        { text: "Downloader gagal di semua server." },
         { quoted: msg },
       );
     }
 
-    const audioUrl = dlJson.result.dlink;
-
-    // Sanitasi nama file agar aman
     const safeFileName = video.title.replace(/[<>:"/\\|?*]+/g, "").trim();
 
-    // Kirim info video
     await sock.sendMessage(
       chatId,
       {
@@ -57,7 +88,6 @@ export const play = async (sock, chatId, msg, text) => {
       { quoted: msg },
     );
 
-    // Kirim audio
     return await sock.sendMessage(
       chatId,
       {
