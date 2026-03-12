@@ -990,7 +990,7 @@ nomer owner: 085664393331 (dimas)`,
   });
 
   registerCommand({
-    name: "perpus",
+    name: "guide",
     alias: ["perpus"],
     category: "Toram Info",
     desc: "memunculkan daftar Guide",
