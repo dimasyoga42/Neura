@@ -1,21 +1,22 @@
 export const play = async (sock, chatId, msg, text) => {
   try {
+    // Ekstraksi query pencarian
     const query = text.replace(/^\.\w+\s+/, "").trim();
     if (!query) {
       return sock.sendMessage(
         chatId,
-        { text: "Masukkan judul lagu." },
+        { text: "Silakan masukkan judul lagu." },
         { quoted: msg },
       );
     }
 
-    // 1. Pencarian YouTube
+    // 1. Pencarian Video (Mendapatkan URL YouTube)
     const searchResponse = await fetch(
       `https://api.siputzx.my.id/api/s/youtube?query=${encodeURIComponent(query)}`,
     );
-    const searchResult = await searchResponse.json();
+    const searchData = await searchResponse.json();
 
-    if (!searchResult.status || !searchResult.data) {
+    if (!searchData.status || !searchData.data) {
       return sock.sendMessage(
         chatId,
         { text: "Pencarian gagal." },
@@ -23,78 +24,66 @@ export const play = async (sock, chatId, msg, text) => {
       );
     }
 
-    const videoUrl = searchResult.data.find((v) => v.type === "video")?.url;
+    const video = searchData.data.find((v) => v.type === "video");
+    if (!video)
+      return sock.sendMessage(
+        chatId,
+        { text: "Video tidak ditemukan." },
+        { quoted: msg },
+      );
 
-    // 2. Mendapatkan Data Download
+    // 2. Request ke API Downloader ytmp3
     const dlResponse = await fetch(
-      `https://api.siputzx.my.id/api/d/savefrom?url=${encodeURIComponent(videoUrl)}`,
+      `https://api.deline.web.id/downloader/ytmp3?url=${encodeURIComponent(video.url)}`,
     );
     const dlJson = await dlResponse.json();
 
-    /* EKSTRAKSI URL AUDIO LANGSUNG:
-       Sesuai struktur JSON Anda, target berada di:
-       data[0].data[0].url (array yang berisi daftar format)
+    if (!dlJson.status || !dlJson.result) {
+      return sock.sendMessage(
+        chatId,
+        { text: "Gagal mengambil data dari server downloader." },
+        { quoted: msg },
+      );
+    }
+
+    /* EKSTRAKSI DATA AUDIO:
+       Sesuai JSON: dlJson.result.dlink
     */
-    const videoGroup = dlJson.data?.find((g) => g.type === "video");
-    const formatList = videoGroup?.data?.[0]?.url; // Ini adalah array berisi berbagai format
+    const finalAudioUrl = dlJson.result.dlink;
+    const info = dlJson.result.youtube;
+    const detail = dlJson.result.pick;
 
-    if (!formatList || !Array.isArray(formatList)) {
-      return sock.sendMessage(
-        chatId,
-        { text: "Format audio tidak ditemukan." },
-        { quoted: msg },
-      );
-    }
-
-    // Mencari format yang merupakan audio murni (audio: true)
-    // Berdasarkan JSON Anda, itag 140 (m4a 130kbps) atau 139 (m4a 50kbps)
-    const audioFormat =
-      formatList.find((f) => f.audio === true && f.ext === "m4a") ||
-      formatList.find((f) => f.audio === true);
-
-    const finalAudioUrl = audioFormat?.url;
-
-    if (!finalAudioUrl) {
-      return sock.sendMessage(
-        chatId,
-        { text: "Gagal mendapatkan tautan audio langsung." },
-        { quoted: msg },
-      );
-    }
-
-    // 3. Metadata untuk Caption
-    const meta = videoGroup.data[0].meta;
-
+    // 3. Mengirim Metadata Video
     await sock.sendMessage(
       chatId,
       {
-        image: { url: videoGroup.data[0].thumb },
-        caption: `*${meta.title}*
+        image: { url: info.thumbnail },
+        caption: `*${info.title}*
 
-Durasi: ${meta.duration}
-Kualitas: ${audioFormat.subname || audioFormat.quality} kbps
-Ukuran: ${(audioFormat.filesize / (1024 * 1024)).toFixed(2)} MB
+Ukuran: ${detail.size}
+Kualitas: ${detail.quality}
+Format: ${detail.ext}
 
-Mengirim audio langsung dari server...`,
+Sedang mengirim audio, mohon tunggu...`,
       },
       { quoted: msg },
     );
 
-    // 4. Pengiriman Audio
+    // 4. Mengirim File Audio
     return await sock.sendMessage(
       chatId,
       {
         audio: { url: finalAudioUrl },
-        mimetype: "audio/mp4", // Menggunakan m4a sesuai ekstensi di JSON
+        mimetype: "audio/mpeg",
         ptt: false,
       },
       { quoted: msg },
     );
   } catch (error) {
-    console.error("Detail Error:", error);
+    console.error("Error Detail:", error);
     return sock.sendMessage(
       chatId,
-      { text: "Terjadi kesalahan sistem saat mengambil data." },
+      { text: "Terjadi kesalahan internal sistem." },
       { quoted: msg },
     );
   }
