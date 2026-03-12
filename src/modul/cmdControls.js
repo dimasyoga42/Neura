@@ -157,8 +157,8 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
 
       await sendFancyText(sock, chatId, {
         title: random,
-        body: "assisten toram anda",
-        text: `${menutext} By Neura Inc`,
+        body: "by Dimas yoga",
+        text: `${menutext}`,
         thumbnail: `${dataImage}`,
         quoted: msg,
       });
