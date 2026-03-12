@@ -1072,7 +1072,7 @@ registerCommand({
   },
 });
 registerCommand({
-  name: "rb",
+  name: "raidbos",
   alias: ["rb"],
   category: "Toram tools",
   desc: "mencari informasi raid boss",
