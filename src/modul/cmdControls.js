@@ -152,7 +152,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
       });
 
       await sock.sendMessage(chatId, {
-        image: dataImage,
+        image: { url: dataImage },
         caption: `${menutext}\nBy 𝚍𝚒𝚖𝚊𝚜𝚢𝚘𝚐𝚊42`.trim(),
       });
     },
@@ -160,7 +160,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
 
   registerCommand({
     name: "Buff",
-    alias: ["buff"],
+    alias: ["bufflind"],
     category: "Toram Search",
     desc: "melihat daftar buff yang tersedia",
     run: async (sock, chatId, msg, args, text) => {
