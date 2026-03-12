@@ -120,12 +120,6 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
       // const key = Math.floor(Math.random() * 4) + 1
       const res = await fetchdata("https://api.waifu.im/images");
       const dataImage = res.items[0].url;
-      const data = await fetchdata(
-        "https://raw.githubusercontent.com/dimasyoga42/dataset/refs/heads/main/image.json",
-      );
-      const key = Math.floor(Math.random() * message.length) + 1;
-      const keyimg = Math.floor(Math.random() * data.length) + 1;
-      const messages = message[key];
 
       commands.forEach((cmd, key) => {
         // skip alias
@@ -140,10 +134,10 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
 
       // sort kategori A-Z
       const sortedCategory = Object.keys(grouped).sort();
-      const imageoverlay = await addOverlayFromUrl(
-        `${dataImage}`,
-        `${messages}`,
-      );
+      // const imageoverlay = await addOverlayFromUrl(
+      //   `${dataImage}`,
+      //   `${messages}`,
+      // );
       sortedCategory.forEach((cat) => {
         menutext += `┌❏ *${cat}*\n`;
         // sort command A-Z
