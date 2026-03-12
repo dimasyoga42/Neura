@@ -155,8 +155,8 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
       await sendFancyText(sock, chatId, {
         title: "Neura Bot",
         body: "assisten toram anda",
-        text: `${menuMessage} By Neura Inc`,
-        thumbnail: dataImage,
+        text: `${menutext} By Neura Inc`,
+        thumbnail: `${dataImage}`,
         quoted: msg,
       });
     },
