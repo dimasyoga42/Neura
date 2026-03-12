@@ -1,4 +1,4 @@
-const play = async (sock, chatId, msg, text) => {
+export const play = async (sock, chatId, msg, text) => {
   try {
     // Validasi input parameter teks untuk memastikan query pencarian tersedia
     if (!text) {
