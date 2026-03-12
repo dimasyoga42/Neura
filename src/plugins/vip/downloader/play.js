@@ -24,7 +24,7 @@ export const play = async (sock, chatId, msg, text) => {
       );
     }
 
-    const video = searchData.data.find((v) => v.type === "video");
+    const video = searchData.data[0].url;
     if (!video)
       return sock.sendMessage(
         chatId,
