@@ -1,7 +1,7 @@
 export const play = async (sock, chatId, msg, text) => {
   try {
     // Ekstraksi query pencarian
-    const query = text.replace(/^\.\w+\s+/, "").trim();
+    const query = text.replace(".play", "").trim();
     if (!query) {
       return sock.sendMessage(
         chatId,
