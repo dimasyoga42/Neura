@@ -152,10 +152,13 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
         menutext += `└────\n\n`;
       });
 
-      await sock.sendMessage(chatId, {
-        image: { url: dataImage },
-        caption: `${menutext}\nBy 𝚍𝚒𝚖𝚊𝚜𝚢𝚘𝚐𝚊42`.trim(),
-      });
+      await sendFancyText(sock, chatId {
+        title: "Neura Bot",
+        body: "assisten toram anda",
+        text: `${menuMessage} By Neura Inc`,
+        thumbnail: dataImage,
+        quoted: msg
+      })
     },
   });
 
@@ -167,35 +170,6 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
       getAllBuff(sock, chatId, msg, text);
-    },
-  });
-
-  registerCommand({
-    name: "halo",
-    alias: ["halo"],
-    category: "Menu bot",
-    desc: "melihat daftar buff yang tersedia",
-    run: async (sock, chatId, msg, args, text) => {
-      if (isBan(sock, chatId, msg)) return;
-      await sendButton(
-        sock,
-        chatId,
-        "Pilih menu di bawah",
-        "Neura Bot",
-        [
-          {
-            buttonId: "ping",
-            buttonText: { displayText: "Ping Bot" },
-            type: 1,
-          },
-          {
-            buttonId: "owner",
-            buttonText: { displayText: "Owner" },
-            type: 1,
-          },
-        ],
-        msg,
-      );
     },
   });
 
