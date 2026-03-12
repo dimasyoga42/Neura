@@ -118,6 +118,8 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
       let menutext = `*Neura Sama Menu*\nRules bot:\n- jangan spam command\n- jangan membuat stiker jamok/18+\n- dilarang manipulasi AI\n- jika bot tidak merespon ulangi kembali command\n- gunakan .report utuk memberi tahu bug\n\nNote: Pada tanggal 20 april Neura akan beralih ke Prem perbulan 6.5k. akan di adakan trial 12 hari\n\n`;
       const grouped = {};
       // const key = Math.floor(Math.random() * 4) + 1
+      const res = await fetchdata("https://api.waifu.im/images");
+      const dataImage = res.items[0].url;
       const data = await fetchdata(
         "https://raw.githubusercontent.com/dimasyoga42/dataset/refs/heads/main/image.json",
       );
@@ -139,7 +141,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
       // sort kategori A-Z
       const sortedCategory = Object.keys(grouped).sort();
       const imageoverlay = await addOverlayFromUrl(
-        `${data[keyimg]}`,
+        `${dataImage}`,
         `${messages}`,
       );
       sortedCategory.forEach((cat) => {
