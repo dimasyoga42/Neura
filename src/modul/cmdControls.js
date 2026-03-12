@@ -159,8 +159,8 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   });
 
   registerCommand({
-    name: "Buff",
-    alias: ["bufflind"],
+    name: "buff",
+    alias: ["buff"],
     category: "Toram Search",
     desc: "melihat daftar buff yang tersedia",
     run: async (sock, chatId, msg, args, text) => {
