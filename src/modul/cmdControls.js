@@ -106,7 +106,7 @@ import { myBini } from "../plugins/fun/mybini.js";
 import { newkhodam } from "../plugins/fun/khodam.js";
 import { cekIdGrub, cekVip } from "../config/vip.js";
 import { filwep } from "../plugins/toram/filwep.js";
-import { sendFancyText } from "../lib/message.js";
+import { sendButton, sendFancyText } from "../lib/message.js";
 //import { EfekCommand } from "../plugins/vip/tools/audioeffect.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
@@ -177,14 +177,25 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "melihat daftar buff yang tersedia",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
-      await sendFancyText(sock, chatId, {
-        title: "Neura Bot",
-        body: "WhatsApp Automation",
-        text: "Ini menu bot",
-        thumbnail:
-          "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj8Jf0AJ4g-4_jHICkPf_9EpaUHjZowQnx-WNJBPgJbuAJoZf0S8prMdhsF4EiB5PeVZ52o2y7oiTMN7NVuAkkMQzVMXKBzGt1-5eGb2oWyW4sKrVHZBrzVMd-CMdHszvH9QRCDhoeQe5qqD2AJVMQUEmISh2VjAphGLpXvoaEsOmjZT7hv7zlwIgoLTXc/s16000/angelina_thumbnail_480p.webp",
-        quoted: msg,
-      });
+      await sendButton(
+        sock,
+        chatId,
+        "Pilih menu di bawah",
+        "Neura Bot",
+        [
+          {
+            buttonId: "ping",
+            buttonText: { displayText: "Ping Bot" },
+            type: 1,
+          },
+          {
+            buttonId: "owner",
+            buttonText: { displayText: "Owner" },
+            type: 1,
+          },
+        ],
+        msg,
+      );
     },
   });
 
