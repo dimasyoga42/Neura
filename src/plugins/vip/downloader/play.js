@@ -1,112 +1,100 @@
 export const play = async (sock, chatId, msg, text) => {
   try {
-    // Membersihkan prefix untuk mendapatkan kata kunci pencarian yang murni
-    const msc = text.replace(/^\.\w+\s+/, "").trim();
-    if (!msc) {
+    const query = text.replace(/^\.\w+\s+/, "").trim();
+    if (!query) {
       return sock.sendMessage(
         chatId,
-        {
-          text: "Silakan masukkan judul lagu atau kata kunci pencarian.\n\nContoh: .play dia",
-        },
+        { text: "Masukkan judul lagu." },
         { quoted: msg },
       );
     }
 
-    // Tahap 1: Pencarian Video melalui YouTube API
+    // 1. Pencarian YouTube
     const searchResponse = await fetch(
-      `https://api.siputzx.my.id/api/s/youtube?query=${encodeURIComponent(msc)}`,
+      `https://api.siputzx.my.id/api/s/youtube?query=${encodeURIComponent(query)}`,
     );
     const searchResult = await searchResponse.json();
 
-    if (
-      !searchResult.status ||
-      !searchResult.data ||
-      searchResult.data.length === 0
-    ) {
+    if (!searchResult.status || !searchResult.data) {
       return sock.sendMessage(
         chatId,
-        { text: "Pencarian gagal atau video tidak ditemukan." },
+        { text: "Pencarian gagal." },
         { quoted: msg },
       );
     }
 
-    const videoData = searchResult.data.find((v) => v.type === "video");
-    if (!videoData) {
-      return sock.sendMessage(
-        chatId,
-        { text: "Entitas video tidak ditemukan." },
-        { quoted: msg },
-      );
-    }
+    const videoUrl = searchResult.data.find((v) => v.type === "video")?.url;
 
-    // Tahap 2: Mendapatkan Tautan Unduh melalui Savefrom API
-    const downloadResponse = await fetch(
-      `https://api.siputzx.my.id/api/d/savefrom?url=${encodeURIComponent(videoData.url)}`,
+    // 2. Mendapatkan Data Download
+    const dlResponse = await fetch(
+      `https://api.siputzx.my.id/api/d/savefrom?url=${encodeURIComponent(videoUrl)}`,
     );
-    const downloadResult = await downloadResponse.json();
+    const dlJson = await dlResponse.json();
 
-    /* PENYESUAIAN STRUKTUR JSON:
-      Berdasarkan data yang Anda berikan, audio berada di:
-      downloadResult.data[0].data[0].stream.mp3['320'].url
+    /* EKSTRAKSI URL AUDIO LANGSUNG:
+       Sesuai struktur JSON Anda, target berada di:
+       data[0].data[0].url (array yang berisi daftar format)
     */
-    const videoGroup = downloadResult.data?.find(
-      (group) => group.type === "video",
-    );
-    const downloadInfo = videoGroup?.data?.[0];
+    const videoGroup = dlJson.data?.find((g) => g.type === "video");
+    const formatList = videoGroup?.data?.[0]?.url; // Ini adalah array berisi berbagai format
 
-    if (!downloadInfo) {
+    if (!formatList || !Array.isArray(formatList)) {
       return sock.sendMessage(
         chatId,
-        { text: "Gagal mengekstraksi informasi unduhan." },
+        { text: "Format audio tidak ditemukan." },
         { quoted: msg },
       );
     }
 
-    // Menentukan URL Audio dengan fallback kualitas (320k -> 256k -> 192k)
-    const mp3Options = downloadInfo.stream?.mp3;
-    const selectedMp3 =
-      mp3Options?.["320"] || mp3Options?.["256"] || mp3Options?.["192"];
+    // Mencari format yang merupakan audio murni (audio: true)
+    // Berdasarkan JSON Anda, itag 140 (m4a 130kbps) atau 139 (m4a 50kbps)
+    const audioFormat =
+      formatList.find((f) => f.audio === true && f.ext === "m4a") ||
+      formatList.find((f) => f.audio === true);
 
-    // Penanganan Local Converter jika URL utama tidak tersedia secara langsung
-    let finalAudioUrl = selectedMp3?.url;
-    if (finalAudioUrl === "#local-converter" || !finalAudioUrl) {
-      // Menggunakan data converter jika URL fisik tidak langsung diberikan
-      finalAudioUrl = `https://api.siputzx.my.id/api/d/convert?data=${encodeURIComponent(downloadInfo.mp3Converter)}`;
+    const finalAudioUrl = audioFormat?.url;
+
+    if (!finalAudioUrl) {
+      return sock.sendMessage(
+        chatId,
+        { text: "Gagal mendapatkan tautan audio langsung." },
+        { quoted: msg },
+      );
     }
 
-    // Tahap 3: Pengiriman Metadata dan Thumbnail
+    // 3. Metadata untuk Caption
+    const meta = videoGroup.data[0].meta;
+
     await sock.sendMessage(
       chatId,
       {
-        image: { url: downloadInfo.thumb || videoData.thumbnail },
-        caption: `🎵 *${downloadInfo.meta?.title || videoData.title}*
+        image: { url: videoGroup.data[0].thumb },
+        caption: `*${meta.title}*
 
-👤 Kanal: ${videoData.author.name}
-⏱ Durasi: ${downloadInfo.meta?.duration || videoData.timestamp}
-👀 Penayangan: ${videoData.views.toLocaleString()}
+Durasi: ${meta.duration}
+Kualitas: ${audioFormat.subname || audioFormat.quality} kbps
+Ukuran: ${(audioFormat.filesize / (1024 * 1024)).toFixed(2)} MB
 
-⏳ Sedang memproses pengiriman audio, mohon tunggu...`,
+Mengirim audio langsung dari server...`,
       },
       { quoted: msg },
     );
 
-    // Tahap 4: Pengiriman File Audio (Buffer/URL)
+    // 4. Pengiriman Audio
     return await sock.sendMessage(
       chatId,
       {
         audio: { url: finalAudioUrl },
-        mimetype: "audio/mpeg",
+        mimetype: "audio/mp4", // Menggunakan m4a sesuai ekstensi di JSON
         ptt: false,
       },
       { quoted: msg },
     );
   } catch (error) {
-    console.error("Error pada fungsi play:", error);
+    console.error("Detail Error:", error);
     return sock.sendMessage(
       chatId,
-      {
-        text: "Terjadi kesalahan sistemis saat mencoba memproses permintaan Anda.",
-      },
+      { text: "Terjadi kesalahan sistem saat mengambil data." },
       { quoted: msg },
     );
   }
