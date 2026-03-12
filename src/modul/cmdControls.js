@@ -51,7 +51,7 @@ import {
 } from "../plugins/toram/raidControl.js";
 import fs from "fs";
 import { Remini } from "../plugins/vip/tools/remini.js";
-import { play, ytmp3 } from "../plugins/vip/downloader/play.js";
+import { play } from "../plugins/vip/downloader/play.js";
 import { pin } from "../plugins/vip/downloader/pinterst.js";
 import {
   Caklontong,
@@ -601,16 +601,16 @@ nomer owner: 085664393331 (dimas)`,
     },
   });
 
-  registerCommand({
-    name: "ytmp3",
-    alias: ["ytmp3"],
-    category: "Menu Downloader",
-    desc: "download audio dari youtube",
-    run: async (sock, chatId, msg, args, text) => {
-      if (isBan(sock, chatId, msg)) return;
-      ytmp3(sock, chatId, msg, text);
-    },
-  });
+  // registerCommand({
+  //   name: "ytmp3",
+  //   alias: ["ytmp3"],
+  //   category: "Menu Downloader",
+  //   desc: "download audio dari youtube",
+  //   run: async (sock, chatId, msg, args, text) => {
+  //     if (isBan(sock, chatId, msg)) return;
+  //     ytmp3(sock, chatId, msg, text);
+  //   },
+  // });
 
   registerCommand({
     name: "pinterest",
