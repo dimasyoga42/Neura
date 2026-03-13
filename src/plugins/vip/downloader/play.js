@@ -36,23 +36,23 @@ export const play = async (sock, chatId, msg, text) => {
       quoted: msg,
     });
 
-    // Download audio sebagai buffer dulu
+    // Download audio
     const audioRes = await axios.get(data.data.url, {
       responseType: "arraybuffer",
-      headers: {
-        "User-Agent": "Mozilla/5.0",
-      },
+      timeout: 60000,
     });
 
     const audioBuffer = Buffer.from(audioRes.data);
+    console.log("Buffer size:", audioBuffer.length); // cek di console
 
     await sock.sendMessage(
       chatId,
       {
         audio: audioBuffer,
-        mimetype: "audio/mpeg", // ganti dari audio/mp3
+        mimetype: "audio/mpeg",
         ptt: false,
-        fileName: `${data.title || "audio"}.mp3`,
+        fileLength: audioBuffer.length,
+        fileName: data.data.filename,
       },
       { quoted: msg },
     );
