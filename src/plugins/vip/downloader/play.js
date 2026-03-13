@@ -4,7 +4,6 @@ import { sendAudio, sendFancyText } from "../../../lib/message.js";
 export const play = async (sock, chatId, msg, text) => {
   try {
     const query = text.replace(".play", "").trim();
-
     if (!query) {
       return await sock.sendMessage(
         chatId,
@@ -16,7 +15,6 @@ export const play = async (sock, chatId, msg, text) => {
     const res = await axios.get(
       `https://api.neoxr.eu/api/play?q=${encodeURIComponent(query)}&apikey=${process.env.NOXER}`,
     );
-
     const data = res.data;
 
     if (!data?.data?.url) {
@@ -37,17 +35,29 @@ export const play = async (sock, chatId, msg, text) => {
       thumbnail: data.thumbnail,
       quoted: msg,
     });
-    console.log(data.data.url);
+
+    // Download audio sebagai buffer dulu
+    const audioRes = await axios.get(data.data.url, {
+      responseType: "arraybuffer",
+      headers: {
+        "User-Agent": "Mozilla/5.0",
+      },
+    });
+
+    const audioBuffer = Buffer.from(audioRes.data);
+
     await sock.sendMessage(
       chatId,
       {
-        audio: { url: data.data.url },
-        mimetype: "audio/mp4",
+        audio: audioBuffer,
+        mimetype: "audio/mpeg", // ganti dari audio/mp3
         ptt: false,
+        fileName: `${data.title || "audio"}.mp3`,
       },
       { quoted: msg },
     );
   } catch (err) {
+    console.error(err);
     await sock.sendMessage(chatId, { text: err.message }, { quoted: msg });
   }
 };
