@@ -48,7 +48,7 @@ export const play = async (sock, chatId, msg, text) => {
     await sock.sendMessage(
       chatId,
       {
-        audio: data.data.url,
+        audio: { url: `${data.data.url}` },
         mimetype: "audio/mpeg",
         ptt: false,
         fileLength: audioBuffer.length,
