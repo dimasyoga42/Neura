@@ -12,6 +12,7 @@ export const play = async (sock, chatId, msg, text) => {
       );
     }
 
+    // Panggil API
     const res = await axios.get(
       `https://api.neoxr.eu/api/play?q=${encodeURIComponent(query)}&apikey=${process.env.NOXER}`,
     );
@@ -20,7 +21,7 @@ export const play = async (sock, chatId, msg, text) => {
     if (!data?.data?.url) {
       return await sendFancyText(sock, chatId, {
         title: "Neura Play",
-        body: "musik yang anda cari tidak ada",
+        body: "Musik yang anda cari tidak ada",
         text: "",
         thumbnail:
           "https://i.pinimg.com/1200x/58/64/04/58640492bafe2aa0d98c00c2b326448b.jpg",
@@ -28,6 +29,7 @@ export const play = async (sock, chatId, msg, text) => {
       });
     }
 
+    // Kirim info musik
     await sendFancyText(sock, chatId, {
       title: "Neura Play",
       body: `Music: ${data.title}`,
@@ -36,28 +38,32 @@ export const play = async (sock, chatId, msg, text) => {
       quoted: msg,
     });
 
-    // Download audio
+    // Download audio sebagai buffer
     const audioRes = await axios.get(data.data.url, {
       responseType: "arraybuffer",
       timeout: 60000,
     });
 
     const audioBuffer = Buffer.from(audioRes.data);
-    console.log("Buffer size:", audioBuffer.length); // cek di console
+    console.log("Buffer size:", audioBuffer.length);
 
+    // Kirim audio ke WhatsApp
     await sock.sendMessage(
       chatId,
       {
-        audio: { url: `${data.data.url}` },
+        audio: audioBuffer, // pakai buffer, bukan url
         mimetype: "audio/mpeg",
+        fileName: `${data.title}.mp3`,
         ptt: false,
-        fileLength: audioBuffer.length,
-        fileName: data.data.filename,
       },
       { quoted: msg },
     );
   } catch (err) {
-    console.error(err);
-    await sock.sendMessage(chatId, { text: err.message }, { quoted: msg });
+    console.error("Error di play:", err.message);
+    await sock.sendMessage(
+      chatId,
+      { text: "Terjadi error: " + err.message },
+      { quoted: msg },
+    );
   }
 };
