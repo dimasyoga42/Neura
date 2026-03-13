@@ -42,7 +42,7 @@ export const play = async (sock, chatId, msg, text) => {
       chatId,
       {
         audio: { url: data.data.url },
-        mimetype: "audio/mpeg",
+        mimetype: "audio/mp4",
         ptt: false,
       },
       { quoted: msg },
