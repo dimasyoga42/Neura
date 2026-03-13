@@ -1,14 +1,9 @@
-// import makeWASocket, {
-//   fetchLatestBaileysVersion,
-//   useMultiFileAuthState,
-//   DisconnectReason,
-// } from "@whiskeysockets/baileys";
-import {
-  makeWASocket,
+import makeWASocket, {
+  fetchLatestBaileysVersion,
   useMultiFileAuthState,
   DisconnectReason,
-  fetchLatestBaileysVersion,
-} from "toxic-baileys";
+} from "@whiskeysockets/baileys";
+
 import qrcode from "qrcode-terminal";
 import dotenv from "dotenv";
 import { ownerControls } from "./src/admin/owner.js";
