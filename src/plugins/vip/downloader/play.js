@@ -37,8 +37,16 @@ export const play = async (sock, chatId, msg, text) => {
       thumbnail: data.thumbnail,
       quoted: msg,
     });
-
-    await sendAudio(sock, chatId, `${data.data.url}`, false, msg);
+    console.log(data.data.url);
+    await sock.sendMessage(
+      chatId,
+      {
+        audio: { url: data.data.url },
+        mimetype: "audio/mpeg",
+        ptt: false,
+      },
+      { quoted: msg },
+    );
   } catch (err) {
     await sock.sendMessage(chatId, { text: err.message }, { quoted: msg });
   }
