@@ -107,6 +107,7 @@ import { newkhodam } from "../plugins/fun/khodam.js";
 import { cekIdGrub, cekVip } from "../config/vip.js";
 import { filwep } from "../plugins/toram/filwep.js";
 import { sendButton, sendFancyText, sendList } from "../lib/message.js";
+import { qweenAi } from "../plugins/lmm/qwen.js";
 //import { EfekCommand } from "../plugins/vip/tools/audioeffect.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
   registerCommand({
@@ -608,16 +609,16 @@ nomer owner: 085664393331 (dimas)`,
   //   },
   // });
 
-  // registerCommand({
-  //   name: "ytmp3",
-  //   alias: ["ytmp3"],
-  //   category: "Menu Downloader",
-  //   desc: "download audio dari youtube",
-  //   run: async (sock, chatId, msg, args, text) => {
-  //     if (isBan(sock, chatId, msg)) return;
-  //     ytmp3(sock, chatId, msg, text);
-  //   },
-  // });
+  registerCommand({
+    name: "qween",
+    alias: ["qween"],
+    category: "Menu AI",
+    desc: "ngobrol dengan model ai Qween",
+    run: async (sock, chatId, msg, args, text) => {
+      if (isBan(sock, chatId, msg)) return;
+      qweenAi(sock, chatId, msg, text);
+    },
+  });
 
   registerCommand({
     name: "pinterest",
