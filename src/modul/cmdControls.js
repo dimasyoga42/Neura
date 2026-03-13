@@ -894,16 +894,16 @@ nomer owner: 085664393331 (dimas)`,
     },
   });
 
-  // registerCommand({
-  //   name: "artinama",
-  //   alias: ["artinama"],
-  //   category: "Menu Fun",
-  //   desc: "melihat arti nama",
-  //   run: async (sock, chatId, msg, args, text) => {
-  //     if (isBan(sock, chatId, msg)) return;
-  //     artiNama(sock, chatId, msg, text);
-  //   },
-  // });
+  registerCommand({
+    name: "artinama",
+    alias: ["artinama"],
+    category: "Menu Fun",
+    desc: "melihat arti nama",
+    run: async (sock, chatId, msg, args, text) => {
+      if (isBan(sock, chatId, msg)) return;
+      artiNama(sock, chatId, msg, text);
+    },
+  });
 
   registerCommand({
     name: "note",
