@@ -574,19 +574,20 @@ dtedark / dtedark% = % luka ke Gelap
 `.trim();
 
 export const messagePembolong = `
-*extract*: 3 - 4.5M
+*extract*: 4 - 5M
+Fairy Silk 5M
 
 *OHS*
-0-1: 16-30M
+0-1: 16-25M
 1-2: 60-70M
 
 *BWG*
-0-1: 9,2-20M
-0-2: 70-100M
+0-1: 6-9M
+0-2: 70-80M
 
 *KNUCK*
-0-1: 7-10M
-1-2: 44-70M
+0-1: 10-15M
+1-2: 30-40M
 
 *STAFF*
 0-1: 15-20M
@@ -594,10 +595,10 @@ export const messagePembolong = `
 
 *MD*
 0-1 10-15M
-1-2 40-60M
+1-2 30-40M
 
 *KTN*
-0-1: 9-20M
+0-1: 10-15M
 1-2: 110-120M
 
 *THS*
@@ -605,14 +606,14 @@ export const messagePembolong = `
 1-2: 110- 140m
 
 *HB*
-0-1 15-20M
+0-1 6-8M
 1-2: 50-55M
 Spirit Needle 6-8M
 legendary needle 550M
-leg ornament: 570-600M
-leg silk: 900-1B
+leg ornament: 510-600M
+leg silk: 800-1B
 
-data bulan januari 2026
+data bulan Maret 2026
 `.trim();
 
 export const listLeveling = `
