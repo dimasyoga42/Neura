@@ -38,20 +38,11 @@ export const play = async (sock, chatId, msg, text) => {
       quoted: msg,
     });
 
-    // Download audio sebagai buffer
-    const audioRes = await axios.get(data.data.url, {
-      responseType: "arraybuffer",
-      timeout: 60000,
-    });
-
-    const audioBuffer = Buffer.from(audioRes.data);
-    console.log("Buffer size:", audioBuffer.length);
-
     // Kirim audio ke WhatsApp
     await sock.sendMessage(
       chatId,
       {
-        audio: audioBuffer, // pakai buffer, bukan url
+        audio: { url: data.data.url },
         mimetype: "audio/mpeg",
         fileName: `${data.title}.mp3`,
         ptt: false,
