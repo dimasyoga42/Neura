@@ -38,7 +38,7 @@ export const play = async (sock, chatId, msg, text) => {
       quoted: msg,
     });
 
-    await sendAudio(sock, chatId, data.data.url, true, msg);
+    await sendAudio(sock, chatId, `${data.data.url}`, false, msg);
   } catch (err) {
     await sock.sendMessage(chatId, { text: err.message }, { quoted: msg });
   }
