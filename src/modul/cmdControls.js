@@ -555,16 +555,16 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     },
   });
 
-  // registerCommand({
-  //   name: "remini",
-  //   alias: ["enhance"],
-  //   category: "Menu Tools",
-  //   desc: "meningkatkan kualitas gambar",
-  //   run: async (sock, chatId, msg) => {
-  //     if (isBan(sock, chatId, msg)) return;
-  //     Remini(sock, chatId, msg);
-  //   },
-  // });
+  registerCommand({
+    name: "remini",
+    alias: ["enhance"],
+    category: "Menu Tools",
+    desc: "meningkatkan kualitas gambar",
+    run: async (sock, chatId, msg) => {
+      if (isBan(sock, chatId, msg)) return;
+      Remini(sock, chatId, msg);
+    },
+  });
 
   registerCommand({
     name: "upbag",
