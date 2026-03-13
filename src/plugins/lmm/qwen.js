@@ -3,7 +3,7 @@ import { sendFancyText } from "../../lib/message.js";
 
 export const qweenAi = async (sock, chatId, msg, text) => {
   try {
-    const { ask } = text.replace(".qween", "").trim();
+    const ask = text.replace(".qween", "").trim();
     if (!ask)
       return sendFancyText(sock, chatId, {
         title: "Neura Sama",
