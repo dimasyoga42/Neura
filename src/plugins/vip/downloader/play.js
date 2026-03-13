@@ -39,12 +39,23 @@ export const play = async (sock, chatId, msg, text) => {
     });
 
     // Kirim audio ke WhatsApp
-    await sock.sendMessage(
+    sock.sendMessage(
       chatId,
       {
-        audio: { url: data.data.url },
-        mimetype: "audio/mp4",
-        ptt: false,
+        audio: { url: data.data.url }, // Mengambil langsung dari stream URL API
+        mimetype: "audio/mpeg",
+        fileName: `${data.title}.mp3`,
+        ptt: false, // Set ke true jika ingin dikirim sebagai Voice Note (VN)
+        contextInfo: {
+          externalAdReply: {
+            title: data.title,
+            body: data.channel,
+            thumbnailUrl: data.thumbnail,
+            sourceUrl: data.data.url,
+            mediaType: 2, // Menandakan tipe media audio
+            showAdAttribution: true,
+          },
+        },
       },
       { quoted: msg },
     );
