@@ -56,14 +56,14 @@ export const play = async (sock, chatId, msg, text) => {
     if (!query) {
       return await sock.sendMessage(
         chatId,
-        { text: "🎵 Masukkan judul lagu." },
+        { text: "Masukkan judul lagu." },
         { quoted: msg },
       );
     }
 
     await sock.sendMessage(
       chatId,
-      { text: "⏳ Mencari lagu..." },
+      { text: "Mencari lagu..." },
       { quoted: msg },
     );
 
@@ -76,7 +76,7 @@ export const play = async (sock, chatId, msg, text) => {
     if (!data?.data?.url) {
       return await sendFancyText(sock, chatId, {
         title: "Neura Play",
-        body: "❌ Musik tidak ditemukan",
+        body: "Musik tidak ditemukan",
         text: "",
         thumbnail:
           "https://i.pinimg.com/1200x/58/64/04/58640492bafe2aa0d98c00c2b326448b.jpg",
@@ -103,7 +103,7 @@ export const play = async (sock, chatId, msg, text) => {
     }
 
     await sendFancyText(sock, chatId, {
-      title: "Neura Play 🎵",
+      title: "Neura Play",
       body: `${data.title}`,
       text: `Channel: ${data.channel}\nDurasi: ${data.fduration}\nViews: ${data.views}\nSize: ${data.data.size}`,
       thumbnail: data.thumbnail,
@@ -124,7 +124,7 @@ export const play = async (sock, chatId, msg, text) => {
 
     await sock.sendMessage(
       chatId,
-      { text: `❌ Error: ${err.message}` },
+      { text: `Error: ${err.message}` },
       { quoted: msg },
     );
   }
