@@ -241,7 +241,7 @@ registerCommand({
   run: async (sock, chatId, msg, args, text) => {
     if (await isBan(sock, chatId, msg)) return;
     if (!(await adminValid(sock, chatId, msg))) return;
-    if (!(await !botValid(sock, chatId, msg))) return;
+    if (!(await botValid(sock, chatId, msg))) return;
     setWarm(sock, chatId, msg);
   },
 });
