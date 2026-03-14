@@ -1,14 +1,10 @@
 import { getUserData, saveUserData } from "../config/func.js";
-import { isUserAdmin } from "../lib/admin.js";
 import path from "path";
 
 const db = path.resolve("database", "warm.json");
 
 export const setWarm = async (sock, chatId, msg) => {
   try {
-    const isAdmin = await isUserAdmin(sock, msg, chatId);
-    if (!isAdmin) return;
-
     const mention =
       msg.message?.extendedTextMessage?.contextInfo?.mentionedJid || [];
 
