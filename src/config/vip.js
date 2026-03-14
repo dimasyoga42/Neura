@@ -7,13 +7,9 @@ const getExp = (durationInDays) => {
   if (isNaN(days) || days <= 0) return null;
 
   const now = new Date();
+  now.setDate(now.getDate() + days);
 
-  const jakartaOffset = 7 * 60 * 60 * 1000;
-  const jakartaNow = new Date(now.getTime() + jakartaOffset);
-
-  jakartaNow.setDate(jakartaNow.getDate() + days);
-
-  return jakartaNow.toISOString();
+  return now.toISOString();
 };
 
 const formatDate = (dateStr) => {
