@@ -104,7 +104,7 @@ import tiktokDownloader from "../plugins/vip/downloader/tt.js";
 import cuaca from "../plugins/fitur/cuaca.js";
 import { myBini } from "../plugins/fun/mybini.js";
 import { newkhodam } from "../plugins/fun/khodam.js";
-import { cekvip, getIdGrub } from "../config/vip.js";
+import { cekvip, chackVip, getIdGrub } from "../config/vip.js";
 import { filwep } from "../plugins/toram/filwep.js";
 import { sendButton, sendFancyText, sendList } from "../lib/message.js";
 import { qweenAi } from "../plugins/lmm/qwen.js";
@@ -966,6 +966,12 @@ nomer owner: 085664393331 (dimas)`,
     category: "Testing",
     desc: "testing boss command",
     run: async (sock, chatId, msg) => {
+      if (chackVip(sock, chatId, msg))
+        return sock.sendMessage(
+          chatId,
+          { text: "grub tidak vip" },
+          { quoted: msg },
+        );
       if (isBan(sock, chatId, msg)) return;
       bosTesting(sock, chatId, msg);
     },

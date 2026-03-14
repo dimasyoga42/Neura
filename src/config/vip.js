@@ -51,7 +51,6 @@ export const vipRegister = async (sock, chatId, msg, text) => {
 
     const day = text.replace(".setvip", "").trim();
 
-    // Guard: pastikan day tidak kosong
     if (!day) {
       await sock.sendMessage(
         chatId,
@@ -91,8 +90,8 @@ export const vipRegister = async (sock, chatId, msg, text) => {
 
     const caption = `
 *Info Vip*
-│ *•day*: ${day} day
-│ *•exp*: ${formatDate(expDate)}
+day: ${day} day
+exp*: ${formatDate(expDate)}
 \n> By: Neura Sama`.trim();
 
     await sock.sendMessage(chatId, { text: caption }, { quoted: msg });
@@ -210,8 +209,8 @@ export const trialGive = async (sock, chatId, msg, id) => {
       {
         text: `
 *TRIAL VIP*
-│ Status : Aktif
-│ Expired : ${formatDate(expDate)}
+Status : Aktif
+Expired : ${formatDate(expDate)}
 `,
       },
       { quoted: msg },
