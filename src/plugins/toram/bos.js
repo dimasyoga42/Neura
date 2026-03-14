@@ -57,9 +57,8 @@ const Bossdef = async (sock, chatId, msg, text) => {
         : "Tidak diketahui";
 
     const msgtxt = `
-Search: ${name}
-
 General Information:
+ Location: ${boss.spawn}
 Element: ${boss.element}
 
 ${toCodeBlock(boss.stat)}
@@ -77,7 +76,7 @@ ${toCodeBlock(boss.stat)}
     // );
     await sendFancyText(sock, chatId, {
       title: boss.name,
-      body: `dye: ${dyeInfo} - Location: ${boss.spawn}`,
+      body: `dye: ${dyeInfo}`,
       text: msgtxt,
       thumbnail: boss.image_url,
       renderLargerThumbnail: true,
