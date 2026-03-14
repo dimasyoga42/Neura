@@ -1,38 +1,53 @@
 import axios from "axios";
 import ffmpeg from "fluent-ffmpeg";
-import ffmpegPath from "@ffmpeg-installer/ffmpeg";
-import { Readable, PassThrough } from "stream";
 import { sendFancyText } from "../../../lib/message.js";
+import { execSync } from "child_process";
+import { writeFileSync, readFileSync, unlinkSync, existsSync } from "fs";
+import { join } from "path";
+import { tmpdir } from "os";
 
-ffmpeg.setFfmpegPath(ffmpegPath.path);
+ffmpeg.setFfmpegPath(execSync("which ffmpeg").toString().trim());
 
-// Convert MP3 buffer → OGG Opus (format yang WhatsApp support)
+// Convert MP3 → OGG Opus via temp file (lebih stabil)
 const convertToOpus = (inputBuffer) => {
   return new Promise((resolve, reject) => {
-    const input = new Readable();
-    input.push(inputBuffer);
-    input.push(null);
+    const tmpIn = join(tmpdir(), `neura_in_${Date.now()}.mp3`);
+    const tmpOut = join(tmpdir(), `neura_out_${Date.now()}.ogg`);
 
-    const output = new PassThrough();
-    const chunks = [];
+    try {
+      // Tulis buffer ke file sementara
+      writeFileSync(tmpIn, inputBuffer);
 
-    output.on("data", (chunk) => chunks.push(chunk));
-    output.on("end", () => {
-      const result = Buffer.concat(chunks);
-      if (result.length === 0) return reject(new Error("Output buffer kosong"));
-      resolve(result);
-    });
-    output.on("error", reject);
-
-    ffmpeg(input)
-      .inputFormat("mp3")
-      .audioFrequency(48000) // ✅ WhatsApp butuh 48kHz
-      .audioChannels(1) // ✅ mono
-      .audioCodec("libopus")
-      .outputOptions(["-avoid_negative_ts make_zero", "-application voip"])
-      .format("ogg")
-      .on("error", reject) // ✅ tangkap error ffmpeg
-      .pipe(output);
+      ffmpeg(tmpIn)
+        .audioFrequency(48000)
+        .audioChannels(1)
+        .audioCodec("libopus")
+        .outputOptions(["-application voip"])
+        .format("ogg")
+        .on("end", () => {
+          try {
+            const result = readFileSync(tmpOut);
+            // Hapus file sementara
+            unlinkSync(tmpIn);
+            unlinkSync(tmpOut);
+            if (result.length === 0) return reject(new Error("Output kosong"));
+            resolve(result);
+          } catch (e) {
+            reject(e);
+          }
+        })
+        .on("error", (err) => {
+          // Cleanup kalau error
+          if (existsSync(tmpIn)) unlinkSync(tmpIn);
+          if (existsSync(tmpOut)) unlinkSync(tmpOut);
+          reject(err);
+        })
+        .save(tmpOut);
+    } catch (e) {
+      if (existsSync(tmpIn)) unlinkSync(tmpIn);
+      if (existsSync(tmpOut)) unlinkSync(tmpOut);
+      reject(e);
+    }
   });
 };
 
@@ -48,14 +63,13 @@ export const play = async (sock, chatId, msg, text) => {
       );
     }
 
-    // Notif loading
     await sock.sendMessage(
       chatId,
       { text: "⏳ Mencari lagu, mohon tunggu..." },
       { quoted: msg },
     );
 
-    // 1. Fetch info lagu dari API
+    // 1. Fetch info lagu
     const res = await axios.get(
       `https://api.neoxr.eu/api/play?q=${encodeURIComponent(query)}&apikey=${process.env.NOXER}`,
     );
@@ -73,7 +87,7 @@ export const play = async (sock, chatId, msg, text) => {
       });
     }
 
-    // 2. Download audio sebagai buffer
+    // 2. Download MP3
     const audioRes = await axios.get(data.data.url, {
       responseType: "arraybuffer",
       headers: { "User-Agent": "Mozilla/5.0" },
@@ -81,19 +95,18 @@ export const play = async (sock, chatId, msg, text) => {
     });
 
     const mp3Buffer = Buffer.from(audioRes.data);
-    console.log("Buffer size:", mp3Buffer.length, "bytes");
+    console.log("MP3 buffer:", mp3Buffer.length, "bytes");
 
-    // 3. Convert MP3 → OGG Opus
+    // 3. Convert ke Opus via temp file
     let audioBuffer;
     let mimetype;
 
     try {
       audioBuffer = await convertToOpus(mp3Buffer);
       mimetype = "audio/ogg; codecs=opus";
-      console.log("Convert opus berhasil, size:", audioBuffer.length, "bytes");
+      console.log("Opus buffer:", audioBuffer.length, "bytes");
     } catch (convertErr) {
-      // Fallback: kirim MP3 langsung kalau convert gagal
-      console.warn("Convert gagal, fallback ke MP3:", convertErr.message);
+      console.warn("Convert gagal, fallback MP3:", convertErr.message);
       audioBuffer = mp3Buffer;
       mimetype = "audio/mpeg";
     }
