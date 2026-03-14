@@ -42,7 +42,11 @@ export const getIdGrub = async (sock, chatId, msg) => {
 
 export const vipRegister = async (sock, chatId, msg, text) => {
   try {
-    const day = text.replace(".setvip", "");
+    // FIX 1: Ambil grubId dari msg
+    const idGrub = msg.key.remoteJid;
+
+    // FIX 2: Trim spasi agar parseInt tidak gagal
+    const day = text.replace(".setvip", "").trim();
     const expDate = getExp(day);
 
     if (!expDate) {
@@ -82,7 +86,15 @@ export const vipRegister = async (sock, chatId, msg, text) => {
 \n> By: Neura Sama`.trim();
 
     await sock.sendMessage(chatId, { text: caption }, { quoted: msg });
-  } catch (err) {}
+  } catch (err) {
+    // FIX 3: Log error agar mudah di-debug
+    console.error("[VIP REGISTER ERROR]:", err);
+    await sock.sendMessage(
+      chatId,
+      { text: "Terjadi error saat mendaftarkan VIP." },
+      { quoted: msg },
+    );
+  }
 };
 
 export const chackVip = async (sock, msg, chatId) => {
@@ -200,5 +212,13 @@ export const trialGive = async (sock, chatId, msg, id) => {
       },
       { quoted: msg },
     );
-  } catch (err) {}
+  } catch (err) {
+    // FIX 4: Log error agar mudah di-debug
+    console.error("[TRIAL GIVE ERROR]:", err);
+    await sock.sendMessage(
+      chatId,
+      { text: "Terjadi error saat memberikan trial." },
+      { quoted: msg },
+    );
+  }
 };
