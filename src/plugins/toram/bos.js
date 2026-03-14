@@ -1,5 +1,6 @@
 import axios from "axios";
 import { supabase } from "../../model/supabase.js";
+import { sendFancyText } from "../../lib/message.js";
 
 function toCodeBlock(text) {
   return "```\n" + text.trim() + "\n```";
@@ -56,28 +57,32 @@ const Bossdef = async (sock, chatId, msg, text) => {
         : "Tidak diketahui";
 
     const msgtxt = `
-*Boss Information By Neura Sama*
 Search: ${name}
 
 General Information:
-Name: ${boss.name}
 Element: ${boss.element}
-Spawn: ${boss.spawn}
-Dye: ${dyeInfo}
 
 ${toCodeBlock(boss.stat)}
 
 > source: Phantom library
     `.trim();
 
-    await sock.sendMessage(
-      chatId,
-      {
-        image: { url: boss.image_url },
-        caption: msgtxt,
-      },
-      { quoted: msg },
-    );
+    // await sock.sendMessage(
+    //   chatId,
+    //   {
+    //     image: { url: boss.image_url },
+    //     caption: msgtxt,
+    //   },
+    //   { quoted: msg },
+    // );
+    await sendFancyText(sock, chatId, {
+      title: boss.name,
+      body: `dye: ${dyeInfo} - Location: ${boss.spawn}`,
+      text: msgtxt,
+      thumbnail: boss.image_url,
+      renderLargerThumbnail: true,
+      msg: msg,
+    });
   } catch (err) {
     console.error("Kesalahan Sistem:", err);
     await sock.sendMessage(
