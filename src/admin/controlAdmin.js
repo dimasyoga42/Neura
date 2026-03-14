@@ -6,7 +6,7 @@ import { setNews } from "../plugins/sosial/news.js";
 import { setrules } from "../plugins/sosial/rules.js";
 import { clearRaid, createRaid } from "../plugins/toram/raidControl.js";
 import { hidetag } from "./hidetag.js";
-import { setWarm } from "./warm.js";
+import { delWarn, listWarn, setWarm } from "./warm.js";
 import { SetWelcome } from "./wellcome.js";
 
 const BOT_ID = "179573169848377@lid";
@@ -243,5 +243,29 @@ registerCommand({
     if (!(await adminValid(sock, chatId, msg))) return;
     if (!(await botValid(sock, chatId, msg))) return;
     setWarm(sock, chatId, msg);
+  },
+});
+registerCommand({
+  name: "listwarn",
+  alias: ["lw"],
+  category: "Menu admin",
+  desc: "list Warn member",
+  run: async (sock, chatId, msg, args, text) => {
+    if (await isBan(sock, chatId, msg)) return;
+    if (!(await adminValid(sock, chatId, msg))) return;
+    if (!(await botValid(sock, chatId, msg))) return;
+    listWarn(sock, chatId, msg);
+  },
+});
+registerCommand({
+  name: "delwarn",
+  alias: ["delw"],
+  category: "Menu admin",
+  desc: "delete Warm member",
+  run: async (sock, chatId, msg, args, text) => {
+    if (await isBan(sock, chatId, msg)) return;
+    if (!(await adminValid(sock, chatId, msg))) return;
+    if (!(await botValid(sock, chatId, msg))) return;
+    delWarn(sock, chatId, msg);
   },
 });

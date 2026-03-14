@@ -67,3 +67,70 @@ export const setWarm = async (sock, chatId, msg) => {
     sock.sendMessage(chatId, { text: err.message }, { quoted: msg });
   }
 };
+
+export const listWarn = async (sock, chatId, msg) => {
+  try {
+    const data = getUserData(db);
+
+    if (!data.length) {
+      return sock.sendMessage(
+        chatId,
+        { text: "Tidak ada data warn." },
+        { quoted: msg },
+      );
+    }
+
+    let text = "*List Warn User*\n";
+
+    data.forEach((user, i) => {
+      text += `${i + 1}. @${user.id.split("@")[0]}\n`;
+      text += `   Warn: ${user.warn}\n\n`;
+    });
+
+    const mentions = data.map((u) => u.id);
+
+    sock.sendMessage(
+      chatId,
+      {
+        text: text.trim(),
+        mentions,
+      },
+      { quoted: msg },
+    );
+  } catch (err) {
+    sock.sendMessage(chatId, { text: err.message }, { quoted: msg });
+  }
+};
+export const delWarn = async (sock, chatId, msg) => {
+  try {
+    const mention =
+      msg.message?.extendedTextMessage?.contextInfo?.mentionedJid || [];
+
+    if (mention.length === 0) {
+      return sock.sendMessage(
+        chatId,
+        { text: "gunakan .delwarn @user" },
+        { quoted: msg },
+      );
+    }
+
+    const target = mention[0];
+
+    const data = getUserData(db);
+
+    const filtered = data.filter((user) => user.id !== target);
+
+    saveUserData(db, filtered);
+
+    sock.sendMessage(
+      chatId,
+      {
+        text: "Warn user berhasil dihapus",
+        mentions: [target],
+      },
+      { quoted: msg },
+    );
+  } catch (err) {
+    sock.sendMessage(chatId, { text: err.message }, { quoted: msg });
+  }
+};
