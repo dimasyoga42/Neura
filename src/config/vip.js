@@ -82,9 +82,7 @@ export const vipRegister = async (sock, chatId, msg, text) => {
 \n> By: Neura Sama`.trim();
 
     await sock.sendMessage(chatId, { text: caption }, { quoted: msg });
-  } catch (err) {
-    errMessage(sock, chatId, msg, err);
-  }
+  } catch (err) {}
 };
 
 export const chackVip = async (sock, msg, chatId) => {
@@ -202,7 +200,5 @@ export const trialGive = async (sock, chatId, msg, id) => {
       },
       { quoted: msg },
     );
-  } catch (err) {
-    errMessage(sock, chatId, msg, err);
-  }
+  } catch (err) {}
 };
