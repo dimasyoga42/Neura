@@ -234,7 +234,7 @@ registerCommand({
 });
 
 registerCommand({
-  name: "warm",
+  name: "warn",
   alias: ["w"],
   category: "Menu admin",
   desc: "Warm member",

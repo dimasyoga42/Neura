@@ -11,7 +11,7 @@ export const setWarm = async (sock, chatId, msg) => {
     if (mention.length === 0) {
       return sock.sendMessage(
         chatId,
-        { text: "gunakan .warm @user" },
+        { text: "gunakan .warn @user" },
         { quoted: msg },
       );
     }
