@@ -6,6 +6,7 @@ import { setNews } from "../plugins/sosial/news.js";
 import { setrules } from "../plugins/sosial/rules.js";
 import { clearRaid, createRaid } from "../plugins/toram/raidControl.js";
 import { hidetag } from "./hidetag.js";
+import { muteUser, unmuteUser } from "./mute.js";
 import { delWarn, listWarn, setWarm } from "./warm.js";
 import { SetWelcome } from "./wellcome.js";
 
@@ -267,5 +268,30 @@ registerCommand({
     if (!(await adminValid(sock, chatId, msg))) return;
     if (!(await botValid(sock, chatId, msg))) return;
     delWarn(sock, chatId, msg);
+  },
+});
+registerCommand({
+  name: "mute",
+  alias: ["mute"],
+  category: "Menu admin",
+  desc: "mute member",
+  run: async (sock, chatId, msg, args, text) => {
+    if (await isBan(sock, chatId, msg)) return;
+    if (!(await adminValid(sock, chatId, msg))) return;
+    if (!(await botValid(sock, chatId, msg))) return;
+    muteUser(sock, chatId, msg, text);
+  },
+});
+
+registerCommand({
+  name: "unmute",
+  alias: ["unmute"],
+  category: "Menu admin",
+  desc: "unmute member",
+  run: async (sock, chatId, msg, args, text) => {
+    if (await isBan(sock, chatId, msg)) return;
+    if (!(await adminValid(sock, chatId, msg))) return;
+    if (!(await botValid(sock, chatId, msg))) return;
+    unmuteUser(sock, chatId, msg);
   },
 });

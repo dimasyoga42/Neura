@@ -109,8 +109,15 @@ import { filwep } from "../plugins/toram/filwep.js";
 import { sendButton, sendFancyText, sendList } from "../lib/message.js";
 import { qweenAi } from "../plugins/lmm/qwen.js";
 import { gptAi } from "../plugins/lmm/gpt.js";
+import { isMuted } from "../admin/mute.js";
 //import { EfekCommand } from "../plugins/vip/tools/audioeffect.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
+  if (isMuted(msg))
+    return sendFancyText(sock, chatId, {
+      title: "Neura Sama",
+      body: "anda di mute",
+      text: "minta maaf dulu gih biar ga di mute",
+    });
   registerCommand({
     name: "help",
     alias: ["menu"],
