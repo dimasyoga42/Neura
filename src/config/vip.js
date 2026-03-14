@@ -6,10 +6,8 @@ const getExp = (durationInDays) => {
   const days = parseInt(durationInDays);
   if (isNaN(days) || days <= 0) return null;
 
-  const now = new Date();
-  now.setDate(now.getDate() + days);
-
-  return now.toISOString();
+  const expMs = Date.now() + days * 24 * 60 * 60 * 1000;
+  return new Date(expMs).toISOString();
 };
 
 const formatDate = (dateStr) => {
