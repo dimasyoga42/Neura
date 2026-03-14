@@ -3,8 +3,10 @@ import { getUserData, saveUserData } from "./func.js";
 const dbPath = path.resolve("database", "vip.json");
 
 const getExp = (durationInDays) => {
-  const days = parseInt(durationInDays);
-  if (isNaN(days) || days <= 0) return null;
+  const days = parseInt(durationInDays, 10);
+
+  // Guard: harus angka valid, minimal 1, maksimal 3650 hari (10 tahun)
+  if (isNaN(days) || days <= 0 || days > 3650) return null;
 
   const expMs = Date.now() + days * 24 * 60 * 60 * 1000;
   return new Date(expMs).toISOString();
@@ -27,28 +29,46 @@ export const getIdGrub = async (sock, chatId, msg) => {
 
   await sock.sendMessage(
     chatId,
-    {
-      text: `ID GRUB: ${grubId}`,
-    },
+    { text: `ID GRUB: ${grubId}` },
     { quoted: msg },
   );
 };
 
 export const vipRegister = async (sock, chatId, msg, text) => {
   try {
-    // FIX 1: Ambil grubId dari msg
     const idGrub = msg.key.remoteJid;
 
-    // FIX 2: Trim spasi agar parseInt tidak gagal
+    // Guard: pastikan text adalah string
+    if (typeof text !== "string") {
+      console.error("[VIP REGISTER] text bukan string:", typeof text, text);
+      await sock.sendMessage(
+        chatId,
+        { text: "Format perintah tidak valid." },
+        { quoted: msg },
+      );
+      return;
+    }
+
     const day = text.replace(".setvip", "").trim();
+
+    // Guard: pastikan day tidak kosong
+    if (!day) {
+      await sock.sendMessage(
+        chatId,
+        { text: "Masukkan jumlah hari. Contoh: .setvip 30" },
+        { quoted: msg },
+      );
+      return;
+    }
+
+    console.log("[VIP REGISTER] day input:", JSON.stringify(day));
+
     const expDate = getExp(day);
 
     if (!expDate) {
       await sock.sendMessage(
         chatId,
-        {
-          text: "Gagal menambahkan VIP. Masukkan hari yang valid.",
-        },
+        { text: "Gagal menambahkan VIP. Masukkan hari yang valid (1-3650)." },
         { quoted: msg },
       );
       return;
@@ -60,11 +80,7 @@ export const vipRegister = async (sock, chatId, msg, text) => {
     let user = data.find((entry) => entry.grubID === idGrub);
 
     if (!user) {
-      user = {
-        grubID: idGrub,
-        registered: now,
-        expired: expDate,
-      };
+      user = { grubID: idGrub, registered: now, expired: expDate };
       data.push(user);
     } else {
       user.registered = now;
@@ -81,7 +97,6 @@ export const vipRegister = async (sock, chatId, msg, text) => {
 
     await sock.sendMessage(chatId, { text: caption }, { quoted: msg });
   } catch (err) {
-    // FIX 3: Log error agar mudah di-debug
     console.error("[VIP REGISTER ERROR]:", err);
     await sock.sendMessage(
       chatId,
@@ -147,7 +162,6 @@ export const cekvip = async (sock, chatId, msg) => {
     if (expired < now) {
       const filtered = data.filter((entry) => entry.grubID !== grubId);
       saveUserData(dbPath, filtered);
-
       return sock.sendMessage(
         chatId,
         { text: "VIP grup ini sudah expired." },
@@ -182,11 +196,7 @@ export const trialGive = async (sock, chatId, msg, id) => {
     let user = data.find((entry) => entry.grubID === id);
 
     if (!user) {
-      user = {
-        grubID: id,
-        registered: now,
-        expired: expDate,
-      };
+      user = { grubID: id, registered: now, expired: expDate };
       data.push(user);
     } else {
       user.registered = now;
@@ -199,7 +209,7 @@ export const trialGive = async (sock, chatId, msg, id) => {
       chatId,
       {
         text: `
- *TRIAL VIP*
+*TRIAL VIP*
 │ Status : Aktif
 │ Expired : ${formatDate(expDate)}
 `,
@@ -207,7 +217,6 @@ export const trialGive = async (sock, chatId, msg, id) => {
       { quoted: msg },
     );
   } catch (err) {
-    // FIX 4: Log error agar mudah di-debug
     console.error("[TRIAL GIVE ERROR]:", err);
     await sock.sendMessage(
       chatId,
