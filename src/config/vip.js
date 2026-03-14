@@ -40,8 +40,9 @@ export const getIdGrub = async (sock, chatId, msg) => {
   );
 };
 
-export const vipRegister = async (sock, chatId, msg, idGrub, day) => {
+export const vipRegister = async (sock, chatId, msg, text) => {
   try {
+    const day = text.replace(".setvip", "");
     const expDate = getExp(day);
 
     if (!expDate) {
