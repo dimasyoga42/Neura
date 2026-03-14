@@ -1,5 +1,6 @@
 import axios from "axios";
 import { sendFancyText } from "../../../lib/message.js";
+import { Readable } from "stream";
 
 export const play = async (sock, chatId, msg, text) => {
   try {
@@ -44,7 +45,11 @@ export const play = async (sock, chatId, msg, text) => {
       maxBodyLength: Infinity,
     });
 
-    const audioBuffer = Buffer.from(audioRes.data);
+    const buffer = Buffer.from(audioRes.data);
+
+    const stream = new Readable();
+    stream.push(buffer);
+    stream.push(null);
 
     await sendFancyText(sock, chatId, {
       title: "Neura Play 🎵",
@@ -57,7 +62,7 @@ export const play = async (sock, chatId, msg, text) => {
     await sock.sendMessage(
       chatId,
       {
-        audio: audioBuffer,
+        audio: stream,
         mimetype: "audio/mpeg",
         fileName: `${data.title}.mp3`,
       },
