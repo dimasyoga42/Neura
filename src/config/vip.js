@@ -34,7 +34,7 @@ export const getIdGrub = async (sock, chatId, msg) => {
   await sock.sendMessage(
     chatId,
     {
-      text: `ID GRUB: ${grubId}\n\n> By: Karina bot`,
+      text: `ID GRUB: ${grubId}`,
     },
     { quoted: msg },
   );
