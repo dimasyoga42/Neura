@@ -6,6 +6,7 @@ import { setNews } from "../plugins/sosial/news.js";
 import { setrules } from "../plugins/sosial/rules.js";
 import { clearRaid, createRaid } from "../plugins/toram/raidControl.js";
 import { hidetag } from "./hidetag.js";
+import { setWarm } from "./warm.js";
 import { SetWelcome } from "./wellcome.js";
 
 const BOT_ID = "179573169848377@lid";
@@ -20,8 +21,8 @@ export const adminValid = async (sock, chatId, msg) => {
 
     const metadata = await sock.groupMetadata(chatId);
     const admins = metadata.participants
-      .filter(p => p.admin)
-      .map(p => p.id);
+      .filter((p) => p.admin)
+      .map((p) => p.id);
 
     const sender = msg.key.participant || msg.key.remoteJid;
 
@@ -42,11 +43,15 @@ export const botValid = async (sock, chatId, msg) => {
   try {
     const metadata = await sock.groupMetadata(chatId);
     const admins = metadata.participants
-      .filter(p => p.admin)
-      .map(p => p.id);
+      .filter((p) => p.admin)
+      .map((p) => p.id);
 
     if (!admins.includes(BOT_ID)) {
-      await sock.sendMessage(chatId, { text: "bot tidak menjadi admin" }, { quoted: msg });
+      await sock.sendMessage(
+        chatId,
+        { text: "bot tidak menjadi admin" },
+        { quoted: msg },
+      );
       return false;
     }
 
@@ -67,7 +72,7 @@ registerCommand({
     if (await isBan(sock, chatId, msg)) return;
     if (!(await adminValid(sock, chatId, msg))) return;
     clearRaid(sock, chatId, msg);
-  }
+  },
 });
 
 // ================= CREATE RAID =================
@@ -79,20 +84,22 @@ registerCommand({
   run: async (sock, chatId, msg, args, text) => {
     if (await isBan(sock, chatId, msg)) return;
     if (!(await adminValid(sock, chatId, msg))) return;
-    const arg = text.split(" ")
+    const arg = text.split(" ");
     const element = arg[1];
     const hadiah = arg[2];
 
     if (!element || !hadiah) {
       return sock.sendMessage(
         chatId,
-        { text: "Susunan cmd tidak sesuai\n> use !creatRaid <element> <hadiah>" },
-        { quoted: msg }
+        {
+          text: "Susunan cmd tidak sesuai\n> use !creatRaid <element> <hadiah>",
+        },
+        { quoted: msg },
       );
     }
 
     createRaid(sock, chatId, msg, text, element, hadiah);
-  }
+  },
 });
 
 // ================= SET WELCOME =================
@@ -105,7 +112,7 @@ registerCommand({
     if (await isBan(sock, chatId, msg)) return;
     if (!(await adminValid(sock, chatId, msg))) return;
     SetWelcome(sock, chatId, msg, text);
-  }
+  },
 });
 
 // ================= SET RULES =================
@@ -118,7 +125,7 @@ registerCommand({
     if (await isBan(sock, chatId, msg)) return;
     if (!(await adminValid(sock, chatId, msg))) return;
     setrules(sock, chatId, msg, text);
-  }
+  },
 });
 
 // ================= CLOSE GROUP =================
@@ -133,7 +140,7 @@ registerCommand({
     if (!(await botValid(sock, chatId, msg))) return;
 
     await sock.groupSettingUpdate(chatId, "announcement");
-  }
+  },
 });
 
 // ================= OPEN GROUP =================
@@ -148,7 +155,7 @@ registerCommand({
     if (!(await botValid(sock, chatId, msg))) return;
 
     await sock.groupSettingUpdate(chatId, "not_announcement");
-  }
+  },
 });
 
 // ================= KICK =================
@@ -162,14 +169,19 @@ registerCommand({
     if (!(await adminValid(sock, chatId, msg))) return;
     if (!(await botValid(sock, chatId, msg))) return;
 
-    const mentions = msg.message?.extendedTextMessage?.contextInfo?.mentionedJid || [];
+    const mentions =
+      msg.message?.extendedTextMessage?.contextInfo?.mentionedJid || [];
 
     if (!mentions.length) {
-      return sock.sendMessage(chatId, { text: "tag target yang akan di kick" }, { quoted: msg });
+      return sock.sendMessage(
+        chatId,
+        { text: "tag target yang akan di kick" },
+        { quoted: msg },
+      );
     }
 
     await sock.groupParticipantsUpdate(chatId, mentions, "remove");
-  }
+  },
 });
 
 // ================= HIDETAG =================
@@ -182,7 +194,7 @@ registerCommand({
     if (await isBan(sock, chatId, msg)) return;
     if (!(await adminValid(sock, chatId, msg))) return;
     hidetag(sock, chatId, msg, text);
-  }
+  },
 });
 
 // ================= SET NEWS =================
@@ -195,7 +207,7 @@ registerCommand({
     if (await isBan(sock, chatId, msg)) return;
     if (!(await adminValid(sock, chatId, msg))) return;
     setNews(sock, chatId, msg, text);
-  }
+  },
 });
 
 registerCommand({
@@ -207,7 +219,7 @@ registerCommand({
     if (await isBan(sock, chatId, msg)) return;
     if (!(await adminValid(sock, chatId, msg))) return;
     setMember(sock, chatId, msg, text);
-  }
+  },
 });
 registerCommand({
   name: "delmem",
@@ -218,5 +230,18 @@ registerCommand({
     if (await isBan(sock, chatId, msg)) return;
     if (!(await adminValid(sock, chatId, msg))) return;
     delMem(sock, chatId, msg, text);
-  }
+  },
+});
+
+registerCommand({
+  name: "warm",
+  alias: ["w"],
+  category: "Menu admin",
+  desc: "Warm member",
+  run: async (sock, chatId, msg, args, text) => {
+    if (await isBan(sock, chatId, msg)) return;
+    if (!(await adminValid(sock, chatId, msg))) return;
+    if (!(await !botValid(sock, chatId, msg))) return;
+    setWarm(sock, chatId, msg);
+  },
 });
