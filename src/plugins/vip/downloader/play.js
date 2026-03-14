@@ -17,13 +17,21 @@ const convertToOpus = (inputBuffer) => {
     const chunks = [];
 
     output.on("data", (chunk) => chunks.push(chunk));
-    output.on("end", () => resolve(Buffer.concat(chunks)));
+    output.on("end", () => {
+      const result = Buffer.concat(chunks);
+      if (result.length === 0) return reject(new Error("Output buffer kosong"));
+      resolve(result);
+    });
     output.on("error", reject);
 
     ffmpeg(input)
       .inputFormat("mp3")
+      .audioFrequency(48000) // ✅ WhatsApp butuh 48kHz
+      .audioChannels(1) // ✅ mono
       .audioCodec("libopus")
+      .outputOptions(["-avoid_negative_ts make_zero", "-application voip"])
       .format("ogg")
+      .on("error", reject) // ✅ tangkap error ffmpeg
       .pipe(output);
   });
 };
