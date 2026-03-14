@@ -112,12 +112,6 @@ import { gptAi } from "../plugins/lmm/gpt.js";
 import { isMuted } from "../admin/mute.js";
 //import { EfekCommand } from "../plugins/vip/tools/audioeffect.js";
 export const cmdMenucontrol = async (sock, chatId, msg, text) => {
-  if (isMuted(msg))
-    return sendFancyText(sock, chatId, {
-      title: "Neura Sama",
-      body: "anda di mute",
-      text: "minta maaf dulu gih biar ga di mute",
-    });
   registerCommand({
     name: "help",
     alias: ["menu"],
@@ -125,6 +119,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "memunculkan daftar menu",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       let menutext = `Rules bot:\n- jangan spam command\n- jangan membuat stiker jamok/18+\n- dilarang manipulasi AI\n- jika bot tidak merespon ulangi kembali command\n- gunakan .report utuk memberi tahu bug\n\nNote: Pada tanggal 20 april Neura akan beralih ke Prem perbulan 6.5k. akan di adakan trial 12 hari\n\n`;
       const grouped = {};
       const i = Math.floor(Math.random() * message.length) + 1;
@@ -181,6 +181,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "melihat daftar buff yang tersedia",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       getAllBuff(sock, chatId, msg, text);
     },
   });
@@ -192,6 +198,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "bergabung ke raid",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       const argsList = text.split(" ");
       if (argsList.length < 3) {
         return sock.sendMessage(
@@ -211,6 +223,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "melihat daftar raid yang tersedia",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       viewRaid(sock, chatId, msg);
     },
   });
@@ -222,6 +240,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "melihat masa aktif vip",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       cekvip(sock, chatId, msg);
     },
   });
@@ -232,6 +256,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "melihat id grub",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       getIdGrub(sock, chatId, msg);
     },
   });
@@ -243,6 +273,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "keluar dari raid",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       leaveRaid(sock, chatId, msg);
     },
   });
@@ -254,6 +290,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "mencari appearance item",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       searchApp(sock, chatId, msg, text);
     },
   });
@@ -265,6 +307,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "mencari crystal",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       searchXtall(sock, chatId, msg, text);
     },
   });
@@ -275,6 +323,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     category: "Toram Search",
     desc: "mencari item toram",
     run: async (sock, chatId, msg, args, text) => {
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       searchItem(sock, chatId, msg, text);
     },
   });
@@ -286,6 +340,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "mencari registlet",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       searchRegist(sock, chatId, msg, text);
     },
   });
@@ -297,6 +357,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "mencari ability detail",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       searchAbility(sock, chatId, msg, text);
     },
   });
@@ -308,6 +374,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "melihat berita terbaru toram",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       getNews(sock, chatId, msg);
     },
   });
@@ -319,6 +391,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "memberikan rekomendasi spot leveling",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       lvl(sock, chatId, msg, text);
     },
   });
@@ -330,6 +408,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "melihat informasi boss",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       Bossdef(sock, chatId, msg, text);
     },
   });
@@ -341,6 +425,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "melihat profil sendiri",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       myProfile(sock, chatId, msg);
     },
   });
@@ -352,12 +442,24 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "mengatur foto profil (replay) foto untuk menggunakan nya",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       await setPP(sock, chatId, msg);
     },
   });
 
   if (msg.message.imageMessage?.caption == ".setpp") {
     if (isBan(sock, chatId, msg)) return;
+    if (isMuted(msg))
+      return sendFancyText(sock, chatId, {
+        title: "Neura Sama",
+        body: "anda di mute",
+        text: "minta maaf dulu gih biar ga di mute",
+      });
     await setPP(sock, chatId, msg);
   }
 
@@ -368,6 +470,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "melihat profil user lain",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       cekProfile(sock, chatId, msg);
     },
   });
@@ -379,6 +487,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "mengatur deskripsi profil",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       setDesc(sock, chatId, msg, text);
     },
   });
@@ -390,6 +504,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "informasi harga pembolong equipment",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       sock.sendMessage(chatId, { text: messagePembolong }, { quoted: msg });
     },
   });
@@ -401,6 +521,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "melihat rules bot",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       getRules(sock, chatId, msg);
     },
   });
@@ -412,6 +538,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "mengatur status afk",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       setAfk(sock, chatId, msg, text);
     },
   });
@@ -423,6 +555,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "memprediksi hasil dye",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       dyePredictor(sock, chatId, msg, text);
     },
   });
@@ -434,6 +572,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "membuat quoted sticker",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       qc(sock, chatId, msg, text);
     },
   });
@@ -447,11 +591,23 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
       if (isBan(sock, chatId, msg)) return;
       const allow = await ColdownUser(sock, chatId, msg, ".stiker");
       if (!allow) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       Smeme(sock, chatId, msg, text);
     },
   });
   if (msg.message.imageMessage?.caption == ".stiker") {
     if (isBan(sock, chatId, msg)) return;
+    if (isMuted(msg))
+      return sendFancyText(sock, chatId, {
+        title: "Neura Sama",
+        body: "anda di mute",
+        text: "minta maaf dulu gih biar ga di mute",
+      });
     await Smeme(sock, chatId, msg, text);
   }
   registerCommand({
@@ -461,6 +617,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "mengatur id buff di profil",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       setidBuff(sock, chatId, msg, text);
     },
   });
@@ -472,6 +634,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "melihat banner toram terkini",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       Banner(sock, msg, chatId);
     },
   });
@@ -483,6 +651,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "melihat jadwal maintenance toram",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       getMt(sock, chatId, msg);
     },
   });
@@ -494,6 +668,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "melaporkan bug atau masalah",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       report(sock, chatId, msg, text);
     },
   });
@@ -505,6 +685,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "melihat daftar report",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       getAllReport(sock, chatId, msg);
     },
   });
@@ -516,6 +702,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "melihat daftar spot leveling",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       sock.sendMessage(chatId, { text: listLeveling }, { quoted: msg });
     },
   });
@@ -527,6 +719,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "filstat armor dengan tanaka",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       filarm(sock, chatId, msg, text);
     },
   });
@@ -538,6 +736,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "filstat armor dengan tanaka",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       filwep(sock, chatId, msg, text);
     },
   });
@@ -549,6 +753,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "melihat cara penggunaan filarm",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       sock.sendMessage(chatId, { text: stat }, { quoted: msg });
     },
   });
@@ -560,6 +770,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "mengecek sesuatu secara random",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       cek(sock, chatId, msg, text);
     },
   });
@@ -571,6 +787,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "meningkatkan kualitas gambar",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       Remini(sock, chatId, msg);
     },
   });
@@ -582,6 +804,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "informasi upgrade bag",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       sock.sendMessage(chatId, { text: upbagId }, { quoted: msg });
     },
   });
@@ -593,6 +821,12 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "informasi donasi untuk bot",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       sock.sendMessage(
         chatId,
         {
@@ -613,6 +847,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "memutar lagu dari youtube",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       play(sock, chatId, msg, text);
     },
   });
@@ -624,6 +864,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "ngobrol dengan model ai Qween",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       qweenAi(sock, chatId, msg, text);
     },
   });
@@ -634,6 +880,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "ngobrol dengan model ai GPT",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       gptAi(sock, chatId, msg, text);
     },
   });
@@ -645,6 +897,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "mencari gambar dari pinterest",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       pin(sock, chatId, msg, text);
     },
   });
@@ -656,6 +914,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "permainan cak lontong",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       Caklontong(sock, chatId, msg, text);
     },
   });
@@ -667,6 +931,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "permainan tebak gambar",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       tebakGambar(sock, chatId, msg, text);
     },
   });
@@ -678,6 +948,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "panduan padu",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       sock.sendMessage(chatId, { text: guide.padu }, { quoted: msg });
     },
   });
@@ -689,6 +965,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "mencari informasi skill",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       skill(sock, chatId, msg, text);
     },
   });
@@ -700,6 +982,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "melihat daftar skill",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       listSkill(sock, chatId, msg);
     },
   });
@@ -711,6 +999,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "melihat daftar crystal",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       Xtall(sock, chatId, msg);
     },
   });
@@ -722,6 +1016,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "mendapatkan gambar husbando random",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       husbu(sock, chatId, msg);
     },
   });
@@ -733,6 +1033,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "mendapatkan gambar Istri random",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       myBini(sock, chatId, msg);
     },
   });
@@ -744,6 +1050,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "melihat daftar ability",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       ability(sock, chatId, msg);
     },
   });
@@ -755,6 +1067,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "informasi boss boost",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       bosboost(sock, chatId, msg);
     },
   });
@@ -766,6 +1084,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "mencari lagu di spotify",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       Spotifysearch(sock, chatId, msg, text);
     },
   });
@@ -777,6 +1101,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "mencari informasi monster",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       searchMonster(sock, chatId, msg, text);
     },
   });
@@ -788,6 +1118,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "mencari informasi pet",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       pet(sock, chatId, msg, text);
     },
   });
@@ -799,6 +1135,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "kalkulasi spam adv toram",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       spamAdv(sock, chatId, msg, text);
     },
   });
@@ -810,6 +1152,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "meningkatkan kualitas gambar (hd)",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       hd(sock, chatId, msg);
     },
   });
@@ -821,6 +1169,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "melihat live stream toram",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       liveStream(sock, chatId, msg);
     },
   });
@@ -832,6 +1186,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "melihat daftar spot farming",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       farm(sock, chatId, msg, text);
     },
   });
@@ -843,6 +1203,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "ghaca khodam",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       newkhodam(sock, chatId, msg);
     },
   });
@@ -854,6 +1220,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "untuk mencari detail bos hdb / event",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       searchHdb(sock, chatId, msg, text);
     },
   });
@@ -865,6 +1237,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "memunculkan daftar bos dan minibos yang tersedia",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       listboss(sock, chatId, msg);
     },
   });
@@ -876,6 +1254,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "memunculkan daftar bahan mq",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       sock.sendMessage(chatId, { text: mq }, { quoted: msg });
     },
   });
@@ -887,6 +1271,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "untuk menambahkan code buff ke dalam database",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       setBuff(sock, chatId, msg, text);
     },
   });
@@ -898,6 +1288,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "membuat stiker brat",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       brat(sock, chatId, msg, text);
     },
   });
@@ -909,6 +1305,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "memadukan emot menjadi stiker",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       mix(sock, chatId, msg, text);
     },
   });
@@ -920,6 +1322,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "melihat arti nama",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       artiNama(sock, chatId, msg, text);
     },
   });
@@ -931,6 +1339,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "melihat catatan",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       note(sock, chatId, msg, text);
     },
   });
@@ -942,6 +1356,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "membuat catatan baru",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       setNote(sock, chatId, msg, text);
     },
   });
@@ -952,6 +1372,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "hapus catatan",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       deleteNote(sock, chatId, msg, text);
     },
   });
@@ -963,6 +1389,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "melihat daftar catatan",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       notelist(sock, chatId, msg);
     },
   });
@@ -981,6 +1413,12 @@ nomer owner: 085664393331 (dimas)`,
           { quoted: msg },
         );
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       bosTesting(sock, chatId, msg);
     },
   });
@@ -992,6 +1430,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "mencari item berdasarkan stat",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       itemStat(sock, chatId, msg, text);
     },
   });
@@ -1003,6 +1447,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "permainan family 100",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       Family100(sock, chatId, msg);
     },
   });
@@ -1014,6 +1464,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "memunculkan foto loli random",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       Loli(sock, chatId, msg);
     },
   });
@@ -1025,6 +1481,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "memunculkan daftar Guide",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       listperpus(sock, chatId, msg);
     },
   });
@@ -1036,6 +1498,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "memunculkan detail Guide",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       bacaBuku(sock, chatId, msg, text);
     },
   });
@@ -1046,6 +1514,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "untuk mencari bos berdasarkan element",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       eleBos(sock, chatId, msg, text);
     },
   });
@@ -1056,6 +1530,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "untuk mencari monster berdasarkan element",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       eleMonster(sock, chatId, msg, text);
     },
   });
@@ -1066,6 +1546,12 @@ nomer owner: 085664393331 (dimas)`,
     desc: "untuk menampilkan buff yang di simpan",
     run: async (sock, chatId, msg, args, text) => {
       if (isBan(sock, chatId, msg)) return;
+      if (isMuted(msg))
+        return sendFancyText(sock, chatId, {
+          title: "Neura Sama",
+          body: "anda di mute",
+          text: "minta maaf dulu gih biar ga di mute",
+        });
       mybuff(sock, chatId, msg);
     },
   });
@@ -1077,6 +1563,12 @@ registerCommand({
   desc: "untuk menambahkan buff ke mybuff",
   run: async (sock, chatId, msg, args, text) => {
     if (isBan(sock, chatId, msg)) return;
+    if (isMuted(msg))
+      return sendFancyText(sock, chatId, {
+        title: "Neura Sama",
+        body: "anda di mute",
+        text: "minta maaf dulu gih biar ga di mute",
+      });
     setMybuff(sock, chatId, msg, text);
   },
 });
@@ -1087,6 +1579,12 @@ registerCommand({
   desc: "untuk memunculkan list",
   run: async (sock, chatId, msg, args, text) => {
     if (isBan(sock, chatId, msg)) return;
+    if (isMuted(msg))
+      return sendFancyText(sock, chatId, {
+        title: "Neura Sama",
+        body: "anda di mute",
+        text: "minta maaf dulu gih biar ga di mute",
+      });
     listMember(sock, chatId, msg);
   },
 });
@@ -1097,6 +1595,12 @@ registerCommand({
   desc: "permainan tebak kata",
   run: async (sock, chatId, msg, args, text) => {
     if (isBan(sock, chatId, msg)) return;
+    if (isMuted(msg))
+      return sendFancyText(sock, chatId, {
+        title: "Neura Sama",
+        body: "anda di mute",
+        text: "minta maaf dulu gih biar ga di mute",
+      });
     Tekateki(sock, chatId, msg, text);
   },
 });
@@ -1107,6 +1611,12 @@ registerCommand({
   desc: "mencari informasi raid boss",
   run: async (sock, chatId, msg, args, text) => {
     if (isBan(sock, chatId, msg)) return;
+    if (isMuted(msg))
+      return sendFancyText(sock, chatId, {
+        title: "Neura Sama",
+        body: "anda di mute",
+        text: "minta maaf dulu gih biar ga di mute",
+      });
     raidBos(sock, chatId, msg, text);
   },
 });
@@ -1118,6 +1628,12 @@ registerCommand({
   desc: "Menjawab pertanyaan dengan jawaban acak ala kerang ajaib",
   run: async (sock, chatId, msg, args, text) => {
     if (isBan(sock, chatId, msg)) return;
+    if (isMuted(msg))
+      return sendFancyText(sock, chatId, {
+        title: "Neura Sama",
+        body: "anda di mute",
+        text: "minta maaf dulu gih biar ga di mute",
+      });
     kerang(sock, chatId, msg, text);
   },
 });
@@ -1128,6 +1644,12 @@ registerCommand({
   desc: "image takjil random",
   run: async (sock, chatId, msg, args, text) => {
     if (isBan(sock, chatId, msg)) return;
+    if (isMuted(msg))
+      return sendFancyText(sock, chatId, {
+        title: "Neura Sama",
+        body: "anda di mute",
+        text: "minta maaf dulu gih biar ga di mute",
+      });
     takjilRandom(sock, chatId, msg);
   },
 });
@@ -1138,6 +1660,12 @@ registerCommand({
   desc: "code live",
   run: async (sock, chatId, msg, args, text) => {
     if (isBan(sock, chatId, msg)) return;
+    if (isMuted(msg))
+      return sendFancyText(sock, chatId, {
+        title: "Neura Sama",
+        body: "anda di mute",
+        text: "minta maaf dulu gih biar ga di mute",
+      });
     codeLive(sock, chatId, msg);
   },
 });
@@ -1148,6 +1676,12 @@ registerCommand({
   desc: "code live",
   run: async (sock, chatId, msg, args, text) => {
     if (isBan(sock, chatId, msg)) return;
+    if (isMuted(msg))
+      return sendFancyText(sock, chatId, {
+        title: "Neura Sama",
+        body: "anda di mute",
+        text: "minta maaf dulu gih biar ga di mute",
+      });
     instagramdownloder(sock, chatId, msg, text);
   },
 });
@@ -1158,6 +1692,12 @@ registerCommand({
   desc: "downloder spotify via link",
   run: async (sock, chatId, msg, args, text) => {
     if (isBan(sock, chatId, msg)) return;
+    if (isMuted(msg))
+      return sendFancyText(sock, chatId, {
+        title: "Neura Sama",
+        body: "anda di mute",
+        text: "minta maaf dulu gih biar ga di mute",
+      });
     spotifyDownloader(sock, chatId, msg, text);
   },
 });
@@ -1169,6 +1709,12 @@ registerCommand({
   desc: "downloder tiktok via link",
   run: async (sock, chatId, msg, args, text) => {
     if (isBan(sock, chatId, msg)) return;
+    if (isMuted(msg))
+      return sendFancyText(sock, chatId, {
+        title: "Neura Sama",
+        body: "anda di mute",
+        text: "minta maaf dulu gih biar ga di mute",
+      });
     tiktokDownloader(sock, chatId, msg, text);
   },
 });
@@ -1180,6 +1726,12 @@ registerCommand({
   desc: "",
   run: async (sock, chatId, msg, args, text) => {
     if (isBan(sock, chatId, msg)) return;
+    if (isMuted(msg))
+      return sendFancyText(sock, chatId, {
+        title: "Neura Sama",
+        body: "anda di mute",
+        text: "minta maaf dulu gih biar ga di mute",
+      });
     cuaca(sock, chatId, msg, text);
   },
 });
