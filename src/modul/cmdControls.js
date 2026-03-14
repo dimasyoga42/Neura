@@ -966,7 +966,8 @@ nomer owner: 085664393331 (dimas)`,
     category: "Testing",
     desc: "testing boss command",
     run: async (sock, chatId, msg) => {
-      if (!chackVip(sock, chatId, msg))
+      const isVip = await chackVip(sock, msg, chatId);
+      if (!isVip)
         return sock.sendMessage(
           chatId,
           { text: "grub tidak vip" },
