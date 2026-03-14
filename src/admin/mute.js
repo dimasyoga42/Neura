@@ -14,7 +14,8 @@ const getExp = (minute) => {
 
 export const muteUser = async (sock, chatId, msg, text) => {
   try {
-    const minute = text.replace(".mute", "");
+    const arg = text.split(" ");
+    const minute = arg[2];
     const mention =
       msg.message?.extendedTextMessage?.contextInfo?.mentionedJid || [];
 
