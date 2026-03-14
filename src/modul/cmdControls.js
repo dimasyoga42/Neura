@@ -104,7 +104,7 @@ import tiktokDownloader from "../plugins/vip/downloader/tt.js";
 import cuaca from "../plugins/fitur/cuaca.js";
 import { myBini } from "../plugins/fun/mybini.js";
 import { newkhodam } from "../plugins/fun/khodam.js";
-import { cekIdGrub, cekVip } from "../config/vip.js";
+import { cekvip, getIdGrub } from "../config/vip.js";
 import { filwep } from "../plugins/toram/filwep.js";
 import { sendButton, sendFancyText, sendList } from "../lib/message.js";
 import { qweenAi } from "../plugins/lmm/qwen.js";
@@ -215,7 +215,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "melihat masa aktif vip",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
-      cekVip(sock, chatId, msg);
+      cekvip(sock, chatId, msg);
     },
   });
   registerCommand({
@@ -225,7 +225,7 @@ export const cmdMenucontrol = async (sock, chatId, msg, text) => {
     desc: "melihat id grub",
     run: async (sock, chatId, msg) => {
       if (isBan(sock, chatId, msg)) return;
-      cekIdGrub(sock, chatId, msg);
+      getIdGrub(sock, chatId, msg);
     },
   });
 

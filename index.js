@@ -16,7 +16,7 @@ import { subMenu } from "./src/modul/subMenu.js";
 import { jawab } from "./src/plugins/fun/caklontong.js";
 import { commands } from "./setting.js";
 import { prefix } from "./src/admin/prefix.js";
-import { autoDeleteVip } from "./src/config/vip.js";
+import { cleanExpiredVip } from "./src/config/vip.js";
 //import { loadCommand } from "./src/service/core/commandhendler.js";
 //import { handleMessage } from "./src/service/core/hendlercmd.js";
 //import { jawabTebakkata } from "./src/plugins/fun/tebakkata.js";
@@ -85,8 +85,8 @@ const start = async () => {
       // jawabTebakkata(sock, chatId, msg)
       //await handleMessage(sock, chatId, msg);
       setInterval(() => {
-        autoDeleteVip();
-      }, 60000);
+        cleanExpiredVip();
+      }, 10000);
 
       const body =
         msg.message.conversation || msg.message.extendedTextMessage?.text || "";

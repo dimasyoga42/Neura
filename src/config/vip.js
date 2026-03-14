@@ -1,61 +1,134 @@
-import { supabase } from "../model/supabase.js";
+import path from "path";
+import { getUserData, saveUserData } from "./func.js";
+const dbPath = path.resolve("database", "vip.json");
 
-export const setVip = async (sock, chatId, msg, text) => {
+const getExp = (durationInDays) => {
+  const days = parseInt(durationInDays);
+  if (isNaN(days) || days <= 0) return null;
+
+  const now = new Date();
+
+  const jakartaOffset = 7 * 60 * 60 * 1000;
+  const jakartaNow = new Date(now.getTime() + jakartaOffset);
+
+  jakartaNow.setDate(jakartaNow.getDate() + days);
+
+  return jakartaNow.toISOString();
+};
+
+const formatDate = (dateStr) => {
+  return new Date(dateStr).toLocaleString("id-ID", {
+    timeZone: "Asia/Jakarta",
+    weekday: "short",
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+export const getIdGrub = async (sock, chatId, msg) => {
+  const grubId = msg.key.remoteJid;
+
+  await sock.sendMessage(
+    chatId,
+    {
+      text: `ID GRUB: ${grubId}\n\n> By: Karina bot`,
+    },
+    { quoted: msg },
+  );
+};
+
+export const vipRegister = async (sock, chatId, msg, idGrub, day) => {
   try {
-    const arg = text.split(" ");
-    const idGrub = arg[1];
-    const limit = arg[2];
+    const expDate = getExp(day);
 
-    const exp = parseInt(limit);
-
-    if (!idGrub || isNaN(exp)) {
-      return sock.sendMessage(
+    if (!expDate) {
+      await sock.sendMessage(
         chatId,
-        { text: "Format: .setvip idgroup hari" },
+        {
+          text: "Gagal menambahkan VIP. Masukkan hari yang valid.",
+        },
         { quoted: msg },
       );
+      return;
     }
 
-    const sekarang = new Date();
-    const tanggal = new Date(sekarang.getTime() + exp * 24 * 60 * 60 * 1000);
-    await supabase.from("vip-member").insert({
-      idGrub: idGrub,
-      exp: tanggal,
-    });
-    sock.sendMessage(
-      chatId,
-      {
-        text: `VIP berhasil diset\nGroup: ${idGrub}\nExpired: ${tanggal}`,
-      },
-      { quoted: msg },
-    );
+    const data = getUserData(dbPath);
+    const now = new Date().toISOString();
+
+    let user = data.find((entry) => entry.grubID === idGrub);
+
+    if (!user) {
+      user = {
+        grubID: idGrub,
+        registered: now,
+        expired: expDate,
+      };
+      data.push(user);
+    } else {
+      user.registered = now;
+      user.expired = expDate;
+    }
+
+    saveUserData(dbPath, data);
+
+    const caption = `
+*Info Vip*
+│ *•day*: ${day} day
+│ *•exp*: ${formatDate(expDate)}
+\n> By: Neura Sama`.trim();
+
+    await sock.sendMessage(chatId, { text: caption }, { quoted: msg });
   } catch (err) {
-    sock.sendMessage(chatId, { text: err.message }, { quoted: msg });
+    errMessage(sock, chatId, msg, err);
   }
 };
 
-export const autoDeleteVip = async () => {
-  const now = new Date().toISOString();
-  await supabase.from("vip-member").delete().lt("exp", now);
+export const chackVip = async (sock, msg, chatId) => {
+  const grubId = msg.key.remoteJid;
+
+  const data = getUserData(dbPath);
+  const user = data.find((entry) => entry.grubID === grubId);
+
+  if (!user) return false;
+
+  const now = new Date();
+  const expired = new Date(user.expired);
+
+  if (expired < now) {
+    const filtered = data.filter((entry) => entry.grubID !== grubId);
+    saveUserData(dbPath, filtered);
+    return false;
+  }
+
+  return true;
 };
 
-export const cekVip = async (sock, chatId, msg) => {
+export const cleanExpiredVip = () => {
+  const data = getUserData(dbPath);
+  const now = new Date();
+
+  const filtered = data.filter((entry) => {
+    const exp = new Date(entry.expired);
+    return exp > now;
+  });
+
+  if (filtered.length !== data.length) {
+    saveUserData(dbPath, filtered);
+    console.log(`[VIP] ${data.length - filtered.length} data expired dihapus.`);
+  }
+};
+
+export const cekvip = async (sock, chatId, msg) => {
   try {
-    if (!chatId.endsWith("@g.us")) {
-      return sock.sendMessage(
-        chatId,
-        { text: "Command ini hanya bisa dipakai di grup." },
-        { quoted: msg },
-      );
-    }
+    const grubId = msg.key.remoteJid;
 
-    const { data, error } = await supabase
-      .from("vip-member")
-      .select("*")
-      .eq("idGrub", chatId)
-      .single();
+    const data = getUserData(dbPath);
+    const user = data.find((entry) => entry.grubID === grubId);
 
-    if (error || !data) {
+    if (!user) {
       return sock.sendMessage(
         chatId,
         { text: "Grup ini bukan VIP." },
@@ -64,10 +137,11 @@ export const cekVip = async (sock, chatId, msg) => {
     }
 
     const now = new Date();
-    const exp = new Date(data.exp);
+    const expired = new Date(user.expired);
 
-    if (now > exp) {
-      await supabase.from("vip").delete().eq("idGrub", chatId);
+    if (expired < now) {
+      const filtered = data.filter((entry) => entry.grubID !== grubId);
+      saveUserData(dbPath, filtered);
 
       return sock.sendMessage(
         chatId,
@@ -76,65 +150,58 @@ export const cekVip = async (sock, chatId, msg) => {
       );
     }
 
-    const expFormat = exp.toLocaleString("id-ID", {
-      dateStyle: "full",
-      timeStyle: "short",
-    });
-
-    sock.sendMessage(
+    return sock.sendMessage(
       chatId,
       {
-        text: `Grup ini VIP\nExpired: ${expFormat}`,
+        text: `
+*VIP STATUS*
+│ Status : Aktif
+│ Expired : ${formatDate(user.expired)}
+`.trim(),
       },
       { quoted: msg },
     );
   } catch (err) {
-    sock.sendMessage(chatId, { text: err.message }, { quoted: msg });
+    console.error("[CEK VIP ERROR]:", err);
+    return sock.sendMessage(chatId, { text: "Error" }, { quoted: msg });
   }
 };
 
-export const isVipGroup = async (chatId) => {
-  const { data, error } = await supabase
-    .from("vip-member")
-    .select("exp")
-    .eq("idGrub", chatId)
-    .single();
-
-  if (error || !data) {
-    return false;
-  }
-
-  const now = new Date();
-  const exp = new Date(data.exp);
-
-  if (now > exp) {
-    await supabase.from("vip-member").delete().eq("idGrub", chatId);
-
-    return false;
-  }
-
-  return true;
-};
-export const cekIdGrub = async (sock, chatId, msg) => {
+export const trialGive = async (sock, chatId, msg, id) => {
   try {
-    if (!chatId.endsWith("@g.us")) {
-      return sock.sendMessage(
-        chatId,
-        { text: "Command ini hanya bisa dipakai di grup." },
-        { quoted: msg },
-      );
+    const expDate = getExp(1);
+    const now = new Date().toISOString();
+
+    const data = getUserData(dbPath);
+
+    let user = data.find((entry) => entry.grubID === id);
+
+    if (!user) {
+      user = {
+        grubID: id,
+        registered: now,
+        expired: expDate,
+      };
+      data.push(user);
+    } else {
+      user.registered = now;
+      user.expired = expDate;
     }
 
-    const metadata = await sock.groupMetadata(chatId);
+    saveUserData(dbPath, data);
 
-    const text = `INFO GRUP
-Nama Grup : ${metadata.subject}
-ID Grup   : ${chatId}
-Member    : ${metadata.participants.length}
-`.trim();
-
-    sock.sendMessage(chatId, { text }, { quoted: msg });
+    await sock.sendMessage(
+      chatId,
+      {
+        text: `
+ *TRIAL VIP*
+│ Status : Aktif
+│ Expired : ${formatDate(expDate)}
+`,
+      },
+      { quoted: msg },
+    );
   } catch (err) {
-    sock.sendMessage(chatId, { text: err.message }, { quoted: msg });
+    errMessage(sock, chatId, msg, err);
   }
 };

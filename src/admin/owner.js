@@ -1,4 +1,4 @@
-import { setVip } from "../config/vip.js";
+import { vipRegister } from "../config/vip.js";
 import { ban, isOwner, unBan } from "../plugins/fitur/ban.js";
 import { deletCode, setCode } from "../plugins/fitur/codeLive.js";
 import { editperpus, hapusperpus, setperpus } from "../plugins/fitur/perpus.js";
@@ -53,6 +53,6 @@ export const ownerControls = async (sock, chatId, msg, text) => {
   }
   if (text.startsWith(".setvip")) {
     if (!isOwner(sock, msg, chatId)) return;
-    setVip(sock, chatId, msg, text);
+    vipRegister(sock, chatId, msg, text);
   }
 };
