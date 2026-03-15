@@ -4,16 +4,33 @@ const ensure = (v, name) => {
   if (!v) throw new Error(`${name} is required`);
 };
 
+const CHANNEL = {
+  forwardingScore: 999,
+  isForwarded: true,
+  forwardedNewsletterMessageInfo: {
+    newsletterJid: "120363401312267152@newsletter",
+    newsletterName: "Neura Inc",
+    serverMessageId: 1,
+  },
+};
+
+const ctx = (extra = {}) => ({
+  contextInfo: {
+    ...CHANNEL,
+    ...extra,
+  },
+});
+
 export const sendText = async (sock, jid, text, quoted = null) => {
   ensure(jid, "jid");
   ensure(text, "text");
-  return await sock.sendMessage(jid, { text }, { quoted });
+  return await sock.sendMessage(jid, { text, ...ctx() }, { quoted });
 };
 
 export const editText = async (sock, jid, message, text) => {
   ensure(jid, "jid");
   ensure(text, "text");
-  return await sock.sendMessage(jid, { text, edit: message.key });
+  return await sock.sendMessage(jid, { text, edit: message.key, ...ctx() });
 };
 
 export const reactMessage = async (sock, jid, message, emoji) => {
@@ -21,6 +38,7 @@ export const reactMessage = async (sock, jid, message, emoji) => {
   ensure(emoji, "emoji");
   return await sock.sendMessage(jid, {
     react: { text: emoji, key: message.key },
+    ...ctx(),
   });
 };
 
@@ -37,6 +55,7 @@ export const sendImage = async (
     {
       image: Buffer.isBuffer(image) ? image : { url: image },
       caption,
+      ...ctx(),
     },
     { quoted },
   );
@@ -55,6 +74,7 @@ export const sendVideo = async (
     {
       video: Buffer.isBuffer(video) ? video : { url: video },
       caption,
+      ...ctx(),
     },
     { quoted },
   );
@@ -73,6 +93,7 @@ export const sendAudio = async (
     {
       audio: Buffer.isBuffer(audio) ? audio : { url: audio },
       ptt,
+      ...ctx(),
     },
     { quoted },
   );
@@ -84,6 +105,7 @@ export const sendSticker = async (sock, jid, sticker, quoted = null) => {
     jid,
     {
       sticker: Buffer.isBuffer(sticker) ? sticker : { url: sticker },
+      ...ctx(),
     },
     { quoted },
   );
@@ -104,6 +126,7 @@ export const sendDocument = async (
       document: Buffer.isBuffer(file) ? file : { url: file },
       fileName: filename,
       mimetype,
+      ...ctx(),
     },
     { quoted },
   );
@@ -125,6 +148,7 @@ export const sendButton = async (
       footer,
       buttons,
       headerType: 1,
+      ...ctx(),
     },
     { quoted },
   );
@@ -149,6 +173,7 @@ export const sendList = async (
       title,
       buttonText,
       sections,
+      ...ctx(),
     },
     { quoted },
   );
@@ -158,7 +183,7 @@ export const sendFancyText = async (
   sock,
   jid,
   {
-    title = "Bot",
+    title = "Neura Bot",
     body = "Message",
     text = "",
     thumbnail = null,
@@ -186,6 +211,7 @@ export const sendFancyText = async (
     {
       text,
       contextInfo: {
+        ...CHANNEL,
         externalAdReply,
       },
     },
@@ -198,6 +224,7 @@ export const downloadMedia = async (message, type = "buffer") => {
     message,
     message.mimetype.split("/")[0],
   );
+
   let buffer = Buffer.from([]);
 
   for await (const chunk of stream) {
