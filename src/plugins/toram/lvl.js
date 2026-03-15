@@ -3,7 +3,7 @@ import * as cheerio from "cheerio";
 
 export const lvl = async (sock, chatId, msg, text) => {
   try {
-    const lv = text.trim().split(/\s+/)[0];
+    const lv = text.trim().split(/\s+/)[1];
 
     if (!lv || isNaN(lv))
       return sock.sendMessage(
