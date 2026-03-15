@@ -163,10 +163,14 @@ export const sendButton = async (
         },
       },
     }),
-    { quoted },
+    {
+      quoted,
+      userJid: sock.user?.id, // ✅ sertakan jid pengirim
+    },
   );
 
-  await sock.sendMessage(jid, msg.message, { messageId: msg.key.id });
+  // ✅ relayMessage, bukan sendMessage
+  await sock.relayMessage(jid, msg.message, { messageId: msg.key.id });
 };
 
 export const sendList = async (
