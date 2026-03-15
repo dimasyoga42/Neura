@@ -1,3 +1,4 @@
+import { sendButton } from "../../lib/message.js";
 import { supabase } from "./../../model/supabase.js";
 
 export const bosTesting = async (sock, chatId, msg) => {
@@ -106,7 +107,7 @@ export const bosTesting = async (sock, chatId, msg) => {
       "Zahhak Machina",
       "Zapo",
       "Zelbuse",
-      "Zolban"
+      "Zolban",
     ];
 
     // Tahap 1: Mengambil data dari database
@@ -126,14 +127,14 @@ export const bosTesting = async (sock, chatId, msg) => {
     // Konversi ke lowercase dan trim untuk perbandingan case-insensitive
     const registeredNames = new Set(
       dbData
-        .map(entry => entry?.name)
+        .map((entry) => entry?.name)
         .filter(Boolean)
-        .map(name => name.toLowerCase().trim())
+        .map((name) => name.toLowerCase().trim()),
     );
 
     // Tahap 3: Filter boss yang belum terdaftar dengan normalisasi
     const unregisteredBosses = nameBos.filter(
-      boss => !registeredNames.has(boss.toLowerCase().trim())
+      (boss) => !registeredNames.has(boss.toLowerCase().trim()),
     );
 
     // Tahap 4: Kirim response
@@ -143,9 +144,33 @@ export const bosTesting = async (sock, chatId, msg) => {
       await sock.sendMessage(
         chatId,
         {
-          text: `📋 *Data Boss Belum Terdaftar*\n\n${resultList}\n\n_Total: ${unregisteredBosses.length} boss_`
+          text: `📋 *Data Boss Belum Terdaftar*\n\n${resultList}\n\n_Total: ${unregisteredBosses.length} boss_`,
         },
-        { quoted: msg }
+        { quoted: msg },
+      );
+      await sendButton(
+        sock,
+        chatId,
+        "Pilih fitur",
+        "Neura Bot",
+        [
+          {
+            buttonId: ".menu",
+            buttonText: { displayText: "Menu" },
+            type: 1,
+          },
+          {
+            buttonId: ".play",
+            buttonText: { displayText: "Play Music" },
+            type: 1,
+          },
+          {
+            buttonId: ".owner",
+            buttonText: { displayText: "Owner" },
+            type: 1,
+          },
+        ],
+        msg,
       );
 
       console.log(`[INFO] ${unregisteredBosses.length} boss belum terdaftar`);
@@ -153,20 +178,22 @@ export const bosTesting = async (sock, chatId, msg) => {
       await sock.sendMessage(
         chatId,
         { text: "✅ Semua boss sudah terdaftar di database" },
-        { quoted: msg }
+        { quoted: msg },
       );
 
       console.log("[INFO] Semua boss sudah terdaftar");
     }
-
   } catch (error) {
     console.error("[ERROR] bosTesting:", error.message);
 
-    await sock.sendMessage(
-      chatId,
-      { text: `❌ Terjadi kesalahan: ${error.message}` },
-      { quoted: msg }
-    ).catch(err => console.error("[ERROR] Gagal mengirim pesan error:", err));
+    await sock
+      .sendMessage(
+        chatId,
+        { text: `❌ Terjadi kesalahan: ${error.message}` },
+        { quoted: msg },
+      )
+      .catch((err) =>
+        console.error("[ERROR] Gagal mengirim pesan error:", err),
+      );
   }
 };
-
