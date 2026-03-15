@@ -20,6 +20,7 @@ export const lvl = async (sock, chatId, msg, text) => {
 
     const html = await res.text();
     const $ = cheerio.load(html);
+    console.log($);
 
     let result = `Leveling Info Lv ${lv}\n\n`;
     let found = false;
