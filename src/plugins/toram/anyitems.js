@@ -1,4 +1,3 @@
-import { writeRandomPadMax16 } from "toxic-baileys/lib/Utils/generics.js";
 import { supabase } from "../../model/supabase.js";
 import axios from "axios";
 const formatStatList = (stat) => {
