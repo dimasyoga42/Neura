@@ -417,8 +417,8 @@ export const searchApp = async (sock, chatId, msg, text) => {
     const { data, error } = await supabase
       .from("appview")
       .select("name, image_url")
-      .ilike("name", `${nama}%`)
-      .limit(1);
+      .ilike("name", `%${nama}%`)
+      .limit(10);
 
     if (error) {
       console.log(error);
@@ -438,20 +438,20 @@ export const searchApp = async (sock, chatId, msg, text) => {
     }
 
     const app = data[0];
-
-    const messageData = `
-Nama App : ${app.name}
-> Source: https://coryn.club/
-`.trim();
-
-    await sock.sendMessage(
-      chatId,
-      {
-        image: { url: app.image_url },
-        caption: messageData,
-      },
-      { quoted: msg },
-    );
+    app.map((item, i) => {
+      const messageData = `
+  Nama App : ${item.name}
+  > Source: https://coryn.club/
+  `.trim();
+      sock.sendMessage(
+        chatId,
+        {
+          image: { url: item.image_url },
+          caption: messageData,
+        },
+        { quoted: msg },
+      );
+    });
   } catch (err) {
     console.log(err);
     sock.sendMessage(chatId, { text: "Error internal" }, { quoted: msg });
