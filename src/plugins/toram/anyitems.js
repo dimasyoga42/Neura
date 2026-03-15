@@ -1,3 +1,4 @@
+import { writeRandomPadMax16 } from "toxic-baileys/lib/Utils/generics.js";
 import { supabase } from "../../model/supabase.js";
 import axios from "axios";
 const formatStatList = (stat) => {
@@ -404,12 +405,14 @@ ${item.drop}
 
 export const searchApp = async (sock, chatId, msg, text) => {
   try {
-    const nama = text.replace(".appview", "").trim();
+    const arg = text.split(" ");
+    const nama = arg[1];
+    const limit = arg[2];
 
-    if (!nama) {
+    if (!nama || !limit) {
       return sock.sendMessage(
         chatId,
-        { text: "Gunakan: .appview <nama>" },
+        { text: "Gunakan: .appview <nama> <limit>" },
         { quoted: msg },
       );
     }
@@ -418,7 +421,7 @@ export const searchApp = async (sock, chatId, msg, text) => {
       .from("appview")
       .select("name, image_url")
       .ilike("name", `%${nama}%`)
-      .limit(10);
+      .limit(limit);
 
     if (error) {
       console.log(error);
