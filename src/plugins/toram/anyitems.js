@@ -437,7 +437,7 @@ export const searchApp = async (sock, chatId, msg, text) => {
       );
     }
 
-    const app = data[0];
+    const app = data;
     app.map((item, i) => {
       const messageData = `
   Nama App : ${item.name}
