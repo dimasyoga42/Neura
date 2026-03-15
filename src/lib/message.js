@@ -140,18 +140,18 @@ export const sendButton = async (
   buttons = [],
   quoted = null,
 ) => {
-  ensure(jid, "jid");
-  return await sock.sendMessage(
-    jid,
-    {
-      text,
-      footer,
-      buttons,
-      headerType: 1,
-      ...ctx(),
-    },
-    { quoted },
-  );
+  const buttonMessage = {
+    text: text,
+    footer: footer,
+    buttons: buttons.map((b, i) => ({
+      buttonId: b.id,
+      buttonText: { displayText: b.text },
+      type: 1,
+    })),
+    headerType: 1,
+  };
+
+  return await sock.sendMessage(jid, buttonMessage, { quoted });
 };
 
 export const sendList = async (
