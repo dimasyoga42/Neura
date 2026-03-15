@@ -166,7 +166,7 @@ export const sendButton = async (
     { quoted },
   );
 
-  await sock.relayMessage(jid, msg.message, { messageId: msg.key.id });
+  await sock.sendMessage(jid, msg.message, { messageId: msg.key.id });
 };
 
 export const sendList = async (
