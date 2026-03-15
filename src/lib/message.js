@@ -132,6 +132,8 @@ export const sendDocument = async (
   );
 };
 
+import { generateWAMessageFromContent, proto } from "@whiskeysockets/baileys";
+
 export const sendButton = async (
   sock,
   jid,
@@ -140,31 +142,31 @@ export const sendButton = async (
   buttons = [],
   quoted = null,
 ) => {
-  const msg = {
-    viewOnceMessage: {
-      message: {
-        interactiveMessage: {
-          body: {
-            text: text,
-          },
-          footer: {
-            text: footer,
-          },
-          nativeFlowMessage: {
-            buttons: buttons.map((b) => ({
-              name: "quick_reply",
-              buttonParamsJson: JSON.stringify({
-                display_text: b.text,
-                id: b.id,
-              }),
-            })),
+  const msg = generateWAMessageFromContent(
+    jid,
+    proto.Message.fromObject({
+      viewOnceMessage: {
+        message: {
+          interactiveMessage: {
+            body: { text },
+            footer: { text: footer },
+            nativeFlowMessage: {
+              buttons: buttons.map((b) => ({
+                name: "quick_reply",
+                buttonParamsJson: JSON.stringify({
+                  display_text: b.text,
+                  id: b.id,
+                }),
+              })),
+            },
           },
         },
       },
-    },
-  };
+    }),
+    { quoted },
+  );
 
-  return await sock.relayMessage(jid, msg, { messageId: quoted?.key?.id });
+  await sock.relayMessage(jid, msg.message, { messageId: msg.key.id });
 };
 
 export const sendList = async (
