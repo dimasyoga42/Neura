@@ -140,18 +140,31 @@ export const sendButton = async (
   buttons = [],
   quoted = null,
 ) => {
-  const buttonMessage = {
-    text: text,
-    footer: footer,
-    buttons: buttons.map((b, i) => ({
-      buttonId: b.id,
-      buttonText: { displayText: b.text },
-      type: 1,
-    })),
-    headerType: 1,
+  const msg = {
+    viewOnceMessage: {
+      message: {
+        interactiveMessage: {
+          body: {
+            text: text,
+          },
+          footer: {
+            text: footer,
+          },
+          nativeFlowMessage: {
+            buttons: buttons.map((b) => ({
+              name: "quick_reply",
+              buttonParamsJson: JSON.stringify({
+                display_text: b.text,
+                id: b.id,
+              }),
+            })),
+          },
+        },
+      },
+    },
   };
 
-  return await sock.sendMessage(jid, buttonMessage, { quoted });
+  return await sock.relayMessage(jid, msg, { messageId: quoted?.key?.id });
 };
 
 export const sendList = async (

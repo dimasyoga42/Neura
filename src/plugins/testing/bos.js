@@ -151,24 +151,12 @@ export const bosTesting = async (sock, chatId, msg) => {
       await sendButton(
         sock,
         chatId,
-        "Pilih fitur",
+        "Pilih menu bot",
         "Neura Bot",
         [
-          {
-            buttonId: ".menu",
-            buttonText: { displayText: "Menu" },
-            type: 1,
-          },
-          {
-            buttonId: ".play",
-            buttonText: { displayText: "Play Music" },
-            type: 1,
-          },
-          {
-            buttonId: ".owner",
-            buttonText: { displayText: "Owner" },
-            type: 1,
-          },
+          { id: ".menu", text: "📋 Menu" },
+          { id: ".play", text: "🎵 Play" },
+          { id: ".owner", text: "👤 Owner" },
         ],
         msg,
       );
