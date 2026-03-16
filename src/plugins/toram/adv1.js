@@ -25,7 +25,7 @@ export const spamAdv = async (sock, chatId, msg, text) => {
     }
 
     const response = await fetch(
-      `https://neuraapi.vercel.app/api/toram/spamadv?lv=${lv}&exp=${exp}&lvmx=${max}&from=${from}`,
+      `https://neurapi.mochinime.cyou/api/toram/spamadv?lv=${lv}&exp=${exp}&lvmx=${max}&from=${from}`,
     );
 
     if (!response.ok) {
